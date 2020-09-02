@@ -1,4 +1,4 @@
 module.exports = {
-    publicPath: '/project-name/',
+    publicPath: '/beatoraja_play_recommend_web/',
     outputDir: 'docs'
 }
