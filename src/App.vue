@@ -9,10 +9,13 @@
       <SongDetail
           v-for="song in songs"
           :key="song.title"
-          :level="1"
+          :level="levelStr"
           :title="song.title"
           :score="song.snap.score"
           :min_bp="song.snap.min_bp"
+          :max_combo="song.snap.max_combo"
+          :clear_type="song.snap.clear_type"
+          :updated_at="song.snap.updated_at"
       />
     </table>
   </div>
@@ -29,6 +32,7 @@ export default {
       {id: 1, text: "tokimeki"}
     ],
     level: 0,
+    levelStr: "",
     songs: [],
   }),
   computed: {
@@ -42,7 +46,9 @@ export default {
         return response.json()
       })
           .then(json => {
-            this.songs = json.Detail.levels[this.level].songs
+            console.log(json);
+            this.levelStr = json.Detail.levels[this.level].level;
+            this.songs = json.Detail.levels[this.level].songs;
           })
           .catch((err) => {
             this.msg = err
