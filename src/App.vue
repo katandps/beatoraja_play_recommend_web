@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     read() {
-      fetch("http://bms.katand.net/detail/2").then(response => {
+      fetch("https://bms.katand.net/detail/2").then(response => {
         return response.json()
       })
           .then(json => {
