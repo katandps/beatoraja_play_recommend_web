@@ -1,12 +1,11 @@
 <template>
-  <tr class="song">
-    <th>{{ level }}</th>
+  <tr :class="clear_type">
+    <td>{{ level }}</td>
     <th>{{ title }}</th>
-    <th>{{ score }}</th>
-    <th>{{ min_bp }}</th>
-    <th>{{ max_combo }}</th>
-    <th>{{ clear_type }}</th>
-    <th>{{ updated_at }}</th>
+    <td>{{ score }}</td>
+    <td>{{ min_bp }}</td>
+    <td>{{ max_combo }}</td>
+    <td>{{ updated_at }}</td>
   </tr>
 </template>
 
@@ -46,4 +45,23 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.Failed {
+  background: #b0b0b0
+}
+.LightAssistEasy {
+  background: #ffb0ff
+}
+.Normal {
+  background: #ffe0b0
+}
+.Easy {
+  background: #d0ffd0
+}
+.Hard {
+  background: #ffffff
+}
+.ExHard {
+  background: #ffffb0
+}
+</style>
