@@ -1,18 +1,25 @@
 <template>
   <div id="detail">
     <label>
-      <input v-model="level"/>
+      <select class="form-control" name="table" v-model="selected_table">
+        <option v-for="(table,key) in tables" :key="key">{{ table.name }}</option>
+      </select>
+    </label>
+    <label>
+      <select class="form-control" name="level" v-model="selected_level">
+        <option v-for="(level,key) in tables[table_index()].levels" :key="key">{{ level }}</option>
+      </select>
     </label>
     <br/>
-    <button @click="read">読み込む</button>
+    <button @click="fetch_detail">読み込む</button>
 
     <br/>
-    {{ title }}
+    {{ selected_table }}
     <table>
       <SongDetail
-          v-for="song in songs"
+          v-for="song in songs[level_index()].songs"
           :key="song.title"
-          :level="levelStr"
+          :level="selected_level"
           :title="song.title"
           :score="song.snap.score"
           :min_bp="song.snap.min_bp"
@@ -31,37 +38,56 @@ export default {
   name: "Detail",
   components: {SongDetail},
   data: () => ({
-    level: 0,
-    levelStr: "",
-    title: "",
-    songs: [],
+    songs: [{songs:[]}],
+    tables: [{"name": "", "levels": []}],
+    selected_table: "",
+    selected_level: ""
   }),
   methods: {
-    read() {
-      fetch("https://bms.katand.net/detail/2").then(response => {
+    fetch_detail() {
+      fetch("https://bms.katand.net/detail/" + this.table_index()).then(response => {
         return response.json()
       })
           .then(json => {
             console.log(json);
-            this.levelStr = json.Detail.levels[this.level].level;
-            this.songs = json.Detail.levels[this.level].songs;
-            this.title = json.Detail.table;
+            this.songs = json.Detail.levels;
           })
           .catch((err) => {
             this.msg = err
           });
     },
-    add() {
-      const newTodo = {
-        id: this.todos.length + 1,
-        text: this.message
-      };
-      this.todos.push(newTodo);
-      this.message = "";
+    fetch_tables() {
+      fetch("https://bms.katand.net/tables/").then(response => {
+        return response.json()
+      }).then(json => {
+        console.log(json);
+        this.tables = json;
+        this.selected_table = json[0].name;
+        this.selected_level = json[0].levels[0];
+      }).catch((err) => {
+        console.error(err);
+      });
     },
-    remove(id) {
-      this.todos = this.todos.filter(todo => todo.id !== id);
+    table_index() {
+      for (let i = 0; i < this.tables.length; i++) {
+        if (this.tables[i].name === this.selected_table) {
+          return i;
+        }
+      }
+      return 0;
+    },
+    level_index() {
+      for (let i = 0; i < this.tables[this.table_index()].levels.length; i++) {
+        if (this.tables[this.table_index()].levels[i] === this.selected_level) {
+          return i;
+        }
+      }
+      return 0;
     }
+  },
+  created: function () {
+    this.fetch_tables();
+    this.fetch_detail();
   }
 }
 </script>
