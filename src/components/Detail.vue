@@ -10,14 +10,12 @@
         <option v-for="(level,key) in tables[table_index()].levels" :key="key">{{ level }}</option>
       </select>
     </label>
-    <br/>
-    <button @click="fetch_detail">読み込む</button>
 
     <br/>
     {{ selected_table }}
     <table>
       <SongDetail
-          v-for="song in songs[level_index()].songs"
+          v-for="song in songs[table_index()][level_index()].songs"
           :key="song.title"
           :level="selected_level"
           :title="song.title"
@@ -38,19 +36,19 @@ export default {
   name: "Detail",
   components: {SongDetail},
   data: () => ({
-    songs: [{songs:[]}],
+    songs: [{songs: []}],
     tables: [{"name": "", "levels": []}],
     selected_table: "",
     selected_level: ""
   }),
   methods: {
-    fetch_detail() {
-      fetch("https://bms.katand.net/detail/" + this.table_index()).then(response => {
+    fetch_detail(index) {
+      fetch("https://bms.katand.net/detail/" + index).then(response => {
         return response.json()
       })
           .then(json => {
             console.log(json);
-            this.songs = json.Detail.levels;
+            this.songs.splice(index, 1, json.Detail.levels);
           })
           .catch((err) => {
             this.msg = err
@@ -64,6 +62,10 @@ export default {
         this.tables = json;
         this.selected_table = json[0].name;
         this.selected_level = json[0].levels[0];
+        this.songs = Array(json.length);
+        for (let i = 0; i < json.length; i++) {
+          this.fetch_detail(i);
+        }
       }).catch((err) => {
         console.error(err);
       });
@@ -74,6 +76,7 @@ export default {
           return i;
         }
       }
+      console.error("難易度表が読み込まれてなさそうです");
       return 0;
     },
     level_index() {
@@ -82,12 +85,12 @@ export default {
           return i;
         }
       }
+      this.selected_level = this.tables[this.table_index()].levels[0];
       return 0;
     }
   },
   created: function () {
     this.fetch_tables();
-    this.fetch_detail();
   }
 }
 </script>
