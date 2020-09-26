@@ -2,19 +2,21 @@
   <div id="lamp-graph">
     <h1>ランプグラフ</h1>
     {{ selected_table }}
-    <div class="progress" v-for="(level, key) in songs[table_index()]" :key="key">
-      <div
-          v-for="clear_type in lamp_type" :key="clear_type"
-          :class="'progress-bar bg-' + clear_type"
-          role="progressbar"
-          style="width: 30%"
-          aria-valuenow="30"
-          aria-valuemin="0"
-          aria-valuemax="100"
-      >
-        {{ level.count[clear_type].count }}
-      </div>
-    </div>
+    <table style="width:100%">
+      <tr v-for="(level, key) in songs[table_index()]" :key="key" style="width:100%">
+        <td style="width:15%">{{ tables[table_index()].levels[key] }}</td>
+        <td class="progress" style="width:100%;height:1.8em">
+          <div
+              v-for="clear_type in lamp_type" :key="clear_type"
+              :class="'progress-bar bg-' + clear_type"
+              role="progressbar"
+              :style="'width: ' + level.count[clear_type].count * 100 + '%'"
+          >
+            {{ level.count[clear_type].count }}
+          </div>
+        </td>
+      </tr>
+    </table>
   </div>
 </template>
 
