@@ -1,11 +1,7 @@
 <template>
   <div id="detail">
     <h1>クリア状況</h1>
-    <label>
-      <select class="form-control" name="table" v-model="selected_table">
-        <option v-for="(table,key) in tables" :key="key">{{ table.name }}</option>
-      </select>
-    </label>
+
     <label>
       <select class="form-control" name="level" v-model="selected_level">
         <option v-for="(level,key) in tables[table_index()].levels" :key="key">{{ level }}</option>
@@ -13,7 +9,6 @@
     </label>
 
     <br/>
-    {{ selected_table }}
     <table class="table table-bordered">
       <SongDetail
           v-for="song in songs[table_index()][level_index()].songs"
@@ -55,10 +50,18 @@ const song_format = [
 export default {
   name: "Detail",
   components: {SongDetail},
+  props: {
+    tables: {
+      type: Array,
+      required: true
+    },
+    selected_table: {
+      type: String,
+      required: true
+    }
+  },
   data: () => ({
     songs: [song_format],
-    tables: [{"name": "", "levels": []}],
-    selected_table: "",
     selected_level: ""
   }),
   methods: {
@@ -73,24 +76,6 @@ export default {
           .catch((err) => {
             this.msg = err
           });
-    },
-    fetch_tables() {
-      fetch("https://bms.katand.net/tables/").then(response => {
-        return response.json()
-      }).then(json => {
-        console.log(json);
-        this.tables = json;
-        this.selected_table = json[0].name;
-        this.selected_level = json[0].levels[0];
-        const songs = Array(json.length);
-        songs.fill(song_format);
-        this.songs = songs;
-        for (let i = 0; i < json.length; i++) {
-          this.fetch_detail(i);
-        }
-      }).catch((err) => {
-        console.error(err);
-      });
     },
     table_index() {
       for (let i = 0; i < this.tables.length; i++) {
@@ -112,11 +97,16 @@ export default {
     }
   },
   created: function () {
-    this.fetch_tables();
+    this.selected_level = this.tables[0].levels[0];
+
+    const songs = Array(this.tables.length);
+    songs.fill(song_format);
+    this.songs = songs;
+    for (let i = 0; i < this.tables.length; i++) {
+      this.fetch_detail(i);
+    }
   }
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
