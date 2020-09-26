@@ -1,0 +1,22 @@
+@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-vue/src";
+
+$theme-colors: (
+        "Failed": #b0b0b0,
+        "NoPlay": #b0b0b0,
+        "AssistEasy": #b0b0ff,
+        "LightAssistEasy": #ffb0ff,
+        "Easy": #d0ffd0,
+        "Normal": #ffe0b0,
+        "Hard": #ffb0b0,
+        "ExHard": #ffffb0,
+        "FullCombo": #b0ffff,
+        "Perfect": #d0d0ff,
+        "Max": #d0d0ff,
+);
+
+@each $color, $value in $theme-colors {
+  @include table-row-variant($color, $value);
+  @include bg-variant('.bg-#{$color}', $value);
+}
+

@@ -1,5 +1,5 @@
 <template>
-  <tr :class="clear_type">
+  <tr :class="'table-' + clear_type">
     <td>{{ level }}</td>
     <th>{{ title }}</th>
     <td>{{ score }}</td>
@@ -45,40 +45,4 @@ export default {
 }
 </script>
 
-<style>
-.Failed {
-  background: #b0b0b0
-}
-
-.NoPlay {
-  background: #b0b0b0
-}
-
-.LightAssistEasy {
-  background: #ffb0ff
-}
-
-.Normal {
-  background: #ffe0b0
-}
-
-.Easy {
-  background: #d0ffd0
-}
-
-.Hard {
-  background: #ffb0b0
-}
-
-.ExHard {
-  background: #ffffb0
-}
-
-.FullCombo {
-  background: #b0ffff
-}
-
-.Perfect {
-  background: #d0d0ff
-}
-</style>
+<style></style>

@@ -1,5 +1,6 @@
 <template>
   <div id="detail">
+    <h1>クリア状況</h1>
     <label>
       <select class="form-control" name="table" v-model="selected_table">
         <option v-for="(table,key) in tables" :key="key">{{ table.name }}</option>
@@ -13,7 +14,7 @@
 
     <br/>
     {{ selected_table }}
-    <table>
+    <table class="table table-bordered">
       <SongDetail
           v-for="song in songs[table_index()][level_index()].songs"
           :key="song.title"
@@ -32,11 +33,30 @@
 <script>
 import SongDetail from "./SongDetail";
 
+const song_format = [
+  [
+    {
+      level: "",
+      songs: [
+        {
+          title: "",
+          snap: {
+            score: "",
+            min_bp: "",
+            max_combo: "",
+            clear_type: "",
+            updated_at: "",
+          }
+        }]
+    }
+  ]
+];
+
 export default {
   name: "Detail",
   components: {SongDetail},
   data: () => ({
-    songs: [{songs: []}],
+    songs: [song_format],
     tables: [{"name": "", "levels": []}],
     selected_table: "",
     selected_level: ""
@@ -62,7 +82,9 @@ export default {
         this.tables = json;
         this.selected_table = json[0].name;
         this.selected_level = json[0].levels[0];
-        this.songs = Array(json.length);
+        const songs = Array(json.length);
+        songs.fill(song_format);
+        this.songs = songs;
         for (let i = 0; i < json.length; i++) {
           this.fetch_detail(i);
         }

@@ -1,16 +1,17 @@
 <template>
-  <div id="app">
-    <h1>クリア状況</h1>
+  <div id="app" class="mx-auto" style="width: 80%">
+    <LampGraph />
     <Detail />
   </div>
 </template>
 
 <script>
 import Detail from "./components/Detail";
+import LampGraph from "./components/LampGraph";
 
 export default {
   name: "App",
-  components: {Detail},
+  components: {LampGraph, Detail},
 };
 </script>
 
