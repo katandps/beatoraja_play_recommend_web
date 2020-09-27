@@ -8,6 +8,7 @@
     </label>
 
     <LampGraph :tables="tables" :selected_table="selected_table" v-if="has_loaded_tables"/>
+    <RankGraph :tables="tables" :selected_table="selected_table" v-if="has_loaded_tables"/>
     <Detail :tables="tables" :selected_table="selected_table" v-if="has_loaded_tables"/>
   </div>
 </template>
@@ -15,10 +16,11 @@
 <script>
 import Detail from "./components/Detail";
 import LampGraph from "./components/LampGraph";
+import RankGraph from "./components/RankGraph";
 
 export default {
   name: "App",
-  components: {LampGraph, Detail},
+  components: {LampGraph, Detail, RankGraph},
   data: () => ({
     tables: [],
     selected_table: "",
