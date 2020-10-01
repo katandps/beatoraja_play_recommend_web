@@ -46,13 +46,15 @@ export default {
     ],
   }),
   methods: {
-    fetch_detail(index) {
-      fetch("https://bms.katand.net/rank/" + index).then(response => {
+    fetch_detail() {
+      fetch("https://bms.katand.net/rank/").then(response => {
         return response.json()
       })
           .then(json => {
             console.log(json);
-            this.songs.splice(index, 1, json.RankGraph.levels);
+            for (let i = 0; i < this.tables.length; i++) {
+              this.songs.splice(i, 1, json[i].RankGraph.levels);
+            }
           })
           .catch((err) => {
             this.msg = err
@@ -69,11 +71,8 @@ export default {
     },
   },
   created: function () {
-    console.debug(this.tables.length);
     this.songs = Array(this.tables.length);
-    for (let i = 0; i < this.tables.length; i++) {
-      this.fetch_detail(i);
-    }
+    this.fetch_detail();
   }
 }
 </script>

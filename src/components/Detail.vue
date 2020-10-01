@@ -65,13 +65,15 @@ export default {
     selected_level: ""
   }),
   methods: {
-    fetch_detail(index) {
-      fetch("https://bms.katand.net/detail/" + index).then(response => {
+    fetch_detail() {
+      fetch("https://bms.katand.net/detail/").then(response => {
         return response.json()
       })
           .then(json => {
             console.log(json);
-            this.songs.splice(index, 1, json.Detail.levels);
+            for (let i = 0; i < this.tables.length; i++) {
+              this.songs.splice(i, 1, json[i].Detail.levels);
+            }
           })
           .catch((err) => {
             this.msg = err
@@ -102,9 +104,7 @@ export default {
     const songs = Array(this.tables.length);
     songs.fill(song_format);
     this.songs = songs;
-    for (let i = 0; i < this.tables.length; i++) {
-      this.fetch_detail(i);
-    }
+    this.fetch_detail();
   }
 }
 </script>
