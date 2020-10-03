@@ -66,7 +66,7 @@ export default {
   }),
   methods: {
     fetch_detail() {
-      fetch("https://bms.katand.net/detail/").then(response => {
+      fetch(process.env.VUE_APP_HOST + "detail/").then(response => {
         return response.json()
       })
           .then(json => {

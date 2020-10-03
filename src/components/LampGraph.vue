@@ -50,7 +50,7 @@ export default {
   }),
   methods: {
     fetch_detail() {
-      fetch("https://bms.katand.net/lamp/").then(response => {
+      fetch(process.env.VUE_APP_HOST + "lamp/").then(response => {
         return response.json()
       })
           .then(json => {

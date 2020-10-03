@@ -27,7 +27,7 @@ export default {
   }),
   methods: {
     fetch_tables() {
-      fetch("https://bms.katand.net/tables/").then(response => {
+      fetch(process.env.VUE_APP_HOST + "tables/").then(response => {
         return response.json()
       }).then(json => {
         console.log(json);

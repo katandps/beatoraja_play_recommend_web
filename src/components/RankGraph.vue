@@ -47,7 +47,7 @@ export default {
   }),
   methods: {
     fetch_detail() {
-      fetch("https://bms.katand.net/rank/").then(response => {
+      fetch(process.env.VUE_APP_HOST + "rank/").then(response => {
         return response.json()
       })
           .then(json => {
