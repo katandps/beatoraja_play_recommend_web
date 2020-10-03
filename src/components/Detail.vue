@@ -10,16 +10,28 @@
 
     <br/>
     <table class="table table-bordered">
+      <thead>
+      <tr>
+        <td>Lv</td>
+        <th>曲名</th>
+        <td>ExScore</td>
+        <td>最小BP</td>
+        <td>最大コンボ</td>
+        <td>プレイ回数</td>
+        <td>更新日時</td>
+      </tr>
+      </thead>
       <SongDetail
           v-for="song in songs[table_index()][level_index()].songs"
           :key="song.title"
           :level="selected_level"
           :title="song.title"
-          :score="song.snap.score"
-          :min_bp="song.snap.min_bp"
-          :max_combo="song.snap.max_combo"
-          :clear_type="song.snap.clear_type"
-          :updated_at="song.snap.updated_at"
+          :score="song.score"
+          :min_bp="song.min_bp"
+          :max_combo="song.max_combo"
+          :clear_type="song.clear_type"
+          :play_count="song.play_count"
+          :updated_at="song.updated_at"
       />
     </table>
   </div>
@@ -35,13 +47,12 @@ const song_format = [
       songs: [
         {
           title: "",
-          snap: {
-            score: "",
-            min_bp: "",
-            max_combo: "",
-            clear_type: "",
-            updated_at: "",
-          }
+          score: "",
+          min_bp: "",
+          max_combo: "",
+          clear_type: "",
+          updated_at: "",
+          play_count: "",
         }]
     }
   ]

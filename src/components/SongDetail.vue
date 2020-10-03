@@ -5,6 +5,7 @@
     <td>{{ score }}</td>
     <td>{{ min_bp }}</td>
     <td>{{ max_combo }}</td>
+    <td>{{ play_count }}</td>
     <td>{{ updated_at }}</td>
   </tr>
 </template>
@@ -35,6 +36,10 @@ export default {
     },
     clear_type: {
       type: String,
+      required: true
+    },
+    play_count: {
+      type: Number,
       required: true
     },
     updated_at: {
