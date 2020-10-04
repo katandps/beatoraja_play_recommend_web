@@ -7,7 +7,7 @@
     <td>{{ min_bp }}</td>
     <td>{{ max_combo }}/{{ total_notes }}</td>
     <td>{{ play_count }}</td>
-    <td>{{ updated_at }}</td>
+    <td>{{ updated_at.split("T")[0] }}</td>
   </tr>
 </template>
 
