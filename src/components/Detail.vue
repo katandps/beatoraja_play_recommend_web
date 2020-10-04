@@ -13,12 +13,13 @@
       <thead>
       <tr>
         <td>Lv</td>
-        <th>曲名</th>
-        <td>ExScore</td>
-        <td>最小BP</td>
-        <td>最大コンボ</td>
-        <td>プレイ回数</td>
-        <td>更新日時</td>
+        <th>Title</th>
+        <td>Rate</td>
+        <td>EX/MAX</td>
+        <td>BP</td>
+        <td>Combo</td>
+        <td>Play</td>
+        <td>Date</td>
       </tr>
       </thead>
       <SongDetail
@@ -32,6 +33,7 @@
           :clear_type="song.clear_type"
           :play_count="song.play_count"
           :updated_at="song.updated_at"
+          :total_notes="song.total_notes"
       />
     </table>
   </div>
@@ -53,6 +55,7 @@ const song_format = [
           clear_type: "",
           updated_at: "",
           play_count: "",
+          total_notes: "",
         }]
     }
   ]

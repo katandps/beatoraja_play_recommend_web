@@ -2,9 +2,10 @@
   <tr :class="'table-' + clear_type">
     <td>{{ level }}</td>
     <th>{{ title }}</th>
-    <td>{{ score }}</td>
+    <td>{{ (score / total_notes * 50).toFixed(2) }}</td>
+    <td>{{ score }}/{{ total_notes * 2 }}</td>
     <td>{{ min_bp }}</td>
-    <td>{{ max_combo }}</td>
+    <td>{{ max_combo }}/{{ total_notes }}</td>
     <td>{{ play_count }}</td>
     <td>{{ updated_at }}</td>
   </tr>
@@ -44,6 +45,10 @@ export default {
     },
     updated_at: {
       type: String,
+      required: true
+    },
+    total_notes: {
+      type: Number,
       required: true
     }
   },
