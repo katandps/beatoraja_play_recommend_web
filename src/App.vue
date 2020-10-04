@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="mx-auto" style="width: 80%">
+  <div id="app" class="mx-auto container">
     <h1>難易度選択</h1>
     <label>
       <select class="form-control" name="table" v-model="selected_table">
