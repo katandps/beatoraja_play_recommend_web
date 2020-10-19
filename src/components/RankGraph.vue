@@ -9,9 +9,9 @@
               v-for="rank in score_rank" :key="rank"
               :class="'progress-bar bg-' + rank"
               role="progressbar"
-              :style="'width: ' + level.count[rank].count * 100 + '%;color:#000'"
+              :style="'width: ' + level[rank] * 100 + '%;color:#000'"
           >
-            {{ level.count[rank].count }}
+            {{ level[rank] }}
           </div>
         </td>
       </tr>
@@ -53,7 +53,7 @@ export default {
           .then(json => {
             console.log(json);
             for (let i = 0; i < this.tables.length; i++) {
-              this.songs.splice(i, 1, json[i].RankGraph.levels);
+              this.songs.splice(i, 1, json[i].levels);
             }
           })
           .catch((err) => {

@@ -9,9 +9,9 @@
               v-for="clear_type in lamp_type" :key="clear_type"
               :class="'progress-bar bg-' + clear_type"
               role="progressbar"
-              :style="'width: ' + level.count[clear_type].count * 100 + '%;color:#000'"
+              :style="'width: ' + level[clear_type] * 100 + '%;color:#000'"
           >
-            {{ level.count[clear_type].count }}
+            {{ level[clear_type] }}
           </div>
         </td>
       </tr>
@@ -56,7 +56,7 @@ export default {
           .then(json => {
             console.log(json);
             for (let i = 0; i < this.tables.length; i++) {
-              this.songs.splice(i, 1, json[i].LampGraph.levels)
+              this.songs.splice(i, 1, json[i].levels)
             }
           })
           .catch((err) => {

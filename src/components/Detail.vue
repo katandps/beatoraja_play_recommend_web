@@ -22,25 +22,21 @@
         <td>Date</td>
       </tr>
       </thead>
-      <SongDetail
-          v-for="song in songs[table_index()][level_index()].songs"
-          :key="song.title"
-          :level="selected_level"
-          :title="song.title"
-          :score="song.score"
-          :min_bp="song.min_bp"
-          :max_combo="song.max_combo"
-          :clear_type="song.clear_type"
-          :play_count="song.play_count"
-          :updated_at="song.updated_at"
-          :total_notes="song.total_notes"
-      />
+      <tr v-for="song in sorted" :class="'table-' + song.clear_type" :key="song.title">
+        <td>{{ selected_level }}</td>
+        <th>{{ song.title }}</th>
+        <td>{{ (song.score / song.total_notes * 50).toFixed(2) }}</td>
+        <td>{{ song.score }}/{{ song.total_notes * 2 }}</td>
+        <td>{{ song.min_bp }}</td>
+        <td>{{ song.max_combo }}/{{ song.total_notes }}</td>
+        <td>{{ song.play_count }}</td>
+        <td>{{ song.updated_at.split("T")[0] }}</td>
+      </tr>
     </table>
   </div>
 </template>
 
 <script>
-import SongDetail from "./SongDetail";
 
 const song_format = [
   [
@@ -48,14 +44,14 @@ const song_format = [
       level: "",
       songs: [
         {
-          title: "",
-          score: "",
-          min_bp: "",
-          max_combo: "",
-          clear_type: "",
-          updated_at: "",
-          play_count: "",
-          total_notes: "",
+          title: "読込中",
+          score: "1",
+          min_bp: "1",
+          max_combo: "1",
+          clear_type: "NoPlay",
+          updated_at: "1970-01-01",
+          play_count: "1",
+          total_notes: "1",
         }]
     }
   ]
@@ -63,7 +59,6 @@ const song_format = [
 
 export default {
   name: "Detail",
-  components: {SongDetail},
   props: {
     tables: {
       type: Array,
@@ -86,7 +81,7 @@ export default {
           .then(json => {
             console.log(json);
             for (let i = 0; i < this.tables.length; i++) {
-              this.songs.splice(i, 1, json[i].Detail.levels);
+              this.songs.splice(i, 1, json[i].levels);
             }
           })
           .catch((err) => {
@@ -119,6 +114,28 @@ export default {
     songs.fill(song_format);
     this.songs = songs;
     this.fetch_detail();
+  },
+  computed: {
+    sorted: function () {
+      let songs = this.songs[this.table_index()][this.level_index()].songs;
+      if (!songs) {
+        return song_format;
+      }
+      return songs.sort(function (a, b) {
+        console.log(a);
+        // let valA = a.title.toUpperCase(); // 大文字と小文字を無視する
+        let valA = a.score;
+        let valB = b.score;
+        // let valB = b.title.toUpperCase(); // 大文字と小文字を無視する
+        if (valA < valB) {
+          return -1;
+        } else if (valA > valB) {
+          return 1;
+        } else {
+          return 0;
+        }
+      })
+    }
   }
 }
 </script>
