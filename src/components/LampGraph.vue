@@ -6,7 +6,7 @@
         <td style="width:30px">{{ tables[table_index()].levels[key] }}</td>
         <td class="progress" style="width:100%;height:1.8em">
           <div
-              v-for="clear_type in lamp_type" :key="clear_type"
+              v-for="clear_type in config().LAMP_TYPE" :key="clear_type"
               :class="'progress-bar bg-' + clear_type"
               role="progressbar"
               :style="'width: ' + level[clear_type] * 100 + '%;color:#000'"
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import config from "../const.js"
+
 export default {
   name: "LampGraph",
   props: {
@@ -34,21 +36,11 @@ export default {
   },
   data: () => ({
     songs: [],
-    lamp_type: [
-      "Max",
-      "Perfect",
-      "FullCombo",
-      "ExHard",
-      "Hard",
-      "Normal",
-      "Easy",
-      "LightAssistEasy",
-      "AssistEasy",
-      "Failed",
-      "NoPlay",
-    ],
   }),
   methods: {
+    config() {
+      return config;
+    },
     fetch_detail() {
       fetch(process.env.VUE_APP_HOST + "lamp/").then(response => {
         return response.json()

@@ -12,14 +12,14 @@
     <table class="table table-bordered">
       <thead>
       <tr>
-        <td>Lv</td>
-        <th>Title</th>
-        <td>Rate</td>
-        <td>EX/MAX</td>
-        <td>BP</td>
-        <td>Combo</td>
-        <td>Play</td>
-        <td>Date</td>
+        <td @click="set_sort('clear')" :class="{active : sort_key==='clear'}">Lv</td>
+        <th @click="set_sort('title')"  :class="{active : sort_key==='title'}">Title</th>
+        <td @click="set_sort('rate')"  :class="{active : sort_key==='rate'}">Rate</td>
+        <td @click="set_sort('score')" :class="{active : sort_key==='score'}">EX/MAX</td>
+        <td @click="set_sort('bp')"  :class="{active : sort_key==='bp'}">BP</td>
+        <td @click="set_sort('combo')"  :class="{active : sort_key==='combo'}">Combo</td>
+        <td @click="set_sort('play')"  :class="{active : sort_key==='play'}">Play</td>
+        <td @click="set_sort('date')"  :class="{active : sort_key==='date'}">Date</td>
       </tr>
       </thead>
       <tr v-for="song in sorted" :class="'table-' + song.clear_type" :key="song.title">
@@ -38,6 +38,8 @@
 
 <script>
 
+import config from '../const.js';
+
 const song_format = [
   [
     {
@@ -49,7 +51,7 @@ const song_format = [
           min_bp: "1",
           max_combo: "1",
           clear_type: "NoPlay",
-          updated_at: "1970-01-01",
+          updated_at: "1970-01-01T00:00:00+09:00",
           play_count: "1",
           total_notes: "1",
         }]
@@ -70,16 +72,19 @@ export default {
     }
   },
   data: () => ({
-    songs: [song_format],
-    selected_level: ""
+    songs: song_format,
+    selected_level: "",
+    sort_key: "clear",
   }),
   methods: {
+    config() {
+      return config;
+    },
     fetch_detail() {
       fetch(process.env.VUE_APP_HOST + "detail/").then(response => {
         return response.json()
       })
           .then(json => {
-            console.log(json);
             for (let i = 0; i < this.tables.length; i++) {
               this.songs.splice(i, 1, json[i].levels);
             }
@@ -105,7 +110,10 @@ export default {
       }
       this.selected_level = this.tables[this.table_index()].levels[0];
       return 0;
-    }
+    },
+    set_sort(key) {
+      this.sort_key = key;
+    },
   },
   created: function () {
     this.selected_level = this.tables[0].levels[0];
@@ -119,14 +127,34 @@ export default {
     sorted: function () {
       let songs = this.songs[this.table_index()][this.level_index()].songs;
       if (!songs) {
-        return song_format;
+        return song_format[0][0].songs;
       }
+      let key = this.sort_key;
+      let sortKey = function(song) {
+        switch (key) {
+          case "clear":
+            return config.LAMP_TYPE.indexOf(song.clear_type);
+          case "title":
+            return song.title.toLowerCase();
+          case "rate":
+            return (song.score / song.total_notes * 50).toFixed(2)
+          case "score":
+            return song.score;
+          case "bp":
+            return song.min_bp;
+          case "combo":
+            return song.max_combo;
+          case "play":
+            return song.play_count;
+          case "date":
+            return song.updated_at;
+          default:
+            return ""
+        }
+      }.bind(this);
       return songs.sort(function (a, b) {
-        console.log(a);
-        // let valA = a.title.toUpperCase(); // 大文字と小文字を無視する
-        let valA = a.score;
-        let valB = b.score;
-        // let valB = b.title.toUpperCase(); // 大文字と小文字を無視する
+        let valA = sortKey(a);
+        let valB = sortKey(b);
         if (valA < valB) {
           return -1;
         } else if (valA > valB) {
@@ -138,6 +166,11 @@ export default {
     }
   }
 }
+
 </script>
 
-<style scoped></style>
+<style scoped>
+.active {
+  background-color: #e0e0e0;
+}
+</style>
