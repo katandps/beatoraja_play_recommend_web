@@ -30,6 +30,10 @@ export default {
     selected_table: {
       type: String,
       required: true
+    },
+    date: {
+      type: String,
+      required: true
     }
   },
   data: () => ({
@@ -47,7 +51,7 @@ export default {
   }),
   methods: {
     fetch_detail() {
-      fetch(process.env.VUE_APP_HOST + "rank/").then(response => {
+      fetch(process.env.VUE_APP_HOST + "rank/?date=" + this.date).then(response => {
         return response.json()
       })
           .then(json => {
@@ -72,7 +76,14 @@ export default {
   },
   created: function () {
     this.songs = Array(this.tables.length);
-    this.fetch_detail();
+  },
+  watch: {
+    date: {
+      immediate: true,
+      handler: function () {
+        this.fetch_detail();
+      }
+    }
   }
 }
 </script>

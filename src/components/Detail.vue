@@ -69,6 +69,10 @@ export default {
     selected_table: {
       type: String,
       required: true
+    },
+    date: {
+      type: String,
+      required: true
     }
   },
   data: () => ({
@@ -81,7 +85,7 @@ export default {
       return config;
     },
     fetch_detail() {
-      fetch(process.env.VUE_APP_HOST + "detail/").then(response => {
+      fetch(process.env.VUE_APP_HOST + "detail/?date=" + this.date).then(response => {
         return response.json()
       })
           .then(json => {
@@ -121,7 +125,6 @@ export default {
     const songs = Array(this.tables.length);
     songs.fill(song_format);
     this.songs = songs;
-    this.fetch_detail();
   },
   computed: {
     sorted: function () {
@@ -163,6 +166,14 @@ export default {
           return 0;
         }
       })
+    }
+  },
+  watch: {
+    date: {
+      immediate: true,
+      handler: function () {
+        this.fetch_detail();
+      }
     }
   }
 }
