@@ -12,6 +12,7 @@
     <div class="row justify-content-start">
       <datepicker class="col-3" format="yyyy-MM-dd" :bootstrap-styling="true" @closed="pickerClosed" name="date"
                   v-model="date" :language="ja"/>
+      <button @click="reset_date">日付リセット</button>
     </div>
 
     <LampGraph :tables="tables" :selected_table="selected_table" :date="date" v-if="has_loaded_tables"/>
@@ -83,6 +84,9 @@ export default {
     pickerClosed() {
       this.date = dateFormatter.format(this.date);
     },
+    reset_date() {
+      this.date = dateFormatter.format(new Date());
+    }
   },
   computed: {
     has_loaded_tables() {

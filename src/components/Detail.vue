@@ -29,7 +29,7 @@
         <td>{{ song.score }}/{{ song.total_notes * 2 }}</td>
         <td>{{ song.min_bp }}</td>
         <td>{{ song.max_combo }}/{{ song.total_notes }}</td>
-        <td>{{ song.play_count }}</td>
+        <td>{{ (song.play_count === -1) ? "---" : song.play_count }}</td>
         <td>{{ song.updated_at.split("T")[0] }}</td>
       </tr>
     </table>
@@ -47,12 +47,12 @@ const song_format = [
       songs: [
         {
           title: "読込中",
-          score: "1",
+          score: "2",
           min_bp: "1",
           max_combo: "1",
           clear_type: "NoPlay",
           updated_at: "1970-01-01T00:00:00+09:00",
-          play_count: "1",
+          play_count: "0",
           total_notes: "1",
         }]
     }
