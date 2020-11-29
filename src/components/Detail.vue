@@ -4,7 +4,7 @@
 
     <label>
       <select class="form-control" name="level" v-model="selected_level">
-        <option v-for="(level,key) in tables[table_index()].levels" :key="key">{{ level }}</option>
+        <option v-for="(level,key) in table.levels" :key="key">{{ level }}</option>
       </select>
     </label>
 
@@ -13,13 +13,13 @@
       <thead>
       <tr>
         <td @click="set_sort('clear')" :class="{active : sort_key==='clear'}">Lv</td>
-        <th @click="set_sort('title')"  :class="{active : sort_key==='title'}">Title</th>
-        <td @click="set_sort('rate')"  :class="{active : sort_key==='rate'}">Rate</td>
+        <th @click="set_sort('title')" :class="{active : sort_key==='title'}">Title</th>
+        <td @click="set_sort('rate')" :class="{active : sort_key==='rate'}">Rate</td>
         <td @click="set_sort('score')" :class="{active : sort_key==='score'}">EX/MAX</td>
-        <td @click="set_sort('bp')"  :class="{active : sort_key==='bp'}">BP</td>
-        <td @click="set_sort('combo')"  :class="{active : sort_key==='combo'}">Combo</td>
-        <td @click="set_sort('play')"  :class="{active : sort_key==='play'}">Play</td>
-        <td @click="set_sort('date')"  :class="{active : sort_key==='date'}">Date</td>
+        <td @click="set_sort('bp')" :class="{active : sort_key==='bp'}">BP</td>
+        <td @click="set_sort('combo')" :class="{active : sort_key==='combo'}">Combo</td>
+        <td @click="set_sort('play')" :class="{active : sort_key==='play'}">Play</td>
+        <td @click="set_sort('date')" :class="{active : sort_key==='date'}">Date</td>
       </tr>
       </thead>
       <tr v-for="song in sorted" :class="'table-' + song.clear_type" :key="song.title">
@@ -62,21 +62,16 @@ const song_format = [
 export default {
   name: "Detail",
   props: {
-    tables: {
+    table: {
+      type: Object,
+      required: true
+    },
+    songs: {
       type: Array,
-      required: true
-    },
-    selected_table: {
-      type: String,
-      required: true
-    },
-    date: {
-      type: String,
       required: true
     }
   },
   data: () => ({
-    songs: song_format,
     selected_level: "",
     sort_key: "clear",
   }),
@@ -84,35 +79,13 @@ export default {
     config() {
       return config;
     },
-    fetch_detail() {
-      fetch(process.env.VUE_APP_HOST + "detail/?date=" + this.date).then(response => {
-        return response.json()
-      })
-          .then(json => {
-            for (let i = 0; i < this.tables.length; i++) {
-              this.songs.splice(i, 1, json[i].levels);
-            }
-          })
-          .catch((err) => {
-            this.msg = err
-          });
-    },
-    table_index() {
-      for (let i = 0; i < this.tables.length; i++) {
-        if (this.tables[i].name === this.selected_table) {
-          return i;
-        }
-      }
-      console.error("難易度表が読み込まれてなさそうです");
-      return 0;
-    },
     level_index() {
-      for (let i = 0; i < this.tables[this.table_index()].levels.length; i++) {
-        if (this.tables[this.table_index()].levels[i] === this.selected_level) {
+      for (let i = 0; i < this.table.levels.length; i++) {
+        if (this.table.levels[i] === this.selected_level) {
           return i;
         }
       }
-      this.selected_level = this.tables[this.table_index()].levels[0];
+      this.selected_level = this.table.levels[0];
       return 0;
     },
     set_sort(key) {
@@ -120,20 +93,16 @@ export default {
     },
   },
   created: function () {
-    this.selected_level = this.tables[0].levels[0];
-
-    const songs = Array(this.tables.length);
-    songs.fill(song_format);
-    this.songs = songs;
+    this.selected_level = this.table.levels[0];
   },
   computed: {
     sorted: function () {
-      let songs = this.songs[this.table_index()][this.level_index()].songs;
+      let songs = this.songs[this.level_index()].songs;
       if (!songs) {
         return song_format[0][0].songs;
       }
       let key = this.sort_key;
-      let sortKey = function(song) {
+      let sortKey = function (song) {
         switch (key) {
           case "clear":
             return config.LAMP_TYPE.indexOf(song.clear_type);
@@ -168,14 +137,7 @@ export default {
       })
     }
   },
-  watch: {
-    date: {
-      immediate: true,
-      handler: function () {
-        this.fetch_detail();
-      }
-    }
-  }
+
 }
 
 </script>

@@ -2,11 +2,13 @@
   <div id="app" class="mx-auto container">
 
     <h1>難易度表選択</h1>
-    <label>
-      <select class="form-control" name="table" v-model="selected_table">
-        <option v-for="(table,key) in tables" :key="key">{{ table.name }}</option>
-      </select>
-    </label>
+    <div>
+      <label>
+        <select class="form-control" name="table" v-model="selected_table">
+          <option v-for="(table,key) in tables" :key="key">{{ table.name }}</option>
+        </select>
+      </label>
+    </div>
 
     <h1>日付選択</h1>
     <div class="row justify-content-start">
@@ -15,9 +17,20 @@
       <button @click="reset_date">日付リセット</button>
     </div>
 
-    <LampGraph :tables="tables" :selected_table="selected_table" :date="date" v-if="has_loaded_tables"/>
-    <RankGraph :tables="tables" :selected_table="selected_table" :date="date" v-if="has_loaded_tables"/>
-    <Detail :tables="tables" :selected_table="selected_table" :date="date" v-if="has_loaded_tables"/>
+    <h1>表示フィルタ</h1>
+    <div>
+      <h2>クリアタイプ</h2>
+      <div v-for="lamp in config().LAMP_TYPE" :key="lamp" class="col-sm-4 form-inline">
+        <label :for="lamp">
+          <input type="checkbox" :id="lamp" :value="lamp" v-model="checked_lamp">
+          {{ lamp }}
+        </label>
+      </div>
+    </div>
+
+    <LampGraph :table="table" :lamps="current_lamps" v-if="has_loaded_songs"/>
+    <RankGraph :table="table" :ranks="current_ranks" v-if="has_loaded_songs"/>
+    <Detail :table="table" :songs="current_songs" v-if="has_loaded_songs"/>
   </div>
 </template>
 
@@ -28,6 +41,7 @@ import {ja} from "vuejs-datepicker/dist/locale"
 import Detail from "./components/Detail";
 import LampGraph from "./components/LampGraph";
 import RankGraph from "./components/RankGraph";
+import config from "./const";
 
 const dateFormatter = {
   _fmt: {
@@ -67,16 +81,32 @@ export default {
     selected_table: "",
     ja: ja,
     date: dateFormatter.format(new Date()),
+    checked_lamp: [],
+    songs: [],
+    ranks: [],
   }),
 
   methods: {
+    config() {
+      return config;
+    },
     fetch_tables() {
       fetch(process.env.VUE_APP_HOST + "tables/").then(response => {
         return response.json()
       }).then(json => {
-        console.log(json);
         this.tables = json;
         this.selected_table = json[0].name;
+      }).catch((err) => {
+        console.error(err);
+      });
+    },
+    fetch_detail() {
+      fetch(process.env.VUE_APP_HOST + "detail/?date=" + this.date).then(response => {
+        return response.json()
+      }).then(json => {
+        for (let i = 0; i < this.tables.length; i++) {
+          this.songs.splice(i, 1, json[i].levels);
+        }
       }).catch((err) => {
         console.error(err);
       });
@@ -91,12 +121,84 @@ export default {
   computed: {
     has_loaded_tables() {
       return this.tables.length !== 0;
+    },
+    has_loaded_songs() {
+      return this.songs.length !== 0;
+    },
+    table_index() {
+      for (let i = 0; i < this.tables.length; i++) {
+        if (this.tables[i].name === this.selected_table) {
+          return i;
+        }
+      }
+      console.error("難易度表が読み込まれてなさそうです");
+      return 0;
+    },
+    table() {
+      return this.tables[this.table_index];
+    },
+    current_songs() {
+      if (!this.has_loaded_songs) {
+        return [];
+      }
+      return this.songs[this.table_index].map(songs_by_level => new Object({
+        level: songs_by_level.level,
+        songs: songs_by_level.songs.filter(s => this.checked_lamp.includes(s.clear_type))
+      }));
+    },
+    current_ranks() {
+      if (!this.has_loaded_songs) {
+        return [];
+      }
+      return this.current_songs.map(songs_by_level => new Object(
+          this.config().RANK_TYPE.reduce(
+              (ret, rank) => ({
+                ...ret,
+                [rank]: songs_by_level.songs.filter(s => s.clear_rank === rank).length
+              }),
+              {}
+          )
+      ))
+    },
+    current_lamps() {
+      if (!this.has_loaded_songs) {
+        return [];
+      }
+      return this.current_songs.map(songs_by_level => new Object(
+          this.config().LAMP_TYPE.reduce(
+              (ret, lamp) => ({
+                ...ret,
+                [lamp]: songs_by_level.songs.filter(s => s.clear_type === lamp).length
+              }),
+              {}
+          )
+      ))
     }
   },
   created: function () {
     this.fetch_tables();
+    this.checked_lamp = this.config().LAMP_TYPE;
+  },
+  watch: {
+    has_loaded_tables: {
+      immediate: true,
+      handler: function () {
+        if (this.has_loaded_tables) {
+          this.fetch_detail();
+        }
+      }
+    },
+    date: {
+      immediate: true,
+      handler: function () {
+        if (this.has_loaded_tables) {
+          this.fetch_detail();
+        }
+      }
+    }
   }
-};
+}
+
 </script>
 
 <style></style>

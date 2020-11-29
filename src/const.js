@@ -12,4 +12,15 @@ export default Object.freeze({
         "Failed",
         "NoPlay",
     ],
+
+    RANK_TYPE: [
+        "AAA",
+        "AA",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+    ],
 });
