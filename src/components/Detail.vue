@@ -1,38 +1,42 @@
 <template>
   <div id="detail">
-    <h1>クリア状況</h1>
+    <h1 @click="visible">Detail{{show ? "▼" : "▶"}}</h1>
 
-    <label>
-      <select class="form-control" name="level" v-model="selected_level">
-        <option v-for="(level,key) in table.levels" :key="key">{{ level }}</option>
-      </select>
-    </label>
+    <transition>
+      <div style="width:100%" v-show="show">
+        <label>
+          <select class="form-control" name="level" v-model="selected_level">
+            <option v-for="(level,key) in table.levels" :key="key">{{ level }}</option>
+          </select>
+        </label>
 
-    <br/>
-    <table class="table table-bordered">
-      <thead>
-      <tr>
-        <td @click="set_sort('clear')" :class="{active : sort_key==='clear'}">Lv</td>
-        <th @click="set_sort('title')" :class="{active : sort_key==='title'}">Title</th>
-        <td @click="set_sort('rate')" :class="{active : sort_key==='rate'}">Rate</td>
-        <td @click="set_sort('score')" :class="{active : sort_key==='score'}">EX/MAX</td>
-        <td @click="set_sort('bp')" :class="{active : sort_key==='bp'}">BP</td>
-        <td @click="set_sort('combo')" :class="{active : sort_key==='combo'}">Combo</td>
-        <td @click="set_sort('play')" :class="{active : sort_key==='play'}">Play</td>
-        <td @click="set_sort('date')" :class="{active : sort_key==='date'}">Date</td>
-      </tr>
-      </thead>
-      <tr v-for="song in sorted" :class="'table-' + song.clear_type" :key="song.title">
-        <td>{{ selected_level }}</td>
-        <th>{{ song.title }}</th>
-        <td>{{ (song.score / song.total_notes * 50).toFixed(2) }}</td>
-        <td>{{ song.score }}/{{ song.total_notes * 2 }}</td>
-        <td>{{ song.min_bp }}</td>
-        <td>{{ song.max_combo }}/{{ song.total_notes }}</td>
-        <td>{{ (song.play_count === -1) ? "---" : song.play_count }}</td>
-        <td>{{ song.updated_at.split("T")[0] }}</td>
-      </tr>
-    </table>
+        <br/>
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <td @click="set_sort('clear')" :class="{active : sort_key==='clear'}">Lv</td>
+            <th @click="set_sort('title')" :class="{active : sort_key==='title'}">Title</th>
+            <td @click="set_sort('rate')" :class="{active : sort_key==='rate'}">Rate</td>
+            <td @click="set_sort('score')" :class="{active : sort_key==='score'}">EX/MAX</td>
+            <td @click="set_sort('bp')" :class="{active : sort_key==='bp'}">BP</td>
+            <td @click="set_sort('combo')" :class="{active : sort_key==='combo'}">Combo</td>
+            <td @click="set_sort('play')" :class="{active : sort_key==='play'}">Play</td>
+            <td @click="set_sort('date')" :class="{active : sort_key==='date'}">Date</td>
+          </tr>
+          </thead>
+          <tr v-for="song in sorted" :class="'table-' + song.clear_type" :key="song.title">
+            <td>{{ selected_level }}</td>
+            <th>{{ song.title }}</th>
+            <td>{{ (song.score / song.total_notes * 50).toFixed(2) }}</td>
+            <td>{{ song.score }}/{{ song.total_notes * 2 }}</td>
+            <td>{{ song.min_bp }}</td>
+            <td>{{ song.max_combo }}/{{ song.total_notes }}</td>
+            <td>{{ (song.play_count === -1) ? "---" : song.play_count }}</td>
+            <td>{{ song.updated_at.split("T")[0] }}</td>
+          </tr>
+        </table>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -55,6 +59,7 @@ export default {
   data: () => ({
     selected_level: "",
     sort_key: "clear",
+    show: false,
   }),
   methods: {
     config() {
@@ -72,6 +77,9 @@ export default {
     set_sort(key) {
       this.sort_key = key;
     },
+    visible() {
+      this.show = !this.show;
+    }
   },
   created: function () {
     this.selected_level = this.table.levels[0];

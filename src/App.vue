@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="mx-auto container">
 
-    <h1>難易度表選択</h1>
+    <h1>Table Select</h1>
     <div>
       <label>
         <select class="form-control" name="table" v-model="selected_table">
@@ -10,31 +10,33 @@
       </label>
     </div>
 
-    <h1>日付選択</h1>
+    <h1>Date</h1>
     <div class="row justify-content-start">
-      <datepicker class="col-3" format="yyyy-MM-dd" :bootstrap-styling="true" @closed="pickerClosed" name="date"
+      <datepicker class="col-6" format="yyyy-MM-dd" :bootstrap-styling="true" @closed="pickerClosed" name="date"
                   v-model="date" :language="ja"/>
       <button @click="reset_date">日付リセット</button>
     </div>
 
-    <h1>表示フィルタ</h1>
-    <div>
-      <h2>クリアタイプ</h2>
-      <div v-for="lamp in config().LAMP_TYPE" :key="lamp" class="col-sm-4" style="display:inline">
-        <label :for="lamp">
-          <input type="checkbox" :id="lamp" :value="lamp" v-model="checked_lamp">
-          {{ lamp }}
-        </label>
-      </div>
+    <h1 @click="filter_visible">Filters{{ show_filter ? "▼" : "▶" }}</h1>
+    <transition>
+      <div v-show="show_filter">
+        <h2>クリアタイプ</h2>
+        <div v-for="lamp in config().LAMP_TYPE" :key="lamp" class="col-sm-4" style="display:inline">
+          <label :for="lamp">
+            <input type="checkbox" :id="lamp" :value="lamp" v-model="checked_lamp">
+            {{ lamp }}
+          </label>
+        </div>
 
-      <h2>スコアランク</h2>
-      <div v-for="rank in config().RANK_TYPE" :key="rank" class="col-sm-4" style="display:inline">
-        <label :for="rank">
-          <input type="checkbox" :id="rank" :value="rank" v-model="checked_rank">
-          {{ rank }}
-        </label>
+        <h2>スコアランク</h2>
+        <div v-for="rank in config().RANK_TYPE" :key="rank" class="col-sm-4" style="display:inline">
+          <label :for="rank">
+            <input type="checkbox" :id="rank" :value="rank" v-model="checked_rank">
+            {{ rank }}
+          </label>
+        </div>
       </div>
-    </div>
+    </transition>
 
     <LampGraph :table="table" :lamps="current_lamps" v-if="has_loaded_songs"/>
     <RankGraph :table="table" :ranks="current_ranks" v-if="has_loaded_songs"/>
@@ -93,6 +95,7 @@ export default {
     checked_rank: [],
     songs: [],
     ranks: [],
+    show_filter: false,
   }),
 
   methods: {
@@ -125,6 +128,9 @@ export default {
     },
     reset_date() {
       this.date = dateFormatter.format(new Date());
+    },
+    filter_visible() {
+      this.show_filter = !this.show_filter;
     }
   },
   computed: {
