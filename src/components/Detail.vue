@@ -59,7 +59,7 @@ export default {
   data: () => ({
     selected_level: "",
     sort_key: "clear",
-    show: false,
+    show: true,
   }),
   methods: {
     config() {

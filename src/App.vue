@@ -95,7 +95,7 @@ export default {
     checked_rank: [],
     songs: [],
     ranks: [],
-    show_filter: false,
+    show_filter: true,
   }),
 
   methods: {
@@ -219,4 +219,14 @@ export default {
 
 </script>
 
-<style></style>
+<style>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 1s ease-out;
+}
+
+.v-enter,
+.v-leave-to {
+  opacity: 0;
+}
+</style>
