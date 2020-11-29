@@ -40,25 +40,6 @@
 
 import config from '../const.js';
 
-const song_format = [
-  [
-    {
-      level: "",
-      songs: [
-        {
-          title: "読込中",
-          score: "2",
-          min_bp: "1",
-          max_combo: "1",
-          clear_type: "NoPlay",
-          updated_at: "1970-01-01T00:00:00+09:00",
-          play_count: "0",
-          total_notes: "1",
-        }]
-    }
-  ]
-];
-
 export default {
   name: "Detail",
   props: {
@@ -99,13 +80,13 @@ export default {
     sorted: function () {
       let songs = this.songs[this.level_index()].songs;
       if (!songs) {
-        return song_format[0][0].songs;
+        return this.config().SONG_FORMAT[0][0].songs;
       }
       let key = this.sort_key;
       let sortKey = function (song) {
         switch (key) {
           case "clear":
-            return config.LAMP_TYPE.indexOf(song.clear_type);
+            return this.config().LAMP_TYPE.indexOf(song.clear_type);
           case "title":
             return song.title.toLowerCase();
           case "rate":

@@ -20,10 +20,18 @@
     <h1>表示フィルタ</h1>
     <div>
       <h2>クリアタイプ</h2>
-      <div v-for="lamp in config().LAMP_TYPE" :key="lamp" class="col-sm-4 form-inline">
+      <div v-for="lamp in config().LAMP_TYPE" :key="lamp" class="col-sm-4" style="display:inline">
         <label :for="lamp">
           <input type="checkbox" :id="lamp" :value="lamp" v-model="checked_lamp">
           {{ lamp }}
+        </label>
+      </div>
+
+      <h2>スコアランク</h2>
+      <div v-for="rank in config().RANK_TYPE" :key="rank" class="col-sm-4" style="display:inline">
+        <label :for="rank">
+          <input type="checkbox" :id="rank" :value="rank" v-model="checked_rank">
+          {{ rank }}
         </label>
       </div>
     </div>
@@ -82,6 +90,7 @@ export default {
     ja: ja,
     date: dateFormatter.format(new Date()),
     checked_lamp: [],
+    checked_rank: [],
     songs: [],
     ranks: [],
   }),
@@ -143,7 +152,9 @@ export default {
       }
       return this.songs[this.table_index].map(songs_by_level => new Object({
         level: songs_by_level.level,
-        songs: songs_by_level.songs.filter(s => this.checked_lamp.includes(s.clear_type))
+        songs: songs_by_level.songs.filter(s =>
+            this.checked_lamp.includes(s.clear_type)
+            && this.checked_rank.includes(s.clear_rank))
       }));
     },
     current_ranks() {
@@ -178,6 +189,7 @@ export default {
   created: function () {
     this.fetch_tables();
     this.checked_lamp = this.config().LAMP_TYPE;
+    this.checked_rank = this.config().RANK_TYPE;
   },
   watch: {
     has_loaded_tables: {
