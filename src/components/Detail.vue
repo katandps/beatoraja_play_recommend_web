@@ -106,7 +106,7 @@ export default {
       let sortKey = function (song) {
         switch (key) {
           case "level":
-            return song.level; //todo 数字部分だけ切り出す必要がある
+            return this.table.levels.indexOf(song.level);
           case "clear":
             return this.config().LAMP_TYPE.indexOf(song.clear_type);
           case "title":
