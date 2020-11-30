@@ -20,13 +20,32 @@
     <h1 @click="filter_visible">Filters{{ show_filter ? "▼" : "▶" }}</h1>
     <transition>
       <div v-show="show_filter">
-        <h2>クリアタイプ</h2>
-        <div v-for="lamp in config().LAMP_TYPE" :key="lamp" class="col-sm-4" style="display:inline">
-          <label :for="lamp">
-            <input type="checkbox" :id="lamp" :value="lamp" v-model="checked_lamp">
-            {{ lamp }}
-          </label>
+        <div>
+          <h2>クリアタイプ</h2>
+          <div v-for="lamp in config().LAMP_TYPE" :key="lamp" class="col-sm-4" style="display:inline">
+            <label :for="lamp">
+              <input type="checkbox" :id="lamp" :value="lamp" v-model="checked_lamp">
+              {{ lamp }}
+            </label>
+          </div>
+          <br />
+          <div class="col-sm-4" style="display:inline">
+            <button @click="filter_all">全表示</button>
+          </div>
+          <div class="col-sm-4" style="display:inline">
+            <button @click="filter_not_full_combo">未フルコン</button>
+          </div>
+          <div class="col-sm-4" style="display:inline">
+            <button @click="filter_not_ex_hard">未エクハ</button>
+          </div>
+          <div class="col-sm-4" style="display:inline">
+            <button @click="filter_not_hard">未難</button>
+          </div>
+          <div class="col-sm-4" style="display:inline">
+            <button @click="filter_not_easy">未易</button>
+          </div>
         </div>
+
 
         <h2>スコアランク</h2>
         <div v-for="rank in config().RANK_TYPE" :key="rank" class="col-sm-4" style="display:inline">
@@ -131,7 +150,30 @@ export default {
     },
     filter_visible() {
       this.show_filter = !this.show_filter;
+    },
+    filter_all() {
+      this.checked_lamp = this.config().LAMP_TYPE.slice();
+    },
+    filter_not_full_combo() {
+      this.filter_all();
+      this.checked_lamp.splice(this.checked_lamp.indexOf("Max"), 1);
+      this.checked_lamp.splice(this.checked_lamp.indexOf("Perfect"), 1);
+      this.checked_lamp.splice(this.checked_lamp.indexOf("FullCombo"), 1);
+    },
+    filter_not_ex_hard() {
+      this.filter_not_full_combo();
+      this.checked_lamp.splice(this.checked_lamp.indexOf("ExHard"), 1);
+    },
+    filter_not_hard() {
+      this.filter_not_ex_hard();
+      this.checked_lamp.splice(this.checked_lamp.indexOf("Hard"), 1);
+    },
+    filter_not_easy() {
+      this.filter_not_hard();
+      this.checked_lamp.splice(this.checked_lamp.indexOf("Normal"), 1);
+      this.checked_lamp.splice(this.checked_lamp.indexOf("Easy"), 1);
     }
+
   },
   computed: {
     has_loaded_tables() {
