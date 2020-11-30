@@ -30,6 +30,7 @@ export default Object.freeze({
                 level: "",
                 songs: [
                     {
+                        level: "Lv1",
                         title: "読込中",
                         score: "2",
                         min_bp: "1",

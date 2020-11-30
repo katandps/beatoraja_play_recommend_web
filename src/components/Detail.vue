@@ -1,6 +1,6 @@
 <template>
   <div id="detail">
-    <h1 @click="visible">Detail{{show ? "▼" : "▶"}}</h1>
+    <h1 @click="visible">Detail{{ show ? "▼" : "▶" }}</h1>
 
     <transition>
       <div style="width:100%" v-show="show">
@@ -9,30 +9,34 @@
             <option v-for="(level,key) in table.levels" :key="key">{{ level }}</option>
           </select>
         </label>
+        <label for="all_list">
+          <input type="checkbox" id="all_list" v-model="all_list">
+          ALL
+        </label>
 
         <br/>
-        <table class="table table-bordered">
+        <table class="table detail">
           <thead>
-          <tr>
-            <td @click="set_sort('clear')" :class="{active : sort_key==='clear'}">Lv</td>
-            <th @click="set_sort('title')" :class="{active : sort_key==='title'}">Title</th>
+            <td @click="set_sort('clear')" :class="{active : sort_key==='clear'}"></td>
+            <td @click="set_sort('level')" :class="{active : sort_key==='level'}">Lv</td>
+            <td @click="set_sort('title')" :class="{active : sort_key==='title'}">Title</td>
             <td @click="set_sort('rate')" :class="{active : sort_key==='rate'}">Rate</td>
             <td @click="set_sort('score')" :class="{active : sort_key==='score'}">EX/MAX</td>
             <td @click="set_sort('bp')" :class="{active : sort_key==='bp'}">BP</td>
             <td @click="set_sort('combo')" :class="{active : sort_key==='combo'}">Combo</td>
             <td @click="set_sort('play')" :class="{active : sort_key==='play'}">Play</td>
             <td @click="set_sort('date')" :class="{active : sort_key==='date'}">Date</td>
-          </tr>
           </thead>
-          <tr v-for="song in sorted" :class="'table-' + song.clear_type" :key="song.title">
-            <td>{{ selected_level }}</td>
-            <th>{{ song.title }}</th>
-            <td>{{ (song.score / song.total_notes * 50).toFixed(2) }}</td>
-            <td>{{ song.score }}/{{ song.total_notes * 2 }}</td>
-            <td>{{ song.min_bp }}</td>
-            <td>{{ song.max_combo }}/{{ song.total_notes }}</td>
-            <td>{{ (song.play_count === -1) ? "---" : song.play_count }}</td>
-            <td>{{ song.updated_at.split("T")[0] }}</td>
+          <tr v-for="(song, index) in sorted" :key="song.title + index">
+            <td :class="'table-' + song.clear_type"></td>
+            <td :class="'table-line-' + song.clear_type">{{ song.level }}</td>
+            <td :class="'table-line-' + song.clear_type">{{ song.title }}</td>
+            <td :class="'table-line-' + song.clear_type">{{ (song.score / song.total_notes * 50).toFixed(2) }}</td>
+            <td :class="'table-line-' + song.clear_type">{{ song.score }}/{{ song.total_notes * 2 }}</td>
+            <td :class="'table-line-' + song.clear_type">{{ song.min_bp }}</td>
+            <td :class="'table-line-' + song.clear_type">{{ song.max_combo }}/{{ song.total_notes }}</td>
+            <td :class="'table-line-' + song.clear_type">{{ (song.play_count === -1) ? "---" : song.play_count }}</td>
+            <td :class="'table-line-' + song.clear_type">{{ song.updated_at.split("T")[0] }}</td>
           </tr>
         </table>
       </div>
@@ -60,6 +64,7 @@ export default {
     selected_level: "",
     sort_key: "clear",
     show: true,
+    all_list: false,
   }),
   methods: {
     config() {
@@ -85,14 +90,23 @@ export default {
     this.selected_level = this.table.levels[0];
   },
   computed: {
+    active: function () {
+      if (this.all_list) {
+        return this.songs.map(songs_by_level => songs_by_level.songs).flat();
+      } else {
+        return this.songs[this.level_index()].songs;
+      }
+    },
     sorted: function () {
-      let songs = this.songs[this.level_index()].songs;
+      let songs = this.active;
       if (!songs) {
         return this.config().SONG_FORMAT[0][0].songs;
       }
       let key = this.sort_key;
       let sortKey = function (song) {
         switch (key) {
+          case "level":
+            return song.level; //todo 数字部分だけ切り出す必要がある
           case "clear":
             return this.config().LAMP_TYPE.indexOf(song.clear_type);
           case "title":

@@ -220,13 +220,5 @@ export default {
 </script>
 
 <style>
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 1s ease-out;
-}
 
-.v-enter,
-.v-leave-to {
-  opacity: 0;
-}
 </style>

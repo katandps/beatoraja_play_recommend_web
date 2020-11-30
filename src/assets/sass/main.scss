@@ -24,8 +24,33 @@ $theme-colors: (
         "F": #999999,
 );
 
-@each $color, $value in $theme-colors {
-  @include table-row-variant($color, $value);
-  @include bg-variant('.bg-#{$color}', $value);
+@each $value, $color in $theme-colors {
+  @include table-row-variant($value, $color);
+  @include bg-variant('.bg-#{$value}', $color);
+  .table-line-#{$value} {
+    &,
+    > th,
+    > td {
+      border-bottom: 2px solid $color;
+    }
+  }
 }
 
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 300ms ease-out;
+}
+
+.v-enter,
+.v-leave-to {
+  opacity: 0;
+}
+
+//table.detail, th, td {
+//
+//}
+
+table.detail td {
+  padding: 0.4rem;
+  font-size: 0.9rem;
+}
