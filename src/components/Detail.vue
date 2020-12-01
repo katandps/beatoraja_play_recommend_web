@@ -17,26 +17,26 @@
         <br/>
         <table class="table detail">
           <thead>
-            <td @click="set_sort('clear')" :class="{active : sort_key==='clear'}"></td>
-            <td @click="set_sort('level')" :class="{active : sort_key==='level'}">Lv</td>
-            <td @click="set_sort('title')" :class="{active : sort_key==='title'}">Title</td>
-            <td @click="set_sort('rate')" :class="{active : sort_key==='rate'}">Rate</td>
-            <td @click="set_sort('score')" :class="{active : sort_key==='score'}">EX/MAX</td>
-            <td @click="set_sort('bp')" :class="{active : sort_key==='bp'}">BP</td>
-            <td @click="set_sort('combo')" :class="{active : sort_key==='combo'}">Combo</td>
-            <td @click="set_sort('play')" :class="{active : sort_key==='play'}">Play</td>
-            <td @click="set_sort('date')" :class="{active : sort_key==='date'}">Date</td>
+          <td @click="set_sort('clear')" :class="{active : sort_key==='clear'}"></td>
+          <td @click="set_sort('level')" :class="{active : sort_key==='level'}">Lv</td>
+          <td @click="set_sort('title')" :class="{active : sort_key==='title'} +' title'">Title</td>
+          <td @click="set_sort('rate')" :class="{active : sort_key==='rate'}">Rate</td>
+          <td @click="set_sort('score')" :class="{active : sort_key==='score'}">EX/MAX</td>
+          <td @click="set_sort('bp')" :class="{active : sort_key==='bp'}">BP</td>
+          <td @click="set_sort('combo')" :class="{active : sort_key==='combo'}">Combo</td>
+          <td @click="set_sort('play')" :class="{active : sort_key==='play'}">Play</td>
+          <td @click="set_sort('date')" :class="{active : sort_key==='date'} + ' date'">Date</td>
           </thead>
           <tr v-for="(song, index) in sorted" :key="song.title + index">
             <td :class="'table-' + song.clear_type"></td>
             <td :class="'table-line-' + song.clear_type">{{ song.level }}</td>
-            <td :class="'table-line-' + song.clear_type">{{ song.title }}</td>
+            <td :class="'table-line-' + song.clear_type + ' title'">{{ song.title }}</td>
             <td :class="'table-line-' + song.clear_type">{{ (song.score / song.total_notes * 50).toFixed(2) }}</td>
             <td :class="'table-line-' + song.clear_type">{{ song.score }}/{{ song.total_notes * 2 }}</td>
             <td :class="'table-line-' + song.clear_type">{{ song.min_bp }}</td>
             <td :class="'table-line-' + song.clear_type">{{ song.max_combo }}/{{ song.total_notes }}</td>
             <td :class="'table-line-' + song.clear_type">{{ (song.play_count === -1) ? "---" : song.play_count }}</td>
-            <td :class="'table-line-' + song.clear_type">{{ song.updated_at.split("T")[0] }}</td>
+            <td :class="'table-line-' + song.clear_type  + ' date'">{{ song.updated_at.split("T")[0] }}</td>
           </tr>
         </table>
       </div>
@@ -148,5 +148,17 @@ export default {
 <style scoped>
 .active {
   background-color: #e0e0e0;
+}
+
+.title {
+  max-width: 500px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.date {
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
