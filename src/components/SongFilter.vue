@@ -5,51 +5,54 @@
       <div v-show="show">
         <div>
           <h2>クリアタイプ</h2>
-          <div v-for="lamp in config().LAMP_TYPE" :key="lamp" class="col-sm-4" style="display:inline">
+          <div v-for="lamp in config().LAMP_TYPE" :key="lamp" class="btn filter">
             <label :for="lamp">
               <input type="checkbox" :id="lamp" :value="lamp" v-model="checked_lamp">
               {{ lamp }}
             </label>
           </div>
           <br/>
-          <div class="btn col-sm-2 filter">
+          <div class="btn filter">
             <button @click="filter_all">全表示</button>
           </div>
-          <div class="btn col-sm-2 filter">
+          <div class="btn filter">
             <button @click="filter_not_full_combo">未フルコン</button>
           </div>
-          <div class="btn col-sm-2 filter">
+          <div class="btn filter">
             <button @click="filter_not_ex_hard">未エクハ</button>
           </div>
-          <div class="btn col-sm-2 filter">
+          <div class="btn filter">
             <button @click="filter_not_hard">未難</button>
           </div>
-          <div class="btn col-sm-2 filter">
+          <div class="btn filter">
             <button @click="filter_not_easy">未易</button>
           </div>
         </div>
 
-
-        <h2>スコアランク</h2>
-        <div v-for="rank in config().RANK_TYPE" :key="rank" class="col-sm-4" style="display:inline">
-          <label :for="rank">
-            <input type="checkbox" :id="rank" :value="rank" v-model="checked_rank">
-            {{ rank }}
-          </label>
+        <div>
+          <h2>スコアランク</h2>
+          <div v-for="rank in config().RANK_TYPE" :key="rank" class="btn filter">
+            <label :for="rank">
+              <input type="checkbox" :id="rank" :value="rank" v-model="checked_rank">
+              {{ rank }}
+            </label>
+          </div>
         </div>
 
-        <h2>更新日時</h2>
-        <div class="btn col-sm4 filter">
-          <button @click="filter_all_term">全期間</button>
-        </div>
-        <div class="btn col-sm4 filter">
-          <button @click="filter_older_half_year">半年以上更新なし</button>
-        </div>
-        <div class="btn col-sm4 filter">
-          <button @click="filter_older_one_year">1年以上更新なし</button>
-        </div>
-        <div class="btn col-sm4 filter">
-          <button @click="filter_older_two_year">2年以上更新なし</button>
+        <div>
+          <h2>更新日時</h2>
+          <div class="btn filter">
+            <button @click="filter_all_term">全期間</button>
+          </div>
+          <div class="btn filter">
+            <button @click="filter_older_half_year">半年以上更新なし</button>
+          </div>
+          <div class="btn filter">
+            <button @click="filter_older_one_year">1年以上更新なし</button>
+          </div>
+          <div class="btn filter">
+            <button @click="filter_older_two_year">2年以上更新なし</button>
+          </div>
         </div>
       </div>
     </transition>
