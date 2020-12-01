@@ -17,46 +17,7 @@
       <button @click="reset_date">日付リセット</button>
     </div>
 
-    <h1 @click="filter_visible">Filters{{ show_filter ? "▼" : "▶" }}</h1>
-    <transition>
-      <div v-show="show_filter">
-        <div>
-          <h2>クリアタイプ</h2>
-          <div v-for="lamp in config().LAMP_TYPE" :key="lamp" class="col-sm-4" style="display:inline">
-            <label :for="lamp">
-              <input type="checkbox" :id="lamp" :value="lamp" v-model="checked_lamp">
-              {{ lamp }}
-            </label>
-          </div>
-          <br />
-          <div class="col-sm-4" style="display:inline">
-            <button @click="filter_all">全表示</button>
-          </div>
-          <div class="col-sm-4" style="display:inline">
-            <button @click="filter_not_full_combo">未フルコン</button>
-          </div>
-          <div class="col-sm-4" style="display:inline">
-            <button @click="filter_not_ex_hard">未エクハ</button>
-          </div>
-          <div class="col-sm-4" style="display:inline">
-            <button @click="filter_not_hard">未難</button>
-          </div>
-          <div class="col-sm-4" style="display:inline">
-            <button @click="filter_not_easy">未易</button>
-          </div>
-        </div>
-
-
-        <h2>スコアランク</h2>
-        <div v-for="rank in config().RANK_TYPE" :key="rank" class="col-sm-4" style="display:inline">
-          <label :for="rank">
-            <input type="checkbox" :id="rank" :value="rank" v-model="checked_rank">
-            {{ rank }}
-          </label>
-        </div>
-      </div>
-    </transition>
-
+    <SongFilter @update="update_filter"/>
     <LampGraph :table="table" :lamps="current_lamps" v-if="has_loaded_songs"/>
     <RankGraph :table="table" :ranks="current_ranks" v-if="has_loaded_songs"/>
     <Detail :table="table" :songs="current_songs" v-if="has_loaded_songs"/>
@@ -70,6 +31,7 @@ import {ja} from "vuejs-datepicker/dist/locale"
 import Detail from "./components/Detail";
 import LampGraph from "./components/LampGraph";
 import RankGraph from "./components/RankGraph";
+import SongFilter from "./components/SongFilter";
 import config from "./const";
 
 const dateFormatter = {
@@ -104,17 +66,15 @@ const dateFormatter = {
 
 export default {
   name: "App",
-  components: {LampGraph, Detail, RankGraph, Datepicker},
+  components: {LampGraph, Detail, RankGraph, Datepicker, SongFilter},
   data: () => ({
     tables: [],
     selected_table: "",
     ja: ja,
     date: dateFormatter.format(new Date()),
-    checked_lamp: [],
-    checked_rank: [],
+    visible_song: [],
     songs: [],
     ranks: [],
-    show_filter: true,
   }),
 
   methods: {
@@ -148,32 +108,10 @@ export default {
     reset_date() {
       this.date = dateFormatter.format(new Date());
     },
-    filter_visible() {
-      this.show_filter = !this.show_filter;
-    },
-    filter_all() {
-      this.checked_lamp = this.config().LAMP_TYPE.slice();
-    },
-    filter_not_full_combo() {
-      this.filter_all();
-      this.checked_lamp.splice(this.checked_lamp.indexOf("Max"), 1);
-      this.checked_lamp.splice(this.checked_lamp.indexOf("Perfect"), 1);
-      this.checked_lamp.splice(this.checked_lamp.indexOf("FullCombo"), 1);
-    },
-    filter_not_ex_hard() {
-      this.filter_not_full_combo();
-      this.checked_lamp.splice(this.checked_lamp.indexOf("ExHard"), 1);
-    },
-    filter_not_hard() {
-      this.filter_not_ex_hard();
-      this.checked_lamp.splice(this.checked_lamp.indexOf("Hard"), 1);
-    },
-    filter_not_easy() {
-      this.filter_not_hard();
-      this.checked_lamp.splice(this.checked_lamp.indexOf("Normal"), 1);
-      this.checked_lamp.splice(this.checked_lamp.indexOf("Easy"), 1);
-    }
 
+    update_filter(lamp, rank) {
+      this.visible_song = lamp.concat(rank);
+    }
   },
   computed: {
     has_loaded_tables() {
@@ -201,8 +139,8 @@ export default {
       return this.songs[this.table_index].map(songs_by_level => new Object({
         level: songs_by_level.level,
         songs: songs_by_level.songs.filter(s =>
-            this.checked_lamp.includes(s.clear_type)
-            && this.checked_rank.includes(s.clear_rank))
+            this.visible_song.includes(s.clear_type)
+            && this.visible_song.includes(s.clear_rank))
       }));
     },
     current_ranks() {
@@ -210,7 +148,7 @@ export default {
         return [];
       }
       return this.current_songs.map(songs_by_level => new Object(
-          this.config().RANK_TYPE.reduce(
+          [...this.config().RANK_TYPE].reduce(
               (ret, rank) => ({
                 ...ret,
                 [rank]: songs_by_level.songs.filter(s => s.clear_rank === rank).length
@@ -224,7 +162,7 @@ export default {
         return [];
       }
       return this.current_songs.map(songs_by_level => new Object(
-          this.config().LAMP_TYPE.reduce(
+          [...this.config().LAMP_TYPE].reduce(
               (ret, lamp) => ({
                 ...ret,
                 [lamp]: songs_by_level.songs.filter(s => s.clear_type === lamp).length
@@ -236,8 +174,6 @@ export default {
   },
   created: function () {
     this.fetch_tables();
-    this.checked_lamp = this.config().LAMP_TYPE;
-    this.checked_rank = this.config().RANK_TYPE;
   },
   watch: {
     has_loaded_tables: {
