@@ -35,6 +35,7 @@ export default {
     selected_table: "",
     date: "",
     visible_song: [],
+    filter_days: 0,
   }),
 
   methods: {
@@ -65,8 +66,9 @@ export default {
     update_date(date) {
       this.date = date;
     },
-    update_filter(lamp, rank) {
+    update_filter(lamp, rank, day) {
       this.visible_song = lamp.concat(rank);
+      this.filter_days = day;
     }
   },
   computed: {
@@ -96,8 +98,15 @@ export default {
         level: songs_by_level.level,
         songs: songs_by_level.songs.filter(s =>
             this.visible_song.includes(s.clear_type)
-            && this.visible_song.includes(s.clear_rank))
+            && this.visible_song.includes(s.clear_rank)
+            && s.updated_at <= this.filter_date
+        )
       }));
+    },
+    filter_date() {
+      let date = new Date();
+      date.setDate(date.getDay() - this.filter_days);
+      return config.dateFormatter.format(date);
     },
     current_ranks() {
       if (!this.has_loaded_songs) {

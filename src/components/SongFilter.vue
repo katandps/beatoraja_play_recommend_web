@@ -12,19 +12,19 @@
             </label>
           </div>
           <br/>
-          <div class="btn col-sm-4" style="display:inline">
+          <div class="btn col-sm-2 filter">
             <button @click="filter_all">全表示</button>
           </div>
-          <div class="btn col-sm-4" style="display:inline">
+          <div class="btn col-sm-2 filter">
             <button @click="filter_not_full_combo">未フルコン</button>
           </div>
-          <div class="btn col-sm-4" style="display:inline">
+          <div class="btn col-sm-2 filter">
             <button @click="filter_not_ex_hard">未エクハ</button>
           </div>
-          <div class="btn col-sm-4" style="display:inline">
+          <div class="btn col-sm-2 filter">
             <button @click="filter_not_hard">未難</button>
           </div>
-          <div class="btn col-sm-4" style="display:inline">
+          <div class="btn col-sm-2 filter">
             <button @click="filter_not_easy">未易</button>
           </div>
         </div>
@@ -36,6 +36,20 @@
             <input type="checkbox" :id="rank" :value="rank" v-model="checked_rank">
             {{ rank }}
           </label>
+        </div>
+
+        <h2>更新日時</h2>
+        <div class="btn col-sm4 filter">
+          <button @click="filter_all_term">全期間</button>
+        </div>
+        <div class="btn col-sm4 filter">
+          <button @click="filter_older_half_year">半年以上更新なし</button>
+        </div>
+        <div class="btn col-sm4 filter">
+          <button @click="filter_older_one_year">1年以上更新なし</button>
+        </div>
+        <div class="btn col-sm4 filter">
+          <button @click="filter_older_two_year">2年以上更新なし</button>
         </div>
       </div>
     </transition>
@@ -50,6 +64,7 @@ export default {
   data: () => ({
     checked_lamp: config.LAMP_TYPE.slice(),
     checked_rank: config.RANK_TYPE.slice(),
+    day: 0,
     show: true,
   }),
   methods: {
@@ -81,18 +96,36 @@ export default {
       this.checked_lamp.splice(this.checked_lamp.indexOf("Normal"), 1);
       this.checked_lamp.splice(this.checked_lamp.indexOf("Easy"), 1);
     },
+    filter_all_term() {
+      this.day = 0;
+    },
+    filter_older_half_year() {
+      this.day = 180;
+    },
+    filter_older_one_year() {
+      this.day = 365;
+    },
+    filter_older_two_year() {
+      this.day = 730;
+    }
   },
   watch: {
     checked_lamp: {
       immediate: true,
       handler: function () {
-        this.$emit('update', this.checked_lamp, this.checked_rank);
+        this.$emit('update', this.checked_lamp, this.checked_rank, this.day);
       }
     },
     checked_rank: {
       immediate: true,
       handler: function () {
-        this.$emit('update', this.checked_lamp, this.checked_rank);
+        this.$emit('update', this.checked_lamp, this.checked_rank, this.day);
+      }
+    },
+    day: {
+      immediate: true,
+      handler: function () {
+        this.$emit('update', this.checked_lamp, this.checked_rank, this.day);
       }
     }
   }
@@ -100,5 +133,7 @@ export default {
 </script>
 
 <style scoped>
-
+.filter div {
+  display: inline
+}
 </style>
