@@ -10,13 +10,7 @@
       </label>
     </div>
 
-    <h1>Date</h1>
-    <div class="row justify-content-start">
-      <datepicker class="col-6" format="yyyy-MM-dd" :bootstrap-styling="true" @closed="pickerClosed" name="date"
-                  v-model="date" :language="ja"/>
-      <button @click="reset_date">日付リセット</button>
-    </div>
-
+    <DateSelector @update="update_date"/>
     <SongFilter @update="update_filter"/>
     <LampGraph :table="table" :lamps="current_lamps" v-if="has_loaded_songs"/>
     <RankGraph :table="table" :ranks="current_ranks" v-if="has_loaded_songs"/>
@@ -25,56 +19,22 @@
 </template>
 
 <script>
-import Datepicker from "vuejs-datepicker"
-import {ja} from "vuejs-datepicker/dist/locale"
-
 import Detail from "./components/Detail";
 import LampGraph from "./components/LampGraph";
 import RankGraph from "./components/RankGraph";
 import SongFilter from "./components/SongFilter";
+import DateSelector from "./components/DateSelector";
 import config from "./const";
-
-const dateFormatter = {
-  _fmt: {
-    "yyyy": function (date) {
-      return date.getFullYear() + '';
-    },
-    "MM": function (date) {
-      return ('0' + (date.getMonth() + 1)).slice(-2);
-    },
-    "dd": function (date) {
-      return ('0' + date.getDate()).slice(-2);
-    },
-    "hh": function (date) {
-      return ('0' + date.getHours()).slice(-2);
-    },
-    "mm": function (date) {
-      return ('0' + date.getMinutes()).slice(-2);
-    },
-    "ss": function (date) {
-      return ('0' + date.getSeconds()).slice(-2);
-    }
-  },
-  _priority: ["yyyy", "MM", "dd", "hh", "mm", "ss"],
-  format: function (date) {
-    if (date && date instanceof Date) {
-      return this._priority.reduce((res, fmt) => res.replace(fmt, this._fmt[fmt](date)), "yyyy-MM-dd")
-    }
-    return date;
-  }
-};
 
 export default {
   name: "App",
-  components: {LampGraph, Detail, RankGraph, Datepicker, SongFilter},
+  components: {LampGraph, Detail, RankGraph, SongFilter, DateSelector},
   data: () => ({
     tables: [],
-    selected_table: "",
-    ja: ja,
-    date: dateFormatter.format(new Date()),
-    visible_song: [],
     songs: [],
-    ranks: [],
+    selected_table: "",
+    date: "",
+    visible_song: [],
   }),
 
   methods: {
@@ -102,13 +62,9 @@ export default {
         console.error(err);
       });
     },
-    pickerClosed() {
-      this.date = dateFormatter.format(this.date);
+    update_date(date) {
+      this.date = date;
     },
-    reset_date() {
-      this.date = dateFormatter.format(new Date());
-    },
-
     update_filter(lamp, rank) {
       this.visible_song = lamp.concat(rank);
     }
@@ -148,7 +104,7 @@ export default {
         return [];
       }
       return this.current_songs.map(songs_by_level => new Object(
-          [...this.config().RANK_TYPE].reduce(
+          [...config.RANK_TYPE].reduce(
               (ret, rank) => ({
                 ...ret,
                 [rank]: songs_by_level.songs.filter(s => s.clear_rank === rank).length
@@ -162,7 +118,7 @@ export default {
         return [];
       }
       return this.current_songs.map(songs_by_level => new Object(
-          [...this.config().LAMP_TYPE].reduce(
+          [...config.LAMP_TYPE].reduce(
               (ret, lamp) => ({
                 ...ret,
                 [lamp]: songs_by_level.songs.filter(s => s.clear_type === lamp).length
@@ -194,9 +150,6 @@ export default {
     }
   }
 }
-
 </script>
 
-<style>
-
-</style>
+<style></style>
