@@ -4,14 +4,18 @@
 
     <transition>
       <div style="width:100%" v-show="show">
-        <label>
+        <label class="col-2">
           <select class="form-control" name="level" v-model="selected_level">
             <option v-for="(level,key) in table.levels" :key="key">{{ level }}</option>
           </select>
         </label>
-        <label for="all_list">
+        <label for="all_list" class="col-2">
           <input type="checkbox" id="all_list" v-model="all_list">
-          ALL
+          全曲表示
+        </label>
+        <label for="desc" class="col-2">
+          <input type="checkbox" id="desc" v-model="desc">
+          降順
         </label>
 
         <br/>
@@ -65,6 +69,7 @@ export default {
     sort_key: "clear",
     show: true,
     all_list: false,
+    desc: true,
   }),
   methods: {
     config() {
@@ -108,7 +113,7 @@ export default {
           case "level":
             return this.table.levels.indexOf(song.level);
           case "clear":
-            return this.config().LAMP_TYPE.indexOf(song.clear_type);
+            return this.config().LAMP_TYPE.length - this.config().LAMP_TYPE.indexOf(song.clear_type);
           case "title":
             return song.title.toLowerCase();
           case "rate":
@@ -130,14 +135,8 @@ export default {
       return songs.sort(function (a, b) {
         let valA = sortKey(a);
         let valB = sortKey(b);
-        if (valA < valB) {
-          return -1;
-        } else if (valA > valB) {
-          return 1;
-        } else {
-          return 0;
-        }
-      })
+        return valA === valB ? 0 : ((valA < valB) ^ this.desc) ? -1 : 1;
+      }.bind(this))
     }
   },
 
