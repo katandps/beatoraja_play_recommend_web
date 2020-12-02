@@ -72,4 +72,16 @@ class SongDetail {
         }
         return (this.score / this.total_notes * 50).toFixed(2)
     }
+
+    clear_type_description() {
+        return `${this.clear_type_before}→${this.clear_type}(${this.clear_updated_at.split("T")[0]})`;
+    }
+
+    score_description() {
+        return `${this.score_before}→${this.score}(${this.score_updated_at.split("T")[0]})`;
+    }
+
+    min_bp_description() {
+        return `${this.min_bp_before}→${this.min_bp}(${this.min_bp_updated_at.split("T")[0]})`;
+    }
 }

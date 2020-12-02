@@ -58,7 +58,6 @@ export default {
         return response.json()
       }).then(json => {
         this.songs = new AllDetail(json);
-        console.log(this.songs);
       }).catch((err) => {
         console.error(err);
       });

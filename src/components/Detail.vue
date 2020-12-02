@@ -31,16 +31,16 @@
           <td @click="set_sort('play')" :class="{active : sort_key==='play'}">Play</td>
           <td @click="set_sort('date')" :class="{active : sort_key==='date'} + ' date'">Date</td>
           </thead>
-          <tr v-for="(song, index) in sorted" :key="song.title + index">
-            <td :class="'table-' + song.clear_type"></td>
-            <td :class="clear_type_class(song)">{{ song.level }}</td>
-            <td :class="clear_type_class(song)" class="title">{{ song.title }}</td>
-            <td :class="clear_type_class(song) + ' bg-' + song.clear_rank">{{ song.score_rate() }}</td>
-            <td :class="clear_type_class(song)">{{ song.score }}/{{ song.total_notes * 2 }}</td>
-            <td :class="clear_type_class(song)">{{ song.min_bp }}</td>
-            <td :class="clear_type_class(song)">{{ song.max_combo }}/{{ song.total_notes }}</td>
-            <td :class="clear_type_class(song)">{{ (song.play_count === -1) ? "---" : song.play_count }}</td>
-            <td :class="clear_type_class(song)" class="date">{{ song.updated_at.split("T")[0] }}</td>
+          <tr v-for="(song, index) in sorted" :key="song.title + index" :class="clear_type_class(song)">
+            <td :class="'table-' + song.clear_type" data-toggle="tooltip" :title="song.clear_type_description()"></td>
+            <td>{{ song.level }}</td>
+            <td class="title" data-toggle="tooltip" :title="song.title">{{ song.title }}</td>
+            <td :class="' bg-' + song.clear_rank">{{ song.score_rate() }}</td>
+            <td data-toggle="tooltip" :title="song.score_description()">{{ song.score }}/{{ song.total_notes * 2 }}</td>
+            <td data-toggle="tooltip" :title="song.min_bp_description()">{{ song.min_bp }}</td>
+            <td>{{ song.max_combo }}/{{ song.total_notes }}</td>
+            <td>{{ (song.play_count === -1) ? "---" : song.play_count }}</td>
+            <td class="date">{{ song.updated_at.split("T")[0] }}</td>
           </tr>
         </table>
       </div>
