@@ -35,7 +35,7 @@
             <td :class="'table-' + song.clear_type"></td>
             <td :class="'table-line-' + song.clear_type">{{ song.level }}</td>
             <td :class="'table-line-' + song.clear_type + ' title'">{{ song.title }}</td>
-            <td :class="'table-line-' + song.clear_type">{{ (song.score / song.total_notes * 50).toFixed(2) }}</td>
+            <td :class="'table-line-' + song.clear_type + ' bg-' + song.clear_rank">{{ (song.score / song.total_notes * 50).toFixed(2) }}</td>
             <td :class="'table-line-' + song.clear_type">{{ song.score }}/{{ song.total_notes * 2 }}</td>
             <td :class="'table-line-' + song.clear_type">{{ song.min_bp }}</td>
             <td :class="'table-line-' + song.clear_type">{{ song.max_combo }}/{{ song.total_notes }}</td>
