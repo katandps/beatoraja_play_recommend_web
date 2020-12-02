@@ -25,13 +25,14 @@ import RankGraph from "./components/RankGraph";
 import SongFilter from "./components/SongFilter";
 import DateSelector from "./components/DateSelector";
 import config from "./const";
+import AllDetail from "./models/song.js";
 
 export default {
   name: "App",
   components: {LampGraph, Detail, RankGraph, SongFilter, DateSelector},
   data: () => ({
     tables: [],
-    songs: [],
+    songs: null,
     selected_table: "",
     date: "",
     visible_song: [],
@@ -56,9 +57,8 @@ export default {
       fetch(process.env.VUE_APP_HOST + "detail/?date=" + this.date).then(response => {
         return response.json()
       }).then(json => {
-        for (let i = 0; i < this.tables.length; i++) {
-          this.songs.splice(i, 1, json[i].levels);
-        }
+        this.songs = new AllDetail(json);
+        console.log(this.songs);
       }).catch((err) => {
         console.error(err);
       });
@@ -76,7 +76,7 @@ export default {
       return this.tables.length !== 0;
     },
     has_loaded_songs() {
-      return this.songs.length !== 0;
+      return this.songs !== null;
     },
     table_index() {
       for (let i = 0; i < this.tables.length; i++) {
@@ -91,17 +91,8 @@ export default {
       return this.tables[this.table_index];
     },
     current_songs() {
-      if (!this.has_loaded_songs) {
-        return [];
-      }
-      return this.songs[this.table_index].map(songs_by_level => new Object({
-        level: songs_by_level.level,
-        songs: songs_by_level.songs.filter(s =>
-            this.visible_song.includes(s.clear_type)
-            && this.visible_song.includes(s.clear_rank)
-            && s.updated_at <= this.filter_date
-        )
-      }));
+      return this.has_loaded_songs ? this.songs.filtered(this.table_index, this.visible_song, this.filter_date) : [];
+
     },
     filter_date() {
       let date = new Date();

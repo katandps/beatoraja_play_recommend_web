@@ -33,14 +33,14 @@
           </thead>
           <tr v-for="(song, index) in sorted" :key="song.title + index">
             <td :class="'table-' + song.clear_type"></td>
-            <td :class="'table-line-' + song.clear_type">{{ song.level }}</td>
-            <td :class="'table-line-' + song.clear_type + ' title'">{{ song.title }}</td>
-            <td :class="'table-line-' + song.clear_type + ' bg-' + song.clear_rank">{{ (song.score / song.total_notes * 50).toFixed(2) }}</td>
-            <td :class="'table-line-' + song.clear_type">{{ song.score }}/{{ song.total_notes * 2 }}</td>
-            <td :class="'table-line-' + song.clear_type">{{ song.min_bp }}</td>
-            <td :class="'table-line-' + song.clear_type">{{ song.max_combo }}/{{ song.total_notes }}</td>
-            <td :class="'table-line-' + song.clear_type">{{ (song.play_count === -1) ? "---" : song.play_count }}</td>
-            <td :class="'table-line-' + song.clear_type  + ' date'">{{ song.updated_at.split("T")[0] }}</td>
+            <td :class="clear_type_class(song)">{{ song.level }}</td>
+            <td :class="clear_type_class(song)" class="title">{{ song.title }}</td>
+            <td :class="clear_type_class(song) + ' bg-' + song.clear_rank">{{ song.score_rate() }}</td>
+            <td :class="clear_type_class(song)">{{ song.score }}/{{ song.total_notes * 2 }}</td>
+            <td :class="clear_type_class(song)">{{ song.min_bp }}</td>
+            <td :class="clear_type_class(song)">{{ song.max_combo }}/{{ song.total_notes }}</td>
+            <td :class="clear_type_class(song)">{{ (song.play_count === -1) ? "---" : song.play_count }}</td>
+            <td :class="clear_type_class(song)" class="date">{{ song.updated_at.split("T")[0] }}</td>
           </tr>
         </table>
       </div>
@@ -89,7 +89,10 @@ export default {
     },
     visible() {
       this.show = !this.show;
-    }
+    },
+    clear_type_class(song) {
+      return "table-line-" + song.clear_type;
+    },
   },
   created: function () {
     this.selected_level = this.table.levels[0];
@@ -117,7 +120,7 @@ export default {
           case "title":
             return song.title.toLowerCase();
           case "rate":
-            return (song.score / song.total_notes * 50).toFixed(2)
+            return song.score_rate();
           case "score":
             return song.score;
           case "bp":
