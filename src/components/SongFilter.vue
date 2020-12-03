@@ -1,10 +1,10 @@
 <template>
   <div id="song_filter">
-    <h1 @click="filter_visible">Filters{{ show ? "▼" : "▶" }}</h1>
+    <h2 @click="filter_visible">Filters{{ show ? "▼" : "▶" }}</h2>
     <transition>
       <div v-show="show">
         <div>
-          <h2>クリアタイプ</h2>
+          <h3>クリアタイプ</h3>
           <div v-for="lamp in config().LAMP_TYPE" :key="lamp" class="btn filter">
             <label :for="lamp">
               <input type="checkbox" :id="lamp" :value="lamp" v-model="checked_lamp">
@@ -30,7 +30,7 @@
         </div>
 
         <div>
-          <h2>スコアランク</h2>
+          <h3>スコアランク</h3>
           <div v-for="rank in config().RANK_TYPE" :key="rank" class="btn filter">
             <label :for="rank">
               <input type="checkbox" :id="rank" :value="rank" v-model="checked_rank">

@@ -1,6 +1,6 @@
 <template>
   <div id="rank-graph">
-    <h1 @click="visible">ScoreRank{{ show ? "▼" : "▶" }}</h1>
+    <h2 @click="visible">ScoreRank{{ show ? "▼" : "▶" }}</h2>
     <transition>
       <table style="width:100%" v-show="show">
         <tr v-for="(level, key) in ranks" :key="key" style="width:100%">

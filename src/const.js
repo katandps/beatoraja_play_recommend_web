@@ -24,6 +24,60 @@ export default Object.freeze({
         "F",
     ],
 
+    DETAIL_COLUMNS: [
+        'clear',
+        'clear_date',
+        'clear_before',
+        'level',
+        'title',
+        'rate',
+        'score',
+        'score_date',
+        'score_before',
+        'bp',
+        'bp_date',
+        'bp_before',
+        'combo',
+        'play',
+        'date'
+    ],
+
+    DETAIL_COLUMN_NAME: {
+        'clear': 'クリア',
+        'clear_date': 'クリア更新日',
+        'clear_before': '更新前クリア',
+        'level': '難易度',
+        'title': '曲名',
+        'rate': 'スコア%',
+        'score': 'EXスコア',
+        'score_date': 'スコア更新日',
+        'score_before': '更新前スコア',
+        'bp': 'ミスカウント',
+        'bp_date': 'ミスカウント更新日',
+        'bp_before': '更新前ミスカウント',
+        'combo': '最高コンボ',
+        'play': 'プレイ回数',
+        'date': '更新日',
+    },
+
+    DETAIL_TITLE_MAP: {
+        'clear': ' ',
+        'clear_date': 'Date(clear)',
+        'clear_before': ' ',
+        'level': 'Lv',
+        'title': 'Title',
+        'rate': 'Rate',
+        'score': 'Ex/Max',
+        'score_before': 'Ex(old)',
+        'score_date': 'Date(score)',
+        'bp': 'BP',
+        'bp_before': 'BP(old)',
+        'bp_date': 'Date(BP)',
+        'combo': 'Combo',
+        'play': 'Play',
+        'date': 'Date'
+    },
+
     SONG_FORMAT: [
         [
             {

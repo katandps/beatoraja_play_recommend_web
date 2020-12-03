@@ -1,46 +1,56 @@
 <template>
   <div id="detail">
-    <h1 @click="visible">Detail{{ show ? "▼" : "▶" }}</h1>
+    <h2 @click="visible">Detail{{ show ? "▼" : "▶" }}</h2>
 
     <transition>
       <div style="width:100%" v-show="show">
-        <label class="col-2">
-          <select class="form-control" name="level" v-model="selected_level">
-            <option v-for="(level,key) in table.levels" :key="key">{{ level }}</option>
-          </select>
-        </label>
-        <label for="all_list" class="col-2">
-          <input type="checkbox" id="all_list" v-model="all_list">
-          全曲表示
-        </label>
-        <label for="desc" class="col-2">
-          <input type="checkbox" id="desc" v-model="desc">
-          降順
-        </label>
+
+        <div id="level-select">
+          <h3>難易度選択</h3>
+          <label class="col-2">
+            <select class="form-control" name="level" v-model="selected_level">
+              <option v-for="(level,key) in table.levels" :key="key">{{ level }}</option>
+            </select>
+          </label>
+          <label for="all_list" class="col-2">
+            <input type="checkbox" id="all_list" v-model="all_list">
+            全曲表示
+          </label>
+        </div>
+        <div id="column-config">
+          <h3>ソート/行表示</h3>
+          <div id="sort" class="btn">
+            <label for="desc">
+              <input type="checkbox" id="desc" v-model="desc">
+              降順
+            </label>
+          </div>
+          <hr>
+          <div id="columns">
+            <div v-for="column in config().DETAIL_COLUMNS" :key="column" class="btn column">
+              <label>
+                <input type="checkbox" :id="column" v-model="active_columns[column]">
+                {{ config().DETAIL_COLUMN_NAME[column] }}
+              </label>
+            </div>
+          </div>
+
+        </div>
 
         <br/>
         <table class="table detail">
           <thead>
-          <td @click="set_sort('clear')" :class="{active : sort_key==='clear'}"></td>
-          <td @click="set_sort('level')" :class="{active : sort_key==='level'}">Lv</td>
-          <td @click="set_sort('title')" :class="{active : sort_key==='title'} +' title'">Title</td>
-          <td @click="set_sort('rate')" :class="{active : sort_key==='rate'}">Rate</td>
-          <td @click="set_sort('score')" :class="{active : sort_key==='score'}">EX/MAX</td>
-          <td @click="set_sort('bp')" :class="{active : sort_key==='bp'}">BP</td>
-          <td @click="set_sort('combo')" :class="{active : sort_key==='combo'}">Combo</td>
-          <td @click="set_sort('play')" :class="{active : sort_key==='play'}">Play</td>
-          <td @click="set_sort('date')" :class="{active : sort_key==='date'} + ' date'">Date</td>
+          <td v-for="type in config().DETAIL_COLUMNS.filter(c => active_columns[c])" @click="set_sort(type)"
+              :class="title_class(type)"
+              :key="type">
+            {{ config().DETAIL_TITLE_MAP[type] }}
+          </td>
           </thead>
           <tr v-for="(song, index) in sorted" :key="song.title + index" :class="clear_type_class(song)">
-            <td :class="'table-' + song.clear_type" data-toggle="tooltip" :title="song.clear_type_description()"></td>
-            <td>{{ song.level }}</td>
-            <td class="title" data-toggle="tooltip" :title="song.title">{{ song.title }}</td>
-            <td :class="' bg-' + song.clear_rank">{{ song.score_rate() }}</td>
-            <td data-toggle="tooltip" :title="song.score_description()">{{ song.score }}/{{ song.total_notes * 2 }}</td>
-            <td data-toggle="tooltip" :title="song.min_bp_description()">{{ song.min_bp }}</td>
-            <td>{{ song.max_combo }}/{{ song.total_notes }}</td>
-            <td>{{ (song.play_count === -1) ? "---" : song.play_count }}</td>
-            <td class="date">{{ song.updated_at.split("T")[0] }}</td>
+            <td v-for="type in config().DETAIL_COLUMNS.filter(c => active_columns[c])" :class="row_class(type, song)"
+                :key="type">
+              {{ song.get(type) }}
+            </td>
           </tr>
         </table>
       </div>
@@ -49,7 +59,6 @@
 </template>
 
 <script>
-
 import config from '../const.js';
 
 export default {
@@ -70,10 +79,46 @@ export default {
     show: true,
     all_list: false,
     desc: true,
+    active_columns: {
+      'clear': true,
+      'level': true,
+      'title': true,
+      'rate': true,
+      'score': true,
+      'bp': true,
+      'combo': true,
+      'play': true,
+      'date': true
+    },
   }),
   methods: {
     config() {
       return config;
+    },
+    title_class(type) {
+      let ret = '';
+      if (this.sort_key === type) {
+        ret += 'sort_active'
+      }
+      if (type === 'title' || type === 'date') {
+        ret += ' ' + type;
+      }
+      return ret;
+    },
+    row_class(type, song) {
+      let ret = type;
+      switch (type) {
+        case 'clear':
+          ret += ' table-' + song.clear_type;
+          break;
+        case 'clear_before':
+          ret += ' table-' + song.clear_type_before;
+          break;
+        case 'rate':
+          ret += ' bg-' + song.clear_rank;
+          break;
+      }
+      return ret;
     },
     level_index() {
       for (let i = 0; i < this.table.levels.length; i++) {
@@ -85,6 +130,9 @@ export default {
       return 0;
     },
     set_sort(key) {
+      if (this.sort_key === key) {
+        this.desc = !this.desc;
+      }
       this.sort_key = key;
     },
     visible() {
@@ -110,34 +158,9 @@ export default {
       if (!songs) {
         return this.config().SONG_FORMAT[0][0].songs;
       }
-      let key = this.sort_key;
-      let sortKey = function (song) {
-        switch (key) {
-          case "level":
-            return this.table.levels.indexOf(song.level);
-          case "clear":
-            return this.config().LAMP_TYPE.length - this.config().LAMP_TYPE.indexOf(song.clear_type);
-          case "title":
-            return song.title.toLowerCase();
-          case "rate":
-            return song.score_rate();
-          case "score":
-            return song.score;
-          case "bp":
-            return song.min_bp;
-          case "combo":
-            return song.max_combo;
-          case "play":
-            return song.play_count;
-          case "date":
-            return song.updated_at;
-          default:
-            return ""
-        }
-      }.bind(this);
       return songs.sort(function (a, b) {
-        let valA = sortKey(a);
-        let valB = sortKey(b);
+        let valA = a.sort_key(this.sort_key, this.table.levels);
+        let valB = b.sort_key(this.sort_key, this.table.levels);
         return valA === valB ? 0 : ((valA < valB) ^ this.desc) ? -1 : 1;
       }.bind(this))
     }
@@ -148,7 +171,11 @@ export default {
 </script>
 
 <style scoped>
-.active {
+.detail table {
+  table-layout: fixed;
+}
+
+.sort_active {
   background-color: #e0e0e0;
 }
 
@@ -159,8 +186,19 @@ export default {
   white-space: nowrap;
 }
 
-.date {
+.clear, .clear_before {
+  width: 30px;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.date, .clear_date, .bp_date, .score_date {
+  width: 80px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.column {
+  display: inline
 }
 </style>

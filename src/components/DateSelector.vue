@@ -1,6 +1,6 @@
 <template>
   <div id="date-selector">
-    <h1>Date</h1>
+    <h2>Date</h2>
     <div class="row justify-content-start">
       <datepicker class="col-6" format="yyyy-MM-dd" :bootstrap-styling="true" @closed="pickerClosed" name="date"
                   v-model="date" :language="ja"/>

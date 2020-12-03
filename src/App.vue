@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="mx-auto container">
 
-    <h1>Table Select</h1>
+    <h2>Table Select</h2>
     <div>
       <label>
         <select class="form-control" name="table" v-model="selected_table">

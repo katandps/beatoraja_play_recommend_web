@@ -1,6 +1,6 @@
 <template>
   <div id="lamp-graph">
-    <h1 @click="visible">ClearLamp{{show ? "▼" : "▶"}}</h1>
+    <h2 @click="visible">ClearLamp{{show ? "▼" : "▶"}}</h2>
     <transition>
       <table style="width:100%" v-show="show">
         <tr v-for="(level, key) in lamps" :key="key" style="width:100%">

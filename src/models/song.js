@@ -1,3 +1,5 @@
+import config from '../const.js';
+
 export default class AllDetail {
     constructor(tables) {
         this.tables = [];
@@ -83,5 +85,77 @@ class SongDetail {
 
     min_bp_description() {
         return `${this.min_bp_before}→${this.min_bp}(${this.min_bp_updated_at.split("T")[0]})`;
+    }
+
+    sort_key(sort_key, levels) {
+        switch (sort_key) {
+            case "level":
+                return levels.indexOf(this.level);
+            case "clear":
+                return config.LAMP_TYPE.length - config.LAMP_TYPE.indexOf(this.clear_type);
+            case "title":
+                return this.title.toLowerCase();
+            case "rate":
+                return this.score_rate();
+            case "score":
+                return this.score;
+            case "bp":
+                return this.min_bp;
+            case "combo":
+                return this.max_combo;
+            case "play":
+                return this.play_count;
+            case "date":
+                return this.updated_at;
+            case "score_before":
+                return this.score_before;
+            case "score_date":
+                return this.score_updated_at;
+            case "bp_date":
+                return this.min_bp_updated_at;
+            case 'bp_before':
+                return this.min_bp_before;
+            case 'clear_date':
+                return this.clear_updated_at;
+            case 'clear_before':
+                return this.clear_type_before;
+            default:
+                return ""
+        }
+    }
+
+    get(type) {
+        switch (type) {
+            case 'clear':
+                return '';
+            case 'title':
+                return this.title;
+            case 'level':
+                return this.level;
+            case 'rate':
+                return this.score_rate();
+            case 'score':
+                return `${this.score}/${this.total_notes * 2}`;
+            case 'score_before':
+                return this.score_before;
+            case 'score_date':
+                return this.score_updated_at.split("T")[0];
+            case 'bp':
+                return this.min_bp === -1 ? "---" : this.min_bp;
+            case 'bp_before':
+                return this.min_bp_before === -1 ? "---" : this.min_bp_before;
+            case 'bp_date':
+                return this.min_bp_updated_at.split("T")[0];
+            case 'clear_before':
+                return '';
+            case 'clear_date':
+                return this.clear_updated_at.split("T")[0];
+            case 'combo':
+                return this.max_combo;
+            case 'play':
+                return this.play_count === -1 ? "---" : this.play_count;
+            case 'date':
+                return this.updated_at.split("T")[0];
+        }
     }
 }
