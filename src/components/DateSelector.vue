@@ -19,14 +19,14 @@ export default {
   components: {Datepicker},
   data: () => ({
     ja: ja,
-    date: config.dateFormatter.format(new Date()),
+    date: config.dateFormatter.format(new Date(new Date().setHours(0, 0, 0, 0))),
   }),
   methods: {
     pickerClosed() {
       this.date = config.dateFormatter.format(this.date);
     },
     reset_date() {
-      this.date = config.dateFormatter.format(new Date());
+      this.date = config.dateFormatter.format(new Date(new Date().setHours(0, 0, 0, 0)));
     },
   },
   watch: {

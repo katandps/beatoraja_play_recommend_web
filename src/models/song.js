@@ -65,7 +65,7 @@ class SongDetail {
     is_visible(visible_song, filter_date) {
         return visible_song.includes(this.clear_type)
             && visible_song.includes(this.clear_rank)
-            && this.updated_at <= filter_date;
+            && this.updated_at.split("T")[0] <= filter_date;
     }
 
     score_rate() {
