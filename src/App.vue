@@ -95,7 +95,7 @@ export default {
     },
     filter_date() {
       let date = new Date();
-      date.setDate(date.getDay() - this.filter_days);
+      date.setDate(date.getDate() - this.filter_days);
       return config.dateFormatter.format(date);
     },
     current_ranks() {
