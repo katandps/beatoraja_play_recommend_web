@@ -1,20 +1,12 @@
 <template>
-  <div id="app" class="mx-auto container">
-
-    <h2>Table Select</h2>
-    <div>
-      <label>
-        <select class="form-control" name="table" v-model="selected_table">
-          <option v-for="(table,key) in tables" :key="key">{{ table.name }}</option>
-        </select>
-      </label>
+  <div id="app">
+    <Sidebar @getTable="fetch_table" @getDate="update_date"/>
+    <div id="page-wrap">
+      <SongFilter @update="update_filter"/>
+      <LampGraph :table="table" :lamps="current_lamps" v-if="has_loaded_songs"/>
+      <RankGraph :table="table" :ranks="current_ranks" v-if="has_loaded_songs"/>
+      <Detail :table="table" :songs="current_songs" v-if="has_loaded_songs"/>
     </div>
-
-    <DateSelector @update="update_date"/>
-    <SongFilter @update="update_filter"/>
-    <LampGraph :table="table" :lamps="current_lamps" v-if="has_loaded_songs"/>
-    <RankGraph :table="table" :ranks="current_ranks" v-if="has_loaded_songs"/>
-    <Detail :table="table" :songs="current_songs" v-if="has_loaded_songs"/>
   </div>
 </template>
 
@@ -23,35 +15,24 @@ import Detail from "./components/Detail";
 import LampGraph from "./components/LampGraph";
 import RankGraph from "./components/RankGraph";
 import SongFilter from "./components/SongFilter";
-import DateSelector from "./components/DateSelector";
 import config from "./const";
 import AllDetail from "./models/song.js";
+import Sidebar from "./components/layouts/Sidebar";
 
 export default {
   name: "App",
-  components: {LampGraph, Detail, RankGraph, SongFilter, DateSelector},
+  components: {LampGraph, Detail, RankGraph, SongFilter, Sidebar},
   data: () => ({
-    tables: [],
     songs: null,
-    selected_table: "",
     date: "",
     visible_song: [],
     filter_days: 0,
+    table: null,
   }),
 
   methods: {
     config() {
       return config;
-    },
-    fetch_tables() {
-      fetch(process.env.VUE_APP_HOST + "tables/").then(response => {
-        return response.json()
-      }).then(json => {
-        this.tables = json;
-        this.selected_table = json[0].name;
-      }).catch((err) => {
-        console.error(err);
-      });
     },
     fetch_detail() {
       fetch(process.env.VUE_APP_HOST + "detail/?date=" + this.date).then(response => {
@@ -68,30 +49,17 @@ export default {
     update_filter(lamp, rank, day) {
       this.visible_song = lamp.concat(rank);
       this.filter_days = day;
+    },
+    fetch_table(table) {
+      this.table = table;
     }
   },
   computed: {
-    has_loaded_tables() {
-      return this.tables.length !== 0;
-    },
     has_loaded_songs() {
       return this.songs !== null;
     },
-    table_index() {
-      for (let i = 0; i < this.tables.length; i++) {
-        if (this.tables[i].name === this.selected_table) {
-          return i;
-        }
-      }
-      console.error("難易度表が読み込まれてなさそうです");
-      return 0;
-    },
-    table() {
-      return this.tables[this.table_index];
-    },
     current_songs() {
-      return this.has_loaded_songs ? this.songs.filtered(this.table_index, this.visible_song, this.filter_date) : [];
-
+      return this.has_loaded_songs ? this.songs.filtered(this.table, this.visible_song, this.filter_date) : [];
     },
     filter_date() {
       let date = new Date();
@@ -127,14 +95,11 @@ export default {
       ))
     }
   },
-  created: function () {
-    this.fetch_tables();
-  },
   watch: {
-    has_loaded_tables: {
+    table: {
       immediate: true,
       handler: function () {
-        if (this.has_loaded_tables) {
+        if (this.table) {
           this.fetch_detail();
         }
       }
@@ -142,7 +107,7 @@ export default {
     date: {
       immediate: true,
       handler: function () {
-        if (this.has_loaded_tables) {
+        if (this.table) {
           this.fetch_detail();
         }
       }
@@ -151,4 +116,20 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.sidebar-area {
+  /* 左側に固定 */
+  float: left;
+}
+
+.footer-area {
+  margin-top: 40px;
+}
+
+#page-wrap {
+  /* display: flex; 要素を横並びにする */
+  flex-direction: column; /* 要素の並び順の主軸を指定 上 => 下 */
+  min-height: 100vh; /* 要素の高さの最小値を指定 vhはviewport(表示領域) heightの略 */
+  padding: 60px 60px 60px 360px; /* サイドメニュー分だけ長くする */
+}
+</style>

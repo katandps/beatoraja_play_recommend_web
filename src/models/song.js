@@ -6,8 +6,8 @@ export default class AllDetail {
         tables.forEach(t => this.tables.push(new TableDetail(t.table, t.levels)));
     }
 
-    filtered(table_index, visible_song, filter_date) {
-        return this.tables[table_index].filtered(visible_song, filter_date);
+    filtered(table, visible_song, filter_date) {
+        return this.tables.find(t => t.name === table.name).filtered(visible_song, filter_date);
     }
 }
 

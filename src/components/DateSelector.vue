@@ -1,10 +1,10 @@
 <template>
   <div id="date-selector">
-    <h2>Date</h2>
-    <div class="row justify-content-start">
-      <datepicker class="col-6" format="yyyy-MM-dd" :bootstrap-styling="true" @closed="pickerClosed" name="date"
-                  v-model="date" :language="ja"/>
-      <button @click="reset_date">日付リセット</button>
+    <div>
+      <datepicker :bootstrap-styling="true" name="date" v-model="date" :language="ja" :inline="true"/>
+    </div>
+    <div>
+      <button @click="reset_date" class="btn btn-danger reset">日付リセット</button>
     </div>
   </div>
 </template>
@@ -19,21 +19,18 @@ export default {
   components: {Datepicker},
   data: () => ({
     ja: ja,
-    date: config.dateFormatter.format(new Date(new Date().setHours(0, 0, 0, 0))),
+    date: new Date(new Date().setHours(0, 0, 0, 0)),
   }),
   methods: {
-    pickerClosed() {
-      this.date = config.dateFormatter.format(this.date);
-    },
     reset_date() {
-      this.date = config.dateFormatter.format(new Date(new Date().setHours(0, 0, 0, 0)));
+      this.date = new Date(new Date().setHours(0, 0, 0, 0));
     },
   },
   watch: {
     date: {
       immediate: true,
       handler: function () {
-        this.$emit('update', this.date);
+        this.$emit('getDate', config.dateFormatter.format(this.date));
       }
     }
   }
@@ -41,5 +38,14 @@ export default {
 </script>
 
 <style scoped>
+#date-selector {
+  width: 320px;
+  box-sizing: border-box;
+}
+
+.reset {
+  margin: 20px 0 0 0;
+  width: 100%;
+}
 
 </style>
