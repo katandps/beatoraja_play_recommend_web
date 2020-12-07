@@ -130,6 +130,10 @@ export default {
   /* display: flex; 要素を横並びにする */
   flex-direction: column; /* 要素の並び順の主軸を指定 上 => 下 */
   min-height: 100vh; /* 要素の高さの最小値を指定 vhはviewport(表示領域) heightの略 */
-  padding: 60px 60px 60px 360px; /* サイドメニュー分だけ長くする */
+  min-width: 700px;
+  max-width: 700px;
+  padding-top: 40px;
+  margin-left: calc(max(0px, calc(100% - 1040px)) / 2 + 340px); /* サイドメニュー分だけ長くする */
+  margin-right: calc(max(0px, calc(100% - 1040px)) / 2);
 }
 </style>
