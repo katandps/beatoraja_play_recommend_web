@@ -1,37 +1,26 @@
 <template>
   <div id="song_filter">
-    <h2 @click="filter_visible">Filters{{ show ? "▼" : "▶" }}</h2>
+    <h4 @click="filter_visible">表示フィルタ{{ show ? "▼" : "▶" }}</h4>
     <transition>
       <div v-show="show">
-        <div>
-          <h3>クリアタイプ</h3>
-          <div v-for="lamp in config().LAMP_TYPE" :key="lamp" class="btn filter">
+        <div class="filter">
+          <h5>クリアタイプ</h5>
+          <div v-for="lamp in config().LAMP_TYPE" :key="lamp">
             <label :for="lamp">
               <input type="checkbox" :id="lamp" :value="lamp" v-model="checked_lamp">
               {{ lamp }}
             </label>
           </div>
-          <br/>
-          <div class="btn filter">
-            <button @click="filter_all">全表示</button>
-          </div>
-          <div class="btn filter">
-            <button @click="filter_not_full_combo">未フルコン</button>
-          </div>
-          <div class="btn filter">
-            <button @click="filter_not_ex_hard">未エクハ</button>
-          </div>
-          <div class="btn filter">
-            <button @click="filter_not_hard">未難</button>
-          </div>
-          <div class="btn filter">
-            <button @click="filter_not_easy">未易</button>
-          </div>
+          <button class="btn btn-success" @click="filter_all">全表示</button>
+          <button class="btn btn-success" @click="filter_not_full_combo">未FC</button>
+          <button class="btn btn-success" @click="filter_not_ex_hard">未EXH</button>
+          <button class="btn btn-success" @click="filter_not_hard">未HARD</button>
+          <button class="btn btn-success" @click="filter_not_easy">未EASY</button>
         </div>
 
-        <div>
-          <h3>スコアランク</h3>
-          <div v-for="rank in config().RANK_TYPE" :key="rank" class="btn filter">
+        <div class="filter">
+          <h5>スコアランク</h5>
+          <div v-for="rank in config().RANK_TYPE" :key="rank">
             <label :for="rank">
               <input type="checkbox" :id="rank" :value="rank" v-model="checked_rank">
               {{ rank }}
@@ -39,20 +28,12 @@
           </div>
         </div>
 
-        <div>
-          <h2>更新日時</h2>
-          <div class="btn filter">
-            <button @click="filter_all_term">全期間</button>
-          </div>
-          <div class="btn filter">
-            <button @click="filter_older_half_year">半年以上更新なし</button>
-          </div>
-          <div class="btn filter">
-            <button @click="filter_older_one_year">1年以上更新なし</button>
-          </div>
-          <div class="btn filter">
-            <button @click="filter_older_two_year">2年以上更新なし</button>
-          </div>
+        <div class="filter">
+          <h5>更新日時</h5>
+          <button class="btn btn-success" @click="filter_all_term">全期間</button>
+          <button class="btn btn-success" @click="filter_older_half_year">半年以上更新なし</button>
+          <button class="btn btn-success" @click="filter_older_one_year">1年以上更新なし</button>
+          <button class="btn btn-success" @click="filter_older_two_year">2年以上更新なし</button>
         </div>
       </div>
     </transition>
@@ -136,7 +117,8 @@ export default {
 </script>
 
 <style scoped>
-.filter div {
+.filter button {
+  margin: 10px;
   display: inline
 }
 </style>

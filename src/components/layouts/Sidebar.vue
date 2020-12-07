@@ -2,23 +2,28 @@
   <div class="sidebar">
     <TableSelector @getTable="fetch_table" class="header-item"/>
     <DateSelector @getDate="update_date" class="header-item"/>
+    <SongFilter @update="update_filter" class="header-item"/>
   </div>
 </template>
 
 <script>
 import TableSelector from "../TableSelector";
 import DateSelector from "../DateSelector";
+import SongFilter from "../SongFilter";
 
 export default {
   name: "Sidebar",
-  components: {DateSelector, TableSelector},
+  components: {DateSelector, TableSelector, SongFilter},
   methods: {
     fetch_table(table) {
       this.$emit('getTable', table);
     },
     update_date(date) {
       this.$emit('getDate', date);
-    }
+    },
+    update_filter(lamp, rank, day) {
+      this.$emit('updateFilter', lamp, rank, day)
+    },
   }
 }
 
@@ -38,7 +43,7 @@ export default {
 }
 
 .header-item {
-  padding: 40px;
+  padding: 40px 40px 0 40px;
 }
 
 .sidebar-link-area {

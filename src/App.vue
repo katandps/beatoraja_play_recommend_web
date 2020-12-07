@@ -1,8 +1,7 @@
 <template>
   <div id="app">
-    <Sidebar @getTable="fetch_table" @getDate="update_date"/>
+    <Sidebar @getTable="fetch_table" @getDate="update_date" @updateFilter="update_filter"/>
     <div id="page-wrap">
-      <SongFilter @update="update_filter"/>
       <LampGraph :table="table" :lamps="current_lamps" v-if="has_loaded_songs"/>
       <RankGraph :table="table" :ranks="current_ranks" v-if="has_loaded_songs"/>
       <Detail :table="table" :songs="current_songs" v-if="has_loaded_songs"/>
@@ -14,14 +13,13 @@
 import Detail from "./components/Detail";
 import LampGraph from "./components/LampGraph";
 import RankGraph from "./components/RankGraph";
-import SongFilter from "./components/SongFilter";
 import config from "./const";
 import AllDetail from "./models/song.js";
 import Sidebar from "./components/layouts/Sidebar";
 
 export default {
   name: "App",
-  components: {LampGraph, Detail, RankGraph, SongFilter, Sidebar},
+  components: {LampGraph, Detail, RankGraph, Sidebar},
   data: () => ({
     songs: null,
     date: "",
@@ -133,7 +131,7 @@ export default {
   min-width: 700px;
   max-width: 700px;
   padding-top: 40px;
-  margin-left: calc(max(0px, calc(100% - 1040px)) / 2 + 340px); /* サイドメニュー分だけ長くする */
-  margin-right: calc(max(0px, calc(100% - 1040px)) / 2);
+  margin-left: calc(max(0px, calc(100% - 1060px)) / 2 + 340px); /* サイドメニュー分だけ長くする */
+  margin-right: calc(max(0px, calc(100% - 1060px)) / 2 + 20px);
 }
 </style>

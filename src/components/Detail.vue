@@ -180,7 +180,8 @@ export default {
 }
 
 .title {
-  max-width: 500px;
+  min-width: 360px;
+  max-width: 360px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
