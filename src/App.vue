@@ -1,10 +1,15 @@
 <template>
   <div id="app">
-    <Sidebar @getTable="fetch_table" @getDate="update_date" @updateFilter="update_filter"/>
+    <Sidebar
+        @getTable="fetch_table"
+        @getDate="update_date"
+        @updateFilter="update_filter"
+        @updateColumns="update_columns"
+    />
     <div id="page-wrap">
       <LampGraph :table="table" :lamps="current_lamps" v-if="has_loaded_songs"/>
       <RankGraph :table="table" :ranks="current_ranks" v-if="has_loaded_songs"/>
-      <Detail :table="table" :songs="current_songs" v-if="has_loaded_songs"/>
+      <Detail :table="table" :songs="current_songs" :columns="active_columns" v-if="has_loaded_songs"/>
     </div>
   </div>
 </template>
@@ -26,6 +31,7 @@ export default {
     visible_song: [],
     filter_days: 0,
     table: null,
+    active_columns: {}
   }),
 
   methods: {
@@ -50,6 +56,10 @@ export default {
     },
     fetch_table(table) {
       this.table = table;
+    },
+    update_columns(columns) {
+      console.log(columns);
+      this.active_columns = columns;
     }
   },
   computed: {
@@ -109,7 +119,7 @@ export default {
           this.fetch_detail();
         }
       }
-    }
+    },
   }
 }
 </script>

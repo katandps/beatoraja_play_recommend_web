@@ -17,37 +17,17 @@
             全曲表示
           </label>
         </div>
-        <div id="column-config">
-          <h3>ソート/行表示</h3>
-          <div id="sort" class="btn">
-            <label for="desc">
-              <input type="checkbox" id="desc" v-model="desc">
-              降順
-            </label>
-          </div>
-          <hr>
-          <div id="columns">
-            <div v-for="column in config().DETAIL_COLUMNS" :key="column" class="btn column">
-              <label>
-                <input type="checkbox" :id="column" v-model="active_columns[column]">
-                {{ config().DETAIL_COLUMN_NAME[column] }}
-              </label>
-            </div>
-          </div>
 
-        </div>
-
-        <br/>
         <table class="table detail">
           <thead>
-          <td v-for="type in config().DETAIL_COLUMNS.filter(c => active_columns[c])" @click="set_sort(type)"
+          <td v-for="type in config().DETAIL_COLUMNS.filter(c => columns[c])" @click="set_sort(type)"
               :class="title_class(type)"
               :key="type">
             {{ config().DETAIL_TITLE_MAP[type] }}
           </td>
           </thead>
           <tr v-for="(song, index) in sorted" :key="song.title + index" :class="clear_type_class(song)">
-            <td v-for="type in config().DETAIL_COLUMNS.filter(c => active_columns[c])" :class="row_class(type, song)"
+            <td v-for="type in config().DETAIL_COLUMNS.filter(c => columns[c])" :class="row_class(type, song)"
                 :key="type">
               {{ song.get(type) }}
             </td>
@@ -71,6 +51,9 @@ export default {
     songs: {
       type: Array,
       required: true
+    },
+    columns: {
+      type: Object
     }
   },
   data: () => ({
@@ -79,17 +62,6 @@ export default {
     show: true,
     all_list: false,
     desc: true,
-    active_columns: {
-      'clear': true,
-      'level': true,
-      'title': true,
-      'rate': true,
-      'score': true,
-      'bp': true,
-      'combo': true,
-      'play': true,
-      'date': true
-    },
   }),
   methods: {
     config() {

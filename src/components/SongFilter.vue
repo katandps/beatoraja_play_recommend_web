@@ -97,19 +97,19 @@ export default {
     checked_lamp: {
       immediate: true,
       handler: function () {
-        this.$emit('update', this.checked_lamp, this.checked_rank, this.day);
+        this.$emit('updateSongFilter', this.checked_lamp, this.checked_rank, this.day);
       }
     },
     checked_rank: {
       immediate: true,
       handler: function () {
-        this.$emit('update', this.checked_lamp, this.checked_rank, this.day);
+        this.$emit('updateSongFilter', this.checked_lamp, this.checked_rank, this.day);
       }
     },
     day: {
       immediate: true,
       handler: function () {
-        this.$emit('update', this.checked_lamp, this.checked_rank, this.day);
+        this.$emit('updateSongFilter', this.checked_lamp, this.checked_rank, this.day);
       }
     }
   }
