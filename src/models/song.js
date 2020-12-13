@@ -6,8 +6,8 @@ export default class AllDetail {
         tables.forEach(t => this.tables.push(new TableDetail(t.table, t.levels)));
     }
 
-    filtered(table, visible_song, filter_date) {
-        return this.tables.find(t => t.name === table.name).filtered(visible_song, filter_date);
+    filtered(table, filter) {
+        return this.tables.find(t => t.name === table.name).filtered(filter);
     }
 }
 
@@ -18,10 +18,10 @@ class TableDetail {
         levels.forEach(s => this.levels.push(new LevelDetail(s.level, s.songs)));
     }
 
-    filtered(visible_song, filter_date) {
+    filtered(filter) {
         return this.levels.map(level_detail => new Object({
             level: level_detail.name,
-            songs: level_detail.filtered(visible_song, filter_date),
+            songs: level_detail.filtered(filter),
         }));
     }
 }
@@ -33,8 +33,8 @@ class LevelDetail {
         songs.forEach(s => this.songs.push(new SongDetail(s)));
     }
 
-    filtered(visible_song, filter_date) {
-        return this.songs.filter(song_detail => song_detail.is_visible(visible_song, filter_date));
+    filtered(filter) {
+        return this.songs.filter(song_detail => filter.should_show(song_detail));
     }
 }
 
@@ -60,12 +60,6 @@ class SongDetail {
         this.updated_at = song.updated_at;
         this.play_count = song.play_count;
         this.total_notes = song.total_notes;
-    }
-
-    is_visible(visible_song, filter_date) {
-        return visible_song.includes(this.clear_type)
-            && visible_song.includes(this.clear_rank)
-            && this.updated_at.split("T")[0] <= filter_date;
     }
 
     score_rate() {

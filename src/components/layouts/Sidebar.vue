@@ -2,8 +2,9 @@
   <div class="sidebar">
     <TableSelector @getTable="fetch_table" class="header-item"/>
     <DateSelector @getDate="update_date" class="header-item"/>
-    <SongFilter @updateSongFilter="update_filter" class="header-item"/>
-    <DetailColumns @updateColumnSelect="update_columns" class="header-item"/>
+    <FilterPreset :filter="filter" class="header-item"/>
+    <SongFilter :filter="filter" class="header-item"/>
+    <DetailColumns :filter="filter" class="header-item"/>
   </div>
 </template>
 
@@ -12,10 +13,18 @@ import TableSelector from "../TableSelector";
 import DateSelector from "../DateSelector";
 import SongFilter from "../SongFilter";
 import DetailColumns from "../DetailColumns";
+import FilterPreset from "../FilterPreset";
+import Filter from "../../models/filter.js"
 
 export default {
   name: "Sidebar",
-  components: {DateSelector, DetailColumns, TableSelector, SongFilter},
+  components: {DateSelector, DetailColumns, TableSelector, SongFilter, FilterPreset},
+  props: {
+    filter: {
+      type: Filter,
+      required: true,
+    }
+  },
   methods: {
     fetch_table(table) {
       this.$emit('getTable', table);
@@ -23,12 +32,6 @@ export default {
     update_date(date) {
       this.$emit('getDate', date);
     },
-    update_filter(lamp, rank, day) {
-      this.$emit('updateFilter', lamp, rank, day);
-    },
-    update_columns(columns) {
-      this.$emit('updateColumns', columns);
-    }
   }
 }
 

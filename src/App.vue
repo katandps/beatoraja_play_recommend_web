@@ -3,13 +3,12 @@
     <Sidebar
         @getTable="fetch_table"
         @getDate="update_date"
-        @updateFilter="update_filter"
-        @updateColumns="update_columns"
+        :filter="filter"
     />
     <div id="page-wrap">
-      <LampGraph :table="table" :lamps="current_lamps" v-if="has_loaded_songs"/>
-      <RankGraph :table="table" :ranks="current_ranks" v-if="has_loaded_songs"/>
-      <Detail :table="table" :songs="current_songs" :columns="active_columns" v-if="has_loaded_songs"/>
+      <LampGraph :table="table" :lamps="current_lamps" v-if="!!songs"/>
+      <RankGraph :table="table" :ranks="current_ranks" v-if="!!songs"/>
+      <Detail :table="table" :songs="current_songs" :filter="filter" v-if="!!songs"/>
     </div>
   </div>
 </template>
@@ -21,6 +20,7 @@ import RankGraph from "./components/RankGraph";
 import config from "./const";
 import AllDetail from "./models/song.js";
 import Sidebar from "./components/layouts/Sidebar";
+import Filter from "./models/filter";
 
 export default {
   name: "App",
@@ -28,10 +28,9 @@ export default {
   data: () => ({
     songs: null,
     date: "",
-    visible_song: [],
     filter_days: 0,
     table: null,
-    active_columns: {}
+    filter: new Filter(),
   }),
 
   methods: {
@@ -50,34 +49,15 @@ export default {
     update_date(date) {
       this.date = date;
     },
-    update_filter(lamp, rank, day) {
-      this.visible_song = lamp.concat(rank);
-      this.filter_days = day;
-    },
     fetch_table(table) {
       this.table = table;
     },
-    update_columns(columns) {
-      console.log(columns);
-      this.active_columns = columns;
-    }
   },
   computed: {
-    has_loaded_songs() {
-      return this.songs !== null;
-    },
     current_songs() {
-      return this.has_loaded_songs ? this.songs.filtered(this.table, this.visible_song, this.filter_date) : [];
-    },
-    filter_date() {
-      let date = new Date();
-      date.setDate(date.getDate() - this.filter_days);
-      return config.dateFormatter.format(date);
+      return this.filter.run(this.songs, this.table);
     },
     current_ranks() {
-      if (!this.has_loaded_songs) {
-        return [];
-      }
       return this.current_songs.map(songs_by_level => new Object(
           [...config.RANK_TYPE].reduce(
               (ret, rank) => ({
@@ -89,9 +69,6 @@ export default {
       ))
     },
     current_lamps() {
-      if (!this.has_loaded_songs) {
-        return [];
-      }
       return this.current_songs.map(songs_by_level => new Object(
           [...config.LAMP_TYPE].reduce(
               (ret, lamp) => ({

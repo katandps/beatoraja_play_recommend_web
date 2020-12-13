@@ -13,21 +13,21 @@
             </select>
           </label>
           <label for="all_list" class="col-2">
-            <input type="checkbox" id="all_list" v-model="all_list">
+            <input type="checkbox" id="all_list" v-model="filter.visible_all_levels">
             全曲表示
           </label>
         </div>
 
         <table class="table detail">
           <thead>
-          <td v-for="type in config().DETAIL_COLUMNS.filter(c => columns[c])" @click="set_sort(type)"
+          <td v-for="type in config().DETAIL_COLUMNS.filter(c => filter.columns[c])" @click="this.filter.set_sort(type)"
               :class="title_class(type)"
               :key="type">
             {{ config().DETAIL_TITLE_MAP[type] }}
           </td>
           </thead>
           <tr v-for="(song, index) in sorted" :key="song.title + index" :class="clear_type_class(song)">
-            <td v-for="type in config().DETAIL_COLUMNS.filter(c => columns[c])" :class="row_class(type, song)"
+            <td v-for="type in config().DETAIL_COLUMNS.filter(c => filter.columns[c])" :class="row_class(type, song)"
                 :key="type">
               {{ song.get(type) }}
             </td>
@@ -40,6 +40,7 @@
 
 <script>
 import config from '../const.js';
+import Filter from "../models/filter";
 
 export default {
   name: "Detail",
@@ -52,16 +53,14 @@ export default {
       type: Array,
       required: true
     },
-    columns: {
-      type: Object
+    filter: {
+      type: Filter,
+      required: true,
     }
   },
   data: () => ({
     selected_level: "",
-    sort_key: "clear",
     show: true,
-    all_list: false,
-    desc: true,
   }),
   methods: {
     config() {
@@ -69,7 +68,7 @@ export default {
     },
     title_class(type) {
       let ret = '';
-      if (this.sort_key === type) {
+      if (this.filter.sort_key === type) {
         ret += 'sort_active'
       }
       if (type === 'title' || type === 'date') {
@@ -101,12 +100,6 @@ export default {
       this.selected_level = this.table.levels[0];
       return 0;
     },
-    set_sort(key) {
-      if (this.sort_key === key) {
-        this.desc = !this.desc;
-      }
-      this.sort_key = key;
-    },
     visible() {
       this.show = !this.show;
     },
@@ -119,7 +112,7 @@ export default {
   },
   computed: {
     active: function () {
-      if (this.all_list) {
+      if (this.filter.visible_all_levels) {
         return this.songs.map(songs_by_level => songs_by_level.songs).flat();
       } else {
         return this.songs[this.level_index()].songs;
@@ -131,9 +124,9 @@ export default {
         return this.config().SONG_FORMAT[0][0].songs;
       }
       return songs.sort(function (a, b) {
-        let valA = a.sort_key(this.sort_key, this.table.levels);
-        let valB = b.sort_key(this.sort_key, this.table.levels);
-        return valA === valB ? 0 : ((valA < valB) ^ this.desc) ? -1 : 1;
+        let valA = a.sort_key(this.filter.sort_key, this.table.levels);
+        let valB = b.sort_key(this.filter.sort_key, this.table.levels);
+        return valA === valB ? 0 : ((valA < valB) ^ this.filter.sort_desc) ? -1 : 1;
       }.bind(this))
     }
   },

@@ -5,7 +5,7 @@
       <div v-show="show">
         <div v-for="column in config().DETAIL_COLUMNS" :key="column">
           <label>
-            <input type="checkbox" :id="column" v-model="active_columns[column]">
+            <input type="checkbox" :id="column" v-model="filter.columns[column]">
             {{ config().DETAIL_COLUMN_NAME[column] }}
           </label>
         </div>
@@ -16,21 +16,17 @@
 
 <script>
 import config from '../const.js';
+import Filter from "../models/filter";
 
 export default {
   name: "DetailColumns",
+  props: {
+    filter: {
+      type: Filter,
+      required: true,
+    }
+  },
   data: () => ({
-    active_columns: {
-      'clear': true,
-      'level': true,
-      'title': true,
-      'rate': true,
-      'score': true,
-      'bp': true,
-      'combo': true,
-      'play': true,
-      'date': true
-    },
     show: true,
   }),
   methods: {
@@ -41,14 +37,6 @@ export default {
       this.show = !this.show;
     },
   },
-  watch: {
-    active_columns: {
-      immediate: true,
-      handler: function () {
-        this.$emit('updateColumnSelect', this.active_columns)
-      }
-    }
-  }
 }
 </script>
 
