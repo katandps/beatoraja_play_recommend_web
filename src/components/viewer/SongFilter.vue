@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import config from "../const";
-import Filter from "../models/filter";
+import config from "../../const";
+import Filter from "../../models/filter";
 
 export default {
   name: "SongFilter",
