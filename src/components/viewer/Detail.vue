@@ -20,7 +20,7 @@
 
         <table class="table detail">
           <thead>
-          <td v-for="type in config().DETAIL_COLUMNS.filter(c => filter.columns[c])" @click="this.filter.set_sort(type)"
+          <td v-for="type in config().DETAIL_COLUMNS.filter(c => filter.columns[c])" @click="filter.set_sort(type)"
               :class="title_class(type)"
               :key="type">
             {{ config().DETAIL_TITLE_MAP[type] }}
