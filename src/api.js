@@ -32,7 +32,7 @@ export default class Api {
 
     static get_upload_score_log_url() {
         const obj = new Api();
-        return obj.host + "upload/scorelog";
+        return obj.host + "upload/score_log";
     }
 
     handler(response) {

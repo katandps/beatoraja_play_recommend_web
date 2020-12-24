@@ -16,7 +16,7 @@
         <VueUploadComponent
             class="btn btn-primary"
             input-id="files_score"
-            :put-action="uploadScoreUrl()"
+            :post-action="uploadScoreUrl()"
             v-model="files_score"
             ref="upload_score"
             @input-filter="inputFilterScore"
@@ -52,7 +52,7 @@
         <VueUploadComponent
             class="btn btn-primary"
             input-id="files_score_log"
-            :put-action="uploadScoreLogUrl()"
+            :post-action="uploadScoreLogUrl()"
             v-model="files_score_log"
             ref="upload_score_log"
             @input-filter="inputFilterScoreLog"
