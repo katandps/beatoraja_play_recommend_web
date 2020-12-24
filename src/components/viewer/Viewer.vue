@@ -5,7 +5,8 @@
         @getDate="update_date"
         :filter="filter"
     />
-    <div id="page-wrap">
+    <div id="page-wrap" v-if="table">
+      <h2>{{ title }}</h2>
       <LampGraph :table="table" :lamps="current_lamps" v-if="!!songs"/>
       <RankGraph :table="table" :ranks="current_ranks" v-if="!!songs"/>
       <Detail :table="table" :songs="current_songs" :filter="filter" v-if="!!songs"/>
@@ -14,40 +15,39 @@
 </template>
 
 <script>
-import Detail from "./viewer/Detail";
-import LampGraph from "./viewer/LampGraph";
-import RankGraph from "./viewer/RankGraph";
-import config from "../const";
-import AllDetail from "../models/song.js";
-import Sidebar from "./viewer/Sidebar";
-import Filter from "../models/filter";
+import Detail from "./Detail";
+import LampGraph from "./LampGraph";
+import RankGraph from "./RankGraph";
+import config from "../../const";
+import AllDetail from "../../models/song.js";
+import Sidebar from "./Sidebar";
+import Filter from "../../models/filter";
 
 export default {
   name: "Viewer",
   components: {LampGraph, Detail, RankGraph, Sidebar},
+  props: {
+    songs: {
+      type: AllDetail,
+      require: true,
+    },
+    title: {
+      type: String,
+      require: true,
+    },
+  },
   data: () => ({
-    songs: null,
-    date: "",
     filter_days: 0,
-    table: null,
     filter: new Filter(),
+    table: null,
   }),
 
   methods: {
     config() {
       return config;
     },
-    fetch_detail() {
-      fetch(process.env.VUE_APP_HOST + "detail/?date=" + this.date).then(response => {
-        return response.json()
-      }).then(json => {
-        this.songs = new AllDetail(json);
-      }).catch((err) => {
-        console.error(err);
-      });
-    },
     update_date(date) {
-      this.date = date;
+      this.$emit("update_date", date);
     },
     fetch_table(table) {
       this.table = table;
@@ -80,24 +80,6 @@ export default {
       ))
     }
   },
-  watch: {
-    table: {
-      immediate: true,
-      handler: function () {
-        if (this.table) {
-          this.fetch_detail();
-        }
-      }
-    },
-    date: {
-      immediate: true,
-      handler: function () {
-        if (this.table) {
-          this.fetch_detail();
-        }
-      }
-    },
-  }
 }
 </script>
 
@@ -117,7 +99,7 @@ export default {
   min-height: 100vh; /* 要素の高さの最小値を指定 vhはviewport(表示領域) heightの略 */
   min-width: 700px;
   max-width: 700px;
-  padding-top: 40px;
+  padding-top: 10px;
   margin-left: calc(max(0px, calc(100% - 1060px)) / 2 + 340px); /* サイドメニュー分だけ長くする */
   margin-right: calc(max(0px, calc(100% - 1060px)) / 2 + 20px);
 }

@@ -4,21 +4,18 @@
       <div class="navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item d-flex align-items-center">
-            <router-link class="text-dark px-2" to="/">Home</router-link>
-            <router-link class="text-dark px-2" to="view">Score</router-link>
-          </li>
-          <li class="nav-item d-flex align-items-center">
-            <router-link v-if="Object.keys($store.state.userInfo).length" class="text-dark px-2" to="/upload">
-              Upload
-            </router-link>
+            <router-link class="text-dark px-2" to="/">ホーム</router-link>
+            <router-link class="text-dark px-2" to="view">スコア閲覧</router-link>
           </li>
         </ul>
         <ul class="navbar-nav">
-          <li class="nav-item">
-            <a v-if="!Object.keys($store.state.userInfo).length" class="text-dark px-3" href="javascript:void(0);"
-               @click.prevent="handleSignIn">Login</a>
-            <a v-if="Object.keys($store.state.userInfo).length" class="text-dark px-3" href="javascript:void(0);"
-               @click.prevent="handleSignOut">Logout</a>
+          <li class="nav-item d-flex">
+            <router-link v-if="is_login" class="text-dark px-2" to="/my_score">マイスコア</router-link>
+            <router-link v-if="is_login" class="text-dark px-2" to="/upload">スコアアップロード</router-link>
+            <a v-if="!is_login" class="text-dark px-3" href="javascript:void(0);"
+               @click.prevent="handleSignIn">ログイン</a>
+            <a v-if="is_login" class="text-dark px-3" href="javascript:void(0);"
+               @click.prevent="handleSignOut">ログアウト</a>
           </li>
         </ul>
       </div>
@@ -50,6 +47,11 @@ export default {
       } catch (error) {
         console.error(error)
       }
+    }
+  },
+  computed: {
+    is_login() {
+      return !!Object.keys(this.$store.state.userInfo).length
     }
   }
 }

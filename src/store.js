@@ -18,5 +18,10 @@ export default new Vuex.Store({
             state.userInfo = userInfo
         }
     },
-    actions: {}
+    actions: {},
+    getters: {
+        token: state => {
+            return state.userInfo ? state.userInfo.id_token : "";
+        }
+    }
 })

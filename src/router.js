@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import BootstrapVue from "bootstrap-vue";
 import Router from 'vue-router'
-import Viewer from "./components/Viewer";
 import Home from "./components/Home"
 import DataUploader from './components/DataUploader'
 import store from "./store";
+import MyScore from "./components/MyScore";
+import OthersScore from "./components/OthersScore";
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -21,14 +22,21 @@ const router = new Router({
         },
         {
             path: '/view',
-            name: 'Viewer',
-            component: Viewer
+            name: 'OthersScore',
+            component: OthersScore,
+            props: (route) => ({id: parseInt(route.query.user_id)})
         },
         {
             path: '/upload',
-            name: 'upload',
+            name: 'Upload',
             component: DataUploader,
-            meta: { requiresAuth: true }
+            meta: {requiresAuth: true}
+        },
+        {
+            path: '/my_score',
+            name: 'My_score',
+            component: MyScore,
+            meta: {requiresAuth: true}
         }
     ]
 })
