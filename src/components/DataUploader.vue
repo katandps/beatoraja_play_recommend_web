@@ -1,6 +1,6 @@
 <template>
   <div class="data-uploader">
-    <h1 id="example-title" class="example-title">スコアアップロード</h1>
+    <h1 id="uploader-title" class="uploader-title">各種データアップロード</h1>
     <div class="upload">
       <ul>
         <li v-for="(file) in files_score" :key="file.id">
@@ -12,11 +12,11 @@
           <span v-else></span>
         </li>
       </ul>
-      <div class="example-btn">
+      <div class="btn">
         <VueUploadComponent
             class="btn btn-primary"
             input-id="files_score"
-            post-action="/upload/post"
+            :put-action="uploadScoreUrl()"
             v-model="files_score"
             ref="upload_score"
             @input-filter="inputFilterScore"
@@ -48,11 +48,11 @@
           <span v-else></span>
         </li>
       </ul>
-      <div class="example-btn">
+      <div class="btn">
         <VueUploadComponent
             class="btn btn-primary"
             input-id="files_score_log"
-            post-action="/upload/post"
+            :put-action="uploadScoreLogUrl()"
             v-model="files_score_log"
             ref="upload_score_log"
             @input-filter="inputFilterScoreLog"
@@ -76,6 +76,7 @@
 
 <script>
 import VueUploadComponent from "vue-upload-component";
+import Api from "../api";
 
 export default {
   name: "DataUploader",
@@ -85,25 +86,25 @@ export default {
     files_score_log: []
   }),
   methods: {
-    inputFilterScore: function (newFile, oldFile, prevent) {
+    inputFilterScore(newFile, oldFile, prevent) {
       if (newFile && !oldFile) {
         if (newFile.name !== "score.db") {
           return prevent()
         }
       }
     },
-    inputFilterScoreLog: function (newFile, oldFile, prevent) {
+    inputFilterScoreLog(newFile, oldFile, prevent) {
       if (newFile && !oldFile) {
         if (newFile.name !== "scorelog.db") {
           return prevent()
         }
       }
     },
-    upload_score() {
-      console.log("score");
+    uploadScoreUrl() {
+      return Api.get_upload_score_url();
     },
-    upload_song() {
-      console.log("song");
+    uploadScoreLogUrl() {
+      return Api.get_upload_score_log_url();
     }
   }
 }
