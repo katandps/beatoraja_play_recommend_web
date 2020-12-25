@@ -1,17 +1,8 @@
 <template>
-  <div class="data-uploader">
+  <div id="data-uploader">
     <h1 id="uploader-title" class="uploader-title">各種データアップロード</h1>
+    score.db と scorelog.db をアップロードするとスコア情報が更新されます。
     <div class="upload">
-      <ul>
-        <li v-for="(file) in files_score" :key="file.id">
-          <span>{{ file.name }}</span> -
-          <span>{{ file.size }} バイト</span> -
-          <span v-if="file.error">{{ file.error }}</span>
-          <span v-else-if="file.success">success</span>
-          <span v-else-if="file.active">active</span>
-          <span v-else></span>
-        </li>
-      </ul>
       <div class="btn">
         <VueUploadComponent
             class="btn btn-primary"
@@ -34,20 +25,20 @@
           Stop Upload
         </button>
       </div>
+      <ul>
+        <li v-for="(file) in files_score" :key="file.id">
+          <span>{{ file.name }}</span> -
+          <span>{{ bytes_format(file.size) }}</span> -
+          <span v-if="file.error">{{ file.error }}</span>
+          <span v-else-if="file.success">success</span>
+          <span v-else-if="file.active">active</span>
+          <span v-else>ready</span>
+        </li>
+      </ul>
     </div>
 
 
     <div class="upload">
-      <ul>
-        <li v-for="(file) in files_score_log" :key="file.id">
-          <span>{{ file.name }}</span> -
-          <span>{{ file.size }}</span> -
-          <span v-if="file.error">{{ file.error }}</span>
-          <span v-else-if="file.success">success</span>
-          <span v-else-if="file.active">active</span>
-          <span v-else></span>
-        </li>
-      </ul>
       <div class="btn">
         <VueUploadComponent
             class="btn btn-primary"
@@ -70,6 +61,52 @@
           Stop Upload
         </button>
       </div>
+      <ul>
+        <li v-for="(file) in files_score_log" :key="file.id">
+          <span>{{ file.name }}</span> -
+          <span>{{ bytes_format(file.size) }}</span> -
+          <span v-if="file.error">{{ file.error }}</span>
+          <span v-else-if="file.success">success</span>
+          <span v-else-if="file.active">active</span>
+          <span v-else>ready</span>
+        </li>
+      </ul>
+    </div>
+    <hr>
+    表示されない曲がある場合は、songdata.dbをアップロードしてください。
+    <div class="upload">
+      <ul>
+        <li v-for="(file) in files_song_data" :key="file.id">
+          <span>{{ file.name }}</span> -
+          <span>{{ bytes_format(file.size) }}</span> -
+          <span v-if="file.error">{{ file.error }}</span>
+          <span v-else-if="file.success">success</span>
+          <span v-else-if="file.active">active</span>
+          <span v-else></span>
+        </li>
+      </ul>
+      <div class="btn">
+        <VueUploadComponent
+            class="btn btn-primary"
+            input-id="files_song_data"
+            :post-action="uploadSongDataUrl()"
+            v-model="files_song_data"
+            ref="upload_song_data"
+            @input-filter="inputFilterSongData"
+        >
+          <i class="fa fa-plus"></i>
+          songdata.dbを選択する
+        </VueUploadComponent>
+        <button type="button" class="btn btn-success" v-if="!$refs.upload_song_data || !$refs.upload_song_data.active"
+                @click.prevent="$refs.upload_song_data.active = true">
+          <i class="fa fa-arrow-up" aria-hidden="true"></i>
+          Start Upload
+        </button>
+        <button type="button" class="btn btn-danger" v-else @click.prevent="$refs.upload_song_data.active = false">
+          <i class="fa fa-stop" aria-hidden="true"></i>
+          Stop Upload
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -77,13 +114,15 @@
 <script>
 import VueUploadComponent from "vue-upload-component";
 import Api from "../api";
+import {format} from "bytes"
 
 export default {
   name: "DataUploader",
   components: {VueUploadComponent},
   data: () => ({
     files_score: [],
-    files_score_log: []
+    files_score_log: [],
+    files_song_data: [],
   }),
   methods: {
     inputFilterScore(newFile, oldFile, prevent) {
@@ -100,11 +139,24 @@ export default {
         }
       }
     },
+    inputFilterSongData(newFile, oldFile, prevent) {
+      if (newFile && !oldFile) {
+        if (newFile.name !== "songdata.db") {
+          return prevent()
+        }
+      }
+    },
     uploadScoreUrl() {
-      return Api.get_upload_score_url();
+      return Api.get_upload_score_url(this.$store.getters.token);
     },
     uploadScoreLogUrl() {
-      return Api.get_upload_score_log_url();
+      return Api.get_upload_score_log_url(this.$store.getters.token);
+    },
+    uploadSongDataUrl() {
+      return Api.get_upload_song_data_url(this.$store.getters.token);
+    },
+    bytes_format(bytes) {
+      return format(bytes);
     }
   }
 }
@@ -147,7 +199,7 @@ export default {
 }
 
 ul {
-  padding: 15px;
+  list-style: none;
 }
 
 .thumb {

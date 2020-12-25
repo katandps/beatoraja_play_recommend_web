@@ -25,14 +25,19 @@ export default class Api {
         return await (await fetch(uri).then(obj.handler).catch(obj.error)).json();
     }
 
-    static get_upload_score_url() {
+    static get_upload_score_url(token) {
         const obj = new Api();
-        return obj.host + "upload/score";
+        return obj.host + "upload/score/?token=" + token;
     }
 
-    static get_upload_score_log_url() {
+    static get_upload_score_log_url(token) {
         const obj = new Api();
-        return obj.host + "upload/score_log";
+        return obj.host + "upload/score_log/?token=" + token;
+    }
+
+    static get_upload_song_data_url(token) {
+        const obj = new Api();
+        return obj.host + "upload/song_data/?token=" + token;
     }
 
     handler(response) {
