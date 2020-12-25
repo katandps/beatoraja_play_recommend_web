@@ -9,11 +9,11 @@
 </template>
 
 <script>
-import TableSelector from "../TableSelector";
-import DateSelector from "../DateSelector";
-import SongFilter from "../SongFilter";
-import DetailColumns from "../DetailColumns";
-import FilterPreset from "../FilterPreset";
+import TableSelector from "./TableSelector";
+import DateSelector from "./DateSelector";
+import SongFilter from "./SongFilter";
+import DetailColumns from "./DetailColumns";
+import FilterPreset from "./FilterPreset";
 import Filter from "../../models/filter.js"
 
 export default {

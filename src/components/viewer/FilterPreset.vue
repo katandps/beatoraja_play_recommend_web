@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import Filter from "../models/filter";
+import Filter from "../../models/filter";
 
 export default {
   name: "FilterPreset",

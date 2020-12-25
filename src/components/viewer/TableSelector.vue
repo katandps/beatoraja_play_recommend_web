@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import Api from "../../api.js"
+
 export default {
   name: "TableSelector",
   data: () => ({
@@ -16,16 +18,11 @@ export default {
     selected_table: "",
   }),
   methods: {
-    fetch_tables() {
-      fetch(process.env.VUE_APP_HOST + "tables/").then(response => {
-        return response.json()
-      }).then(json => {
-        this.tables = json;
-        this.selected_table = json[0].name;
-      }).catch((err) => {
-        console.error(err);
-      });
-    },
+    async fetch_tables() {
+      const json = await Api.fetch_tables();
+      this.tables = json;
+      this.selected_table = json[0].name;
+    }
   },
   created: function () {
     this.fetch_tables();

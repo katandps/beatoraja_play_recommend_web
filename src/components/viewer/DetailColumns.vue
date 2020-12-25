@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import config from '../const.js';
-import Filter from "../models/filter";
+import config from '../../const.js';
+import Filter from "../../models/filter";
 
 export default {
   name: "DetailColumns",

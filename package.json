@@ -9,13 +9,19 @@
   },
   "dependencies": {
     "bootstrap": "^4.5.2",
-    "bootstrap-vue": "^2.17.3",
+    "bootstrap-vue": "^2.20.1",
+    "bytes": "^3.1.0",
     "core-js": "^3.6.5",
     "loglevel": "^1.7.0",
     "material-icons": "^0.3.1",
     "vue": "^2.6.12",
+    "vue-google-oauth2": "^1.5.5",
+    "vue-router": "^3.4.9",
+    "vue-upload-component": "^2.8.22",
     "vuejs-datepicker": "^1.6.2",
-    "vuesax": "^3.11.17"
+    "vuesax": "^3.11.17",
+    "vuex": "^3.6.0",
+    "vuex-persistedstate": "^4.0.0-beta.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

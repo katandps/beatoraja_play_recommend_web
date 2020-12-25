@@ -12,7 +12,7 @@
 <script>
 import {ja} from "vuejs-datepicker/dist/locale";
 import Datepicker from "vuejs-datepicker"
-import config from "../const.js"
+import config from "../../const.js"
 
 export default {
   name: "DateSelector",

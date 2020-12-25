@@ -55,7 +55,7 @@ export default class Filter {
     }
 
     run(songs, table) {
-        if (!songs) {
+        if (!songs || !table) {
             return [];
         }
         return songs.filtered(table, this);
