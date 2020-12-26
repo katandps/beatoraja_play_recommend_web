@@ -28,25 +28,10 @@ export default {
   name: "PageHeader",
   methods: {
     async handleSignIn() {
-      try {
-        const googleUser = await this.$gAuth.signIn()
-        if (!googleUser) {
-          return null
-        }
-        this.$store.commit('setUserInfo', googleUser.getAuthResponse())
-      } catch (error) {
-        console.error(error)
-        return null
-      }
+      this.$emit("handleSignIn");
     },
     async handleSignOut() {
-      try {
-        await this.$gAuth.signOut()
-        this.$store.commit('setUserInfo', {})
-        window.location.href = '/beatoraja_play_recommend_web/'
-      } catch (error) {
-        console.error(error)
-      }
+      this.$emit("handleSignOut");
     }
   },
   computed: {

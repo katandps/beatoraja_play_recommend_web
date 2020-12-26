@@ -16,7 +16,7 @@ export default new Vuex.Store({
     mutations: {
         setUserInfo: function (state, userInfo) {
             state.userInfo = userInfo
-        }
+        },
     },
     actions: {},
     getters: {
