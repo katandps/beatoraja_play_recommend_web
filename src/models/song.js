@@ -114,7 +114,7 @@ class SongDetail {
             case 'clear_date':
                 return this.clear_updated_at;
             case 'clear_before':
-                return this.clear_type_before;
+                return config.LAMP_TYPE.length - config.LAMP_TYPE.indexOf(this.clear_type_before);
             default:
                 return ""
         }

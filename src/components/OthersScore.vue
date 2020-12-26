@@ -1,6 +1,6 @@
 <template>
   <div id="others_score">
-    ○○のスコア
+    ユーザーIDを入力 -
     <label>
       <input v-model="user_id">
     </label>
@@ -39,9 +39,7 @@ export default {
     date: {
       immediate: true,
       handler: function () {
-        if (this.table) {
-          this.fetch_detail()
-        }
+        this.fetch_detail()
       }
     },
     id: {
