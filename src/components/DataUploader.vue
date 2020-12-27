@@ -8,6 +8,7 @@
             class="btn btn-primary"
             input-id="files_score"
             :post-action="uploadScoreUrl()"
+            :headers="{'oauth-token': token()}"
             v-model="files_score"
             ref="upload_score"
             @input-filter="inputFilterScore"
@@ -44,6 +45,7 @@
             class="btn btn-primary"
             input-id="files_score_log"
             :post-action="uploadScoreLogUrl()"
+            :headers="{'oauth-token': token()}"
             v-model="files_score_log"
             ref="upload_score_log"
             @input-filter="inputFilterScoreLog"
@@ -90,6 +92,7 @@
             class="btn btn-primary"
             input-id="files_song_data"
             :post-action="uploadSongDataUrl()"
+            :headers="{'oauth-token': token()}"
             v-model="files_song_data"
             ref="upload_song_data"
             @input-filter="inputFilterSongData"
@@ -125,6 +128,9 @@ export default {
     files_song_data: [],
   }),
   methods: {
+    token() {
+      return this.$store.getters.token;
+    },
     inputFilterScore(newFile, oldFile, prevent) {
       if (newFile && !oldFile) {
         if (newFile.name !== "score.db") {
@@ -147,13 +153,13 @@ export default {
       }
     },
     uploadScoreUrl() {
-      return Api.get_upload_score_url(this.$store.getters.token);
+      return Api.get_upload_score_url();
     },
     uploadScoreLogUrl() {
-      return Api.get_upload_score_log_url(this.$store.getters.token);
+      return Api.get_upload_score_log_url();
     },
     uploadSongDataUrl() {
-      return Api.get_upload_song_data_url(this.$store.getters.token);
+      return Api.get_upload_song_data_url();
     },
     bytes_format(bytes) {
       return format(bytes);
