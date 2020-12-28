@@ -8,6 +8,7 @@ export default class Filter {
         this.visible_lamp = new VisibleLamp();
         this.visible_rank = new VisibleRank();
         this.day_before = 0;
+        this.max_length = 200;
         this.visible_all_levels = false;
     }
 

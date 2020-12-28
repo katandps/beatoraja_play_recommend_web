@@ -8,6 +8,11 @@
     <h2>使い方</h2>
      メニューの前半がログイン不要メニュー、後半がログインメニューとなっています。
     ログインはGoogle OAuthをサポートしています。
+
+    <h2>その他</h2>
+     管理者(かたんど)について<br/>
+      <a href="https://twitter.com/dnaTaK">twitter@dnaTaK</a><br/>
+      <router-link to="/view/?user_id=1">スコア表示</router-link><br/>
   </div>
 </template>
 

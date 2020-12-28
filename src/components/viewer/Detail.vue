@@ -16,6 +16,11 @@
             <input type="checkbox" id="all_list" v-model="filter.visible_all_levels">
             全曲表示
           </label>
+          <label for="max_length">
+            表示曲数:
+            <input id="max_length" v-model="filter.max_length" class="col-3">
+            曲
+          </label>
         </div>
 
         <table class="table detail">
@@ -127,7 +132,7 @@ export default {
         let valA = a.sort_key(this.filter.sort_key, this.table.levels);
         let valB = b.sort_key(this.filter.sort_key, this.table.levels);
         return valA === valB ? 0 : ((valA < valB) ^ this.filter.sort_desc) ? -1 : 1;
-      }.bind(this))
+      }.bind(this)).slice(0, parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length)
     }
   },
 
