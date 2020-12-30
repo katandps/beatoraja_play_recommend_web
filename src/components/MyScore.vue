@@ -17,7 +17,7 @@ export default {
   }),
   methods: {
     async fetch_detail() {
-      this.songs = await Api.fetch_my_score(this.date, this.$store.getters.token);
+      this.songs = await Api.fetch_my_score(this.date, this.$cookies.get("session-token"));
     },
     update_date(date) {
       this.date = date;

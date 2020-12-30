@@ -8,7 +8,7 @@
             class="btn btn-primary"
             input-id="files_score"
             :post-action="uploadScoreUrl()"
-            :headers="{'oauth-token': token()}"
+            :headers="{'session-token': token()}"
             v-model="files_score"
             ref="upload_score"
             @input-filter="inputFilterScore"
@@ -45,7 +45,7 @@
             class="btn btn-primary"
             input-id="files_score_log"
             :post-action="uploadScoreLogUrl()"
-            :headers="{'oauth-token': token()}"
+            :headers="{'session-token': token()}"
             v-model="files_score_log"
             ref="upload_score_log"
             @input-filter="inputFilterScoreLog"
@@ -92,7 +92,7 @@
             class="btn btn-primary"
             input-id="files_song_data"
             :post-action="uploadSongDataUrl()"
-            :headers="{'oauth-token': token()}"
+            :headers="{'session-token': token()}"
             v-model="files_song_data"
             ref="upload_song_data"
             @input-filter="inputFilterSongData"
@@ -129,7 +129,7 @@ export default {
   }),
   methods: {
     token() {
-      return this.$store.getters.token;
+      return this.$cookies.get("session-token");
     },
     inputFilterScore(newFile, oldFile, prevent) {
       if (newFile && !oldFile) {

@@ -3,7 +3,6 @@ import BootstrapVue from "bootstrap-vue";
 import Router from 'vue-router'
 import Home from "./components/Home"
 import DataUploader from './components/DataUploader'
-import store from "./store";
 import MyScore from "./components/MyScore";
 import OthersScore from "./components/OthersScore";
 
@@ -43,7 +42,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (Object.keys(store.state.userInfo).length) {
+        if (Vue.$cookies.get("session-token")) {
             next()
         } else {
             next({path: '/', query: {redirect: to.fullPath}})

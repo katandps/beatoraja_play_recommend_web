@@ -55,6 +55,9 @@ export default {
   },
   computed: {
     current_songs() {
+      if (this.table === null) {
+        return [];
+      }
       return this.filter.run(this.songs, this.table);
     },
     current_ranks() {

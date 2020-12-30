@@ -19,7 +19,7 @@ export default {
   }),
   methods: {
     async fetch_tables() {
-      const json = await Api.fetch_tables();
+      const json = await Api.fetch_tables(this.$cookies.get("session-token"));
       this.tables = json;
       this.selected_table = json[0].name;
     }

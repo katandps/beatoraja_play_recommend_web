@@ -3,9 +3,7 @@ import config from '../const.js';
 export default class AllDetail {
     constructor(tables) {
         this.tables = [];
-        if (tables) {
-            tables.forEach(t => this.tables.push(new TableDetail(t.table, t.levels)));
-        }
+        tables.forEach(t => this.tables.push(new TableDetail(t.table, t.levels)));
     }
 
     filtered(table, filter) {

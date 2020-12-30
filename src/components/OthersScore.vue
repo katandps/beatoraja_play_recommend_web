@@ -7,6 +7,7 @@
     <router-link class="btn btn-success" :to="'/view/?user_id=' + user_id">ユーザー変更</router-link>
     <Viewer v-if="!!songs" :songs="songs" title="他人のスコア" @fetch_detail="fetch_detail"
             @update_date="update_date"/>
+    <p v-else>ユーザーが存在しません</p>
   </div>
 </template>
 
@@ -20,6 +21,7 @@ export default {
   props: {
     id: {
       type: Number,
+      default: 1,
     }
   },
   data: () => ({
@@ -29,7 +31,8 @@ export default {
   }),
   methods: {
     async fetch_detail() {
-      this.songs = await Api.fetch_others_score(this.date, this.id);
+      const songs = await Api.fetch_others_score(this.date, this.id, this.$cookies.get("session-token"));
+      this.songs = songs ? songs : null;
     },
     update_date(date) {
       this.date = date;
