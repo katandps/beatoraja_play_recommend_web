@@ -33,10 +33,10 @@ const router = new Router({
         },
         {
             path: '/my_score',
-            name: 'My_score',
+            name: 'MyScore',
             component: MyScore,
             meta: {requiresAuth: true}
-        }
+        },
     ]
 })
 
