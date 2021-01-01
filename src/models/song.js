@@ -113,8 +113,10 @@ class SongDetail {
                 return this.clear_updated_at;
             case 'clear_before':
                 return config.LAMP_TYPE.length - config.LAMP_TYPE.indexOf(this.clear_type_before);
+            case 'random_select':
+                return Math.floor(Math.random() * Math.floor(100000000));
             default:
-                return ""
+                return;
         }
     }
 

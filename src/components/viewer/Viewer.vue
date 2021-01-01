@@ -1,7 +1,7 @@
 <template>
   <div id="viewer">
     <Sidebar
-        @getTable="fetch_table"
+        @setTable="set_table"
         @getDate="update_date"
         :filter="filter"
     />
@@ -49,7 +49,7 @@ export default {
     update_date(date) {
       this.$emit("update_date", date);
     },
-    fetch_table(table) {
+    set_table(table) {
       this.table = table;
     },
   },

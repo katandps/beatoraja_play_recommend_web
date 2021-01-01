@@ -72,6 +72,14 @@ export default class Filter {
         return config.dateFormatter.format(date) >= song_detail.updated_at.split("T")[0];
     }
 
+    for_random() {
+        this.sort_key = ''; //連続押し対応
+        this.sort_key = 'random_select';
+        this.sort_desc = false;
+        this.day_before = 0;
+        this.columns.default();
+    }
+
     for_score() {
         this.sort_key = 'score_date';
         this.sort_desc = false;

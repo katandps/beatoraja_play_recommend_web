@@ -1,8 +1,8 @@
 <template>
   <div id="table_selector">
     <label>
-      <select class="form-control " name="table" v-model="selected_table" style="height:100%; width:100%">
-        <option v-for="(table,key) in tables" :key="key">{{ table.name }}</option>
+      <select class="form-control " name="table" v-model="tables.selected_table" style="height:100%; width:100%">
+        <option v-for="(table,key) in tables.list()" :key="key">{{ table.name }}</option>
       </select>
     </label>
   </div>
@@ -10,38 +10,27 @@
 
 <script>
 import Api from "../../api.js"
+import Tables from "../../models/table";
 
 export default {
   name: "TableSelector",
   data: () => ({
-    tables: [],
-    selected_table: "",
+    tables: new Tables([]),
   }),
   methods: {
     async fetch_tables() {
       const json = await Api.fetch_tables(this.$cookies.get("session-token"));
-      this.tables = json;
-      this.selected_table = json[0].name;
+      this.tables = new Tables(json);
     }
   },
   created: function () {
     this.fetch_tables();
   },
-  computed: {
-    table_index() {
-      for (let i = 0; i < this.tables.length; i++) {
-        if (this.tables[i].name === this.selected_table) {
-          return i;
-        }
-      }
-      return 0;
-    },
-  },
   watch: {
-    selected_table: {
+    tables: {
       immediate: true,
       handler: function () {
-        this.$emit('getTable', this.tables[this.table_index]);
+        this.$emit('setTable', this.tables.get_table());
       }
     },
   }

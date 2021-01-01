@@ -13,12 +13,16 @@
      管理者(かたんど)について<br/>
       <a href="https://twitter.com/dnaTaK">twitter@dnaTaK</a><br/>
       <router-link to="/view/?user_id=1">スコア表示</router-link><br/>
+    <ReleaseNote />
   </div>
 </template>
 
 <script>
+import ReleaseNote from "./ReleaseNote";
+
 export default {
-  name: "Home"
+  name: "Home",
+  components: {ReleaseNote}
 }
 </script>
 

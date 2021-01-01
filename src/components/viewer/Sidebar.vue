@@ -1,6 +1,6 @@
 <template>
   <div class="sidebar">
-    <TableSelector @getTable="fetch_table" class="header-item"/>
+    <TableSelector @setTable="set_table" class="header-item"/>
     <DateSelector @getDate="update_date" class="header-item"/>
     <FilterPreset :filter="filter" class="header-item"/>
     <SongFilter :filter="filter" class="header-item"/>
@@ -26,8 +26,8 @@ export default {
     }
   },
   methods: {
-    fetch_table(table) {
-      this.$emit('getTable', table);
+    set_table(table) {
+      this.$emit('setTable', table);
     },
     update_date(date) {
       this.$emit('getDate', date);
