@@ -8,6 +8,7 @@ import OthersScore from "./components/OthersScore";
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import ProfileEdit from "./components/ProfileEdit";
 
 Vue.use(Router)
 Vue.use(BootstrapVue)
@@ -37,6 +38,12 @@ const router = new Router({
             component: MyScore,
             meta: {requiresAuth: true}
         },
+        {
+            path: '/profile',
+            name: 'ProfileEdit',
+            component: ProfileEdit,
+            meta: {requiresAuth: true}
+        }
     ]
 })
 

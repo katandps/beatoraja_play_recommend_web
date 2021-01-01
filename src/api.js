@@ -9,7 +9,7 @@ export default class Api {
         const obj = new Api();
         const uri = obj.host + "/account";
         const init = {headers: {'session-token': token}};
-        return await fetch(uri, init).then(obj.handler);
+        return await (await fetch(uri, init).then(obj.handler)).json();
     }
 
     static async fetch_my_score(date, token) {
@@ -56,6 +56,18 @@ export default class Api {
         const uri = obj.host + "/logout";
         const init = {headers: {'session-token': token}};
         await fetch(uri, init).then(obj.handler);
+    }
+
+    static async change_user_name(token, name) {
+        const obj = new Api();
+        const uri = obj.host + "/update/name";
+        const body = JSON.stringify({'changed_name': name});
+        const init = {
+            headers: {'session-token': token, 'content-type': 'application/json'},
+            method: 'POST',
+            body: body
+        };
+        return await (await fetch(uri, init).then(obj.handler)).json();
     }
 
     static get_upload_score_url() {

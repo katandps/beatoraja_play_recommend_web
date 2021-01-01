@@ -15,16 +15,23 @@ export default {
   data: () => ({
     is_login: false,
   }),
-  mounted() {
+  async mounted() {
+    const now = this.is_login;
     if (this.$cookies.get("session-token")) {
       this.is_login = true;
+    }
+
+    // login route
+    if (now ^ this.is_login) {
+      let res = await Api.check_account(this.$cookies.get("session-token"));
+      this.$store.commit("setUserInfo", res);
     }
   },
   watch: {
     // ルート切り替え検出
     '$route': async function (to, from) {
       if (this.is_login && to.path !== from.path) {
-        if (!(await Api.check_account(this.$cookies.get("session-token"))).ok) {
+        if (!(await Api.check_account(this.$cookies.get("session-token"))).user_name) {
           await this.handleSignOut();
         }
       }
@@ -35,6 +42,8 @@ export default {
       await Api.logout(this.$cookies.get("session-token"));
       this.$cookies.remove("session-token");
       this.is_login = false;
+      this.$store.commit("setUserInfo", null);
+      window.location.href("/")
     }
   },
 }

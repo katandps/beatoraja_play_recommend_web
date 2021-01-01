@@ -50,6 +50,7 @@ export default {
   }),
   methods: {
     async fetch_detail() {
+      if (!this.id || !this.date) {return;}
       this.message = "読込中...";
       this.songs = null;
       const songs = await Api.fetch_others_score(this.date, this.id, this.$cookies.get("session-token"));
@@ -69,7 +70,7 @@ export default {
     date: {
       immediate: true,
       handler: function () {
-        this.fetch_detail()
+          this.fetch_detail()
       }
     },
     id: {

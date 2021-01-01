@@ -6,6 +6,7 @@
         :filter="filter"
     />
     <Viewer
+        v-if="!!songs"
         :songs="songs"
         :filter="filter"
         :table="table"
@@ -15,6 +16,7 @@
         @fetch_detail="fetch_detail"
         @update_date="update_date"
     />
+    <p v-else>{{message}}</p>
   </div>
 </template>
 
@@ -31,11 +33,17 @@ export default {
     songs: null,
     date: "",
     table: null,
-    filter: new Filter()
+    filter: new Filter(),
+    message: ""
   }),
   methods: {
     async fetch_detail() {
+      if (!this.date) {
+        return;
+      }
+      this.message = "読込中...";
       this.songs = await Api.fetch_my_score(this.date, this.$cookies.get("session-token"));
+      this.message = "";
     },
     update_date(date) {
       this.date = date;

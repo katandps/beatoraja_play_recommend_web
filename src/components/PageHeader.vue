@@ -2,9 +2,9 @@
   <div id="page-header">
     <!--ハンバーガーメニューのボタン-->
     <div class="hamburger_btn" v-on:click='active_btn=!active_btn'>
-      <span class="line line_01" v-bind:class="{'btn_line01':active_btn}"></span>
-      <span class="line line_02" v-bind:class="{'btn_line02':active_btn}"></span>
-      <span class="line line_03" v-bind:class="{'btn_line03':active_btn}"></span>
+      <span class="line line_01" :class="(is_login ? 'line-login ' : 'line-logout ') + (active_btn ? 'btn_line01' : '')" />
+      <span class="line line_02" :class="(is_login ? 'line-login ' : 'line-logout ') + (active_btn ? 'btn_line02' : '')"/>
+      <span class="line line_03" :class="(is_login ? 'line-login ' : 'line-logout ') + (active_btn ? 'btn_line03' : '')"/>
     </div>
     <!--サイドバー-->
     <transition name="menu">
@@ -18,6 +18,9 @@
           </li>
         </ul>
         <ul v-if="is_login">
+          <li>
+            <router-link class="text-dark px-2" to="/profile">プロフィール</router-link>
+          </li>
           <li>
             <router-link class="text-dark px-2" to="/my_score">マイスコア</router-link>
           </li>
@@ -92,9 +95,17 @@ export default {
   left: 20px;
   width: 32px;
   height: 2px;
-  background: #333333;
   text-align: center;
 }
+
+.hamburger_btn .line-logout {
+  background: #900000;
+}
+
+.hamburger_btn .line-login {
+  background: #008000;
+}
+
 
 .hamburger_btn .line_01 {
   top: 16px;
@@ -102,18 +113,18 @@ export default {
 }
 
 .hamburger_btn .line_02 {
-  top: 26px;
+  top: 25px;
   transition: 0.4s ease;
 }
 
 .hamburger_btn .line_03 {
-  top: 36px;
+  top: 34px;
   transition: 0.4s ease;
 }
 
 
 .btn_line01 {
-  transform: translateY(10px) rotate(-45deg);
+  transform: translateY(9px) rotate(-45deg);
   transition: 0.4s ease;
 }
 
@@ -123,7 +134,7 @@ export default {
 }
 
 .btn_line03 {
-  transform: translateY(-10px) rotate(45deg);
+  transform: translateY(-9px) rotate(45deg);
   transition: 0.4s ease;
 }
 

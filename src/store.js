@@ -11,7 +11,7 @@ export default new Vuex.Store({
         storage: window.sessionStorage
     })],
     state: {
-        userInfo: {}
+        userInfo: null
     },
     mutations: {
         setUserInfo: function (state, userInfo) {
@@ -20,8 +20,8 @@ export default new Vuex.Store({
     },
     actions: {},
     getters: {
-        token: state => {
-            return state.userInfo ? state.userInfo.id_token : "";
+        userInfo: state => {
+            return state.userInfo;
         }
     }
 })
