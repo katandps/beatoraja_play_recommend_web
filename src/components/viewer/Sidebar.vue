@@ -30,7 +30,7 @@ export default {
       this.$emit('setTable', table);
     },
     update_date(date) {
-      this.$emit('getDate', date);
+      this.$emit('setDate', date);
     },
   }
 }
@@ -44,25 +44,27 @@ export default {
   height: 100%; /* サイドバーの高さ */
   width: 320px; /* サイドバーのwidthを指定 */
   max-width: 320px; /* widthの最大値 */
-  opacity: 0.95; /* 透過する 0に近くほど透過する */
+  opacity: 0.90; /* 透過する 0に近くほど透過する */
   position: fixed; /* 左上に要素を固定する(スクロールしても位置は固定される) */
   overflow-x: hidden; /* 横軸ではみ出た要素を非表示にする */
+  overflow-y: scroll; /* スクロールバーを常に表示 */
   box-sizing: border-box; /* paddingとborderを、widthとheightに含める */
+  padding-top: 20px;
+  padding-bottom: 60px;
 }
 
 .header-item {
-  padding: 40px 40px 0 40px;
+  padding-right: 20px;
 }
 
-.sidebar-link-area {
-  padding-top: 20px; /* サイドバーリンクの上部に空白を作る */
+/deep/ .sidebar-title {
+  margin-left: 20px;
+  text-align: left;
 }
 
-.sidebar-link {
-  color: #ffffff; /* リンクの文字色を白に */
+/deep/ .sidebar-body {
+  margin-left: 30px;
+  text-align: left;
 }
 
-.sidebar-link:hover {
-  color: #ffffff /* マウスがリンクに乗った時も文字色を白に */
-}
 </style>

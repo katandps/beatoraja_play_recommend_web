@@ -1,8 +1,8 @@
 <template>
   <div id="DetailColumns">
-    <h4 @click="filter_visible">リコメンド{{ show ? "▼" : "▶" }}</h4>
+    <h6 class="sidebar-title" @click="filter_visible">リコメンド{{ show ? "▼" : "▶" }}</h6>
     <transition>
-      <div v-show="show" class="filter">
+      <div v-show="show" class="filter sidebar-body">
         <button class="btn btn-primary" @click="filter.for_random()">ランダムセレクト</button>
         <button class="btn btn-success" @click="filter.for_score()">スコア狙い</button>
         <button class="btn btn-success" @click="filter.for_bp()">BP狙い</button>

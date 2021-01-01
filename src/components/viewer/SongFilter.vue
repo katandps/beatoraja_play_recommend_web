@@ -1,16 +1,17 @@
 <template>
   <div id="song_filter">
-    <h4 @click="filter_visible">表示フィルタ{{ show ? "▼" : "▶" }}</h4>
+    <h6 class="sidebar-title" @click="filter_visible">表示フィルタ{{ show ? "▼" : "▶" }}</h6>
     <transition>
-      <div v-show="show">
+      <div v-show="show" class="sidebar-body">
         <div class="filter">
           <h5>クリアタイプ</h5>
           <div v-for="lamp in config().LAMP_TYPE" :key="lamp">
-            <label :for="lamp">
+            <label :for="lamp" class="sidebar-list">
               <input type="checkbox" :id="lamp" :value="lamp" v-model="filter.visible_lamp[lamp]">
               {{ lamp }}
             </label>
           </div>
+          <button class="btn btn-danger" @click="filter.visible_reverse()">表示反転</button>
           <button class="btn btn-success" @click="filter.visible_all_lamp_type()">全表示</button>
           <button class="btn btn-success" @click="filter.visible_not_full_combo()">未FC</button>
           <button class="btn btn-success" @click="filter.visible_not_ex_hard()">未EXH</button>
@@ -53,7 +54,7 @@ export default {
     }
   },
   data: () => ({
-    show: true,
+    show: false,
   }),
   methods: {
     config() {
@@ -68,7 +69,11 @@ export default {
 
 <style scoped>
 .filter button {
-  margin: 10px;
+  margin: 5px;
   display: inline
+}
+
+.sidebar-list {
+  margin-left: 10px;
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div id="DetailColumns">
-    <h4 @click="filter_visible">表示カラム{{ show ? "▼" : "▶" }}</h4>
+    <h6 class="sidebar-title" @click="filter_visible">表示カラム{{ show ? "▼" : "▶" }}</h6>
     <transition>
-      <div v-show="show">
+      <div v-show="show" class="sidebar-body">
         <div v-for="column in config().DETAIL_COLUMNS" :key="column">
           <label>
             <input type="checkbox" :id="column" v-model="filter.columns[column]">
@@ -27,7 +27,7 @@ export default {
     }
   },
   data: () => ({
-    show: true,
+    show: false,
   }),
   methods: {
     config() {

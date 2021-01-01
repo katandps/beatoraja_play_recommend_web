@@ -19,6 +19,10 @@ export default class Filter {
         this.sort_key = key;
     }
 
+    visible_reverse() {
+        this.visible_lamp.reverse();
+    }
+
     visible_all_lamp_type() {
         this.visible_lamp.to_all();
     }
@@ -202,6 +206,20 @@ class VisibleLamp {
         this.AssistEasy = true;
         this.Failed = true;
         this.NoPlay = true;
+    }
+
+    reverse() {
+        this.Max = !this.Max;
+        this.Perfect = !this.Perfect;
+        this.FullCombo = !this.FullCombo;
+        this.ExHard = !this.ExHard;
+        this.Hard = !this.Hard;
+        this.Normal = !this.Normal;
+        this.Easy = !this.Easy;
+        this.LightAssistEasy = !this.LightAssistEasy;
+        this.AssistEasy = !this.AssistEasy;
+        this.Failed = !this.Failed;
+        this.NoPlay = !this.NoPlay;
     }
 
     to_all() {

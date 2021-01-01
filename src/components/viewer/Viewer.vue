@@ -1,11 +1,6 @@
 <template>
   <div id="viewer">
-    <Sidebar
-        @setTable="set_table"
-        @getDate="update_date"
-        :filter="filter"
-    />
-    <div id="page-wrap" v-if="table">
+    <div v-if="table">
       <h2>{{ title }}</h2>
       <LampGraph :table="table" :lamps="current_lamps" v-if="!!songs"/>
       <RankGraph :table="table" :ranks="current_ranks" v-if="!!songs"/>
@@ -20,13 +15,17 @@ import LampGraph from "./LampGraph";
 import RankGraph from "./RankGraph";
 import config from "../../const";
 import AllDetail from "../../models/song.js";
-import Sidebar from "./Sidebar";
 import Filter from "../../models/filter";
+import {Table} from "../../models/table";
 
 export default {
   name: "Viewer",
-  components: {LampGraph, Detail, RankGraph, Sidebar},
+  components: {LampGraph, Detail, RankGraph},
   props: {
+    filter: {
+      type: Filter,
+      require: true,
+    },
     songs: {
       type: AllDetail,
       require: true,
@@ -35,22 +34,14 @@ export default {
       type: String,
       require: true,
     },
+    table: {
+      type: Table,
+      require: true,
+    }
   },
-  data: () => ({
-    filter_days: 0,
-    filter: new Filter(),
-    table: null,
-  }),
-
   methods: {
     config() {
       return config;
-    },
-    update_date(date) {
-      this.$emit("update_date", date);
-    },
-    set_table(table) {
-      this.table = table;
     },
   },
   computed: {
@@ -86,24 +77,4 @@ export default {
 }
 </script>
 
-<style>
-.sidebar-area {
-  /* 左側に固定 */
-  float: left;
-}
-
-.footer-area {
-  margin-top: 40px;
-}
-
-#page-wrap {
-  /* display: flex; 要素を横並びにする */
-  flex-direction: column; /* 要素の並び順の主軸を指定 上 => 下 */
-  min-height: 100vh; /* 要素の高さの最小値を指定 vhはviewport(表示領域) heightの略 */
-  min-width: 700px;
-  max-width: 700px;
-  padding-top: 10px;
-  margin-left: calc(max(0px, calc(100% - 1060px)) / 2 + 340px); /* サイドメニュー分だけ長くする */
-  margin-right: calc(max(0px, calc(100% - 1060px)) / 2 + 20px);
-}
-</style>
+<style scoped></style>
