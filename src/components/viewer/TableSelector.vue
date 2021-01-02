@@ -28,7 +28,7 @@ export default {
       this.show = !this.show;
     },
     async fetch_tables() {
-      const json = await Api.fetch_tables(this.$cookies.get("session-token"));
+      const json = await Api.fetch_tables(this.$store.getters.accessToken);
       this.tables = new Tables(json);
     }
   },

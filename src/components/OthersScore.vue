@@ -50,10 +50,12 @@ export default {
   }),
   methods: {
     async fetch_detail() {
-      if (!this.id || !this.date) {return;}
+      if (!this.id || !this.date) {
+        return;
+      }
       this.message = "読込中...";
       this.songs = null;
-      const songs = await Api.fetch_others_score(this.date, this.id, this.$cookies.get("session-token"));
+      const songs = await Api.fetch_others_score(this.date, this.id, this.$store.getters.accessToken);
       this.songs = songs ? songs : null;
       if (songs === null) {
         this.message = "読み込み失敗"
@@ -70,7 +72,7 @@ export default {
     date: {
       immediate: true,
       handler: function () {
-          this.fetch_detail()
+        this.fetch_detail()
       }
     },
     id: {

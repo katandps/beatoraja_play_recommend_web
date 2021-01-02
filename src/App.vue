@@ -18,12 +18,14 @@ export default {
   async mounted() {
     const now = this.is_login;
     if (this.$cookies.get("session-token")) {
-      this.is_login = true;
+      this.$store.commit("setAccessToken", this.$cookies.get("session-token"))
     }
+
+    this.is_login = !!this.$store.getters.accessToken;
 
     // login route
     if (now ^ this.is_login) {
-      let res = await Api.check_account(this.$cookies.get("session-token"));
+      let res = await Api.check_account(this.$store.getters.accessToken);
       this.$store.commit("setUserInfo", res);
     }
   },
@@ -31,7 +33,7 @@ export default {
     // ルート切り替え検出
     '$route': async function (to, from) {
       if (this.is_login && to.path !== from.path) {
-        if (!(await Api.check_account(this.$cookies.get("session-token"))).user_name) {
+        if (!(await Api.check_account(this.$store.getters.accessToken)).user_name) {
           await this.handleSignOut();
         }
       }
@@ -39,9 +41,8 @@ export default {
   },
   methods: {
     async handleSignOut() {
-      await Api.logout(this.$cookies.get("session-token"));
-      await this.$cookies.remove("session-token");
-      this.is_login = false;
+      await Api.logout(this.$store.getters.accessToken);
+      await this.$store.commit("setAccessToken", null);
       await this.$store.commit("setUserInfo", null);
       window.location.href = "/";
     }
