@@ -8,6 +8,7 @@
 <script>
 import PageHeader from "./components/PageHeader";
 import Api from "./api";
+import * as log from "loglevel"
 
 export default {
   name: "App",
@@ -16,26 +17,22 @@ export default {
     is_login: false,
   }),
   async mounted() {
-    const now = this.is_login;
     if (this.$cookies.get("session-token")) {
       this.$store.commit("setAccessToken", this.$cookies.get("session-token"))
     }
 
-    this.is_login = !!this.$store.getters.accessToken;
-
-    // login route
-    if (now ^ this.is_login) {
-      let res = await Api.check_account(this.$store.getters.accessToken);
-      this.$store.commit("setUserInfo", res);
-    }
+    const account = await Api.get_account(this.$store.getters.accessToken);
+    log.debug(account);
+    this.is_login = !account.error;
+    if (!account.error) this.$store.commit('setUserInfo', account);
   },
   watch: {
     // ルート切り替え検出
     '$route': async function (to, from) {
       if (this.is_login && to.path !== from.path) {
-        if (!(await Api.check_account(this.$store.getters.accessToken)).user_name) {
-          await this.handleSignOut();
-        }
+        const account = await Api.get_account(this.$store.getters.accessToken);
+        log.debug(account);
+        if (account.error) await this.handleSignOut();
       }
     }
   },
@@ -44,7 +41,10 @@ export default {
       await Api.logout(this.$store.getters.accessToken);
       await this.$store.commit("setAccessToken", null);
       await this.$store.commit("setUserInfo", null);
-      window.location.href = "/";
+      if (this.$router.currentRoute.path !== '/') {
+        await this.$router.push('/');
+      }
+      this.is_login = false;
     }
   },
 }

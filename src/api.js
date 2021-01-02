@@ -1,11 +1,12 @@
 import AllDetail from "./models/song";
+import * as log from "loglevel"
 
 export default class Api {
     constructor() {
         this.host = process.env.VUE_APP_HOST;
     }
 
-    static async check_account(token) {
+    static async get_account(token) {
         const obj = new Api();
         const uri = obj.host + "/account";
         const init = {headers: {'session-token': token}};
@@ -87,10 +88,10 @@ export default class Api {
 
     handler(response) {
         if (response.status === 401) {
-            console.log("Need Login");
+            log.debug("Need Login");
         }
         if (!response.ok) {
-            console.log(response.statusText);
+            log.debug(response);
         }
         return response;
     }
