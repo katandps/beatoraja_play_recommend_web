@@ -6,6 +6,8 @@
       <input v-model="name">
     </label>
     <button class="btn btn-success" @click="change_name">変更を反映</button>
+    <br />
+    {{ message }}
   </div>
 </template>
 
@@ -16,17 +18,19 @@ export default {
   name: "ProfileEdit",
   data: () => ({
     name: "",
+    message: "",
   }),
   mounted() {
     this.name = this.$store.getters.userInfo.user_name;
   },
   methods: {
     async change_name() {
-      if (this.name === "") {
+      if (this.name === "" || this.name === this.$store.getters.userInfo.user_name) {
         return;
       }
       let res = await Api.change_user_name(this.$cookies.get('session-token'), this.name);
       this.$store.commit("setUserInfo", res);
+      this.message = "" + this.name + "に更新しました。"
     }
   }
 }
