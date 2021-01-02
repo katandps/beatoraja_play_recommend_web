@@ -41,10 +41,10 @@ export default {
       await Api.logout(this.$store.getters.accessToken);
       await this.$store.commit("setAccessToken", null);
       await this.$store.commit("setUserInfo", null);
+      this.is_login = false;
       if (this.$router.currentRoute.path !== '/') {
         await this.$router.push('/');
       }
-      this.is_login = false;
     }
   },
 }

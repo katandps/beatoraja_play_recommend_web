@@ -1,8 +1,10 @@
 import config from '../const.js';
 
 export default class AllDetail {
-    constructor(tables) {
+    constructor(tables, name, user_id) {
         this.tables = [];
+        this.name = name;
+        this.user_id = user_id;
         tables.forEach(t => this.tables.push(new TableDetail(t.table, t.levels)));
     }
 

@@ -11,7 +11,7 @@ export default class Api {
         const uri = obj.host + "/account";
         const init = {headers: {'session-token': token}};
         return await (await fetch(uri, init).then(obj.handler)).json();
-    }
+    }z
 
     static async fetch_my_score(date, token) {
         const obj = new Api();
@@ -19,10 +19,11 @@ export default class Api {
         const init = {headers: {'session-token': token}};
         try {
             const json = await (await fetch(url, init).then(obj.handler)).json();
-            if (!Array.isArray(json)) {
+            log.debug(json);
+            if (json.error) {
                 return null;
             }
-            return new AllDetail(json);
+            return new AllDetail(json.score, json.user_name, json.user_id);
         } catch (e) {
             console.log(e);
             return null;
@@ -35,10 +36,11 @@ export default class Api {
         const init = {headers: {'session-token': token}};
         try {
             const json = await (await fetch(url, init).then(obj.handler)).json();
-            if (!Array.isArray(json)) {
+            log.debug(json);
+            if (json.error) {
                 return null;
             }
-            return new AllDetail(json);
+            return new AllDetail(json.score, json.user_name, json.user_id);
         } catch (e) {
             console.log(e);
             return null;

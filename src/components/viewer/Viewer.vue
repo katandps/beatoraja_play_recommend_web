@@ -1,7 +1,6 @@
 <template>
   <div id="viewer">
     <div v-if="table">
-      <h2>{{ title }}</h2>
       <LampGraph :table="table" :lamps="current_lamps" v-if="!!songs"/>
       <RankGraph :table="table" :ranks="current_ranks" v-if="!!songs"/>
       <Detail :table="table" :songs="current_songs" :filter="filter" v-if="!!songs"/>
@@ -28,10 +27,6 @@ export default {
     },
     songs: {
       type: AllDetail,
-      require: true,
-    },
-    title: {
-      type: String,
       require: true,
     },
     table: {

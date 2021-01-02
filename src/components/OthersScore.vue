@@ -11,12 +11,14 @@
         <input v-model="user_id">
       </label>
       <router-link class="btn btn-success" :to="'/view/?user_id=' + user_id">ユーザー変更</router-link>
+      <div v-if="!!songs">
+        <h2>{{songs.name}}のデータ</h2>
+      </div>
       <Viewer
           v-if="!!songs"
           :songs="songs"
           :filter="filter"
           :table="table"
-          title="他人のスコア"
           @fetch_detail="fetch_detail"
           @update_date="update_date"
       />
@@ -46,7 +48,8 @@ export default {
     date: "",
     filter: new Filter(),
     table: null,
-    message: ""
+    message: "",
+    user_name: ""
   }),
   methods: {
     async fetch_detail() {

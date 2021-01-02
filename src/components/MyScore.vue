@@ -5,18 +5,22 @@
         @setDate="update_date"
         :filter="filter"
     />
-    <Viewer
-        v-if="!!songs"
-        :songs="songs"
-        :filter="filter"
-        :table="table"
-        title="マイスコア"
-        id="page-wrap"
-        class="main"
-        @fetch_detail="fetch_detail"
-        @update_date="update_date"
-    />
-    <p v-else>{{message}}</p>
+    <div id="page-wrap">
+      <div v-if="!!songs">
+        <h2 style="display:inline">マイスコア</h2>
+        <a :href="link" target="_blank"><img src="twitter.png" alt="Twitterで共有" width="40" height="40"></a>
+      </div>
+      <Viewer
+          v-if="!!songs"
+          :songs="songs"
+          :filter="filter"
+          :table="table"
+          class="main"
+          @fetch_detail="fetch_detail"
+          @update_date="update_date"
+      />
+      <p v-else>{{ message }}</p>
+    </div>
   </div>
 </template>
 
@@ -52,6 +56,15 @@ export default {
       this.table = table;
     }
   },
+  computed: {
+    link() {
+      if (!this.songs) {
+        return "";
+      }
+      return "https://twitter.com/intent/tweet?url="
+          + window.location.host + "/%23/view?user_id=" + this.songs.user_id;
+    },
+  },
   watch: {
     date: {
       immediate: true,
@@ -64,10 +77,6 @@ export default {
 </script>
 
 <style scoped>
-.main {
-  padding-top: 20px;
-}
-
 #page-wrap {
   flex-direction: column; /* 要素の並び順の主軸を指定 上 => 下 */
   min-height: 100vh; /* 要素の高さの最小値を指定 vhはviewport(表示領域) heightの略 */

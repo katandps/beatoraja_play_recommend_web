@@ -30,32 +30,18 @@ const router = new Router({
             path: '/upload',
             name: 'Upload',
             component: DataUploader,
-            meta: {requiresAuth: true}
         },
         {
             path: '/my_score',
             name: 'MyScore',
             component: MyScore,
-            meta: {requiresAuth: true}
         },
         {
             path: '/profile',
             name: 'ProfileEdit',
             component: ProfileEdit,
-            meta: {requiresAuth: true}
         }
     ]
-})
-
-router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (Vue.$cookies.get("session-token")) {
-            next()
-        } else {
-            next({path: '/', query: {redirect: to.fullPath}})
-        }
-    }
-    next()
 })
 
 export default router
