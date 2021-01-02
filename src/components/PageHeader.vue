@@ -57,7 +57,7 @@ export default {
       return "https://accounts.google.com/o/oauth2/auth?" +
           "include_granted_scopes=true" +
           "&redirect_uri=" + redirect_url +
-          "&scope=openid" +
+          "&scope=openid%20email%20profile" +
           "&response_type=code" +
           "&approval_prompt=force" +
           "&access_type=offline" +
