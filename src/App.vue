@@ -43,7 +43,7 @@ export default {
       this.$cookies.remove("session-token");
       this.is_login = false;
       this.$store.commit("setUserInfo", null);
-      window.location.href("/")
+      window.location.href = "/";
     }
   },
 }
