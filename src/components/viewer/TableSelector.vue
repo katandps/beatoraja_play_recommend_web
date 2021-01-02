@@ -36,7 +36,7 @@ export default {
     this.fetch_tables();
   },
   watch: {
-    tables: {
+    'tables.selected_table': {
       immediate: true,
       handler: function () {
         this.$emit('setTable', this.tables.get_table());
