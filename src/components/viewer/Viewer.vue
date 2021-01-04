@@ -1,6 +1,6 @@
 <template>
   <div id="viewer">
-    <div v-if="table">
+    <div>
       <LampGraph :table="table" :lamps="current_lamps" v-if="!!songs"/>
       <RankGraph :table="table" :ranks="current_ranks" v-if="!!songs"/>
       <Detail :table="table" :songs="current_songs" :filter="filter" v-if="!!songs"/>
@@ -15,7 +15,7 @@ import RankGraph from "./RankGraph";
 import config from "../../const";
 import AllDetail from "../../models/song.js";
 import Filter from "../../models/filter";
-import {Table} from "../../models/table";
+import Model from "../../models/model";
 
 export default {
   name: "Viewer",
@@ -29,8 +29,8 @@ export default {
       type: AllDetail,
       require: true,
     },
-    table: {
-      type: Table,
+    model: {
+      type: Model,
       require: true,
     }
   },
@@ -40,10 +40,10 @@ export default {
     },
   },
   computed: {
+    table() {
+      return this.model.selected_table
+    },
     current_songs() {
-      if (this.table === null) {
-        return [];
-      }
       return this.filter.run(this.songs, this.table);
     },
     current_ranks() {

@@ -1,6 +1,6 @@
 <template>
   <div class="sidebar">
-    <TableSelector @setTable="set_table" class="header-item"/>
+    <TableSelector :model="model" @setTable="set_table" class="header-item"/>
     <DateSelector @getDate="update_date" class="header-item"/>
     <FilterPreset :filter="filter" class="header-item"/>
     <SongFilter :filter="filter" class="header-item"/>
@@ -15,17 +15,25 @@ import SongFilter from "./SongFilter";
 import DetailColumns from "./DetailColumns";
 import FilterPreset from "./FilterPreset";
 import Filter from "../../models/filter.js"
+import Model from "../../models/model";
 
 export default {
   name: "Sidebar",
   components: {DateSelector, DetailColumns, TableSelector, SongFilter, FilterPreset},
   props: {
+    model: {
+      type: Model,
+      required: true,
+    },
     filter: {
       type: Filter,
       required: true,
     }
   },
   methods: {
+    /**
+     * @param {string} table
+     */
     set_table(table) {
       this.$emit('setTable', table);
     },

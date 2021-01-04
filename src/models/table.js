@@ -1,25 +1,47 @@
+import Api from "../api";
+
 export default class Tables {
-    constructor(tables) {
+    constructor(json) {
         this.tables = [];
-        tables.forEach(t => this.tables.push(new Table(t.name, t.levels)))
-        this.selected_table = this.tables.length > 0 ? this.tables[0].name : "";
+        json.forEach(t => this.tables.push(new Table(t.name, t.levels)))
     }
 
-    list() {
-        return this.tables;
+    /**
+     * @param token
+     * @returns {Tables}
+     */
+    static async init(token) {
+        return new Tables(await Api.fetch_tables(token))
     }
 
-    table_index() {
+    /**
+     * @public
+     * @returns {string[]}
+     */
+    name_list() {
+        return this.tables.map(t => t.name)
+    }
+
+    /**
+     * @private
+     * @param table_name
+     * @returns {number}
+     */
+    table_index(table_name) {
         for (let i = 0; i < this.tables.length; i++) {
-            if (this.tables[i].name === this.selected_table) {
+            if (this.tables[i].name === table_name) {
                 return i;
             }
         }
-        return -1;
+        return 0;
     }
 
-    get_table() {
-        return this.tables[this.table_index()] || null;
+    /**
+     * @param table_name
+     * @returns {Table|null}
+     */
+    get_table(table_name) {
+        return this.tables[this.table_index(table_name)] || null;
     }
 }
 

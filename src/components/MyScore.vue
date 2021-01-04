@@ -1,8 +1,9 @@
 <template>
-  <div id="my_score">
+  <div id="my_score" v-if="model">
     <Sidebar
         @setTable="set_table"
         @setDate="update_date"
+        :model="model"
         :filter="filter"
     />
     <div id="page-wrap">
@@ -14,7 +15,7 @@
           v-if="!!songs"
           :songs="songs"
           :filter="filter"
-          :table="table"
+          :model="model"
           class="main"
           @fetch_detail="fetch_detail"
           @update_date="update_date"
@@ -29,17 +30,21 @@ import Viewer from "./viewer/Viewer";
 import Api from "../api.js"
 import Sidebar from "./viewer/Sidebar";
 import Filter from "../models/filter";
+import Model from "../models/model";
 
 export default {
   name: "MyScore",
   components: {Viewer, Sidebar},
   data: () => ({
+    model: null,
     songs: null,
     date: "",
-    table: null,
     filter: new Filter(),
     message: ""
   }),
+  async mounted() {
+    this.model = await Model.init(this.$store.getters.accessToken)
+  },
   methods: {
     async fetch_detail() {
       if (!this.date) {
@@ -53,8 +58,8 @@ export default {
       this.date = date;
     },
     set_table(table) {
-      this.table = table;
-    }
+      this.model.set_table(table)
+    },
   },
   computed: {
     link() {

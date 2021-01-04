@@ -1,8 +1,9 @@
 <template>
-  <div id="others_score">
+  <div id="others_score" v-if="model">
     <Sidebar
         @setTable="set_table"
         @setDate="update_date"
+        :model="model"
         :filter="filter"
     />
     <div class="main" id="page-wrap">
@@ -18,7 +19,7 @@
           v-if="!!songs"
           :songs="songs"
           :filter="filter"
-          :table="table"
+          :model="model"
           @fetch_detail="fetch_detail"
           @update_date="update_date"
       />
@@ -32,6 +33,7 @@ import Viewer from "./viewer/Viewer";
 import Api from "../api";
 import Filter from "../models/filter";
 import Sidebar from "./viewer/Sidebar";
+import Model from "../models/model";
 
 export default {
   name: "OthersScore",
@@ -47,10 +49,14 @@ export default {
     user_id: null,
     date: "",
     filter: new Filter(),
+    model: null,
     table: null,
     message: "",
     user_name: ""
   }),
+  async mounted() {
+    this.model = await Model.init(this.$store.getters.accessToken)
+  },
   methods: {
     async fetch_detail() {
       if (!this.id || !this.date) {
@@ -67,9 +73,12 @@ export default {
     update_date(date) {
       this.date = date;
     },
+    /**
+     * @param {string} table
+     */
     set_table(table) {
-      this.table = table;
-    }
+      this.model.set_table(table)
+    },
   },
   watch: {
     date: {
