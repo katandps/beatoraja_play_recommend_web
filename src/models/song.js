@@ -36,6 +36,12 @@ export default class AllDetail {
         return await Api.fetch_others_score(date_str, user_id, token);
     }
 
+    /**
+     * @deprecated
+     * @param table
+     * @param filter
+     * @returns {SongDetail[]|*}
+     */
     filtered(table, filter) {
         return this.tables.find(t => t.name === table.name).filtered(filter);
     }
@@ -63,6 +69,11 @@ class TableDetail {
         levels.forEach(s => this.levels.push(new LevelDetail(s.level, s.songs)));
     }
 
+    /**
+     * @deprecated
+     * @param filter
+     * @returns {Object[]}
+     */
     filtered(filter) {
         return this.levels.map(level_detail => new Object({
             level: level_detail.name,
@@ -74,15 +85,16 @@ class TableDetail {
     /**
      * @param {boolean} visible_all_levels
      * @param {string} selected_level
+     * @param {Filter} filter
      * @returns {SongDetail[]}
      */
-    get_active(visible_all_levels, selected_level) {
+    get_active(visible_all_levels, selected_level, filter) {
         if (visible_all_levels) {
-            return this.levels.map(level_detail => level_detail.songs).flat();
+            return this.levels.map(level_detail => level_detail.filtered(filter)).flat();
         } else {
             return this.levels
                 .filter(level_detail => level_detail.name === selected_level)
-                .map(level_detail => level_detail.songs)
+                .map(level_detail => level_detail.filtered(filter))
                 .flat()
         }
     }
@@ -102,7 +114,7 @@ class LevelDetail {
     }
 
     /**
-     * @param filter
+     * @param {Filter} filter
      * @returns {SongDetail[]}
      */
     filtered(filter) {

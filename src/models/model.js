@@ -99,34 +99,30 @@ export default class Model {
     }
 
     /**
-     * @private
-     * @param {string} selected_level
-     * @returns {SongDetail[]}
-     */
-    get_active_songs(selected_level) {
-        return this.songs
-            .table_specified(this.get_selected_table())
-            .get_active(this.filter.visible_all_levels, selected_level)
-    }
-
-    /**
      * @public
      * @param {string} selected_level
      * @returns {SongDetail[]}
      */
     get_sorted_song_list(selected_level) {
-        let songs = this.get_active_songs(selected_level);
-        if (!songs) {
+        if (!this.songs) {
             return [SongDetail.dummy()]
         }
+        let songs = this.songs
+            .table_specified(this.get_selected_table())
+            .get_active(this.filter.visible_all_levels, selected_level, this.filter);
+
         return songs.sort(function (a, b) {
             let valA = a.sort_key(this.filter.sort_key, this.get_selected_table().levels);
             let valB = b.sort_key(this.filter.sort_key, this.get_selected_table().levels);
             return valA === valB ? 0 : ((valA < valB) ^ this.filter.sort_desc) ? -1 : 1;
-        }.bind(this))
+        }
+            .bind(this))
             .slice(0, parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length)
     }
 
+    /**
+     * @returns {({name: string, title: string, class: string, key: string})[]}
+     */
     get_active_columns() {
         return config.DETAIL_COLUMNS.filter(obj => this.filter.columns[obj.key])
     }
