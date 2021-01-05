@@ -1,12 +1,15 @@
 <template>
   <div id="DetailColumns">
-    <h6 class="sidebar-title" @click="filter_visible">表示カラム{{ show ? "▼" : "▶" }}</h6>
+    <h6 class="sidebar-title" @click="filter_visible">
+      表示カラム{{ show ? "▼" : "▶" }}
+    </h6>
     <transition>
       <div v-show="show" class="sidebar-body">
-        <div v-for="column in config().DETAIL_COLUMNS" :key="column">
+        <div v-for="obj in config().DETAIL_COLUMNS" :key="obj.key">
           <label>
-            <input type="checkbox" :id="column" v-model="model.filter.columns[column]">
-            {{ config().DETAIL_COLUMN_NAME[column] }}
+            <input type="checkbox" :id="obj.key"
+                   v-model="model.filter.columns[obj.key]">
+            {{ obj.name }}
           </label>
         </div>
       </div>

@@ -3,51 +3,62 @@
     <h2 @click="visible">Detail{{ show ? "▼" : "▶" }}</h2>
 
     <transition>
-      <div style="width:100%" v-show="show">
-
+      <div class="wrap" v-show="show">
         <div id="level-select">
           <h3>難易度選択</h3>
           <label class="col-2">
             <select class="form-control" name="level" v-model="selected_level">
-              <option v-for="(level,key) in model.get_selected_table().levels" :key="key">{{ level }}</option>
+              <option v-for="(level,key) in model.get_selected_table().levels"
+                      :key="key">{{ level }}
+              </option>
             </select>
           </label>
           <label for="all_list" class="col-2">
-            <input type="checkbox" id="all_list" v-model="model.filter.visible_all_levels">
+            <input type="checkbox" id="all_list"
+                   v-model="model.filter.visible_all_levels">
             全曲表示
           </label>
           <label for="max_length">
             表示曲数:
-            <input id="max_length" v-model="model.filter.max_length" class="col-3">
+            <input id="max_length" v-model="model.filter.max_length"
+                   class="col-3">
             曲
           </label>
         </div>
 
-        <table class="table detail">
-          <thead>
-          <td v-for="type in model.get_active_columns()"
-              @click="model.filter.set_sort(type)"
-              :class="title_class(type)"
-              :key="type">
-            {{ config().DETAIL_TITLE_MAP[type] }}
-          </td>
-          </thead>
-          <tr v-for="song in model.get_sorted_song_list(selected_level)" :key="song.sha256"
-              :class="clear_type_class(song)">
-            <td v-for="type in model.get_active_columns()"
-                :class="row_class(type, song)"
-                :key="type">
-              {{ song.get(type) }}
-            </td>
-          </tr>
-        </table>
+        <div class="table detail">
+          <div class="colgroup">
+            <div class="col" v-for="obj in model.get_active_columns()"
+                 :class="obj.class" :key="obj.key"/>
+          </div>
+          <div class="thead">
+            <div class="tr">
+              <div class="td" v-for="obj in model.get_active_columns()"
+                   @click="model.filter.set_sort(obj.key)"
+                   :class="header_class(obj)"
+                   :key="obj.key">
+                {{ obj.title }}
+              </div>
+            </div>
+          </div>
+          <transition-group tag="div" class="tbody" name="flip-list">
+            <div v-for="song in model.get_sorted_song_list(selected_level)"
+                 :key="song.sha256"
+                 :class="clear_type_class(song)" class="tr">
+              <div class="td" v-for="obj in model.get_active_columns()"
+                   :class="row_class(obj, song)"
+                   :key="obj.key">
+                {{ song.get(obj.key) }}
+              </div>
+            </div>
+          </transition-group>
+        </div>
       </div>
     </transition>
   </div>
 </template>
 
 <script>
-import config from '../../const.js';
 import Model from "../../models/model";
 
 export default {
@@ -63,22 +74,16 @@ export default {
     show: true,
   }),
   methods: {
-    config() {
-      return config;
-    },
-    title_class(type) {
-      let ret = '';
-      if (this.model.filter.sort_key === type) {
-        ret += 'sort_active'
-      }
-      if (type === 'title' || type === 'date') {
-        ret += ' ' + type;
+    header_class(obj) {
+      let ret = obj.class;
+      if (this.model.sort_key_is(obj.key)) {
+        ret += ' sort_active'
       }
       return ret;
     },
-    row_class(type, song) {
-      let ret = type;
-      switch (type) {
+    row_class(obj, song) {
+      let ret = obj.class;
+      switch (obj.key) {
         case 'clear':
           ret += ' table-' + song.clear_type;
           break;
@@ -119,8 +124,8 @@ export default {
 </script>
 
 <style scoped>
-.detail table {
-  table-layout: fixed;
+.wrap {
+  width: 100%;
 }
 
 .sort_active {
@@ -136,18 +141,68 @@ export default {
 }
 
 .clear, .clear_before {
-  width: 30px;
+  max-width: 12px;
+  min-width: 12px;
+}
+
+.date, .clear_date, .bp_date, .score_date {
+  max-width: 80px;
+  min-width: 80px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.date, .clear_date, .bp_date, .score_date {
-  width: 80px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.bp .combo .play {
+  max-width: 60px;
+  min-width: 60px;
+}
+
+.level {
+  min-width: 60px;
+}
+
+.rate {
+  min-width: 60px;
+  max-width: 60px;
 }
 
 .column {
   display: inline
+}
+
+.table {
+  display: table;
+  table-layout: auto;
+  overflow: scroll;
+}
+
+.colgroup {
+  display: table-column-group;
+}
+
+.col {
+  display: table-column;
+}
+
+.thead {
+  display: table-header-group;
+}
+
+.tbody {
+  display: table-row-group;
+}
+
+.tr {
+  display: table-row;
+}
+
+.td {
+  display: table-cell;
+  padding: .4rem;
+  font-size: .9rem;
+}
+
+.flip-list-move {
+  transition: transform 800ms;
 }
 </style>

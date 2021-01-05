@@ -24,12 +24,27 @@ $theme-colors: (
 );
 
 @each $value, $color in $theme-colors {
-  @include table-row-variant($value, $color);
-  @include bg-variant('.bg-#{$value}', $color);
+  // @include table-row-variant($value, $color);
+
+  .table-#{$value} {
+    &,
+    > div {
+      background-color: $color;
+    }
+  }
+
+  #{'.bg-#{$value}'} {
+    background-color: $color !important;
+  }
+  a#{'.bg-#{$value}'},
+  button#{'.bg-#{$value}'} {
+    @include hover-focus() {
+      background-color: darken($color, 10%) !important;
+    }
+  }
   .table-line-#{$value} {
     &,
-    > th,
-    > td {
+    div {
       border-bottom: 2px solid $color;
     }
   }

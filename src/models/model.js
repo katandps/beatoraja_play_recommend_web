@@ -99,6 +99,7 @@ export default class Model {
     }
 
     /**
+     * @private
      * @param {string} selected_level
      * @returns {SongDetail[]}
      */
@@ -127,14 +128,14 @@ export default class Model {
     }
 
     get_active_columns() {
-        return config.DETAIL_COLUMNS.filter(c => this.filter.columns[c])
+        return config.DETAIL_COLUMNS.filter(obj => this.filter.columns[obj.key])
     }
 
     /**
      * @public
      * @returns {boolean}
      */
-    tables_is_set(){
+    tables_is_set() {
         return !!this.tables
     }
 
@@ -142,7 +143,7 @@ export default class Model {
      * @public 選択状態の難易度表ががある
      * @returns {boolean}
      */
-    table_is_set(){
+    table_is_set() {
         return !!this.selected_table
     }
 
@@ -207,5 +208,13 @@ export default class Model {
     get_twitter_link() {
         return "https://twitter.com/intent/tweet?url="
             + window.location.host + "/%23/view?user_id=" + this.songs.user_id;
+    }
+
+    /**
+     * @param {string} key
+     * @return {boolean}
+     */
+    sort_key_is(key) {
+        return this.filter.sort_key === key
     }
 }
