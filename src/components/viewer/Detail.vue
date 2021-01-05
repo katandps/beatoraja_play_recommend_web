@@ -9,30 +9,33 @@
           <h3>難易度選択</h3>
           <label class="col-2">
             <select class="form-control" name="level" v-model="selected_level">
-              <option v-for="(level,key) in table.levels" :key="key">{{ level }}</option>
+              <option v-for="(level,key) in model.get_selected_table().levels" :key="key">{{ level }}</option>
             </select>
           </label>
           <label for="all_list" class="col-2">
-            <input type="checkbox" id="all_list" v-model="filter.visible_all_levels">
+            <input type="checkbox" id="all_list" v-model="model.filter.visible_all_levels">
             全曲表示
           </label>
           <label for="max_length">
             表示曲数:
-            <input id="max_length" v-model="filter.max_length" class="col-3">
+            <input id="max_length" v-model="model.filter.max_length" class="col-3">
             曲
           </label>
         </div>
 
         <table class="table detail">
           <thead>
-          <td v-for="type in config().DETAIL_COLUMNS.filter(c => filter.columns[c])" @click="filter.set_sort(type)"
+          <td v-for="type in model.get_active_columns()"
+              @click="model.filter.set_sort(type)"
               :class="title_class(type)"
               :key="type">
             {{ config().DETAIL_TITLE_MAP[type] }}
           </td>
           </thead>
-          <tr v-for="(song, index) in sorted" :key="song.title + index" :class="clear_type_class(song)">
-            <td v-for="type in config().DETAIL_COLUMNS.filter(c => filter.columns[c])" :class="row_class(type, song)"
+          <tr v-for="song in model.get_sorted_song_list(selected_level)" :key="song.sha256"
+              :class="clear_type_class(song)">
+            <td v-for="type in model.get_active_columns()"
+                :class="row_class(type, song)"
                 :key="type">
               {{ song.get(type) }}
             </td>
@@ -45,22 +48,14 @@
 
 <script>
 import config from '../../const.js';
-import Filter from "../../models/filter";
+import Model from "../../models/model";
 
 export default {
   name: "Detail",
   props: {
-    table: {
-      type: Object,
-      required: true
-    },
-    songs: {
-      type: Array,
-      required: true
-    },
-    filter: {
-      type: Filter,
-      required: true,
+    model: {
+      type: Model,
+      require: true,
     }
   },
   data: () => ({
@@ -73,7 +68,7 @@ export default {
     },
     title_class(type) {
       let ret = '';
-      if (this.filter.sort_key === type) {
+      if (this.model.filter.sort_key === type) {
         ret += 'sort_active'
       }
       if (type === 'title' || type === 'date') {
@@ -96,46 +91,29 @@ export default {
       }
       return ret;
     },
-    level_index() {
-      for (let i = 0; i < this.table.levels.length; i++) {
-        if (this.table.levels[i] === this.selected_level) {
-          return i;
-        }
-      }
-      this.selected_level = this.table.levels[0];
-      return 0;
-    },
     visible() {
       this.show = !this.show;
     },
     clear_type_class(song) {
       return "table-line-" + song.clear_type;
     },
-  },
-  created: function () {
-    this.selected_level = this.table.levels[0];
-  },
-  computed: {
-    active: function () {
-      if (this.filter.visible_all_levels) {
-        return this.songs.map(songs_by_level => songs_by_level.songs).flat();
-      } else {
-        return this.songs[this.level_index()].songs;
+    set_default_selected_level() {
+      const table = this.model.get_selected_table()
+      if (!table.contains_level(this.selected_level)) {
+        this.selected_level = table.levels[0]
       }
-    },
-    sorted: function () {
-      let songs = this.active;
-      if (!songs) {
-        return this.config().SONG_FORMAT[0][0].songs;
-      }
-      return songs.sort(function (a, b) {
-        let valA = a.sort_key(this.filter.sort_key, this.table.levels);
-        let valB = b.sort_key(this.filter.sort_key, this.table.levels);
-        return valA === valB ? 0 : ((valA < valB) ^ this.filter.sort_desc) ? -1 : 1;
-      }.bind(this)).slice(0, parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length)
     }
   },
-
+  mounted() {
+    this.set_default_selected_level()
+  },
+  watch: {
+    'model.selected_table': {
+      handler() {
+        this.set_default_selected_level()
+      }
+    }
+  }
 }
 
 </script>

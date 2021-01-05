@@ -2,9 +2,9 @@
   <div class="sidebar">
     <TableSelector :model="model" @setTable="set_table" class="header-item" v-if="model.tables_is_set ()"/>
     <DateSelector @setDate="set_date" class="header-item"/>
-    <FilterPreset :filter="filter" class="header-item"/>
-    <SongFilter :filter="filter" class="header-item"/>
-    <DetailColumns :filter="filter" class="header-item"/>
+    <FilterPreset :model="model" class="header-item"/>
+    <SongFilter :model="model" class="header-item"/>
+    <DetailColumns :model="model" class="header-item"/>
   </div>
 </template>
 
@@ -14,7 +14,6 @@ import DateSelector from "./DateSelector";
 import SongFilter from "./SongFilter";
 import DetailColumns from "./DetailColumns";
 import FilterPreset from "./FilterPreset";
-import Filter from "../../models/filter.js"
 import Model from "../../models/model";
 
 export default {
@@ -25,10 +24,6 @@ export default {
       type: Model,
       required: true,
     },
-    filter: {
-      type: Filter,
-      required: true,
-    }
   },
   methods: {
     /**

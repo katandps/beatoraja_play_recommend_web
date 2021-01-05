@@ -158,7 +158,7 @@ export default {
 }
 
 .menu {
-  background-color: rgba(197, 197, 197, 0.80);
+  background-color: rgba(180, 210, 255, 0.90);
   z-index: 30;
   padding: 2rem 1rem;
   position: fixed;

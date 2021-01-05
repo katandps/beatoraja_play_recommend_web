@@ -5,7 +5,7 @@
       <div v-show="show" class="sidebar-body">
         <div v-for="column in config().DETAIL_COLUMNS" :key="column">
           <label>
-            <input type="checkbox" :id="column" v-model="filter.columns[column]">
+            <input type="checkbox" :id="column" v-model="model.filter.columns[column]">
             {{ config().DETAIL_COLUMN_NAME[column] }}
           </label>
         </div>
@@ -16,13 +16,13 @@
 
 <script>
 import config from '../../const.js';
-import Filter from "../../models/filter";
+import Model from "../../models/model";
 
 export default {
   name: "DetailColumns",
   props: {
-    filter: {
-      type: Filter,
+    model: {
+      type: Model,
       required: true,
     }
   },

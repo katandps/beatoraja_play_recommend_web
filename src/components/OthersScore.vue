@@ -1,11 +1,6 @@
 <template>
   <div id="others_score">
-    <Sidebar
-        @setTable="set_table"
-        @setDate="set_date"
-        :model="model"
-        :filter="filter"
-    />
+    <Sidebar @setTable="set_table" @setDate="set_date" :model="model"/>
     <div class="main" id="page-wrap">
       ユーザーIDを入力
       <label>
@@ -16,10 +11,7 @@
       </router-link>
       <div v-if="model.song_is_set()">
         <h2>{{ model.user_name() }}のデータ</h2>
-        <Viewer
-            :filter="filter"
-            :model="model"
-        />
+        <Viewer :model="model"/>
       </div>
       <p v-else>{{ message }}</p>
     </div>
@@ -28,7 +20,6 @@
 
 <script>
 import Viewer from "./viewer/Viewer";
-import Filter from "../models/filter";
 import Sidebar from "./viewer/Sidebar";
 import Model from "../models/model";
 
@@ -42,7 +33,6 @@ export default {
   },
   data: () => ({
     input_user_id: null,
-    filter: new Filter(),
     model: Model.default(),
     message: "",
   }),

@@ -57,7 +57,21 @@ export default class Tables {
 
 export class Table {
     constructor(name, levels) {
+        /**
+         * @type string
+         */
         this.name = name;
+        /**
+         * @type string[]
+         */
         this.levels = levels;
+    }
+
+    /**
+     * @param {string} table_name
+     * @returns {boolean}
+     */
+    contains_level(table_name) {
+        return this.levels.indexOf(table_name) !== -1
     }
 }

@@ -3,7 +3,7 @@
     <div v-if="model.song_is_set()">
       <LampGraph :table="table" :lamps="current_lamps"/>
       <RankGraph :table="table" :ranks="current_ranks"/>
-      <Detail :table="table" :songs="current_songs" :filter="filter"/>
+      <Detail :model="model" v-if="model.table_is_set()"/>
     </div>
   </div>
 </template>
@@ -13,17 +13,12 @@ import Detail from "./Detail";
 import LampGraph from "./LampGraph";
 import RankGraph from "./RankGraph";
 import config from "../../const";
-import Filter from "../../models/filter";
 import Model from "../../models/model";
 
 export default {
   name: "Viewer",
   components: {LampGraph, Detail, RankGraph},
   props: {
-    filter: {
-      type: Filter,
-      require: true,
-    },
     model: {
       type: Model,
       require: true,
@@ -39,7 +34,7 @@ export default {
       return this.model.selected_table
     },
     current_songs() {
-      return this.filter.run(this.model.songs, this.table);
+      return this.model.filter.run(this.model.songs, this.table);
     },
     current_ranks() {
       return this.current_songs.map(songs_by_level => new Object(

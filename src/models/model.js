@@ -1,7 +1,9 @@
 import Filter from "./filter";
 import Tables from "./table";
-import AllDetail from "./song";
+import AllDetail from "./song"
 import {DateFormatter} from "./date_formatter";
+import SongDetail from "./song_detail"
+import config from "../const"
 
 export default class Model {
     /**
@@ -97,11 +99,51 @@ export default class Model {
     }
 
     /**
+     * @param {string} selected_level
+     * @returns {SongDetail[]}
+     */
+    get_active_songs(selected_level) {
+        return this.songs
+            .table_specified(this.get_selected_table())
+            .get_active(this.filter.visible_all_levels, selected_level)
+    }
+
+    /**
+     * @public
+     * @param {string} selected_level
+     * @returns {SongDetail[]}
+     */
+    get_sorted_song_list(selected_level) {
+        let songs = this.get_active_songs(selected_level);
+        if (!songs) {
+            return [SongDetail.dummy()]
+        }
+        return songs.sort(function (a, b) {
+            let valA = a.sort_key(this.filter.sort_key, this.get_selected_table().levels);
+            let valB = b.sort_key(this.filter.sort_key, this.get_selected_table().levels);
+            return valA === valB ? 0 : ((valA < valB) ^ this.filter.sort_desc) ? -1 : 1;
+        }.bind(this))
+            .slice(0, parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length)
+    }
+
+    get_active_columns() {
+        return config.DETAIL_COLUMNS.filter(c => this.filter.columns[c])
+    }
+
+    /**
      * @public
      * @returns {boolean}
      */
     tables_is_set(){
         return !!this.tables
+    }
+
+    /**
+     * @public 選択状態の難易度表ががある
+     * @returns {boolean}
+     */
+    table_is_set(){
+        return !!this.selected_table
     }
 
     /**
@@ -118,6 +160,14 @@ export default class Model {
      */
     get_table_names() {
         return this.tables ? this.tables.name_list() : []
+    }
+
+    /**
+     * @public
+     * @returns {Table}
+     */
+    get_selected_table() {
+        return this.selected_table
     }
 
     /**

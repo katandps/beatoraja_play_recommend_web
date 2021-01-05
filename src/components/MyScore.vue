@@ -1,11 +1,6 @@
 <template>
   <div id="my_score">
-    <Sidebar
-        @setTable="set_table"
-        @setDate="set_date"
-        :model="model"
-        :filter="filter"
-    />
+    <Sidebar @setTable="set_table" @setDate="set_date" :model="model"/>
     <div class="main" id="page-wrap">
       <div>
         <h2 style="display:inline">マイスコア</h2>
@@ -13,11 +8,7 @@
           <img src="../assets/twitter.png" alt="Twitterで共有" width="40" height="40">
         </a>
       </div>
-      <Viewer
-          v-if="model.song_is_set()"
-          :filter="filter"
-          :model="model"
-      />
+      <Viewer v-if="model.song_is_set()" :model="model"/>
       <p v-else>{{ message }}</p>
     </div>
   </div>
@@ -26,7 +17,6 @@
 <script>
 import Viewer from "./viewer/Viewer";
 import Sidebar from "./viewer/Sidebar";
-import Filter from "../models/filter";
 import Model from "../models/model";
 
 export default {
@@ -34,7 +24,6 @@ export default {
   components: {Viewer, Sidebar},
   data: () => ({
     model: Model.default(),
-    filter: new Filter(),
     message: ""
   }),
   async beforeMount() {
