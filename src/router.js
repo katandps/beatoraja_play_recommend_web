@@ -24,7 +24,7 @@ const router = new Router({
             path: '/view',
             name: 'OthersScore',
             component: OthersScore,
-            props: (route) => ({id: parseInt(route.query.user_id)})
+            props: (route) => ({user_id: parseInt(route.query.user_id)})
         },
         {
             path: '/upload',

@@ -1,11 +1,38 @@
 import config from '../const.js';
+import Api from "../api";
 
 export default class AllDetail {
+    /**
+     * @private
+     * @param {Object[]} tables
+     * @param {string} name
+     * @param {number} user_id
+     */
     constructor(tables, name, user_id) {
         this.tables = [];
-        this.name = name;
-        this.user_id = user_id;
         tables.forEach(t => this.tables.push(new TableDetail(t.table, t.levels)));
+        this.name = name
+        this.user_id = user_id
+    }
+
+    /**
+     * @public
+     * @param {string} date_str
+     * @param {string} token
+     * @returns {AllDetail}
+     */
+    static async init(date_str, token) {
+        return await Api.fetch_my_score(date_str, token);
+    }
+    /**
+     * @public
+     * @param {string} date_str
+     * @param {number} user_id
+     * @param {string} token
+     * @returns {AllDetail}
+     */
+    static async init_others(date_str, user_id, token) {
+        return await Api.fetch_others_score(date_str, user_id, token);
     }
 
     filtered(table, filter) {

@@ -1,4 +1,5 @@
 import config from '../const.js';
+import {DateFormatter} from "./date_formatter";
 
 export default class Filter {
     constructor() {
@@ -73,7 +74,7 @@ export default class Filter {
     valid_date(song_detail) {
         let date = new Date();
         date.setDate(date.getDate() - this.day_before);
-        return config.dateFormatter.format(date) >= song_detail.updated_at.split("T")[0];
+        return DateFormatter.format(date) >= song_detail.updated_at.split("T")[0];
     }
 
     for_random() {

@@ -1,24 +1,22 @@
 <template>
-  <div id="my_score" v-if="model">
+  <div id="my_score">
     <Sidebar
         @setTable="set_table"
-        @setDate="update_date"
+        @setDate="set_date"
         :model="model"
         :filter="filter"
     />
-    <div id="page-wrap">
-      <div v-if="!!songs">
+    <div class="main" id="page-wrap">
+      <div>
         <h2 style="display:inline">マイスコア</h2>
-        <a :href="link" target="_blank"><img src="twitter.png" alt="Twitterで共有" width="40" height="40"></a>
+        <a :href="model.get_twitter_link()" target="_blank" v-if="model.song_is_set()">
+          <img src="../assets/twitter.png" alt="Twitterで共有" width="40" height="40">
+        </a>
       </div>
       <Viewer
-          v-if="!!songs"
-          :songs="songs"
+          v-if="model.song_is_set()"
           :filter="filter"
           :model="model"
-          class="main"
-          @fetch_detail="fetch_detail"
-          @update_date="update_date"
       />
       <p v-else>{{ message }}</p>
     </div>
@@ -27,7 +25,6 @@
 
 <script>
 import Viewer from "./viewer/Viewer";
-import Api from "../api.js"
 import Sidebar from "./viewer/Sidebar";
 import Filter from "../models/filter";
 import Model from "../models/model";
@@ -36,45 +33,41 @@ export default {
   name: "MyScore",
   components: {Viewer, Sidebar},
   data: () => ({
-    model: null,
-    songs: null,
-    date: "",
+    model: Model.default(),
     filter: new Filter(),
     message: ""
   }),
-  async mounted() {
-    this.model = await Model.init(this.$store.getters.accessToken)
+  async beforeMount() {
+    this.model = await this.model.init_table(this.$store.getters.accessToken)
+    await this.fetch_detail()
   },
   methods: {
     async fetch_detail() {
-      if (!this.date) {
-        return;
-      }
       this.message = "読込中...";
-      this.songs = await Api.fetch_my_score(this.date, this.$store.getters.accessToken);
-      this.message = "";
+      this.model = await this.model.init_my_score(
+          this.$store.getters.accessToken,
+      )
+      this.message = this.model.song_is_set() ? "" : "読み込み失敗";
     },
-    update_date(date) {
-      this.date = date;
+    /**
+     * @public
+     * @param {Date} date
+     */
+    async set_date(date) {
+      this.model = this.model.set_date(date)
+      await this.fetch_detail()
     },
+    /**
+     * @param {string} table
+     */
     set_table(table) {
-      this.model.set_table(table)
-    },
-  },
-  computed: {
-    link() {
-      if (!this.songs) {
-        return "";
-      }
-      return "https://twitter.com/intent/tweet?url="
-          + window.location.host + "/%23/view?user_id=" + this.songs.user_id;
+      this.model = this.model.set_table(table)
     },
   },
   watch: {
     date: {
-      immediate: true,
-      handler: function () {
-        this.fetch_detail()
+      async handler() {
+        await this.fetch_detail()
       }
     }
   }

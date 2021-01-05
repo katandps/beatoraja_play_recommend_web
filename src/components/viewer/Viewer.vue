@@ -1,9 +1,9 @@
 <template>
   <div id="viewer">
-    <div>
-      <LampGraph :table="table" :lamps="current_lamps" v-if="!!songs"/>
-      <RankGraph :table="table" :ranks="current_ranks" v-if="!!songs"/>
-      <Detail :table="table" :songs="current_songs" :filter="filter" v-if="!!songs"/>
+    <div v-if="model.song_is_set()">
+      <LampGraph :table="table" :lamps="current_lamps"/>
+      <RankGraph :table="table" :ranks="current_ranks"/>
+      <Detail :table="table" :songs="current_songs" :filter="filter"/>
     </div>
   </div>
 </template>
@@ -13,7 +13,6 @@ import Detail from "./Detail";
 import LampGraph from "./LampGraph";
 import RankGraph from "./RankGraph";
 import config from "../../const";
-import AllDetail from "../../models/song.js";
 import Filter from "../../models/filter";
 import Model from "../../models/model";
 
@@ -23,10 +22,6 @@ export default {
   props: {
     filter: {
       type: Filter,
-      require: true,
-    },
-    songs: {
-      type: AllDetail,
       require: true,
     },
     model: {
@@ -44,7 +39,7 @@ export default {
       return this.model.selected_table
     },
     current_songs() {
-      return this.filter.run(this.songs, this.table);
+      return this.filter.run(this.model.songs, this.table);
     },
     current_ranks() {
       return this.current_songs.map(songs_by_level => new Object(

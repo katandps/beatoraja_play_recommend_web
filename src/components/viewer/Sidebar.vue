@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar">
-    <TableSelector :model="model" @setTable="set_table" class="header-item"/>
-    <DateSelector @getDate="update_date" class="header-item"/>
+    <TableSelector :model="model" @setTable="set_table" class="header-item" v-if="model.tables_is_set ()"/>
+    <DateSelector @setDate="set_date" class="header-item"/>
     <FilterPreset :filter="filter" class="header-item"/>
     <SongFilter :filter="filter" class="header-item"/>
     <DetailColumns :filter="filter" class="header-item"/>
@@ -37,7 +37,7 @@ export default {
     set_table(table) {
       this.$emit('setTable', table);
     },
-    update_date(date) {
+    set_date(date) {
       this.$emit('setDate', date);
     },
   }

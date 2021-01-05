@@ -6,44 +6,64 @@ export default class Api {
         this.host = process.env.VUE_APP_HOST;
     }
 
+    /**
+     * @public
+     * @param {string|null} token
+     * @returns {Promise<any>}
+     */
     static async get_account(token) {
+        if (token === null) {
+            return {'error': 'token is not set'}
+        }
         const obj = new Api();
         const uri = obj.host + "/account";
         const init = {headers: {'session-token': token}};
         return await (await fetch(uri, init).then(obj.handler)).json();
-    }z
+    }
 
+    /**
+     * @public
+     * @param {string} date
+     * @param {string|null} token
+     * @returns {Promise<null|AllDetail>}
+     */
     static async fetch_my_score(date, token) {
         const obj = new Api();
         const url = obj.host + "/my_detail/?date=" + date;
-        const init = {headers: {'session-token': token}};
-        try {
-            const json = await (await fetch(url, init).then(obj.handler)).json();
-            log.debug(json);
-            if (json.error) {
-                return null;
-            }
-            return new AllDetail(json.score, json.user_name, json.user_id);
-        } catch (e) {
-            console.log(e);
-            return null;
-        }
+        return obj.fetch_score(url, token)
     }
 
+    /**
+     * @param {string} date
+     * @param {number} user_id
+     * @param {string| null}token
+     * @returns {Promise<null|AllDetail>}
+     */
     static async fetch_others_score(date, user_id, token) {
-        const obj = new Api();
-        const url = obj.host + "/detail/?date=" + date + "&user_id=" + user_id;
-        const init = {headers: {'session-token': token}};
+        const obj = new Api()
+        const url = obj.host + "/detail/?date=" + date + "&user_id=" + user_id
+        return obj.fetch_score(url, token)
+    }
+
+    /**
+     * @private
+     * @param {string} url
+     * @param {string} token
+     * @returns {AllDetail}
+     */
+    async fetch_score(url, token) {
+        const init = {headers: {'session-token': token}}
         try {
-            const json = await (await fetch(url, init).then(obj.handler)).json();
-            log.debug(json);
+            const json = await (await fetch(url, init).then(this.handler)).json()
             if (json.error) {
-                return null;
+                log.debug(json)
+                return null
             }
-            return new AllDetail(json.score, json.user_name, json.user_id);
+            log.debug(json)
+            return new AllDetail(json.score, json.user_name, json.user_id)
         } catch (e) {
-            console.log(e);
-            return null;
+            log.error(e)
+            return null
         }
     }
 
@@ -88,7 +108,7 @@ export default class Api {
         return obj.host + "/upload/song_data";
     }
 
-    handler(response) {
+    async handler(response) {
         if (response.status === 401) {
             log.debug("Need Login");
         }

@@ -1,6 +1,10 @@
 import Api from "../api";
+import * as log from "loglevel"
 
 export default class Tables {
+    /**
+     * @param {Object[]} json
+     */
     constructor(json) {
         this.tables = [];
         json.forEach(t => this.tables.push(new Table(t.name, t.levels)))
@@ -11,7 +15,9 @@ export default class Tables {
      * @returns {Tables}
      */
     static async init(token) {
-        return new Tables(await Api.fetch_tables(token))
+        const json = await Api.fetch_tables(token)
+        log.debug(json)
+        return new Tables(json)
     }
 
     /**
@@ -20,6 +26,10 @@ export default class Tables {
      */
     name_list() {
         return this.tables.map(t => t.name)
+    }
+
+    first() {
+        return this.tables.length === 0 ? null : this.tables[0]
     }
 
     /**

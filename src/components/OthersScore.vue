@@ -1,28 +1,26 @@
 <template>
-  <div id="others_score" v-if="model">
+  <div id="others_score">
     <Sidebar
         @setTable="set_table"
-        @setDate="update_date"
+        @setDate="set_date"
         :model="model"
         :filter="filter"
     />
     <div class="main" id="page-wrap">
       ユーザーIDを入力
       <label>
-        <input v-model="user_id">
+        <input v-model="input_user_id">
       </label>
-      <router-link class="btn btn-success" :to="'/view/?user_id=' + user_id">ユーザー変更</router-link>
-      <div v-if="!!songs">
-        <h2>{{songs.name}}のデータ</h2>
+      <router-link class="btn btn-success" :to="'/view/?user_id=' + input_user_id">
+        ユーザー変更
+      </router-link>
+      <div v-if="model.song_is_set()">
+        <h2>{{ model.user_name() }}のデータ</h2>
+        <Viewer
+            :filter="filter"
+            :model="model"
+        />
       </div>
-      <Viewer
-          v-if="!!songs"
-          :songs="songs"
-          :filter="filter"
-          :model="model"
-          @fetch_detail="fetch_detail"
-          @update_date="update_date"
-      />
       <p v-else>{{ message }}</p>
     </div>
   </div>
@@ -30,7 +28,6 @@
 
 <script>
 import Viewer from "./viewer/Viewer";
-import Api from "../api";
 import Filter from "../models/filter";
 import Sidebar from "./viewer/Sidebar";
 import Model from "../models/model";
@@ -39,63 +36,64 @@ export default {
   name: "OthersScore",
   components: {Viewer, Sidebar},
   props: {
-    id: {
+    user_id: {
       type: Number,
-      default: 1,
     }
   },
   data: () => ({
-    songs: null,
-    user_id: null,
-    date: "",
+    input_user_id: null,
     filter: new Filter(),
-    model: null,
-    table: null,
+    model: Model.default(),
     message: "",
-    user_name: ""
   }),
-  async mounted() {
-    this.model = await Model.init(this.$store.getters.accessToken)
+  async beforeMount() {
+    this.input_user_id = this.user_id
+    this.model = await this.model.init_table(this.$store.getters.accessToken)
+    if (this.user_id) {
+      await this.fetch_detail()
+    }
   },
   methods: {
     async fetch_detail() {
-      if (!this.id || !this.date) {
+      if (!this.user_id) {
         return;
       }
       this.message = "読込中...";
-      this.songs = null;
-      const songs = await Api.fetch_others_score(this.date, this.id, this.$store.getters.accessToken);
-      this.songs = songs ? songs : null;
-      if (songs === null) {
-        this.message = "読み込み失敗"
-      }
+      this.model = await this.model.init_others_score(
+          this.$store.getters.accessToken,
+          this.user_id
+      )
+      this.message = this.model.song_is_set() ? "" : "読み込み失敗"
     },
-    update_date(date) {
-      this.date = date;
+    /**
+     * @public
+     * @param {Date} date
+     */
+    async set_date(date) {
+      this.model = this.model.set_date(date)
+      await this.fetch_detail()
     },
     /**
      * @param {string} table
      */
     set_table(table) {
-      this.model.set_table(table)
+      this.model = this.model.set_table(table)
     },
   },
   watch: {
     date: {
-      immediate: true,
-      handler: function () {
-        this.fetch_detail()
+      async handler() {
+        await this.fetch_detail()
       }
     },
-    id: {
-      immediate: true,
-      handler: function () {
-        if (this.id) {
-          this.fetch_detail();
-          this.user_id = "" + this.id;
+    user_id: {
+      async handler() {
+        if (this.user_id) {
+          this.input_user_id = this.user_id;
+          await this.fetch_detail()
         }
       }
-    }
+    },
   }
 }
 </script>

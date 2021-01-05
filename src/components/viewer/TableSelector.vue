@@ -31,7 +31,7 @@ export default {
     show: true,
   }),
   mounted() {
-    this.selected = this.model.selected_table.name
+    this.selected = this.model.get_selected_table_name()
   },
   methods: {
     selector_visible() {
@@ -40,7 +40,7 @@ export default {
   },
   watch: {
     selected: {
-      handler: function () {
+      handler() {
         this.$emit('setTable', this.selected);
       }
     },
