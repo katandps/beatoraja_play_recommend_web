@@ -98,6 +98,10 @@ export default class Model {
         return !!this.songs
     }
 
+    is_initialized() {
+        return this.tables_is_set() && this.song_is_set()
+    }
+
     /**
      * @public
      * @param {string} selected_level
@@ -173,6 +177,36 @@ export default class Model {
      */
     get_selected_table_name() {
         return this.selected_table ? this.selected_table.name : ""
+    }
+
+    /**
+     * @returns {Object[]}
+     */
+    get_current_lamps() {
+        return this.filter.run(this.songs, this.selected_table).map(songs_by_level => new Object(
+            [...config.LAMP_TYPE].reduce(
+                (ret, lamp) => ({
+                    ...ret,
+                    [lamp]: songs_by_level.songs.filter(s => s.clear_type === lamp).length
+                }),
+                {}
+            )
+        ))
+    }
+
+    /**
+     * @returns {Object[]}
+     */
+    get_current_ranks() {
+        return this.filter.run(this.songs, this.selected_table).map(songs_by_level => new Object(
+            [...config.RANK_TYPE].reduce(
+                (ret, rank) => ({
+                    ...ret,
+                    [rank]: songs_by_level.songs.filter(s => s.clear_rank === rank).length
+                }),
+                {}
+            )
+        ))
     }
 
     /**

@@ -3,8 +3,8 @@
     <h2 @click="visible">ClearLamp{{show ? "▼" : "▶"}}</h2>
     <transition>
       <table style="width:100%" v-show="show">
-        <tr v-for="(level, key) in lamps" :key="key" style="width:100%">
-          <td style="width:30px">{{ table.levels[key] }}</td>
+        <tr v-for="(level, key) in model.get_current_lamps()" :key="key" style="width:100%">
+          <td style="width:30px">{{ model.selected_table.levels[key] }}</td>
           <td class="progress" style="width:100%;height:1.8em">
             <div
                 v-for="clear_type in config().LAMP_TYPE" :key="clear_type"
@@ -23,16 +23,13 @@
 
 <script>
 import config from "../../const.js"
+import Model from "../../models/model";
 
 export default {
   name: "LampGraph",
   props: {
-    table: {
-      type: Object,
-      required: true,
-    },
-    lamps: {
-      type: Array,
+    model: {
+      type: Model,
       required: true,
     },
   },
