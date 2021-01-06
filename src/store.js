@@ -7,28 +7,35 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     plugins: [createPersistedState({
         key: 'vue-gauth',
-        paths: ['userInfo', 'accessToken'],
+        paths: ['userInfo', 'accessToken', 'filter'],
         storage: window.sessionStorage
     })],
     state: {
         userInfo: null,
         accessToken: null,
+        filter: null,
     },
     mutations: {
-        setUserInfo: function (state, userInfo) {
+        setUserInfo(state, userInfo) {
             state.userInfo = userInfo
         },
-        setAccessToken: function (state, token) {
+        setAccessToken(state, token) {
             state.accessToken = token
+        },
+        setFilter(state ,filter) {
+            state.filter = filter
         }
     },
     actions: {},
     getters: {
-        userInfo: state => {
+        userInfo(state) {
             return state.userInfo;
         },
-        accessToken: state => {
+        accessToken(state) {
             return state.accessToken;
+        },
+        filter(state) {
+            return state.filter
         }
     }
 })

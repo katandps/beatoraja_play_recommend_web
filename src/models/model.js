@@ -1,7 +1,7 @@
-import Filter from "./filter";
-import Tables from "./table";
+import Filter from "./filter"
+import Tables from "./table"
 import AllDetail from "./song"
-import {DateFormatter} from "./date_formatter";
+import {DateFormatter} from "./date_formatter"
 import SongDetail from "./song_detail"
 import config from "../const"
 
@@ -21,17 +21,17 @@ export default class Model {
          * @private
          * @type {Tables}
          */
-        this.tables = null;
+        this.tables = null
         /**
          * @private
          * @type {Table}
          */
-        this.selected_table = null;
+        this.selected_table = null
         /**
          * @private
          * @type {AllDetail}
          */
-        this.songs = null;
+        this.songs = null
         /**
          * @private
          * @type {Date}
@@ -61,9 +61,23 @@ export default class Model {
      * @returns {self}
      */
     async init_table(token) {
-        let model = this;
+        let model = this
         model.tables = await Tables.init(token)
         model.selected_table = model.tables ? model.tables.first() : null
+        return model
+    }
+
+    /**
+     * @public
+     * @param {Filter} filter
+     * @returns {Model}
+     */
+    init_filter(filter) {
+        if (filter === null) {
+            return this
+        }
+        let model = this
+        model.filter = filter
         return model
     }
 
@@ -73,7 +87,7 @@ export default class Model {
      * @returns {Tables}
      */
     async init_my_score(token) {
-        let model = this;
+        let model = this
         model.songs = await AllDetail.init(DateFormatter.format(Model.default_date()), token)
         return model
     }
@@ -85,7 +99,7 @@ export default class Model {
      * @returns {Tables}
      */
     async init_others_score(token, user_id) {
-        let model = this;
+        let model = this
         model.songs = await AllDetail.init_others(DateFormatter.format(this.date), user_id, token)
         return model
     }
@@ -113,12 +127,12 @@ export default class Model {
         }
         let songs = this.songs
             .table_specified(this.get_selected_table())
-            .get_active(this.filter.visible_all_levels, selected_level, this.filter);
+            .get_active(this.filter.visible_all_levels, selected_level, this.filter)
 
         return songs.sort(function (a, b) {
-            let valA = a.sort_key(this.filter.sort_key, this.get_selected_table().levels);
-            let valB = b.sort_key(this.filter.sort_key, this.get_selected_table().levels);
-            return valA === valB ? 0 : ((valA < valB) ^ this.filter.sort_desc) ? -1 : 1;
+            let valA = a.sort_key(this.filter.sort_key, this.get_selected_table().levels)
+            let valB = b.sort_key(this.filter.sort_key, this.get_selected_table().levels)
+            return valA === valB ? 0 : ((valA < valB) ^ this.filter.sort_desc) ? -1 : 1
         }
             .bind(this))
             .slice(0, parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length)
@@ -215,7 +229,7 @@ export default class Model {
      * @return Model
      */
     set_table(table_name) {
-        let model = this;
+        let model = this
         model.selected_table = this.tables ? this.tables.get_table(table_name) : null
         return model
     }
@@ -237,7 +251,7 @@ export default class Model {
      */
     get_twitter_link() {
         return "https://twitter.com/intent/tweet?url="
-            + window.location.host + "/%23/view?user_id=" + this.songs.user_id;
+            + window.location.host + "/%23/view?user_id=" + this.songs.user_id
     }
 
     /**

@@ -22,6 +22,7 @@
 import Viewer from "./viewer/Viewer";
 import Sidebar from "./viewer/Sidebar";
 import Model from "../models/model";
+import Filter from "../models/filter";
 
 export default {
   name: "OthersScore",
@@ -38,6 +39,7 @@ export default {
   }),
   async beforeMount() {
     this.input_user_id = this.user_id
+    this.model = this.model.init_filter(Object.assign(new Filter(), this.$store.getters.filter))
     this.model = await this.model.init_table(this.$store.getters.accessToken)
     if (this.user_id) {
       await this.fetch_detail()
@@ -84,6 +86,12 @@ export default {
         }
       }
     },
+    model: {
+      deep: true,
+      handler() {
+        this.$store.commit('setFilter', this.model.filter)
+      }
+    }
   }
 }
 </script>

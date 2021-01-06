@@ -18,6 +18,7 @@
 import Viewer from "./viewer/Viewer";
 import Sidebar from "./viewer/Sidebar";
 import Model from "../models/model";
+import Filter from "../models/filter";
 
 export default {
   name: "MyScore",
@@ -27,6 +28,7 @@ export default {
     message: ""
   }),
   async beforeMount() {
+    this.model = this.model.init_filter(Object.assign(new Filter(), this.$store.getters.filter))
     this.model = await this.model.init_table(this.$store.getters.accessToken)
     await this.fetch_detail()
   },
@@ -57,6 +59,12 @@ export default {
     date: {
       async handler() {
         await this.fetch_detail()
+      }
+    },
+    model: {
+      deep: true,
+      handler() {
+        this.$store.commit('setFilter', this.model.filter)
       }
     }
   }
