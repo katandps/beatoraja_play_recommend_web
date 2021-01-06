@@ -24,6 +24,7 @@ export default class SongDetail {
         this.total_notes = song.total_notes;
 
         this.sha256 = song.hash;
+        this.mode = 0; //todo モード対応
     }
 
     /**
@@ -88,7 +89,7 @@ export default class SongDetail {
             case 'random_select':
                 return Math.floor(Math.random() * Math.floor(100000000));
             default:
-                return;
+                return 0;
         }
     }
 
@@ -124,6 +125,10 @@ export default class SongDetail {
                 return this.play_count === -1 ? "---" : this.play_count;
             case 'date':
                 return this.updated_at.split("T")[0];
+            case 'minir':
+                return '<a href="https://www.gaftalk.com/minir/#/viewer/song/' + this.sha256 + '/' + this.mode + '" target="_blank">MinIR</a>'
+            case 'mocha':
+                return '<a href="https://mocha-repository.info/song.php?sha256=' + this.sha256 + '" target="_blank">Mocha</a>'
         }
     }
 }

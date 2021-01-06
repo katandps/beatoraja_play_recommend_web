@@ -48,7 +48,7 @@
               <div class="td" v-for="obj in model.get_active_columns()"
                    :class="row_class(obj, song)"
                    :key="obj.key">
-                {{ song.get(obj.key) }}
+                <span v-html="song.get(obj.key)"></span>
               </div>
             </div>
           </transition-group>

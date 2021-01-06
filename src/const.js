@@ -47,6 +47,12 @@ export default Object.freeze({
             key: 'title', name: '曲名', title: 'Title', class: 'title'
         },
         {
+            key: 'minir', name: 'MinIR', title: 'MinIR', class: 'minir'
+        },
+        {
+            key: 'mocha', name: 'Mocha Repository', title:'Mocha', class: 'mocha'
+        },
+        {
             key: 'rate', name: 'スコア%', title: 'Rate', class: 'rate'
         },
         {
