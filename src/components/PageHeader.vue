@@ -14,7 +14,7 @@
             <router-link class="text-dark px-2" to="/">ホーム</router-link>
           </li>
           <li>
-            <router-link class="text-dark px-2" to="view">スコア閲覧</router-link>
+            <router-link class="text-dark px-2" to="/view">スコア閲覧</router-link>
           </li>
         </ul>
         <ul v-if="is_login">
