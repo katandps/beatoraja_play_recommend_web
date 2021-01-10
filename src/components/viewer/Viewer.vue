@@ -1,9 +1,26 @@
 <template>
   <div id="viewer">
     <div v-if="model.is_initialized()">
-      <LampGraph :model="model"/>
-      <RankGraph :model="model"/>
-      <Detail :model="model"/>
+      <div class="form-group row">
+        <div class="btn-group col-sm-12">
+          <label class="btn btn-outline-secondary col-sm-4">
+            <input type="radio" v-model="viewType" value="lamp"/>
+            ランプグラフ
+          </label>
+          <label class="btn btn-outline-secondary col-sm-4">
+            <input type="radio" v-model="viewType" value="rank"/>
+            ランクグラフ
+          </label>
+          <label class="btn btn-outline-secondary col-sm-4">
+            <input type="radio" v-model="viewType" value="detail"/>
+            詳細表
+          </label>
+        </div>
+      </div>
+
+      <LampGraph :model="model" v-if="viewType === 'lamp'"/>
+      <RankGraph :model="model" v-if="viewType === 'rank'"/>
+      <Detail :model="model" v-if="viewType === 'detail'"/>
     </div>
   </div>
 </template>
@@ -23,6 +40,9 @@ export default {
       require: true,
     }
   },
+  data: () => ({
+    viewType: "detail"
+  })
 }
 </script>
 

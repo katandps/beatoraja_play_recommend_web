@@ -1,60 +1,56 @@
 <template>
   <div id="detail">
-    <h2 @click="visible">Detail{{ show ? "▼" : "▶" }}</h2>
-
-    <transition>
-      <div class="wrap" v-show="show">
-        <div id="level-select">
-          <h3>難易度選択</h3>
-          <label class="col-2">
-            <select class="form-control" name="level" v-model="selected_level">
-              <option v-for="(level,key) in model.get_selected_table().levels"
-                      :key="key">{{ level }}
-              </option>
-            </select>
-          </label>
-          <label for="all_list" class="col-2">
-            <input type="checkbox" id="all_list"
-                   v-model="model.filter.visible_all_levels">
-            全曲表示
-          </label>
-          <label for="max_length">
-            表示曲数:
-            <input id="max_length" v-model="model.filter.max_length"
-                   class="col-3">
-            曲
-          </label>
-        </div>
-
-        <div class="table detail">
-          <div class="colgroup">
-            <div class="col" v-for="obj in model.get_active_columns()"
-                 :class="obj.class" :key="obj.key"/>
-          </div>
-          <div class="thead">
-            <div class="tr">
-              <div class="td" v-for="obj in model.get_active_columns()"
-                   @click="model.filter.set_sort(obj.key)"
-                   :class="header_class(obj)"
-                   :key="obj.key">
-                {{ obj.title }}
-              </div>
-            </div>
-          </div>
-          <transition-group tag="div" class="tbody" name="flip-list">
-            <div v-for="song in model.get_sorted_song_list(selected_level)"
-                 :key="song.sha256"
-                 :class="clear_type_class(song)" class="tr">
-              <div class="td" v-for="obj in model.get_active_columns()"
-                   :class="row_class(obj, song)"
-                   :key="obj.key">
-                <span v-html="song.get(obj.key)"></span>
-              </div>
-            </div>
-          </transition-group>
-        </div>
+    <div class="wrap">
+      <div id="level-select">
+        <h3>難易度選択</h3>
+        <label class="col-2">
+          <select class="form-control" name="level" v-model="selected_level">
+            <option v-for="(level,key) in model.get_selected_table().levels"
+                    :key="key">{{ level }}
+            </option>
+          </select>
+        </label>
+        <label for="all_list" class="col-2">
+          <input type="checkbox" id="all_list"
+                 v-model="model.filter.visible_all_levels">
+          全曲表示
+        </label>
+        <label for="max_length">
+          表示曲数:
+          <input id="max_length" v-model="model.filter.max_length"
+                 class="col-3">
+          曲
+        </label>
       </div>
-    </transition>
+
+      <div class="table detail">
+        <div class="colgroup">
+          <div class="col" v-for="obj in model.get_active_columns()"
+               :class="obj.class" :key="obj.key"/>
+        </div>
+        <div class="thead">
+          <div class="tr">
+            <div class="td" v-for="obj in model.get_active_columns()"
+                 @click="model.filter.set_sort(obj.key)"
+                 :class="header_class(obj)"
+                 :key="obj.key">
+              {{ obj.title }}
+            </div>
+          </div>
+        </div>
+        <transition-group tag="div" class="tbody" name="flip-list">
+          <div v-for="song in model.get_sorted_song_list(selected_level)"
+               :key="song.sha256"
+               :class="clear_type_class(song)" class="tr">
+            <div class="td" v-for="obj in model.get_active_columns()"
+                 :class="row_class(obj, song)"
+                 :key="obj.key">
+              <span v-html="song.get(obj.key)"></span>
+            </div>
+          </div>
+        </transition-group>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -71,7 +67,6 @@ export default {
   },
   data: () => ({
     selected_level: "",
-    show: true,
   }),
   methods: {
     header_class(obj) {
@@ -95,9 +90,6 @@ export default {
           break;
       }
       return ret;
-    },
-    visible() {
-      this.show = !this.show;
     },
     clear_type_class(song) {
       return "table-line-" + song.clear_type;
