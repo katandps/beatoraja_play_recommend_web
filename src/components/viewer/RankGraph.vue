@@ -3,7 +3,7 @@
     <table style="width:100%">
       <tr v-for="(level, key) in model.get_current_ranks()" :key="key"
           style="width:100%">
-        <td style="width:30px">{{ model.selected_table.levels[key] }}</td>
+        <td style="width:30px">{{ model.get_selected_table().levels[key] }}</td>
         <td class="progress" style="width:100%;height:1.8em">
           <div
               v-for="rank in config().RANK_TYPE" :key="rank"
