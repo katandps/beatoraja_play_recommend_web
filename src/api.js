@@ -1,5 +1,6 @@
-import AllDetail from "./models/song";
+import Scores from "./models/song";
 import * as log from "loglevel"
+import SongDetail from "./models/song_detail";
 
 export default class Api {
     constructor() {
@@ -25,7 +26,7 @@ export default class Api {
      * @public
      * @param {string} date
      * @param {string|null} token
-     * @returns {Promise<null|AllDetail>}
+     * @returns {Promise<null|Scores>}
      */
     static async fetch_my_score(date, token) {
         const obj = new Api();
@@ -37,7 +38,7 @@ export default class Api {
      * @param {string} date
      * @param {number} user_id
      * @param {string| null}token
-     * @returns {Promise<null|AllDetail>}
+     * @returns {Promise<null|Scores>}
      */
     static async fetch_others_score(date, user_id, token) {
         const obj = new Api()
@@ -49,18 +50,25 @@ export default class Api {
      * @private
      * @param {string} url
      * @param {string} token
-     * @returns {AllDetail}
+     * @returns {Scores}
      */
     async fetch_score(url, token) {
         const init = {headers: {'session-token': token}}
         try {
+            /**
+             * @type {({user_id: number, user_name: string, score: {}})}
+             */
             const json = await (await fetch(url, init).then(this.handler)).json()
             if (json.error) {
                 log.debug(json)
                 return null
             }
             log.debug(json)
-            return new AllDetail(json.score, json.user_name, json.user_id)
+            let scores = {};
+            for (const [hash, score] of Object.entries(json.score)) {
+                scores[hash] = new SongDetail(score)
+            }
+            return new Scores(scores, json.user_name, json.user_id)
         } catch (e) {
             log.error(e)
             return null

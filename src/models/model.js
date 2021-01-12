@@ -1,6 +1,6 @@
-import Filter from "./filter"
+import SongFilter from "./songFilter"
 import Tables from "./table"
-import AllDetail from "./song"
+import Scores from "./song"
 import {DateFormatter} from "./date_formatter"
 import SongDetail from "./song_detail"
 import config from "../const"
@@ -13,9 +13,9 @@ export default class Model {
     constructor() {
         /**
          * @private
-         * @type {Filter}
+         * @type {SongFilter}
          */
-        this.filter = new Filter()
+        this.filter = new SongFilter()
 
         /**
          * @private
@@ -29,7 +29,7 @@ export default class Model {
         this.selected_table = null
         /**
          * @private
-         * @type {AllDetail}
+         * @type {Scores}
          */
         this.songs = null
         /**
@@ -69,7 +69,7 @@ export default class Model {
 
     /**
      * @public
-     * @param {Filter} filter
+     * @param {SongFilter} filter
      * @returns {Model}
      */
     init_filter(filter) {
@@ -88,7 +88,7 @@ export default class Model {
      */
     async init_my_score(token) {
         let model = this
-        model.songs = await AllDetail.init(DateFormatter.format(Model.default_date()), token)
+        model.songs = await Scores.init(DateFormatter.format(Model.default_date()), token)
         return model
     }
 
@@ -100,7 +100,7 @@ export default class Model {
      */
     async init_others_score(token, user_id) {
         let model = this
-        model.songs = await AllDetail.init_others(DateFormatter.format(this.date), user_id, token)
+        model.songs = await Scores.init_others(DateFormatter.format(this.date), user_id, token)
         return model
     }
 
@@ -118,24 +118,60 @@ export default class Model {
 
     /**
      * @public
+     * @param {string} level
+     * @param {string} lamp_type
+     * @return {SongDetail[]}
+     */
+    get_lamp_list(level, lamp_type) {
+        if (!this.song_is_set() || !this.tables_is_set()) {
+            return []
+        }
+        let songs = this.songs.apply_table(this.get_selected_table(), this.filter)
+        return songs.filter(s => s.clear_type === lamp_type && s.level === level).sort(s => s.title)
+    }
+
+    /**
+     * @public
+     * @param {string} level
+     * @param {string} rank_type
+     * @return {SongDetail[]}
+     */
+    get_rank_list(level, rank_type) {
+        if (!this.song_is_set() || !this.tables_is_set()) {
+            return []
+        }
+        let songs = this.songs.apply_table(this.get_selected_table(), this.filter)
+        return songs.filter(s => s.clear_rank === rank_type && s.level === level).sort(s => s.title)
+    }
+
+
+    /**
+     * @public
      * @param {string} selected_level
      * @returns {SongDetail[]}
      */
     get_sorted_song_list(selected_level) {
-        if (!this.songs) {
+        if (!this.song_is_set() || !this.tables_is_set()) {
             return [SongDetail.dummy()]
         }
-        let songs = this.songs
-            .table_specified(this.get_selected_table())
-            .get_active(this.filter.visible_all_levels, selected_level, this.filter)
-
-        return songs.sort(function (a, b) {
-            let valA = a.sort_key(this.filter.sort_key, this.get_selected_table().levels)
-            let valB = b.sort_key(this.filter.sort_key, this.get_selected_table().levels)
-            return valA === valB ? 0 : ((valA < valB) ^ this.filter.sort_desc) ? -1 : 1
+        let songs = this.songs.apply_table(this.get_selected_table(), this.filter)
+        if (!this.filter.visible_all_levels) {
+            songs = songs.filter(s => s.level === selected_level)
         }
-            .bind(this))
-            .slice(0, parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length)
+        const length = parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length;
+        return songs.sort(this.cmp.bind(this)).slice(0, length)
+    }
+
+    /**
+     * @private
+     * @param {SongDetail} a
+     * @param {SongDetail} b
+     * @returns {number}
+     */
+    cmp(a, b) {
+        let valA = a.sort_key(this.filter.sort_key, this.get_selected_table().level_list)
+        let valB = b.sort_key(this.filter.sort_key, this.get_selected_table().level_list)
+        return valA === valB ? 0 : ((valA < valB) ^ this.filter.sort_desc) ? -1 : 1
     }
 
     /**
@@ -151,14 +187,6 @@ export default class Model {
      */
     tables_is_set() {
         return !!this.tables
-    }
-
-    /**
-     * @public 選択状態の難易度表ががある
-     * @returns {boolean}
-     */
-    table_is_set() {
-        return !!this.selected_table
     }
 
     /**
@@ -197,30 +225,28 @@ export default class Model {
      * @returns {Object[]}
      */
     get_current_lamps() {
-        return this.filter.run(this.songs, this.selected_table).map(songs_by_level => new Object(
-            [...config.LAMP_TYPE].reduce(
-                (ret, lamp) => ({
-                    ...ret,
-                    [lamp]: songs_by_level.songs.filter(s => s.clear_type === lamp).length
-                }),
-                {}
-            )
-        ))
+        const songs = this.songs.apply_table(this.get_selected_table(), this.filter)
+        return [...config.LAMP_TYPE].reduce(
+            (ret, lamp) => ({
+                ...ret,
+                [lamp]: songs.filter(s => s.clear_type === lamp).length
+            }),
+            {}
+        )
     }
 
     /**
      * @returns {Object[]}
      */
     get_current_ranks() {
-        return this.filter.run(this.songs, this.selected_table).map(songs_by_level => new Object(
-            [...config.RANK_TYPE].reduce(
-                (ret, rank) => ({
-                    ...ret,
-                    [rank]: songs_by_level.songs.filter(s => s.clear_rank === rank).length
-                }),
-                {}
-            )
-        ))
+        const songs = this.songs.apply_table(this.get_selected_table(), this.filter)
+        return [...config.RANK_TYPE].reduce(
+            (ret, rank) => ({
+                ...ret,
+                [rank]: songs.filter(s => s.clear_rank === rank).length
+            }),
+            {}
+        )
     }
 
     /**

@@ -3,7 +3,7 @@
     <TableSelector :model="model" @setTable="set_table" class="header-item" v-if="model.tables_is_set ()"/>
     <DateSelector @setDate="set_date" class="header-item"/>
     <FilterPreset :model="model" class="header-item"/>
-    <SongFilter :model="model" class="header-item"/>
+    <SongFilterController :model="model" class="header-item"/>
     <DetailColumns :model="model" class="header-item"/>
   </div>
 </template>
@@ -11,14 +11,14 @@
 <script>
 import TableSelector from "./TableSelector";
 import DateSelector from "./DateSelector";
-import SongFilter from "./SongFilter";
+import SongFilterController from "./SongFilterController";
 import DetailColumns from "./DetailColumns";
 import FilterPreset from "./FilterPreset";
 import Model from "../../models/model";
 
 export default {
   name: "Sidebar",
-  components: {DateSelector, DetailColumns, TableSelector, SongFilter, FilterPreset},
+  components: {DateSelector, DetailColumns, TableSelector, SongFilterController, FilterPreset},
   props: {
     model: {
       type: Model,

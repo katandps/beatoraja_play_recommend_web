@@ -5,7 +5,7 @@
         <h3>難易度選択</h3>
         <label class="col-2">
           <select class="form-control" name="level" v-model="selected_level">
-            <option v-for="(level,key) in model.get_selected_table().levels"
+            <option v-for="(level,key) in model.get_selected_table().level_list"
                     :key="key">{{ level }}
             </option>
           </select>
@@ -40,7 +40,7 @@
         </div>
         <transition-group tag="div" class="tbody" name="flip-list">
           <div v-for="song in model.get_sorted_song_list(selected_level)"
-               :key="song.sha256"
+               :key="song.md5"
                :class="clear_type_class(song)" class="tr">
             <div class="td" v-for="obj in model.get_active_columns()"
                  :class="row_class(obj, song)"
@@ -97,7 +97,7 @@ export default {
     set_default_selected_level() {
       const table = this.model.get_selected_table()
       if (!table.contains_level(this.selected_level)) {
-        this.selected_level = table.levels[0]
+        this.selected_level = table.level_list[0]
       }
     }
   },
@@ -109,7 +109,7 @@ export default {
       handler() {
         this.set_default_selected_level()
       }
-    }
+    },
   }
 }
 

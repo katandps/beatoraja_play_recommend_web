@@ -7,7 +7,7 @@ export default class Tables {
      */
     constructor(json) {
         this.tables = [];
-        json.forEach(t => this.tables.push(new Table(t.name, t.levels)))
+        json.forEach(t => this.tables.push(new Table(t.name, t.levels, t.level_list)))
     }
 
     /**
@@ -56,22 +56,27 @@ export default class Tables {
 }
 
 export class Table {
-    constructor(name, levels) {
+    constructor(name, levels, level_list) {
         /**
          * @type string
          */
         this.name = name;
         /**
-         * @type string[]
+         * @type {Object} {level_label: string[]}
          */
         this.levels = levels;
+        /**
+         * @type string[]
+         */
+        this.level_list = level_list;
     }
 
     /**
+     * @public
      * @param {string} table_name
      * @returns {boolean}
      */
     contains_level(table_name) {
-        return this.levels.indexOf(table_name) !== -1
+        return this.level_list.indexOf(table_name) !== -1
     }
 }

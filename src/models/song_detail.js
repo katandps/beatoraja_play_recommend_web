@@ -24,6 +24,7 @@ export default class SongDetail {
         this.total_notes = song.total_notes;
 
         this.sha256 = song.hash;
+        this.md5 = song.md5;
         this.mode = 0; //todo モード対応
     }
 
@@ -42,6 +43,17 @@ export default class SongDetail {
         return (this.score / this.total_notes * 50).toFixed(2)
     }
 
+    /**
+     * @public
+     * @param {string} level
+     * @returns {SongDetail}
+     */
+    set_level(level) {
+        let ret = this;
+        ret.level = level;
+        return ret;
+    }
+
     clear_type_description() {
         return `${this.clear_type_before}→${this.clear_type}(${this.clear_updated_at.split("T")[0]})`;
     }
@@ -54,10 +66,17 @@ export default class SongDetail {
         return `${this.min_bp_before}→${this.min_bp}(${this.min_bp_updated_at.split("T")[0]})`;
     }
 
-    sort_key(sort_key, levels) {
+
+    /**
+     * @public
+     * @param {string} sort_key
+     * @param {string[]} level_list
+     * @returns {string|string|*|number}
+     */
+    sort_key(sort_key, level_list) {
         switch (sort_key) {
             case "level":
-                return levels.indexOf(this.level);
+                return level_list.indexOf(this.level);
             case "clear":
                 return config.LAMP_TYPE.length - config.LAMP_TYPE.indexOf(this.clear_type);
             case "title":

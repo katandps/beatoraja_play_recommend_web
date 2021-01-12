@@ -46,7 +46,7 @@ import config from "../../const";
 import Model from "../../models/model";
 
 export default {
-  name: "SongFilter",
+  name: "SongFilterController",
   props: {
     model: {
       type: Model,

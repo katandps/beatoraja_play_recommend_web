@@ -1,7 +1,7 @@
 import config from '../const.js';
 import {DateFormatter} from "./date_formatter";
 
-export default class Filter {
+export default class SongFilter {
     constructor() {
         this.sort_desc = true;
         this.sort_key = "clear";
@@ -60,31 +60,39 @@ export default class Filter {
         this.day_before = 730;
     }
 
-    run(songs, table) {
-        if (!songs || !table) {
-            return [];
-        }
-        return songs.filtered(table, this);
+    /**
+     * @public
+     * @param {SongDetail} song
+     * @return boolean
+     */
+    apply(song) {
+        return this.visible_lamp[song.clear_type] && this.visible_rank[song.clear_rank] && this.viewable_date(song);
     }
 
-    should_show(song_detail) {
-        return this.visible_lamp[song_detail.clear_type] && this.visible_rank[song_detail.clear_rank] && this.valid_date(song_detail);
-    }
-
-    valid_date(song_detail) {
+    /**
+     * @private
+     * @param {SongDetail} song_detail
+     * @returns {boolean}
+     */
+    viewable_date(song_detail) {
         let date = new Date();
         date.setDate(date.getDate() - this.day_before);
         return DateFormatter.format(date) >= song_detail.updated_at.split("T")[0];
     }
 
+    /**
+     * @public
+     */
     for_random() {
         this.sort_key = ''; //連続押し対応
         this.sort_key = 'random_select';
         this.sort_desc = false;
         this.day_before = 0;
-        this.columns.default();
     }
 
+    /**
+     * @public
+     */
     for_score() {
         this.sort_key = 'score_date';
         this.sort_desc = false;
@@ -94,6 +102,9 @@ export default class Filter {
         this.visible_rank.to_all();
     }
 
+    /**
+     * @public
+     */
     for_bp() {
         this.sort_key = 'bp_date';
         this.sort_desc = false;
@@ -103,6 +114,9 @@ export default class Filter {
         this.visible_rank.to_all();
     }
 
+    /**
+     * @public
+     */
     for_aaa() {
         this.sort_key = 'rate';
         this.sort_desc = true;
@@ -112,6 +126,9 @@ export default class Filter {
         this.visible_rank.to_not_aaa();
     }
 
+    /**
+     * @public
+     */
     for_aa() {
         this.sort_key = 'rate';
         this.sort_desc = true;
@@ -121,6 +138,9 @@ export default class Filter {
         this.visible_rank.to_not_aa();
     }
 
+    /**
+     * @public
+     */
     for_easy() {
         this.sort_key = 'bp';
         this.sort_desc = false;
@@ -130,6 +150,9 @@ export default class Filter {
         this.visible_rank.to_all();
     }
 
+    /**
+     * @public
+     */
     for_hard() {
         this.sort_key = 'bp';
         this.sort_desc = false;
@@ -139,6 +162,9 @@ export default class Filter {
         this.visible_rank.to_all();
     }
 
+    /**
+     * @public
+     */
     for_ex_hard() {
         this.sort_key = 'bp';
         this.sort_desc = false;
@@ -148,6 +174,9 @@ export default class Filter {
         this.visible_rank.to_all();
     }
 
+    /**
+     * @public
+     */
     for_full_combo() {
         this.sort_key = 'bp';
         this.sort_desc = false;
