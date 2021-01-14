@@ -69,38 +69,31 @@ export default class Model {
 
     /**
      * @public
-     * @param {SongFilter} filter
+     * @param token  APIアクセスに使用するトークン
      * @returns {Model}
      */
-    init_filter(filter) {
-        if (filter === null) {
-            return this
-        }
-        let model = this
-        model.filter = filter
-        return model
-    }
-
-    /**
-     * @public
-     * @param token  APIアクセスに使用するトークン
-     * @returns {Tables}
-     */
     async init_my_score(token) {
-        let model = this
-        model.songs = await Scores.init(DateFormatter.format(Model.default_date()), token)
-        return model
+        return this.init_score(await Scores.init(DateFormatter.format(this.date), token))
     }
 
     /**
      * @public
      * @param {string} token  APIアクセスに使用するトークン
      * @param {number} user_id スコアを取得するユーザーID
-     * @returns {Tables}
+     * @returns {Model}
      */
     async init_others_score(token, user_id) {
+        return this.init_score(await Scores.init_others(DateFormatter.format(this.date), user_id, token))
+    }
+
+    /**
+     * @private
+     * @param {Scores} songs
+     * @return {Model}
+     */
+    init_score(songs) {
         let model = this
-        model.songs = await Scores.init_others(DateFormatter.format(this.date), user_id, token)
+        model.songs = songs
         return model
     }
 
@@ -222,34 +215,6 @@ export default class Model {
     }
 
     /**
-     * @returns {Object[]}
-     */
-    get_current_lamps() {
-        const songs = this.songs.apply_table(this.get_selected_table(), this.filter)
-        return [...config.LAMP_TYPE].reduce(
-            (ret, lamp) => ({
-                ...ret,
-                [lamp]: songs.filter(s => s.clear_type === lamp).length
-            }),
-            {}
-        )
-    }
-
-    /**
-     * @returns {Object[]}
-     */
-    get_current_ranks() {
-        const songs = this.songs.apply_table(this.get_selected_table(), this.filter)
-        return [...config.RANK_TYPE].reduce(
-            (ret, rank) => ({
-                ...ret,
-                [rank]: songs.filter(s => s.clear_rank === rank).length
-            }),
-            {}
-        )
-    }
-
-    /**
      * @public
      * @param {string} table_name 設定するテーブル名
      * @return Model
@@ -257,6 +222,7 @@ export default class Model {
     set_table(table_name) {
         let model = this
         model.selected_table = this.tables ? this.tables.get_table(table_name) : null
+
         return model
     }
 
