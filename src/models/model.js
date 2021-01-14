@@ -1,5 +1,5 @@
 import SongFilter from "./songFilter"
-import Tables from "./table"
+import Tables from "./difficultyTable"
 import Scores from "./song"
 import {DateFormatter} from "./date_formatter"
 import SongDetail from "./song_detail"
@@ -24,7 +24,7 @@ export default class Model {
         this.tables = null
         /**
          * @private
-         * @type {Table}
+         * @type {DifficultyTable}
          */
         this.selected_table = null
         /**
@@ -58,12 +58,13 @@ export default class Model {
     /**
      * @public
      * @param {string} token
-     * @returns {self}
+     * @returns {Model}
      */
     async init_table(token) {
         let model = this
         model.tables = await Tables.init(token)
         model.selected_table = model.tables ? model.tables.first() : null
+        model = model.init_table_score()
         return model
     }
 
@@ -94,6 +95,20 @@ export default class Model {
     init_score(songs) {
         let model = this
         model.songs = songs
+        model = model.init_table_score()
+        return model
+    }
+
+    /**
+     * @private
+     * @return Model
+     */
+    init_table_score() {
+        if (!this.is_initialized()) {
+            return this;
+        }
+        let model = this;
+        model.selected_table = model.selected_table.set_score(this.songs)
         return model
     }
 
@@ -111,32 +126,38 @@ export default class Model {
 
     /**
      * @public
-     * @param {string} level
-     * @param {string} lamp_type
-     * @return {SongDetail[]}
+     * @return {SongDetail[][][]} get_lank_list[level][rank][index]
      */
-    get_lamp_list(level, lamp_type) {
-        if (!this.song_is_set() || !this.tables_is_set()) {
+    get_lamp_list() {
+        if (!this.is_initialized()) {
             return []
         }
-        let songs = this.songs.apply_table(this.get_selected_table(), this.filter)
-        return songs.filter(s => s.clear_type === lamp_type && s.level === level).sort(s => s.title)
-    }
+        let levels = this.get_selected_table().level_list;
+        let lamps = config.LAMP_TYPE;
+        let songs = this.get_selected_table().get_filtered_score(this.filter)
+        return levels.map(
+            level => lamps.map(
+                lamp => songs.filter(s => s.clear_type === lamp && s.level === level).sort(s => s.title)
+            )
+        )    }
 
     /**
      * @public
-     * @param {string} level
-     * @param {string} rank_type
-     * @return {SongDetail[]}
+     * @return {SongDetail[][][]} get_rank_list[level][rank][index]
      */
-    get_rank_list(level, rank_type) {
-        if (!this.song_is_set() || !this.tables_is_set()) {
+    get_rank_list() {
+        if (!this.is_initialized()) {
             return []
         }
-        let songs = this.songs.apply_table(this.get_selected_table(), this.filter)
-        return songs.filter(s => s.clear_rank === rank_type && s.level === level).sort(s => s.title)
+        let levels = this.get_selected_table().level_list;
+        let ranks = config.RANK_TYPE;
+        let songs = this.get_selected_table().get_filtered_score(this.filter)
+        return levels.map(
+            l => ranks.map(
+                r => songs.filter(s => s.clear_rank === r && s.level === l).sort(s => s.title)
+            )
+        )
     }
-
 
     /**
      * @public
@@ -144,10 +165,10 @@ export default class Model {
      * @returns {SongDetail[]}
      */
     get_sorted_song_list(selected_level) {
-        if (!this.song_is_set() || !this.tables_is_set()) {
+        if (!this.is_initialized()) {
             return [SongDetail.dummy()]
         }
-        let songs = this.songs.apply_table(this.get_selected_table(), this.filter)
+        let songs = this.get_selected_table().get_filtered_score(this.filter)
         if (!this.filter.visible_all_levels) {
             songs = songs.filter(s => s.level === selected_level)
         }
@@ -200,7 +221,7 @@ export default class Model {
 
     /**
      * @public
-     * @returns {Table}
+     * @returns {DifficultyTable}
      */
     get_selected_table() {
         return this.selected_table
@@ -222,7 +243,7 @@ export default class Model {
     set_table(table_name) {
         let model = this
         model.selected_table = this.tables ? this.tables.get_table(table_name) : null
-
+        model = model.init_table_score()
         return model
     }
 

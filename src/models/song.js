@@ -35,15 +35,11 @@ export default class Scores {
     }
 
     /**
+     * ハッシュを指定してスコアを取得する
      * @public
-     * @param {Table} table
-     * @param {SongFilter} filter
-     * @return SongDetail[]
+     * @param md5
      */
-    apply_table(table, filter) {
-        return Object.entries(table.levels)
-            .map(([label, hashes]) => hashes.map(hash => this.score[hash].set_level(label)))
-            .flat()
-            .filter(s => filter.apply(s))
+    get_score(md5) {
+        return this.score[md5]
     }
 }

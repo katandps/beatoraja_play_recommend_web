@@ -17,18 +17,19 @@
     <hr>
 
     <table style="width:100%">
-      <tr v-for="(level, key) in level_list" :key="key"
+      <tr v-for="(level, level_index) in level_list" :key="level_index"
           style="width:100%">
         <td style="width:30px">{{ level }}</td>
         <td class="progress" style="width:100%;height:1.8em">
           <div
-              v-for="clear_type in config().LAMP_TYPE" :key="clear_type"
+              v-for="(clear_type,lamp_index) in config().LAMP_TYPE"
+              :key="clear_type"
               :class="'progress-bar bg-' + clear_type"
               role="progressbar"
-              :style="'width: ' + get_list(level, clear_type).length * 100 + '%;color:#000'"
-              v-on:click="show_modal(level + ' ' +  clear_type, get_list(level, clear_type).map(s => s.title))"
+              :style="'width: ' + lamp_list[level_index][lamp_index].length * 100 + '%;color:#000'"
+              v-on:click="show_modal(level + ' ' +  clear_type, lamp_list[level_index][lamp_index].map(s => s.title))"
           >
-            {{ get_list(level, clear_type).length }}
+            {{ lamp_list[level_index][lamp_index].length }}
           </div>
         </td>
       </tr>
@@ -70,11 +71,7 @@ export default {
     config() {
       return config;
     },
-    get_list(level, lamp_type) {
-      return this.model.get_lamp_list(level, lamp_type)
-    },
     /**
-     *
      * @param {string} title
      * @param {string[]} text
      */
@@ -86,6 +83,12 @@ export default {
     },
   },
   computed: {
+    /**
+     * @returns {SongDetail[][][]}
+     */
+    lamp_list() {
+      return this.model.get_lamp_list()
+    },
     level_list() {
       return this.model.get_selected_table().level_list
     }

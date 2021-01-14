@@ -16,17 +16,17 @@
     </table>
     <hr>
     <table style="width:100%">
-      <tr v-for="(level, key) in level_list" :key="key">
+      <tr v-for="(level, level_index) in level_list" :key="level_index">
         <td style="width:30px">{{ level }}</td>
         <td class="progress" style="width:100%;height:1.8em">
           <div
-              v-for="rank in config().RANK_TYPE" :key="rank"
+              v-for="(rank, rank_index) in config().RANK_TYPE" :key="rank"
               :class="'progress-bar bg-' + rank"
               role="progressbar"
-              :style="'width: ' + get_list(level, rank).length * 100 + '%;color:#000'"
-              v-on:click="show_modal(level + ' ' +  rank, get_list(level, rank).map(s => s.title))"
+              :style="'width: ' + rank_list[level_index][rank_index].length * 100 + '%;color:#000'"
+              v-on:click="show_modal(level + ' ' +  rank, rank_list[level_index][rank_index].map(s => s.title))"
           >
-            {{ get_list(level, rank).length }}
+            {{ rank_list[level_index][rank_index].length }}
           </div>
         </td>
       </tr>
@@ -68,11 +68,7 @@ export default {
     config() {
       return config;
     },
-    get_list(level, rank_type) {
-      return this.model.get_rank_list(level, rank_type)
-    },
     /**
-     *
      * @param {string} title
      * @param {string[]} text
      */
@@ -84,6 +80,12 @@ export default {
     },
   },
   computed: {
+    /**
+     * @returns {SongDetail[][][]}
+     */
+    rank_list() {
+      return this.model.get_rank_list()
+    },
     level_list() {
       return this.model.get_selected_table().level_list
     }
