@@ -31,7 +31,7 @@
                  @click.prevent="handleSignOut">ログアウト</a></li>
         </ul>
         <ul v-if="!is_login">
-          <li><a class="text-dark px-3" :href="handleSignInUrl()">ログイン</a></li>
+          <li><a class="text-dark px-3" :href="handleSignInUrl()">登録/ログイン</a></li>
         </ul>
       </div>
     </transition>

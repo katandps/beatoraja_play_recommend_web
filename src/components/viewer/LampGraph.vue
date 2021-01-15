@@ -7,7 +7,7 @@
           <div v-for="clear_type in config().LAMP_TYPE" :key="clear_type"
                :class="'progress-bar bg-' + clear_type"
                role="progressbar"
-               style="color:#000"
+               style="color:#000000"
                :style="'width: ' + 100.0/config().LAMP_TYPE.length + '%'"
           >{{ clear_type }}
           </div>
@@ -27,7 +27,10 @@
               :class="'progress-bar bg-' + clear_type"
               role="progressbar"
               :style="'width: ' + lamp_list[level_index][lamp_index].length * 100 + '%;color:#000'"
-              v-on:click="show_modal(level + ' ' +  clear_type, lamp_list[level_index][lamp_index].map(s => s.title))"
+              v-on:click="show_modal(
+                  level + ' ' +  clear_type,
+                   lamp_list[level_index][lamp_index].map(s => s.title).sort()
+                   )"
           >
             {{ lamp_list[level_index][lamp_index].length }}
           </div>

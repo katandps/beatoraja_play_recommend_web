@@ -24,7 +24,10 @@
               :class="'progress-bar bg-' + rank"
               role="progressbar"
               :style="'width: ' + rank_list[level_index][rank_index].length * 100 + '%;color:#000'"
-              v-on:click="show_modal(level + ' ' +  rank, rank_list[level_index][rank_index].map(s => s.title))"
+              v-on:click="show_modal(
+                  level + ' ' +  rank,
+                  rank_list[level_index][rank_index].map(s => s.title).sort()
+              )"
           >
             {{ rank_list[level_index][rank_index].length }}
           </div>

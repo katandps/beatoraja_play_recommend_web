@@ -1,7 +1,8 @@
 <template>
   <div id="data-uploader">
     <h1 id="uploader-title" class="uploader-title">各種データアップロード</h1>
-    score.db と scorelog.db をアップロードするとスコア情報が更新されます。
+    score.db と scorelog.db をアップロードするとスコア情報が更新されます。<br />
+    ファイルは<em>beatoraja/player/player*</em>にあります。
     <div class="upload">
       <div class="btn">
         <VueUploadComponent
