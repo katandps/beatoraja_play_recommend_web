@@ -2,14 +2,6 @@
   <div id="detail">
     <div class="wrap">
       <div id="level-select">
-        <h3>難易度選択</h3>
-        <label class="col-2">
-          <select class="form-control" name="level" v-model="selected_level">
-            <option v-for="(level,key) in model.get_selected_table().level_list"
-                    :key="key">{{ level }}
-            </option>
-          </select>
-        </label>
         <label for="all_list" class="col-2">
           <input type="checkbox" id="all_list"
                  v-model="model.filter.visible_all_levels">
@@ -39,7 +31,7 @@
           </div>
         </div>
         <transition-group tag="div" class="tbody" name="flip-list">
-          <div v-for="song in model.get_sorted_song_list(selected_level)"
+          <div v-for="song in model.get_sorted_song_list()"
                :key="song.md5"
                :class="clear_type_class(song)" class="tr">
             <div class="td" v-for="obj in model.get_active_columns()"
@@ -65,9 +57,6 @@ export default {
       require: true,
     }
   },
-  data: () => ({
-    selected_level: "",
-  }),
   methods: {
     header_class(obj) {
       let ret = obj.class;
@@ -94,23 +83,7 @@ export default {
     clear_type_class(song) {
       return "table-line-" + song.clear_type;
     },
-    set_default_selected_level() {
-      const table = this.model.get_selected_table()
-      if (!table.contains_level(this.selected_level)) {
-        this.selected_level = table.level_list[0]
-      }
-    }
   },
-  mounted() {
-    this.set_default_selected_level()
-  },
-  watch: {
-    'model.selected_table': {
-      handler() {
-        this.set_default_selected_level()
-      }
-    },
-  }
 }
 
 </script>

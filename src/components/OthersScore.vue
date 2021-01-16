@@ -1,17 +1,23 @@
 <template>
   <div id="others_score">
-    <Sidebar @setTable="set_table" @setDate="set_date" :model="model"/>
+    <Sidebar :model="model"/>
     <div class="main" id="page-wrap">
       ユーザーIDを入力
       <label>
         <input v-model="input_user_id">
       </label>
-      <router-link class="btn btn-success" :to="'/view/?user_id=' + input_user_id">
+      <router-link class="btn btn-success"
+                   :to="'/view/?user_id=' + input_user_id">
         ユーザー変更
       </router-link>
       <div v-if="model.song_is_set()">
-        <h2>{{ model.user_name() }}のデータ</h2>
-        <Viewer :model="model"/>
+        <h2 style="display:inline">{{ model.user_name() }}のデータ</h2>
+        <a :href="model.get_twitter_link()" target="_blank"
+           v-if="model.song_is_set()"><img src="../assets/twitter.png"
+                                           alt="Twitterで共有" width="40"
+                                           height="40">
+        </a>
+        <Viewer :model="model" @setTable="set_table" @setDate="set_date"/>
       </div>
       <p v-else>{{ message }}</p>
     </div>

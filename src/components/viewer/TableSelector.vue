@@ -1,17 +1,21 @@
 <template>
-  <div id="table_selector">
-    <h6 class="sidebar-title" @click="selector_visible">
-      難易度表選択{{ show ? "▼" : "▶" }}
-    </h6>
-    <transition>
-      <div v-show="show" class="sidebar-body">
-        <label>
-          <select class="form-control table-listbox" name="table" v-model="selected">
-            <option v-for="(name,index) in model.get_table_names()" :key="index">{{ name }}</option>
-          </select>
-        </label>
-      </div>
-    </transition>
+  <div id="table_selector" class="form-inline">
+    <label for="selector">
+      難易度表:
+    </label>
+    <select id="selector" class="form-control table-input-form" name="table"
+            v-model="selected">
+      <option v-for="(name,index) in model.get_table_names()" :key="index">
+        {{ name }}
+      </option>
+    </select>
+    <label for="level_selector" class="level-selector-label">難易度:</label>
+    <select id="level_selector" class="level-selector form-control" name="level"
+            v-model="model.selected_level">
+      <option v-for="(level,key) in model.get_selected_table().level_list"
+              :key="key">{{ level }}
+      </option>
+    </select>
   </div>
 </template>
 
@@ -28,16 +32,11 @@ export default {
   },
   data: () => ({
     selected: "",
-    show: true,
   }),
   mounted() {
     this.selected = this.model.get_selected_table_name()
   },
-  methods: {
-    selector_visible() {
-      this.show = !this.show;
-    },
-  },
+  methods: {},
   watch: {
     selected: {
       handler() {
@@ -50,12 +49,20 @@ export default {
 
 <style scoped>
 #table_selector {
-  width: 320px;
-  box-sizing: border-box
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
-.table-listbox {
-  height: 100%;
-  width: 100%;
+.table-input-form {
+  margin-left: 20px;
 }
+
+.level-selector {
+  margin-left: 20px;
+}
+
+.level-selector-label {
+  margin-left: 20px;
+}
+
 </style>

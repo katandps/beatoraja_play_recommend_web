@@ -27,6 +27,12 @@ export default class Model {
          * @type {DifficultyTable}
          */
         this.selected_table = null
+
+        /**
+         * @public
+         * @type {string}
+         */
+        this.selected_level = ""
         /**
          * @private
          * @type {Scores}
@@ -161,16 +167,15 @@ export default class Model {
 
     /**
      * @public
-     * @param {string} selected_level
      * @returns {SongDetail[]}
      */
-    get_sorted_song_list(selected_level) {
+    get_sorted_song_list() {
         if (!this.is_initialized()) {
             return [SongDetail.dummy()]
         }
         let songs = this.get_selected_table().get_filtered_score(this.filter)
         if (!this.filter.visible_all_levels) {
-            songs = songs.filter(s => s.level === selected_level)
+            songs = songs.filter(s => s.level === this.selected_level)
         }
         const length = parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length;
         return songs.sort(this.cmp.bind(this)).slice(0, length)
@@ -244,6 +249,19 @@ export default class Model {
         let model = this
         model.selected_table = this.tables ? this.tables.get_table(table_name) : null
         model = model.init_table_score()
+        model = model.set_default_selected_level()
+        return model
+    }
+
+    /**
+     * @return Model
+     */
+    set_default_selected_level () {
+        let model = this
+        const table = this.get_selected_table()
+        if (!table.contains_level(this.selected_level)) {
+            model.selected_level = table.level_list[0]
+        }
         return model
     }
 

@@ -22,7 +22,7 @@
             <router-link class="text-dark px-2" to="/profile">プロフィール</router-link>
           </li>
           <li>
-            <router-link class="text-dark px-2" to="/my_score">マイスコア</router-link>
+            <router-link class="text-dark px-2" :to="'/view?user_id='+user_id">マイスコア</router-link>
           </li>
           <li>
             <router-link v-if="is_login" class="text-dark px-2" to="/upload">スコアアップロード</router-link>
@@ -40,12 +40,12 @@
 
 <script>
 export default {
-  name: "PageHeader",
+  name: "HamburgerMenu",
   props: {
     is_login: {
       type: Boolean,
       required: true,
-    }
+    },
   },
   data: () => ({
     active_btn: false
@@ -65,6 +65,11 @@ export default {
     },
     async handleSignOut() {
       this.$emit("handleSignOut");
+    }
+  },
+  computed: {
+    user_id() {
+      return this.$store.getters.userInfo.user_id;
     }
   },
   watch: {

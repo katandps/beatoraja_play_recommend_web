@@ -3,7 +3,6 @@ import BootstrapVue from "bootstrap-vue";
 import Router from 'vue-router'
 import Home from "./components/Home"
 import DataUploader from './components/DataUploader'
-import MyScore from "./components/MyScore";
 import OthersScore from "./components/OthersScore";
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -24,17 +23,12 @@ const router = new Router({
             path: '/view',
             name: 'OthersScore',
             component: OthersScore,
-            props: (route) => ({user_id: parseInt(route.query.user_id || 0)})
+            props: (route) => ({user_id: parseInt(route.query.user_id || 1)})
         },
         {
             path: '/upload',
             name: 'Upload',
             component: DataUploader,
-        },
-        {
-            path: '/my_score',
-            name: 'MyScore',
-            component: MyScore,
         },
         {
             path: '/profile',

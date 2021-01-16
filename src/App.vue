@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <PageHeader :is_login="is_login" @handleSignOut="handleSignOut"/>
+    <HamburgerMenu :is_login="is_login" @handleSignOut="handleSignOut"/>
     <router-view/>
   </div>
 </template>
 
 <script>
-import PageHeader from "./components/PageHeader";
+import HamburgerMenu from "./components/HamburgerMenu";
 import Api from "./api";
 import * as log from "loglevel"
 
 export default {
   name: "App",
-  components: {PageHeader},
+  components: {HamburgerMenu},
   data: () => ({
     is_login: false,
   }),

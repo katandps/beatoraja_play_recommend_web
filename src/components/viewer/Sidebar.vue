@@ -1,7 +1,5 @@
 <template>
   <div class="sidebar">
-    <TableSelector :model="model" @setTable="set_table" class="header-item" v-if="model.tables_is_set ()"/>
-    <DateSelector @setDate="set_date" class="header-item"/>
     <FilterPreset :model="model" class="header-item"/>
     <SongFilterController :model="model" class="header-item"/>
     <DetailColumns :model="model" class="header-item"/>
@@ -9,8 +7,6 @@
 </template>
 
 <script>
-import TableSelector from "./TableSelector";
-import DateSelector from "./DateSelector";
 import SongFilterController from "./SongFilterController";
 import DetailColumns from "./DetailColumns";
 import FilterPreset from "./FilterPreset";
@@ -18,24 +14,13 @@ import Model from "../../models/model";
 
 export default {
   name: "Sidebar",
-  components: {DateSelector, DetailColumns, TableSelector, SongFilterController, FilterPreset},
+  components: {DetailColumns, SongFilterController, FilterPreset},
   props: {
     model: {
       type: Model,
       required: true,
     },
   },
-  methods: {
-    /**
-     * @param {string} table
-     */
-    set_table(table) {
-      this.$emit('setTable', table);
-    },
-    set_date(date) {
-      this.$emit('setDate', date);
-    },
-  }
 }
 
 </script>

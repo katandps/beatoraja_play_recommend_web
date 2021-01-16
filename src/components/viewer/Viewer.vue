@@ -18,6 +18,9 @@
         </div>
       </div>
 
+      <DateSelector @setDate="set_date" />
+      <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set ()"/>
+      <hr>
       <LampGraph :model="model" v-if="viewType === 'lamp'"/>
       <RankGraph :model="model" v-if="viewType === 'rank'"/>
       <Detail :model="model" v-if="viewType === 'detail'"/>
@@ -30,10 +33,12 @@ import Detail from "./Detail";
 import LampGraph from "./LampGraph";
 import RankGraph from "./RankGraph";
 import Model from "../../models/model";
+import TableSelector from "./TableSelector";
+import DateSelector from "./DateSelector";
 
 export default {
   name: "Viewer",
-  components: {LampGraph, Detail, RankGraph},
+  components: {DateSelector, LampGraph, Detail, RankGraph, TableSelector},
   props: {
     model: {
       type: Model,
@@ -42,7 +47,18 @@ export default {
   },
   data: () => ({
     viewType: "detail"
-  })
+  }),
+  methods: {
+    /**
+     * @param {string} table
+     */
+    set_table(table) {
+      this.$emit('setTable', table);
+    },
+    set_date(date) {
+      this.$emit('setDate', date);
+    },
+  }
 }
 </script>
 
