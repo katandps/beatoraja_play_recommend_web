@@ -4,10 +4,18 @@ import * as log from "loglevel"
 import router from './router'
 import store from './store'
 import VueJSModal from "vue-js-modal";
+import {library} from '@fortawesome/fontawesome-svg-core'
+import {fas} from '@fortawesome/free-solid-svg-icons'
+import {fab} from '@fortawesome/free-brands-svg-icons'
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+
+library.add(fas)
+library.add(fab)
 
 Vue.config.productionTip = false
 Vue.use(require('vue-cookies'))
 Vue.use(VueJSModal)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 require('./assets/sass/main.scss')
 

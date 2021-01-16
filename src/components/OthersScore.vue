@@ -13,10 +13,7 @@
       <div v-if="model.song_is_set()">
         <h2 style="display:inline">{{ model.user_name() }}のデータ</h2>
         <a :href="model.get_twitter_link()" target="_blank"
-           v-if="model.song_is_set()"><img src="../assets/twitter.png"
-                                           alt="Twitterで共有" width="40"
-                                           height="40">
-        </a>
+           v-if="model.song_is_set()"><font-awesome-icon style="font-size:2rem;" :icon="['fab', 'twitter-square']" /></a>
         <Viewer :model="model" @setTable="set_table" @setDate="set_date"/>
       </div>
       <p v-else>{{ message }}</p>
