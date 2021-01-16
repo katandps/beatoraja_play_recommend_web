@@ -2,36 +2,61 @@
   <div id="page-header">
     <!--ハンバーガーメニューのボタン-->
     <div class="hamburger_btn" v-on:click='active_btn=!active_btn'>
-      <span class="line line_01" :class="(is_login ? 'line-login ' : 'line-logout ') + (active_btn ? 'btn_line01' : '')" />
-      <span class="line line_02" :class="(is_login ? 'line-login ' : 'line-logout ') + (active_btn ? 'btn_line02' : '')"/>
-      <span class="line line_03" :class="(is_login ? 'line-login ' : 'line-logout ') + (active_btn ? 'btn_line03' : '')"/>
+      <span class="line line_01"
+            :class="(is_login ? 'line-login ' : 'line-logout ') + (active_btn ? 'btn_line01' : '')"/>
+      <span class="line line_02"
+            :class="(is_login ? 'line-login ' : 'line-logout ') + (active_btn ? 'btn_line02' : '')"/>
+      <span class="line line_03"
+            :class="(is_login ? 'line-login ' : 'line-logout ') + (active_btn ? 'btn_line03' : '')"/>
     </div>
     <!--サイドバー-->
     <transition name="menu">
       <div class="menu" v-show="active_btn">
         <ul>
           <li>
-            <router-link class="text-dark px-2" to="/">ホーム</router-link>
+            <router-link class="text-dark px-2" to="/">
+              <font-awesome-icon :icon="['fas', 'home']"/>
+              ホーム
+            </router-link>
           </li>
           <li>
-            <router-link class="text-dark px-2" to="/view">スコア閲覧</router-link>
+            <router-link class="text-dark px-2" to="/view">
+              <font-awesome-icon :icon="['fas', 'cubes']"/>
+              スコア閲覧
+            </router-link>
           </li>
         </ul>
         <ul v-if="is_login">
           <li>
-            <router-link class="text-dark px-2" to="/profile">プロフィール</router-link>
+            <router-link class="text-dark px-2" to="/profile">
+              <font-awesome-icon :icon="['fas', 'pencil-alt']"/>
+              プロフィール
+            </router-link>
           </li>
           <li>
-            <router-link class="text-dark px-2" :to="'/view?user_id='+user_id">マイスコア</router-link>
+            <router-link class="text-dark px-2" :to="'/view?user_id='+user_id">
+              <font-awesome-icon :icon="['fas', 'cube']"/>
+              マイスコア
+            </router-link>
           </li>
           <li>
-            <router-link v-if="is_login" class="text-dark px-2" to="/upload">スコアアップロード</router-link>
+            <router-link v-if="is_login" class="text-dark px-2" to="/upload">
+              <font-awesome-icon :icon="['fas', 'file-upload']"/>
+              スコアアップロード
+            </router-link>
           </li>
           <li><a class="text-dark px-3" href="javascript:void(0);"
-                 @click.prevent="handleSignOut">ログアウト</a></li>
+                 @click.prevent="handleSignOut">
+            <font-awesome-icon :icon="['fas', 'sign-out-alt']"/>
+            ログアウト
+          </a></li>
         </ul>
         <ul v-if="!is_login">
-          <li><a class="text-dark px-3" :href="handleSignInUrl()">登録/ログイン</a></li>
+          <li><a class="text-dark px-3" :href="handleSignInUrl()">
+            <font-awesome-icon :icon="['fas', 'sign-in-alt']"/>
+            登録/ログイン
+          </a>
+          </li>
         </ul>
       </div>
     </transition>
@@ -69,6 +94,9 @@ export default {
   },
   computed: {
     user_id() {
+      if (!this.$store.getters.userInfo) {
+        return ""
+      }
       return this.$store.getters.userInfo.user_id;
     }
   },
