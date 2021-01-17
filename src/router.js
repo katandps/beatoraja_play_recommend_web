@@ -8,6 +8,7 @@ import OthersScore from "./components/OthersScore";
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import ProfileEdit from "./components/ProfileEdit";
+import RecommendTable from "./components/RecommendTable";
 
 Vue.use(Router)
 Vue.use(BootstrapVue)
@@ -34,6 +35,12 @@ const router = new Router({
             path: '/profile',
             name: 'ProfileEdit',
             component: ProfileEdit,
+        },
+        {
+            path: '/table',
+            name: 'RecommendTable',
+            component: RecommendTable,
+            props: (route) => ({user_id: parseInt(route.query.user_id)})
         }
     ]
 })

@@ -24,17 +24,16 @@ export default class Api {
 
     /**
      * @public
-     * @param {string} date
-     * @param {string|null} token
-     * @returns {Promise<null|Scores>}
+     * @param {number} user_id
+     * @return string
      */
-    static async fetch_my_score(date, token) {
-        const obj = new Api();
-        const url = obj.host + "/my_detail/?date=" + date;
-        return obj.fetch_score(url, token)
+    static get_table_header_url(user_id) {
+        const obj = new Api()
+        return obj.host + "/recommend_table_header/" + user_id
     }
 
     /**
+     * @public
      * @param {string} date
      * @param {number} user_id
      * @param {string| null}token
@@ -94,7 +93,10 @@ export default class Api {
         const uri = obj.host + "/update/name";
         const body = JSON.stringify({'changed_name': name});
         const init = {
-            headers: {'session-token': token, 'content-type': 'application/json'},
+            headers: {
+                'session-token': token,
+                'content-type': 'application/json'
+            },
             method: 'POST',
             body: body
         };

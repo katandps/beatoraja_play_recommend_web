@@ -76,15 +76,6 @@ export default class Model {
 
     /**
      * @public
-     * @param token  APIアクセスに使用するトークン
-     * @returns {Model}
-     */
-    async init_my_score(token) {
-        return this.init_score(await Scores.init(DateFormatter.format(this.date), token))
-    }
-
-    /**
-     * @public
      * @param {string} token  APIアクセスに使用するトークン
      * @param {number} user_id スコアを取得するユーザーID
      * @returns {Model}

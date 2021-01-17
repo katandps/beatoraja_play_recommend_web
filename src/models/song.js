@@ -16,16 +16,6 @@ export default class Scores {
     /**
      * @public
      * @param {string} date_str
-     * @param {string} token
-     * @returns {Scores}
-     */
-    static async init(date_str, token) {
-        return await Api.fetch_my_score(date_str, token);
-    }
-
-    /**
-     * @public
-     * @param {string} date_str
      * @param {number} user_id
      * @param {string} token
      * @returns {Scores}
