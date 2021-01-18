@@ -4,7 +4,7 @@
     <div class="main" id="page-wrap">
       ユーザーIDを入力
       <label>
-        <input v-model="input_user_id">
+        <input class="form-control" v-model="input_user_id">
       </label>
       <router-link class="btn btn-success"
                    :to="'/view/?user_id=' + input_user_id">

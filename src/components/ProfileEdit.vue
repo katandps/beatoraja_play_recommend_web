@@ -3,7 +3,7 @@
     <h1>プロフィール</h1>
     <label>
       名前:
-      <input v-model="name">
+      <input class="form-control" v-model="name">
     </label>
     <button class="btn btn-success" @click="change_name">変更を反映</button>
     <br />

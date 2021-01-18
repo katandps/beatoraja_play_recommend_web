@@ -1,12 +1,20 @@
 <template>
-  <div>
-    このURLをbeatorajaに追加して下さい。
-    現在はSatelliteからのみ選出されます。
+  <div id="recommend-table">
+    <h2>おすすめ譜面表</h2>
+    下記URLをbeatorajaに追加して下さい。<br/>
+    <div class="form-group row align-items-center">
+      <div class="btn-group col-sm-12">
+        <label for="url_box"></label>
+        <input id="url_box" class="form-control" type="text" :value="url" disabled>
+        <button class="btn btn-secondary" @click="doCopy"><font-awesome-icon class="copy-url" :icon="['fas', 'copy']"/></button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import Api from "../api";
+import * as log from 'loglevel'
 
 export default {
   name: "RecommendTable",
@@ -16,17 +24,31 @@ export default {
       required: true
     }
   },
-  head() {
-    return {
-      meta: [{
-        name: 'bmstable',
-        content: Api.get_table_header_url(this.user_id),
-      }]
+  methods: {
+    doCopy() {
+      this.$copyText(this.url).then(function (e) {
+        log.debug(e)
+      }, function (e) {
+        log.debug(e)
+      })
+    }
+  },
+  computed: {
+    /**
+     * @returns {string}
+     */
+    url() {
+      return Api.get_table_header_url(this.user_id)
     }
   },
 }
 </script>
 
 <style scoped>
+#recommend-table {
+  padding-top: 20px;
+  max-width: 800px;
+  margin: 0 auto 0 auto;
+}
 
 </style>

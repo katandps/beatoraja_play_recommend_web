@@ -7,22 +7,22 @@ import VueJSModal from "vue-js-modal";
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {fas} from '@fortawesome/free-solid-svg-icons'
 import {fab} from '@fortawesome/free-brands-svg-icons'
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import VueHead from 'vue-head'
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome"
+import VueClipboard from 'vue-clipboard2'
 
 library.add(fas)
 library.add(fab)
 
 Vue.config.productionTip = false
-Vue.use(VueHead)
 Vue.use(require('vue-cookies'))
 Vue.use(VueJSModal)
+Vue.use(VueClipboard)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 require('./assets/sass/main.scss')
 
-const logLevel = process.env.NODE_ENV === "development" ? log.levels.DEBUG : log.levels.SILENT;
-log.setLevel(logLevel, false);
+const logLevel = process.env.NODE_ENV === "development" ? log.levels.DEBUG : log.levels.SILENT
+log.setLevel(logLevel, false)
 
 new Vue({
   render: h => h(App),
@@ -30,10 +30,10 @@ new Vue({
   store,
   methods: {
     show: function() {
-      this.$modal.show('modal-area');
+      this.$modal.show('modal-area')
     },
     hide: function() {
-      this.$modal.hide('modal-area');
+      this.$modal.hide('modal-area')
     },
   }
 }).$mount('#app')

@@ -29,7 +29,7 @@ export default class Api {
      */
     static get_table_header_url(user_id) {
         const obj = new Api()
-        return obj.host + "/recommend_table_header/" + user_id
+        return obj.host + "/recommend_table/" + user_id + "/table.html"
     }
 
     /**
