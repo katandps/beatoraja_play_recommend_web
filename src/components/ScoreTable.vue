@@ -27,7 +27,7 @@ import Sidebar from "./viewer/Sidebar";
 import Model from "../models/model";
 
 export default {
-  name: "OthersScore",
+  name: "ScoreTable",
   components: {Viewer, Sidebar},
   props: {
     user_id: {
