@@ -1,17 +1,17 @@
 <template>
   <div id="DetailColumns">
-    <h6 class="sidebar-title" @click="filter_visible">リコメンド{{ show ? "▼" : "▶" }}</h6>
+    <h6 class="sidebar-title" @click="filter_visible">目標{{ show ? "▼" : "▶" }}</h6>
     <transition>
       <div v-show="show" class="filter sidebar-body">
         <button class="btn btn-primary" @click="model.filter.for_random()">ランダムセレクト</button>
-        <button class="btn btn-success" @click="model.filter.for_score()">スコア狙い</button>
-        <button class="btn btn-success" @click="model.filter.for_bp()">BP狙い</button>
-        <button class="btn btn-success" @click="model.filter.for_aaa()">AAA狙い</button>
-        <button class="btn btn-success" @click="model.filter.for_aa()">AA狙い</button>
-        <button class="btn btn-success" @click="model.filter.for_easy()">Easy狙い</button>
-        <button class="btn btn-success" @click="model.filter.for_hard()">Hard狙い</button>
-        <button class="btn btn-success" @click="model.filter.for_ex_hard()">EXH狙い</button>
-        <button class="btn btn-success" @click="model.filter.for_full_combo()">FC狙い</button>
+        <button class="btn btn-success" @click="model.filter.for_score()">スコア更新</button>
+        <button class="btn btn-success" @click="model.filter.for_bp()">BP更新</button>
+        <button class="btn btn-success" @click="model.filter.for_aaa()">AAA</button>
+        <button class="btn btn-success" @click="model.filter.for_aa()">AA</button>
+        <button class="btn btn-success" @click="model.filter.for_easy()">Easy</button>
+        <button class="btn btn-success" @click="model.filter.for_hard()">Hard</button>
+        <button class="btn btn-success" @click="model.filter.for_ex_hard()">EXH</button>
+        <button class="btn btn-success" @click="model.filter.for_full_combo()">FC</button>
       </div>
     </transition>
   </div>

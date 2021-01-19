@@ -4,9 +4,10 @@
       表示カラム{{ show ? "▼" : "▶" }}
     </h6>
     <transition>
-      <div v-show="show" class="sidebar-body">
-        <div v-for="obj in config().DETAIL_COLUMNS" :key="obj.key">
-          <label>
+      <div v-show="show" class="form-group row align-items-center">
+        <div v-for="obj in column_list" :key="obj.key"
+             class="form-control col-sm-3 text-nowrap">
+          <label style="font-size:0.9rem">
             <input type="checkbox" :id="obj.key"
                    v-model="model.filter.columns[obj.key]">
             {{ obj.name }}
@@ -32,6 +33,11 @@ export default {
   data: () => ({
     show: false,
   }),
+  computed: {
+    column_list() {
+      return config.DETAIL_COLUMNS.filter(c => c.key !== "title")
+    },
+  },
   methods: {
     config() {
       return config;

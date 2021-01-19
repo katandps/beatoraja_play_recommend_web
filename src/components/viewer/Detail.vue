@@ -24,6 +24,14 @@
       </div>
     </div>
 
+    <hr>
+
+    <FilterPreset :model="model"/>
+    <SongFilterController :model="model"/>
+    <DetailColumns :model="model"/>
+
+    <hr>
+
     <div class="table-responsive">
       <div class="table detail">
         <div class="colgroup">
@@ -58,10 +66,14 @@
 </template>
 
 <script>
+import SongFilterController from "./SongFilterController";
+import DetailColumns from "./DetailColumns";
+import FilterPreset from "./FilterPreset";
 import Model from "../../models/model";
 
 export default {
   name: "Detail",
+  components: {FilterPreset, DetailColumns, SongFilterController},
   props: {
     model: {
       type: Model,
@@ -107,14 +119,13 @@ export default {
 }
 
 .title {
-  min-width: 360px;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  max-width: 360px;
 }
 
 .clear, .clear_before {
-  width: 12px;
+  width: 14px;
 }
 
 .date, .clear_date, .bp_date, .score_date {
@@ -125,8 +136,8 @@ export default {
 }
 
 .bp .combo .play {
-  max-width: 60px;
-  min-width: 60px;
+  width: 1px;
+  white-space: nowrap;
 }
 
 .level {
@@ -135,8 +146,8 @@ export default {
 }
 
 .rate {
-  min-width: 60px;
-  max-width: 60px;
+  width: 1px;
+  white-space: nowrap;
 }
 
 .column {
