@@ -1,46 +1,40 @@
 <template>
-  <div id="others_score">
-    <Sidebar :model="model"/>
-    <div class="main" id="page-wrap">
-      ユーザーIDを入力
-      <label>
-        <input class="form-control" v-model="input_user_id">
-      </label>
-      <router-link class="btn btn-success"
-                   :to="'/view/?user_id=' + input_user_id">
-        ユーザー変更
-      </router-link>
-      <div v-if="model.song_is_set()">
-        <h2 style="display:inline">{{ model.user_name() }}のデータ</h2>
+  <div id="score-table">
+    <InputUserId :user_id="user_id" @refreshData="fetch_detail"/>
+    <hr>
+    <div v-if="model.song_is_set()">
+      <h2>
+        {{ model.user_name() }}のデータ
         <a :href="model.get_twitter_link()" target="_blank"
-           v-if="model.song_is_set()"><font-awesome-icon style="font-size:2rem;" :icon="['fab', 'twitter-square']" /></a>
-        <Viewer :model="model" @setTable="set_table" @setDate="set_date"/>
-      </div>
-      <p v-else>{{ message }}</p>
+           v-if="model.song_is_set()">
+          <font-awesome-icon :icon="['fab', 'twitter-square']"/>
+        </a>
+      </h2>
+
+      <Viewer :model="model" @setTable="set_table" @setDate="set_date"/>
     </div>
+    <p v-else>{{ message }}</p>
   </div>
 </template>
 
 <script>
 import Viewer from "./viewer/Viewer";
-import Sidebar from "./viewer/Sidebar";
 import Model from "../models/model";
+import InputUserId from "./InputUserId";
 
 export default {
   name: "ScoreTable",
-  components: {Viewer, Sidebar},
+  components: {InputUserId, Viewer},
   props: {
     user_id: {
       type: Number,
     }
   },
   data: () => ({
-    input_user_id: null,
     model: Model.default(),
     message: "",
   }),
   async beforeMount() {
-    this.input_user_id = this.user_id
     // this.model = this.model.init_filter(Object.assign(new SongFilter(), this.$store.getters.filter))
     this.model = await this.model.init_table(this.$store.getters.accessToken)
     if (this.user_id) {
@@ -80,14 +74,6 @@ export default {
         await this.fetch_detail()
       }
     },
-    user_id: {
-      async handler() {
-        if (this.user_id) {
-          this.input_user_id = this.user_id;
-          await this.fetch_detail()
-        }
-      }
-    },
     model: {
       deep: true,
       handler() {
@@ -99,17 +85,7 @@ export default {
 </script>
 
 <style scoped>
-.main {
+#score-table {
   padding-top: 20px;
-}
-
-#page-wrap {
-  flex-direction: column; /* 要素の並び順の主軸を指定 上 => 下 */
-  min-height: 100vh; /* 要素の高さの最小値を指定 vhはviewport(表示領域) heightの略 */
-  min-width: 700px;
-  max-width: 700px;
-  padding-top: 20px;
-  margin-left: calc(max(0px, calc(100% - 1060px)) / 2 + 340px); /* サイドメニュー分だけ長くする */
-  margin-right: calc(max(0px, calc(100% - 1060px)) / 2 + 20px);
 }
 </style>

@@ -3,15 +3,15 @@
     <div v-if="model.is_initialized()">
       <div class="form-group row">
         <div class="btn-group col-sm-12">
-          <label class="btn btn-outline-secondary col-sm-4">
+          <label class="btn btn-outline-secondary col-sm-4 text-nowrap">
             <input type="radio" v-model="viewType" value="lamp"/>
             ランプグラフ
           </label>
-          <label class="btn btn-outline-secondary col-sm-4">
+          <label class="btn btn-outline-secondary col-sm-4 text-nowrap">
             <input type="radio" v-model="viewType" value="rank"/>
             ランクグラフ
           </label>
-          <label class="btn btn-outline-secondary col-sm-4">
+          <label class="btn btn-outline-secondary col-sm-4 text-nowrap">
             <input type="radio" v-model="viewType" value="detail"/>
             詳細表
           </label>

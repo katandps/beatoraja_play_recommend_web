@@ -5,8 +5,11 @@
     <div class="form-group row align-items-center">
       <div class="btn-group col-sm-12">
         <label for="url_box"></label>
-        <input id="url_box" class="form-control" type="text" :value="url" disabled>
-        <button class="btn btn-secondary" @click="doCopy"><font-awesome-icon class="copy-url" :icon="['fas', 'copy']"/></button>
+        <input id="url_box" class="form-control" type="text" :value="url"
+               disabled>
+        <button class="btn btn-secondary" @click="doCopy">
+          <font-awesome-icon :icon="['fas', 'copy']"/>
+        </button>
       </div>
     </div>
   </div>

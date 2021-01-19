@@ -136,7 +136,8 @@ export default class Model {
             level => lamps.map(
                 lamp => songs.filter(s => s.clear_type === lamp && s.level === level).sort(s => s.title)
             )
-        )    }
+        )
+    }
 
     /**
      * @public
@@ -247,7 +248,7 @@ export default class Model {
     /**
      * @return Model
      */
-    set_default_selected_level () {
+    set_default_selected_level() {
         let model = this
         const table = this.get_selected_table()
         if (!table.contains_level(this.selected_level)) {
@@ -282,5 +283,14 @@ export default class Model {
      */
     sort_key_is(key) {
         return this.filter.sort_key === key
+    }
+
+    /**
+     * @public
+     * @return String[]
+     */
+    level_list() {
+        const table = this.get_selected_table();
+        return table.level_list || []
     }
 }

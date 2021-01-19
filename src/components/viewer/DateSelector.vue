@@ -1,9 +1,25 @@
 <template>
-  <div id="date-selector" class="form-inline">
-    <label for="picker" class="picker-title">日付選択</label>
-    <datepicker id="picker" :bootstrap-styling="true" name="date" v-model="date"
-                :language="ja" :format="datePickerFormat"/>
-    <button @click="reset_date" class="btn btn-danger reset">日付リセット</button>
+  <div id="date-selector">
+    <div class="form-group row align-items-center">
+      <div class="input-group col-sm-6" role="group">
+        <div class="input-group-prepend">
+          <div class="btn btn-info text-nowrap">
+            日付
+            <font-awesome-icon :icon="['fas', 'question-circle']"/>
+          </div>
+        </div>
+        <datepicker id="picker"
+                    input-class="form-control"
+                    name="date"
+                    v-model="date"
+                    :language="ja" :format="datePickerFormat"/>
+        <div class="input-group-append">
+          <div @click="reset_date" class="btn btn-danger text-nowrap">
+            <font-awesome-icon :icon="['fas', 'undo']"/>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -34,28 +50,4 @@ export default {
 }
 </script>
 
-<style scoped>
-#date-selector {
-  width: 100%;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  box-sizing: border-box;
-}
-
-.picker-title {
-  margin-right: 20px;
-}
-
-#picker {
-  margin-left: 20px;
-}
-
-.reset {
-  margin-left: 20px;
-}
-
-/deep/ .vdp-datepicker__calendar {
-  width: 240px !important;
-  color: #000000;
-}
-</style>
+<style scoped></style>

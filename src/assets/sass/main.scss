@@ -45,7 +45,7 @@ $theme-colors: (
   .table-line-#{$value} {
     &,
     div {
-      border-bottom: 2px solid $color;
+      border-bottom: 3px solid $color;
     }
   }
 }

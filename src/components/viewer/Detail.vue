@@ -1,20 +1,30 @@
 <template>
   <div id="detail">
-    <div class="wrap">
-      <div id="level-select">
-        <label for="all_list" class="col-2">
-          <input type="checkbox" id="all_list"
-                 v-model="model.filter.visible_all_levels">
-          全曲表示
-        </label>
-        <label for="max_length">
-          表示曲数:
-          <input id="max_length" v-model="model.filter.max_length"
-                 class="col-3">
-          曲
-        </label>
+    <div class="form-group row align-items-center">
+      <div class="input-group col-sm-6" role="group">
+        <div class="input-group-prepend">
+          <label for="all_list" class="btn btn-info text-nowrap">
+            全難易度表示
+          </label>
+        </div>
+        <input class="form-control" type="checkbox" id="all_list"
+               v-model="model.filter.visible_all_levels">
       </div>
+      <div class="input-group col-sm-6" role="group">
+        <div class="input-group-prepend">
+          <label for="max_length" class="btn btn-info text-nowrap">
+            表示曲数
+          </label>
+        </div>
+        <input id="max_length" v-model="model.filter.max_length"
+               class="form-control">
+        <div class="input-group-append">
+          <label for="max_length" class="btn btn-info text-nowrap">曲</label>
+        </div>
+      </div>
+    </div>
 
+    <div class="table-responsive">
       <div class="table detail">
         <div class="colgroup">
           <div class="col" v-for="obj in model.get_active_columns()"
@@ -22,7 +32,8 @@
         </div>
         <div class="thead">
           <div class="tr">
-            <div class="td" v-for="obj in model.get_active_columns()"
+            <div class="th sticky-top"
+                 v-for="obj in model.get_active_columns()"
                  @click="model.filter.set_sort(obj.key)"
                  :class="header_class(obj)"
                  :key="obj.key">
@@ -60,9 +71,7 @@ export default {
   methods: {
     header_class(obj) {
       let ret = obj.class;
-      if (this.model.sort_key_is(obj.key)) {
-        ret += ' sort_active'
-      }
+      ret += this.model.sort_key_is(obj.key) ? ' sort_active' : ' sort_inactive'
       return ret;
     },
     row_class(obj, song) {
@@ -89,25 +98,23 @@ export default {
 </script>
 
 <style scoped>
-.wrap {
-  width: 100%;
-}
-
 .sort_active {
   background-color: #e0e0e0;
 }
 
+.sort_inactive {
+  background-color: #ffffff;
+}
+
 .title {
   min-width: 360px;
-  max-width: 360px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .clear, .clear_before {
-  max-width: 12px;
-  min-width: 12px;
+  width: 12px;
 }
 
 .date, .clear_date, .bp_date, .score_date {
@@ -123,7 +130,8 @@ export default {
 }
 
 .level {
-  min-width: 60px;
+  width: 1px;
+  white-space: nowrap;
 }
 
 .rate {
@@ -139,6 +147,8 @@ export default {
   display: table;
   table-layout: auto;
   overflow: scroll;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
 }
 
 .colgroup {
@@ -161,13 +171,21 @@ export default {
   display: table-row;
 }
 
+.th {
+  display: table-cell;
+  padding: .3rem;
+  font-size: .8rem;
+}
+
 .td {
   display: table-cell;
-  padding: .4rem;
-  font-size: .9rem;
+  padding: .3rem;
+  font-size: .8rem;
 }
 
 .flip-list-move {
   transition: transform 800ms;
 }
+
+
 </style>
