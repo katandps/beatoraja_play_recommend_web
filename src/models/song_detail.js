@@ -36,11 +36,21 @@ export default class SongDetail {
         return new SongDetail(config.SONG_FORMAT[0][0].songs)
     }
 
-    score_rate() {
+    score_rate_format() {
+        if (this.total_notes === 0) {
+            return "00.00";
+        }
         if (this.score === this.total_notes * 2) {
             return "100.0";
         }
         return (this.score / this.total_notes * 50).toFixed(2)
+    }
+
+    score_rate() {
+        if (this.total_notes === 0) {
+            return 0.0
+        }
+        return (this.score / this.total_notes)
     }
 
     /**
@@ -121,7 +131,7 @@ export default class SongDetail {
             case 'level':
                 return this.level;
             case 'rate':
-                return this.score_rate();
+                return this.score_rate_format();
             case 'score':
                 return `${this.score}/${this.total_notes * 2}`;
             case 'score_before':
