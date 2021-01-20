@@ -18,6 +18,7 @@
     "bytes": "^3.1.0",
     "core-js": "^3.8.1",
     "loglevel": "^1.7.1",
+    "v-tooltip": "^2.1.2",
     "vue": "^2.6.12",
     "vue-clipboard2": "^0.3.1",
     "vue-cookies": "^1.7.4",

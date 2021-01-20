@@ -3,8 +3,9 @@
     <div class="form-group row align-items-center">
       <div class="input-group col-sm-6" role="group">
         <div class="input-group-prepend">
-          <label for="all_list" class="btn btn-info text-nowrap">
+          <label for="all_list" class="btn btn-info text-nowrap" v-tooltip="'難易度表に登録されているすべてのレベルを表示対象にします'">
             全難易度表示
+            <font-awesome-icon :icon="['fas', 'question-circle']"/>
           </label>
         </div>
         <input class="form-control" type="checkbox" id="all_list"
@@ -12,8 +13,9 @@
       </div>
       <div class="input-group col-sm-6" role="group">
         <div class="input-group-prepend">
-          <label for="max_length" class="btn btn-info text-nowrap">
+          <label for="max_length" class="btn btn-info text-nowrap" v-tooltip="'詳細表上に表示する曲数を制限します フィルタリングは全曲から行われます'">
             表示曲数
+            <font-awesome-icon :icon="['fas', 'question-circle']"/>
           </label>
         </div>
         <input id="max_length" v-model="model.filter.max_length"

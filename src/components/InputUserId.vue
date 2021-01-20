@@ -2,7 +2,8 @@
   <div class="form-group row align-items-center">
     <div class="input-group col-sm-6">
       <div class="input-group-prepend">
-        <label for="input_user_id" class="btn btn-info text-nowrap">
+        <label for="input_user_id" class="btn btn-info text-nowrap"
+               v-tooltip="'IDを入力後、更新をタップすると反映されます'">
           ユーザーID
           <font-awesome-icon :icon="['fas', 'question-circle']"/>
         </label>

@@ -4,7 +4,8 @@
       <div class="input-group col-sm-6" role="group"
            aria-label="Difficulty Table">
         <div class="input-group-prepend">
-          <label for="table" class="btn btn-info text-nowrap">
+          <label for="table" class="btn btn-info text-nowrap"
+                 v-tooltip="'表示する難易度表'">
             難易度表
             <font-awesome-icon :icon="['fas', 'question-circle']"/>
           </label>
@@ -18,7 +19,8 @@
       </div>
       <div class="input-group col-sm-6" role="group" aria-label="Difficulty">
         <div class="input-group-prepend">
-          <label for="level" class="btn btn-info text-nowrap">
+          <label for="level" class="btn btn-info text-nowrap"
+                 v-tooltip="'詳細表で表示する難易度'">
             難易度
             <font-awesome-icon :icon="['fas', 'question-circle']"/>
           </label>

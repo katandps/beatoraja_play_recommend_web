@@ -38,8 +38,7 @@
       </tr>
     </table>
     <div id="song-list-modal">
-      <modal name="modal-area" :draggable="true" :scrollable="true"
-             width="80%" height="auto" :reset="true">
+      <modal name="modal-area" :scrollable="true" width="90%" height="auto">
         <div class="modal-header">
           {{ modal_title }}
         </div>
@@ -104,16 +103,18 @@ export default {
   cursor: pointer;
 }
 
-.modal-header, .modal-body {
+.modal-body {
   padding: 5px 25px;
   font-size: 0.9rem;
 }
 
 .modal-body li {
-  list-style: none;
+  text-align: left;
 }
 
 .modal-header {
+  padding: 5px 25px;
+  font-size: 1.4rem;
   border-bottom: 1px solid #ddd;
 }
 </style>
