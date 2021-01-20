@@ -79,11 +79,13 @@ export default {
         return;
       }
       this.message = "読込中...";
+      this.model = this.model.reset_score()
       this.model = await this.model.init_others_score(
           this.$store.getters.accessToken,
           this.user_id
       )
       this.message = this.model.song_is_set() ? "" : "読み込み失敗"
+
     },
     /**
      * @public

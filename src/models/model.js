@@ -85,6 +85,13 @@ export default class Model {
     }
 
     /**
+     * @public
+     */
+    reset_score() {
+        return this.init_score(null)
+    }
+
+    /**
      * @private
      * @param {Scores} songs
      * @return {Model}

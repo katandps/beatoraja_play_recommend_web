@@ -35,10 +35,10 @@ export default {
     this.input_user_id = this.user_id
   },
   methods: {
-    onClick() {
-      this.$router.push({
+    async onClick() {
+      await this.$router.push({
         path: "/view/?user_id=" + this.input_user_id
-      })
+      }).catch(() => {})
       this.$emit('refreshData')
     }
   }
