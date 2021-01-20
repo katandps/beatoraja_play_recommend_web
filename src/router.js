@@ -3,7 +3,7 @@ import BootstrapVue from "bootstrap-vue";
 import Router from 'vue-router'
 import Home from "./components/Home"
 import DataUploader from './components/DataUploader'
-import ScoreTable from "./components/ScoreTable";
+import ScoreViewer from "./components/ScoreViewer";
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -22,8 +22,8 @@ const router = new Router({
         },
         {
             path: '/view',
-            name: 'ScoreTable',
-            component: ScoreTable,
+            name: 'ScoreViewer',
+            component: ScoreViewer,
             props: (route) => ({user_id: parseInt(route.query.user_id || 1)})
         },
         {
