@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive">
+  <div class="table-wrapper">
     <div class="table detail">
       <div class="colgroup">
         <div class="col" v-for="obj in model.get_active_columns()"
@@ -20,7 +20,7 @@
         <div v-for="song in model.get_sorted_song_list()"
              :key="song.md5"
              :class="clear_type_class(song)" class="tr">
-          <div class="td" v-for="obj in model.get_active_columns()"
+          <div class="td text-nowrap" v-for="obj in model.get_active_columns()"
                :class="row_class(obj, song)"
                :key="obj.key">
             <span v-html="song.get(obj.key)"></span>
@@ -75,6 +75,61 @@ export default {
   background-color: #ffffff;
 }
 
+.table-wrapper {
+  display: block;
+  width: 100%;
+  height: 90vh;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  display: table;
+  table-layout: auto;
+}
+
+.colgroup {
+  display: table-column-group;
+}
+
+.col {
+  display: table-column;
+}
+
+.thead {
+  display: table-header-group;
+}
+
+.tbody {
+  display: table-row-group;
+}
+
+.tr {
+  display: table-row;
+}
+
+.th {
+  display: table-cell;
+  font-weight: bold;
+  position: sticky;
+  top: -1px;
+  z-index: 3;
+  padding: .3rem;
+  font-size: .8rem;
+  border-bottom: 3px solid rgba(0, 0, 0, 0.1);
+}
+
+.td {
+  display: table-cell;
+  padding: .3rem;
+  font-size: .8rem;
+}
+
+.flip-list-move {
+  transition: transform 800ms;
+}
+
+/* Each Column CSS*/
 .title {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -105,53 +160,5 @@ export default {
 .rate {
   width: 1px;
   white-space: nowrap;
-}
-
-.column {
-  display: inline
-}
-
-.table {
-  display: table;
-  table-layout: auto;
-  overflow: scroll;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
-}
-
-.colgroup {
-  display: table-column-group;
-}
-
-.col {
-  display: table-column;
-}
-
-.thead {
-  display: table-header-group;
-}
-
-.tbody {
-  display: table-row-group;
-}
-
-.tr {
-  display: table-row;
-}
-
-.th {
-  display: table-cell;
-  padding: .3rem;
-  font-size: .8rem;
-}
-
-.td {
-  display: table-cell;
-  padding: .3rem;
-  font-size: .8rem;
-}
-
-.flip-list-move {
-  transition: transform 800ms;
 }
 </style>
