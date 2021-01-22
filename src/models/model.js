@@ -100,16 +100,6 @@ export default class Model {
     }
 
     /**
-     * @public
-     */
-    reset_score() {
-        let model = this
-        model.scores = null
-        model = model.init_table_score()
-        return model
-    }
-
-    /**
      * @private
      * @return Model
      */

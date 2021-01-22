@@ -31,10 +31,46 @@ export default class SongDetail {
         this.min_bp_before = score.min_bp_before
         this.min_bp_updated_at = score.min_bp_updated_at
 
-        this.clear_rank = score.clear_rank
+        this.clear_rank = SongDetail.make_clear_rank(this.total_notes, this.score)
         this.updated_at = score.updated_at
         this.play_count = score.play_count
         this.mode = 0
+    }
+
+    /**
+     * @private
+     * @param {number} total_notes
+     * @param {number} ex_score
+     * @return string
+     */
+    static make_clear_rank(total_notes, ex_score) {
+        if (!total_notes || !ex_score) {
+            return "F"
+        }
+        const max = total_notes * 2
+        const rate = ex_score / max;
+        if (rate >= 8 / 9) {
+            return "AAA"
+        }
+        if (rate >= 7 / 9) {
+            return "AA"
+        }
+        if (rate >= 6 / 9) {
+            return "A"
+        }
+        if (rate >= 5 / 9) {
+            return "B"
+        }
+        if (rate >= 4 / 9) {
+            return "C"
+        }
+        if (rate >= 3 / 9) {
+            return "D"
+        }
+        if (rate >= 2 / 9) {
+            return "E"
+        }
+        return "F"
     }
 
     /**
@@ -91,7 +127,7 @@ export default class SongDetail {
      */
     static cmp_title(a, b) {
         if (a.title === b.title) {return 0}
-        return a.title > b.title ? 1 : 0
+        return a.title.toLowerCase() > b.title.toLowerCase() ? 1 : 0
     }
 
     /**

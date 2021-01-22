@@ -83,7 +83,6 @@ export default {
         return;
       }
       this.message = "読込中...";
-      this.model = this.model.reset_score()
       Api.fetch_score(
           this.model.get_date_str(),
           this.user_id,

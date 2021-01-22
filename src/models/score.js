@@ -1,7 +1,14 @@
 export default class Score {
     /**
      * @private
-     * @param {{clear_rank: string, max_combo: number, score: {}, min_bp: {}, clear_type: {}, updated_at: string, play_count: number}} score
+     * @param {{
+     *   max_combo: number,
+     *   score: {},
+     *   min_bp: {},
+     *   clear_type: {},
+     *   updated_at: string,
+     *   play_count: number
+     * }} score
      */
     constructor(score) {
         this.max_combo = score.max_combo
@@ -35,7 +42,6 @@ export default class Score {
             this.min_bp_before = score.min_bp.before
             this.min_bp_updated_at = score.min_bp.updated_at
         }
-        this.clear_rank = score.clear_rank
         this.updated_at = score.updated_at
         this.play_count = score.play_count
     }
