@@ -1,15 +1,46 @@
 import Vue from 'vue'
 
-
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome"
-import {fas} from '@fortawesome/free-solid-svg-icons'
-import {fab} from '@fortawesome/free-brands-svg-icons'
+/**
+ * FontAwesomeの登録
+ */
 import {library} from '@fortawesome/fontawesome-svg-core'
 
-library.add(fas)
-library.add(fab)
-Vue.component('font-awesome-icon', FontAwesomeIcon)
+import {
+    faHome,
+    faCubes,
+    faPencilAlt,
+    faCube,
+    faThumbsUp,
+    faWrench,
+    faFileUpload,
+    faSignOutAlt,
+    faSignInAlt,
+    faCopy,
+    faQuestionCircle,
+    faUndo,
+    faSync
+} from '@fortawesome/free-solid-svg-icons'
+library.add(
+    faHome,
+    faCubes,
+    faPencilAlt,
+    faCube,
+    faThumbsUp,
+    faWrench,
+    faFileUpload,
+    faSignOutAlt,
+    faSignInAlt,
+    faCopy,
+    faQuestionCircle,
+    faUndo,
+    faSync
+)
 
+import {faTwitterSquare} from '@fortawesome/free-brands-svg-icons'
+library.add(faTwitterSquare)
+
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome"
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(require('vue-cookies'))
 
@@ -38,6 +69,8 @@ log.setLevel(logLevel, false)
 
 require('./assets/sass/main.scss')
 require('./assets/sass/tooltip.css')
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.config.productionTip = false
 import router from './router'
