@@ -1,10 +1,11 @@
-import Scores from "./models/song";
+import Scores from "./models/scores"
 import * as log from "loglevel"
-import SongDetail from "./models/song_detail";
+import Songs from "./models/songs";
+import Tables from "./models/difficultyTable";
 
 export default class Api {
     constructor() {
-        this.host = process.env.VUE_APP_HOST;
+        this.host = process.env.VUE_APP_HOST
     }
 
     /**
@@ -16,10 +17,10 @@ export default class Api {
         if (token === null) {
             return {'error': 'token is not set'}
         }
-        const obj = new Api();
-        const uri = obj.host + "/account";
-        const init = {headers: {'session-token': token}};
-        return await (await fetch(uri, init).then(obj.handler)).json();
+        const obj = new Api()
+        const uri = obj.host + "/account"
+        const init = {headers: {'session-token': token}}
+        return await (await fetch(uri, init).then(obj.handler)).json()
     }
 
     /**
@@ -33,29 +34,19 @@ export default class Api {
     }
 
     /**
-     * @public
-     * @param {string} date
-     * @param {number} user_id
-     * @param {string| null}token
-     * @returns {Promise<null|Scores>}
+     *
+     * @param date
+     * @param user_id
+     * @param token
+     * @returns {Promise<null|{user_id: number, user_name: string, score: {}}>}
      */
-    static async fetch_others_score(date, user_id, token) {
+    static async fetch_score(date, user_id, token) {
         const obj = new Api()
         const url = obj.host + "/detail/?date=" + date + "&user_id=" + user_id
-        return obj.fetch_score(url, token)
-    }
-
-    /**
-     * @private
-     * @param {string} url
-     * @param {string} token
-     * @returns {Scores}
-     */
-    async fetch_score(url, token) {
         const init = {headers: {'session-token': token}}
         try {
             /**
-             * @type {({user_id: number, user_name: string, score: {}})}
+             * @type {({user_id: number, user_name: string, score: {}, error: string})}
              */
             const json = await (await fetch(url, init).then(this.handler)).json()
             if (json.error) {
@@ -63,35 +54,47 @@ export default class Api {
                 return null
             }
             log.debug(json)
-            let scores = {};
-            for (const [hash, score] of Object.entries(json.score)) {
-                scores[hash] = new SongDetail(score)
-            }
-            return new Scores(scores, json.user_name, json.user_id)
+
+            return await new Scores(json.score, json.user_name, json.user_id)
         } catch (e) {
             log.error(e)
             return null
         }
     }
 
+    /**
+     * @param {string} token
+     * @returns {Promise<Songs>}
+     */
+    static async fetch_songs(token) {
+        const obj = new Api()
+        const uri = obj.host + "/songs"
+        const init = {headers: {'session-token': token}}
+        return new Songs(await (await fetch(uri, init).then(obj.handler)).json())
+    }
+
+    /**
+     * @param {string} token
+     * @returns {Promise<Tables>}
+     */
     static async fetch_tables(token) {
-        const obj = new Api();
-        const uri = obj.host + "/tables";
-        const init = {headers: {'session-token': token}};
-        return await (await fetch(uri, init).then(obj.handler)).json();
+        const obj = new Api()
+        const uri = obj.host + "/tables"
+        const init = {headers: {'session-token': token}}
+        return new Tables(await (await fetch(uri, init).then(obj.handler)).json())
     }
 
     static async logout(token) {
-        const obj = new Api();
-        const uri = obj.host + "/logout";
-        const init = {headers: {'session-token': token}};
-        await fetch(uri, init).then(obj.handler);
+        const obj = new Api()
+        const uri = obj.host + "/logout"
+        const init = {headers: {'session-token': token}}
+        await fetch(uri, init).then(obj.handler)
     }
 
     static async change_user_name(token, name) {
-        const obj = new Api();
-        const uri = obj.host + "/update/name";
-        const body = JSON.stringify({'changed_name': name});
+        const obj = new Api()
+        const uri = obj.host + "/update/name"
+        const body = JSON.stringify({'changed_name': name})
         const init = {
             headers: {
                 'session-token': token,
@@ -99,32 +102,32 @@ export default class Api {
             },
             method: 'POST',
             body: body
-        };
-        return await (await fetch(uri, init).then(obj.handler)).json();
+        }
+        return await (await fetch(uri, init).then(obj.handler)).json()
     }
 
     static get_upload_score_url() {
-        const obj = new Api();
-        return obj.host + "/upload/score";
+        const obj = new Api()
+        return obj.host + "/upload/score"
     }
 
     static get_upload_score_log_url() {
-        const obj = new Api();
-        return obj.host + "/upload/score_log";
+        const obj = new Api()
+        return obj.host + "/upload/score_log"
     }
 
     static get_upload_song_data_url() {
-        const obj = new Api();
-        return obj.host + "/upload/song_data";
+        const obj = new Api()
+        return obj.host + "/upload/song_data"
     }
 
     async handler(response) {
         if (response.status === 401) {
-            log.debug("Need Login");
+            log.debug("Need Login")
         }
         if (!response.ok) {
-            log.debug(response);
+            log.debug(response)
         }
-        return response;
+        return response
     }
 }

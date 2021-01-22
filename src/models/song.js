@@ -1,35 +1,23 @@
-import Api from "../api";
-
-export default class Scores {
+export default class Song {
     /**
-     * @private
-     * @param {Object[]} score {(md5): song_detail}
-     * @param {string} name
-     * @param {number} user_id
+     * @param {{title: string, notes: number, sha256: string, md5: string}} song
      */
-    constructor(score, name, user_id) {
-        this.score = score
-        this.name = name
-        this.user_id = user_id
-    }
-
-    /**
-     * @public
-     * @param {string} date_str
-     * @param {number} user_id
-     * @param {string} token
-     * @returns {Scores}
-     */
-    static async init_others(date_str, user_id, token) {
-        return await Api.fetch_others_score(date_str, user_id, token);
-    }
-
-    /**
-     * ハッシュを指定してスコアを取得する
-     * @public
-     * @param md5
-     */
-    get_score(md5) {
-        return this.score[md5]
+    constructor(song) {
+        /**
+         * @type string
+         */
+        this.title = song.title
+        /**
+         * @type number
+         */
+        this.notes = song.notes
+        /**
+         * @type string
+         */
+        this.sha256 = song.sha256
+        /**
+         * @type string
+         */
+        this.md5 = song.md5
     }
 }

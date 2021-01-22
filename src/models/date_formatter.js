@@ -2,6 +2,7 @@ export class DateFormatter {
     /**
      * @public
      * @param {Date} date
+     * @return {string}
      */
     static format(date) {
         return this.PRIORITY.reduce((res, fmt) => res.replace(fmt, this.FMT[fmt](date)), "yyyy-MM-dd")

@@ -1,48 +1,40 @@
 import config from "../const"
 
 export default class SongDetail {
-    constructor(song) {
-        this.level = song.level
+    constructor() {    }
+
+    /**
+     * @param {Song} song
+     */
+    init_song(song) {
         this.title = song.title
-        this.max_combo = song.max_combo
-
-        if (song.clear_type === null) {
-            this.clear_type = "NoPlay"
-            this.clear_type_before = "NoPlay"
-            this.clear_updated_at = "1970-01-01T09:00:00+09:00"
-        } else {
-            this.clear_type = song.clear_type.current
-            this.clear_type_before = song.clear_type.before
-            this.clear_updated_at = song.clear_type.updated_at
-        }
-
-        if (song.score === null) {
-            this.score = 0
-            this.score_before = 0
-            this.score_updated_at = "1970-01-01T09:00:00+09:00"
-        } else {
-            this.score = song.score.current
-            this.score_before = song.score.before
-            this.score_updated_at = song.score.updated_at
-        }
-
-        if (song.min_bp === null) {
-            this.min_bp = -1
-            this.min_bp_before = -1
-            this.min_bp_updated_at = "1970-01-01T09:00:00+09:00"
-        } else {
-            this.min_bp = song.min_bp.current
-            this.min_bp_before = song.min_bp.before
-            this.min_bp_updated_at = song.min_bp.updated_at
-        }
-        this.clear_rank = song.clear_rank
-        this.updated_at = song.updated_at
-        this.play_count = song.play_count
-        this.total_notes = song.total_notes
-
-        this.sha256 = song.hash
+        this.total_notes = song.notes
         this.md5 = song.md5
-        this.mode = 0 //todo モード対応
+        this.sha256 = song.sha256
+    }
+
+    /**
+     * @param {Score} score
+     */
+    init_score(score) {
+        this.max_combo = score.max_combo
+
+        this.clear_type = score.clear_type
+        this.clear_type_before = score.clear_type_before
+        this.clear_updated_at = score.clear_updated_at
+
+        this.score = score.score
+        this.score_before = score.score_before
+        this.score_updated_at = score.score_updated_at
+
+        this.min_bp = score.min_bp
+        this.min_bp_before = score.min_bp_before
+        this.min_bp_updated_at = score.min_bp_updated_at
+
+        this.clear_rank = score.clear_rank
+        this.updated_at = score.updated_at
+        this.play_count = score.play_count
+        this.mode = 0
     }
 
     /**
@@ -93,6 +85,14 @@ export default class SongDetail {
         return `${this.min_bp_before}→${this.min_bp}(${this.min_bp_updated_at.split("T")[0]})`
     }
 
+    /**
+     * @param {SongDetail} a
+     * @param {SongDetail} b
+     */
+    static cmp_title(a, b) {
+        if (a.title === b.title) {return 0}
+        return a.title > b.title ? 1 : 0
+    }
 
     /**
      * @public

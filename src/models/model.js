@@ -1,6 +1,4 @@
 import SongFilter from "./songFilter"
-import Tables from "./difficultyTable"
-import Scores from "./song"
 import {DateFormatter} from "./date_formatter"
 import SongDetail from "./song_detail"
 import config from "../const"
@@ -35,9 +33,14 @@ export default class Model {
         this.selected_level = ""
         /**
          * @private
-         * @type {Scores}
+         * @type {Songs}
          */
         this.songs = null
+        /**
+         * @private
+         * @type {Scores}
+         */
+        this.scores = null
         /**
          * @private
          * @type {Date}
@@ -63,42 +66,45 @@ export default class Model {
 
     /**
      * @public
-     * @param {string} token
+     * @param {Tables} tables
      * @returns {Model}
      */
-    async init_table(token) {
+    init_table(tables) {
         let model = this
-        model.tables = await Tables.init(token)
+        model.tables = tables
         model.selected_table = model.tables ? model.tables.first() : null
         model = model.init_table_score()
         return model
     }
 
     /**
-     * @public
-     * @param {string} token  APIアクセスに使用するトークン
-     * @param {number} user_id スコアを取得するユーザーID
+     * @param {Scores} scores
      * @returns {Model}
      */
-    async init_others_score(token, user_id) {
-        return this.init_score(await Scores.init_others(DateFormatter.format(this.date), user_id, token))
+    init_score(scores) {
+        let model = this
+        model.scores = scores
+        model = model.init_table_score()
+        return model
+    }
+
+    /**
+     * @param {Songs} songs
+     * @returns {Model}
+     */
+    init_songs(songs) {
+        let model = this
+        model.songs = songs
+        model = model.init_table_score()
+        return model
     }
 
     /**
      * @public
      */
     reset_score() {
-        return this.init_score(null)
-    }
-
-    /**
-     * @private
-     * @param {Scores} songs
-     * @return {Model}
-     */
-    init_score(songs) {
         let model = this
-        model.songs = songs
+        model.scores = null
         model = model.init_table_score()
         return model
     }
@@ -112,7 +118,7 @@ export default class Model {
             return this;
         }
         let model = this;
-        model.selected_table = model.selected_table.set_score(this.songs)
+        model.selected_table = model.selected_table.set_score(this.songs, this.scores)
         return model
     }
 
@@ -124,8 +130,16 @@ export default class Model {
         return !!this.songs
     }
 
+    /**
+     * @public
+     * @returns {boolean}
+     */
+    score_is_set() {
+        return !!this.scores
+    }
+
     is_initialized() {
-        return this.tables_is_set() && this.song_is_set()
+        return this.tables_is_set() && this.song_is_set() && this.score_is_set()
     }
 
     /**
@@ -141,7 +155,7 @@ export default class Model {
         let songs = this.get_selected_table().get_filtered_score(this.filter)
         return levels.map(
             level => lamps.map(
-                lamp => songs.filter(s => s.clear_type === lamp && s.level === level).sort(s => s.title)
+                lamp => songs.filter(s => s.clear_type === lamp && s.level === level).sort(SongDetail.cmp_title)
             )
         )
     }
@@ -159,7 +173,7 @@ export default class Model {
         let songs = this.get_selected_table().get_filtered_score(this.filter)
         return levels.map(
             l => ranks.map(
-                r => songs.filter(s => s.clear_rank === r && s.level === l).sort(s => s.title)
+                r => songs.filter(s => s.clear_rank === r && s.level === l).sort(SongDetail.cmp_title)
             )
         )
     }
@@ -212,7 +226,7 @@ export default class Model {
      * @returns {string}
      */
     user_name() {
-        return this.songs ? this.songs.name : ""
+        return this.score_is_set() ? this.scores.name : ""
     }
 
     /**
@@ -265,6 +279,13 @@ export default class Model {
     }
 
     /**
+     * @returns {string}
+     */
+    get_date_str() {
+        return DateFormatter.format(this.date)
+    }
+
+    /**
      * @public
      * @param {Date} date
      * @return Model
@@ -280,8 +301,11 @@ export default class Model {
      * @returns {string}
      */
     get_twitter_link() {
+        if (!this.score_is_set()) {
+            return ""
+        }
         return "https://twitter.com/intent/tweet?url="
-            + window.location.host + "/%23/view?user_id=" + this.songs.user_id
+            + window.location.host + "/%23/view?user_id=" + this.scores.user_id
     }
 
     /**

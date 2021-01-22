@@ -1,23 +1,15 @@
-import Api from "../api";
-import * as log from "loglevel"
+import SongDetail from "./song_detail";
 
 export default class Tables {
     /**
      * @param {Object[]} json
      */
     constructor(json) {
-        this.tables = [];
+        /**
+         * @type {DifficultyTable[]}
+         */
+        this.tables = []
         json.forEach(t => this.tables.push(new DifficultyTable(t.name, t.levels, t.level_list)))
-    }
-
-    /**
-     * @param token
-     * @returns {Tables}
-     */
-    static async init(token) {
-        const json = await Api.fetch_tables(token)
-        log.debug(json)
-        return new Tables(json)
     }
 
     /**
@@ -28,6 +20,9 @@ export default class Tables {
         return this.tables.map(t => t.name)
     }
 
+    /**
+     * @returns {null|DifficultyTable}
+     */
     first() {
         return this.tables.length === 0 ? null : this.tables[0]
     }
@@ -40,10 +35,10 @@ export default class Tables {
     table_index(table_name) {
         for (let i = 0; i < this.tables.length; i++) {
             if (this.tables[i].name === table_name) {
-                return i;
+                return i
             }
         }
-        return 0;
+        return 0
     }
 
     /**
@@ -51,7 +46,7 @@ export default class Tables {
      * @returns {DifficultyTable|null}
      */
     get_table(table_name) {
-        return this.tables[this.table_index(table_name)] || null;
+        return this.tables[this.table_index(table_name)] || null
     }
 }
 
@@ -60,32 +55,40 @@ export class DifficultyTable {
         /**
          * @type string
          */
-        this.name = name;
+        this.name = name
         /**
          * @type {Object.<string, string[]>} level_label: hash[]
          */
-        this.levels = levels;
+        this.levels = levels
         /**
          * @type string[]
          */
-        this.level_list = level_list;
+        this.level_list = level_list
         /**
          * @type {Object.<string, Object.<string, SongDetail>>}
          */
-        this.table_score = {};
+        this.table_score = {}
         this.level_list.forEach(level => this.table_score[level] = {})
     }
 
     /**
      * @public
-     * @param {Scores} songs
+     * @param {Songs} songs
+     * @param {Scores} scores
      * @return DifficultyTable
      */
-    set_score(songs) {
+    set_score(songs, scores) {
         let table = this
         Object.entries(table.levels).forEach(
             ([level_label, hashes]) => hashes.forEach(
-                hash => table.table_score[level_label][hash] = songs.get_score(hash).set_level(level_label)
+                hash => {
+                    if (!table.table_score[level_label][hash]) {
+                        table.table_score[level_label][hash] = new SongDetail()
+                    }
+                    table.table_score[level_label][hash].init_score(scores.get_score(hash))
+                    table.table_score[level_label][hash].init_song(songs.get_score(hash))
+                    table.table_score[level_label][hash].set_level(level_label)
+                }
             )
         )
         return table
@@ -98,8 +101,17 @@ export class DifficultyTable {
      */
     get_filtered_score(filter) {
         return Object.values(this.table_score).map(
+            /**
+             * @param {Object.<string, SongDetail>} scores
+             * @returns {unknown[]}
+             */
             scores => {
-                return Object.values(scores).filter(s => filter.apply(s))
+                return Object.values(scores).filter(
+                    /**
+                     * @param {SongDetail} s
+                     * @returns {boolean}
+                     */
+                    s => filter.apply(s))
             }
         ).flat()
     }
