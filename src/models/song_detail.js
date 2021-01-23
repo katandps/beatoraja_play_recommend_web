@@ -11,6 +11,8 @@ export default class SongDetail {
         this.total_notes = song.notes
         this.md5 = song.md5
         this.sha256 = song.sha256
+
+        this.clear_rank = SongDetail.make_clear_rank(this.total_notes, this.score)
     }
 
     /**
@@ -127,7 +129,7 @@ export default class SongDetail {
      */
     static cmp_title(a, b) {
         if (a.title === b.title) {return 0}
-        return a.title.toLowerCase() > b.title.toLowerCase() ? 1 : 0
+        return a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1
     }
 
     /**

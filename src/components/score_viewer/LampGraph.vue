@@ -29,7 +29,7 @@
               :style="'width: ' + lamp_list[level_index][lamp_index].length * 100 + '%;color:#000'"
               v-on:click="show_modal(
                   level + ' ' +  clear_type,
-                   lamp_list[level_index][lamp_index].map(s => s.title).sort()
+                   list(level_index, lamp_index)
                    )"
           >
             {{ lamp_list[level_index][lamp_index].length }}
@@ -56,6 +56,7 @@
 import config from "../../const.js"
 import Model from "../../models/model";
 import * as log from "loglevel";
+import SongDetail from "../../models/song_detail";
 
 export default {
   name: "LampGraph",
@@ -83,6 +84,9 @@ export default {
       this.modal_title = title;
       this.$modal.show("modal-area")
     },
+    list(level_index, rank_index) {
+      return this.lamp_list[level_index][rank_index].sort(SongDetail.cmp_title).map(s => s.title)
+    }
   },
   computed: {
     /**
@@ -93,7 +97,7 @@ export default {
     },
     level_list() {
       return this.model.get_selected_table().level_list
-    }
+    },
   }
 }
 </script>
