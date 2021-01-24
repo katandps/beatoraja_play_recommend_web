@@ -1,4 +1,5 @@
-import SongDetail from "./song_detail";
+import SongDetail from "./song_detail"
+import * as log from "loglevel"
 
 export default class Tables {
     /**
@@ -78,6 +79,8 @@ export class DifficultyTable {
      * @return DifficultyTable
      */
     set_score(songs, scores) {
+        log.debug(songs)
+        log.debug(scores)
         let table = this
         Object.entries(table.levels).forEach(
             ([level_label, hashes]) => hashes.forEach(
@@ -86,7 +89,7 @@ export class DifficultyTable {
                         table.table_score[level_label][hash] = new SongDetail()
                     }
                     table.table_score[level_label][hash].init_score(scores.get_score(hash))
-                    table.table_score[level_label][hash].init_song(songs.get_score(hash))
+                    table.table_score[level_label][hash].init_song(songs.get_score(hash), hash)
                     table.table_score[level_label][hash].set_level(level_label)
                 }
             )

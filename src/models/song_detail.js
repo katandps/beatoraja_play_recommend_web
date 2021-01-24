@@ -1,12 +1,22 @@
 import config from "../const"
 
 export default class SongDetail {
-    constructor() {    }
+    constructor() {
+    }
 
     /**
      * @param {Song} song
+     * @param {string} hash
      */
-    init_song(song) {
+    init_song(song, hash) {
+        if (!song) {
+            this.title = "曲データなし"
+            this.total_notes = 0
+            this.md5 = hash
+            this.sha256 = ""
+            this.clear_rank = SongDetail.make_clear_rank(this.total_notes, this.score)
+            return;
+        }
         this.title = song.title
         this.total_notes = song.notes
         this.md5 = song.md5
@@ -128,7 +138,9 @@ export default class SongDetail {
      * @param {SongDetail} b
      */
     static cmp_title(a, b) {
-        if (a.title === b.title) {return 0}
+        if (a.title === b.title) {
+            return 0
+        }
         return a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1
     }
 
