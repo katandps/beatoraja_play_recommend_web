@@ -8,7 +8,8 @@
       </div>
       <input id="name-input" class="form-control" v-model="name">
       <div class="input-group-append">
-        <label class="btn btn-success text-nowrap" @click="change_name" :disabled="lock">
+        <label class="btn btn-success text-nowrap" @click="change_name"
+               :class="disabled ? 'disabled' :''" :disabled="disabled">
           変更を反映
         </label>
       </div>
@@ -35,7 +36,7 @@ export default {
   },
   methods: {
     async change_name() {
-      if (this.name === "" || this.name === this.$store.getters.userInfo.name) {
+      if (this.disabled) {
         return
       }
       this.lock = true
@@ -46,6 +47,11 @@ export default {
       }).catch(() => {
         this.message = "更新に失敗しました。"
       });
+    }
+  },
+  computed: {
+    disabled() {
+      return this.lock || this.name === "" || this.name === this.$store.getters.userInfo.name
     }
   }
 }
