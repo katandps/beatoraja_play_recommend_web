@@ -20,7 +20,7 @@ export default class Api {
         const obj = new Api()
         const uri = obj.host + "/account"
         const init = {headers: {'session-token': token}}
-        return await (await fetch(uri, init).then(obj.handler)).json()
+        return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
     /**
@@ -48,7 +48,7 @@ export default class Api {
             /**
              * @type {({user_id: number, user_name: string, score: {}, error: string})}
              */
-            const json = await (await fetch(url, init).then(this.handler)).json()
+            const json = await fetch(url, init).then(obj.handler).catch(obj.error)
             if (json.error) {
                 log.debug(json)
                 return null
@@ -70,7 +70,7 @@ export default class Api {
         const obj = new Api()
         const uri = obj.host + "/songs"
         const init = {headers: {'session-token': token}}
-        return new Songs(await (await fetch(uri, init).then(obj.handler)).json())
+        return new Songs(await fetch(uri, init).then(obj.handler).catch(obj.error))
     }
 
     /**
@@ -81,19 +81,19 @@ export default class Api {
         const obj = new Api()
         const uri = obj.host + "/tables"
         const init = {headers: {'session-token': token}}
-        return new Tables(await (await fetch(uri, init).then(obj.handler)).json())
+        return new Tables(await fetch(uri, init).then(obj.handler).catch(obj.error))
     }
 
     static async logout(token) {
         const obj = new Api()
         const uri = obj.host + "/logout"
         const init = {headers: {'session-token': token}}
-        await fetch(uri, init).then(obj.handler)
+        await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
     static async change_user_name(token, name) {
         const obj = new Api()
-        const uri = obj.host + "/update/name"
+        const uri = obj.host + "/user/name"
         const body = JSON.stringify({'changed_name': name})
         const init = {
             headers: {
@@ -103,7 +103,7 @@ export default class Api {
             method: 'POST',
             body: body
         }
-        return await (await fetch(uri, init).then(obj.handler)).json()
+        return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
     static get_upload_score_url() {
@@ -122,12 +122,21 @@ export default class Api {
     }
 
     async handler(response) {
+        log.debug(response)
         if (response.status === 401) {
             log.debug("Need Login")
         }
         if (!response.ok) {
             log.debug(response)
         }
-        return response
+        return response.json()
+    }
+
+    /**
+     * @param response
+     * @returns {Promise<{error}>}
+     */
+    async error(response) {
+        return {'error': response}
     }
 }

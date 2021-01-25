@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     disabled() {
-      return this.lock || this.name === "" || this.name === this.$store.getters.userInfo.name
+      return this.lock || this.name === "" || !this.$store.getters.userInfo || this.$store.getters.userInfo.name === this.name
     }
   }
 }
