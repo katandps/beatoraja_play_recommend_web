@@ -91,10 +91,35 @@ export default class Api {
         await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
+    /**
+     * @param {string} token
+     * @param {string} name
+     * @returns {Promise<Response|{error: *}>}
+     */
     static async change_user_name(token, name) {
         const obj = new Api()
         const uri = obj.host + "/user/name"
         const body = JSON.stringify({'changed_name': name})
+        const init = {
+            headers: {
+                'session-token': token,
+                'content-type': 'application/json'
+            },
+            method: 'POST',
+            body: body
+        }
+        return await fetch(uri, init).then(obj.handler).catch(obj.error)
+    }
+
+    /**
+     * @param {string} token
+     * @param {boolean} visibility
+     * @returns {Promise<Response|{error: *}>}
+     */
+    static async change_visibility(token, visibility) {
+        const obj = new Api()
+        const uri = obj.host + "/user/visibility"
+        const body = JSON.stringify({'visibility': visibility ? "true" : "false"})
         const init = {
             headers: {
                 'session-token': token,
