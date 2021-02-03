@@ -5,5 +5,8 @@ module.exports = {
     outputDir: 'docs',
     configureWebpack: {
         plugins: [new BundleAnalyzerPlugin()]
+    },
+    devServer: {
+        disableHostCheck: true
     }
 }
