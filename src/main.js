@@ -18,7 +18,8 @@ import {
     faCopy,
     faQuestionCircle,
     faUndo,
-    faSync
+    faSync,
+    faUsers,
 } from '@fortawesome/free-solid-svg-icons'
 library.add(
     faHome,
@@ -33,7 +34,8 @@ library.add(
     faCopy,
     faQuestionCircle,
     faUndo,
-    faSync
+    faSync,
+    faUsers,
 )
 
 import {faTwitterSquare} from '@fortawesome/free-brands-svg-icons'

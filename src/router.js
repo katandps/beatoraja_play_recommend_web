@@ -6,6 +6,7 @@ import DataUploader from './components/DataUploader'
 import ScoreViewer from "./components/ScoreViewer";
 import ProfileEdit from "./components/ProfileEdit";
 import RecommendTable from "./components/RecommendTable";
+import UserList from "./components/UserList";
 
 Vue.use(Router)
 const router = new Router({
@@ -36,6 +37,11 @@ const router = new Router({
             name: 'RecommendTable',
             component: RecommendTable,
             props: (route) => ({user_id: parseInt(route.query.user_id)})
+        },
+        {
+            path: '/users',
+            name: 'UserList',
+            component: UserList,
         }
     ]
 })

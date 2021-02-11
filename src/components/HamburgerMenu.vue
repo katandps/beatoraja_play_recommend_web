@@ -25,6 +25,13 @@
               スコア閲覧
             </router-link>
           </li>
+          <li>
+            <router-link class="text-dark px-2" to="/users">
+              <font-awesome-icon :icon="['fas','users']"/>
+              ユーザーリスト
+              <font-awesome-icon :icon="['fas', 'wrench']"/>
+            </router-link>
+          </li>
         </ul>
         <ul v-if="is_login">
           <li>

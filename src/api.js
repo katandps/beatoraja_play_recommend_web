@@ -25,6 +25,18 @@ export default class Api {
 
     /**
      * @public
+     * @param {string|null}token
+     * @returns {[]| {error:*}}>}
+     */
+    static async get_user_list(token) {
+        const obj = new Api()
+        const url = obj.host + "/users"
+        const init = {headers: {'session-token': token}}
+        return await fetch(url, init).then(obj.handler).catch(obj.error)
+    }
+
+    /**
+     * @public
      * @param {number} user_id
      * @return string
      */
