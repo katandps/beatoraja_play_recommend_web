@@ -11,7 +11,9 @@
       </div>
       <div class="tr" v-for="obj in users" :key="obj.id">
         <div class="td">{{ obj.id }}</div>
-        <div class="td">{{ obj.name }}</div>
+        <div class="td">
+          <router-link :to="'/view/?user_id=' + obj.id">{{ obj.name }}</router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -27,11 +29,11 @@ export default {
       type: Number,
     }
   },
-  data:() => ({
+  data: () => ({
     users: [],
   }),
   async mounted() {
-      this.users = await Api.get_user_list(this.$store.getters.accessToken)
+    this.users = await Api.get_user_list(this.$store.getters.accessToken)
   }
 }
 </script>
