@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import * as log from 'loglevel'
+
 export default {
   name: "InputUserId",
   props: {
@@ -36,8 +38,12 @@ export default {
   },
   methods: {
     async onClick() {
+      let query = Object.assign({}, this.$route.query)
+      query.user_id = this.input_user_id
+      log.debug(query)
       await this.$router.push({
-        path: "/view/?user_id=" + this.input_user_id
+        name: 'ScoreViewer',
+        query: query
       }).catch(() => {})
       this.$emit('refreshData')
     }
