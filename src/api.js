@@ -38,11 +38,12 @@ export default class Api {
     /**
      * @public
      * @param {number} user_id
+     * @param {number} table_index
      * @return string
      */
-    static get_table_header_url(user_id) {
+    static get_table_header_url(user_id, table_index) {
         const obj = new Api()
-        return obj.host + "/recommend_table/" + user_id + "/table.html"
+        return obj.host + "/recommend_table/" + user_id + "/" + table_index + "/table.html"
     }
 
     /**

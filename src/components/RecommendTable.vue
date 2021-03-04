@@ -1,6 +1,22 @@
 <template>
   <div id="recommend-table">
     <h2>おすすめ譜面表</h2>
+    <div class="input-group col-sm-12" role="group"
+         aria-label="Difficulty Table">
+      <div class="input-group-prepend">
+        <label for="table" class="btn btn-info text-nowrap"
+               v-tooltip="'表示する難易度表'">
+          難易度表
+          <font-awesome-icon :icon="['fas', 'question-circle']"/>
+        </label>
+      </div>
+      <select id="table" class="form-control"
+              name="table" v-model="selected">
+        <option v-for="(name,index) in list" :key="index">
+          {{ name }}
+        </option>
+      </select>
+    </div>
     下記URLをbeatorajaに追加して下さい。<br/>
     <div class="form-group row align-items-center">
       <div class="btn-group col-sm-12">
@@ -27,6 +43,10 @@ export default {
       required: true
     }
   },
+  data: () => ({
+    tables: null,
+    selected: "",
+  }),
   methods: {
     doCopy() {
       this.$copyText(this.url).then(function (e) {
@@ -36,12 +56,31 @@ export default {
       })
     }
   },
+  mounted() {
+    Api.fetch_tables(this.$store.getters.accessToken).then(
+        t => {
+          this.tables = t
+          this.selected = t.first()
+        }
+    )
+  },
   computed: {
+    list() {
+      if (this.tables) {
+        return this.tables.name_list()
+      } else {
+        return []
+      }
+    },
     /**
      * @returns {string}
      */
     url() {
-      return Api.get_table_header_url(this.user_id)
+      if (this.tables && this.tables.table_index(this.selected) >= 0) {
+        return Api.get_table_header_url(this.user_id, this.tables.table_index(this.selected))
+      } else {
+        return "難易度表を選択してください"
+      }
     }
   },
 }
