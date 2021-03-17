@@ -1,5 +1,5 @@
 <template>
-  <div class="form-group row align-items-center">
+  <div id="input-user" class="form-group row align-items-center">
     <div class="input-group col-sm-6">
       <div class="input-group-prepend">
         <label for="input_user_id" class="btn btn-info text-nowrap"
@@ -51,4 +51,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+#input-user {
+  margin-right: 40px;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div id="page-header">
+  <nav id="page-header">
     <!--ハンバーガーメニューのボタン-->
     <div class="hamburger_btn" v-on:click='active_btn=!active_btn'>
       <span class="line line_01"
@@ -73,7 +73,7 @@
         </ul>
       </div>
     </transition>
-  </div>
+  </nav>
 </template>
 
 <script>

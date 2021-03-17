@@ -1,7 +1,14 @@
 <template>
   <div id="app">
     <HamburgerMenu :is_login="is_login" @handleSignOut="handleSignOut"/>
-    <router-view/>
+    <router-view :is_login="is_login" @handleSignOut="handleSignOut"/>
+    <footer id="footer" class="footer mt-auto py-3">
+      <div class="container">
+        © 2020 KATAND<br/>
+        <a href="https://twitter.com/dnaTaK">twitter@dnaTaK</a><br/>
+        <router-link to="/view/?user_id=1">Score</router-link>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -61,5 +68,11 @@ export default {
   max-width: 960px;
   margin-left: auto;
   margin-right: auto;
+}
+
+#footer {
+  padding: 20px;
+  background-color: #dddddd;
+  border-radius: 0.3rem;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div id="score-table">
+  <section id="score-table">
     <InputUserId :user_id="user_id" @refreshData="fetch_detail"/>
     <hr>
     <div v-if="model.is_initialized()">
@@ -32,7 +32,7 @@
       </div>
     </div>
     <p v-else>{{ message }}</p>
-  </div>
+  </section>
 </template>
 
 <script>

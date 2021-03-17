@@ -14,13 +14,17 @@ const router = new Router({
         {
             path: '/',
             name: 'Home',
-            component: Home
+            component: Home,
+            props: true
         },
         {
             path: '/view',
             name: 'ScoreViewer',
             component: ScoreViewer,
-            props: (route) => ({user_id: parseInt(route.query.user_id || 1), mode: route.query.mode || 'detail'})
+            props: (route) => ({
+                user_id: parseInt(route.query.user_id || 1),
+                mode: route.query.mode || 'detail'
+            })
         },
         {
             path: '/upload',
