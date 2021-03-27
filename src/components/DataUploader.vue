@@ -1,169 +1,103 @@
 <template>
   <div id="data-uploader">
     <h1 id="uploader-title" class="uploader-title">各種データアップロード</h1>
-    score.db と scorelog.db をアップロードするとスコア情報が更新されます。<br />
-    ファイルは<em>beatoraja/player/player*</em>にあります。
-    <div class="upload">
-      <div class="btn">
-        <VueUploadComponent
-            class="btn btn-primary"
-            input-id="files_score"
-            :post-action="uploadScoreUrl()"
-            :headers="{'session-token': token()}"
-            v-model="files_score"
-            ref="upload_score"
-            @input-filter="inputFilterScore"
+    <div>
+      score.db と scorelog.db をアップロードするとスコア情報が更新されます。<br/>
+      ファイルは<em>beatoraja/player/player*</em>にあります。
+      <form>
+        <label for="play_data" class="btn btn-primary">
+          <font-awesome-icon :icon="['fas', 'plus']"/>
+          Choose file
+          <input id="play_data" type="file" @change="onPlayDataUploaded" accept=".db" multiple required>
+        </label>
+        <div class="btn" :class="score_db ? 'btn-outline-success' : 'btn-outline-danger'">score.db</div>
+        <div class="btn" :class="score_log_db ? 'btn-outline-success' : 'btn-outline-danger'">scorelog.db</div>
+        <button
+            type="submit"
+            class="btn"
+            :class="ready_upload_play_data ? 'btn-info' : 'btn-outline-info'"
+            :disabled="!ready_upload_play_data"
+            @click="uploadPlayData"
         >
-          <i class="fa fa-plus"></i>
-          score.dbを選択する
-        </VueUploadComponent>
-        <button type="button" class="btn btn-success" v-if="!$refs.upload_score || !$refs.upload_score.active"
-                @click.prevent="$refs.upload_score.active = true">
-          <i class="fa fa-arrow-up" aria-hidden="true"></i>
-          Start Upload
+          Submit
         </button>
-        <button type="button" class="btn btn-danger" v-else @click.prevent="$refs.upload_score.active = false">
-          <i class="fa fa-stop" aria-hidden="true"></i>
-          Stop Upload
-        </button>
-      </div>
-      <ul>
-        <li v-for="(file) in files_score" :key="file.id">
-          <span>{{ file.name }}</span> -
-          <span>{{ bytes_format(file.size) }}</span> -
-          <span v-if="file.error">{{ file.error }}</span>
-          <span v-else-if="file.success">success</span>
-          <span v-else-if="file.active">active</span>
-          <span v-else>ready</span>
-        </li>
-      </ul>
-    </div>
-
-
-    <div class="upload">
-      <div class="btn">
-        <VueUploadComponent
-            class="btn btn-primary"
-            input-id="files_score_log"
-            :post-action="uploadScoreLogUrl()"
-            :headers="{'session-token': token()}"
-            v-model="files_score_log"
-            ref="upload_score_log"
-            @input-filter="inputFilterScoreLog"
-        >
-          <i class="fa fa-plus"></i>
-          scorelog.dbを選択する
-        </VueUploadComponent>
-        <button type="button" class="btn btn-success" v-if="!$refs.upload_score_log || !$refs.upload_score_log.active"
-                @click.prevent="$refs.upload_score_log.active = true">
-          <i class="fa fa-arrow-up" aria-hidden="true"></i>
-          Start Upload
-        </button>
-        <button type="button" class="btn btn-danger" v-else @click.prevent="$refs.upload_score_log.active = false">
-          <i class="fa fa-stop" aria-hidden="true"></i>
-          Stop Upload
-        </button>
-      </div>
-      <ul>
-        <li v-for="(file) in files_score_log" :key="file.id">
-          <span>{{ file.name }}</span> -
-          <span>{{ bytes_format(file.size) }}</span> -
-          <span v-if="file.error">{{ file.error }}</span>
-          <span v-else-if="file.success">success</span>
-          <span v-else-if="file.active">active</span>
-          <span v-else>ready</span>
-        </li>
-      </ul>
+        <div class="btn">{{ play_data_message }}</div>
+      </form>
     </div>
     <hr>
-    表示されない曲がある場合は、songdata.dbをアップロードしてください。
-    <div class="upload">
-      <ul>
-        <li v-for="(file) in files_song_data" :key="file.id">
-          <span>{{ file.name }}</span> -
-          <span>{{ bytes_format(file.size) }}</span> -
-          <span v-if="file.error">{{ file.error }}</span>
-          <span v-else-if="file.success">success</span>
-          <span v-else-if="file.active">active</span>
-          <span v-else></span>
-        </li>
-      </ul>
-      <div class="btn">
-        <VueUploadComponent
-            class="btn btn-primary"
-            input-id="files_song_data"
-            :post-action="uploadSongDataUrl()"
-            :headers="{'session-token': token()}"
-            v-model="files_song_data"
-            ref="upload_song_data"
-            @input-filter="inputFilterSongData"
+    <div>
+      表示されない曲がある場合は、songdata.dbをアップロードしてください。
+      <form>
+        <label for="song_data" class="btn btn-primary">
+          <font-awesome-icon :icon="['fas', 'plus']"/>
+          Choose file
+          <input id="song_data" type="file" @change="onSongDataUploaded" accept=".db" multiple required>
+        </label>
+        <div class="btn" :class="song_data_db ? 'btn-outline-success' : 'btn-outline-danger'">songdata.db</div>
+        <button type="submit"
+                class="btn"
+                :class="ready_upload_song_data ? 'btn-info' : 'btn-outline-info'"
+                :disabled="!ready_upload_song_data"
+                @click="uploadSongData"
         >
-          <i class="fa fa-plus"></i>
-          songdata.dbを選択する
-        </VueUploadComponent>
-        <button type="button" class="btn btn-success" v-if="!$refs.upload_song_data || !$refs.upload_song_data.active"
-                @click.prevent="$refs.upload_song_data.active = true">
-          <i class="fa fa-arrow-up" aria-hidden="true"></i>
-          Start Upload
+          Submit
         </button>
-        <button type="button" class="btn btn-danger" v-else @click.prevent="$refs.upload_song_data.active = false">
-          <i class="fa fa-stop" aria-hidden="true"></i>
-          Stop Upload
-        </button>
-      </div>
+        <div class="btn">{{ song_data_message }}</div>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
-import VueUploadComponent from "vue-upload-component";
-import Api from "../api";
-import {format} from "bytes"
+import Api from "../api"
 
 export default {
   name: "DataUploader",
-  components: {VueUploadComponent},
   data: () => ({
-    files_score: [],
-    files_score_log: [],
-    files_song_data: [],
+    score_db: null,
+    score_log_db: null,
+    song_data_db: null,
+    play_data_message: "",
+    song_data_message: "",
   }),
   methods: {
-    token() {
-      return this.$cookies.get("session-token");
-    },
-    inputFilterScore(newFile, oldFile, prevent) {
-      if (newFile && !oldFile) {
-        if (newFile.name !== "score.db") {
-          return prevent()
+    onPlayDataUploaded(e) {
+      e.target.files.forEach(file => {
+        if (file.name === "score.db") {
+          this.score_db = file
         }
-      }
-    },
-    inputFilterScoreLog(newFile, oldFile, prevent) {
-      if (newFile && !oldFile) {
-        if (newFile.name !== "scorelog.db") {
-          return prevent()
+        if (file.name === "scorelog.db") {
+          this.score_log_db = file
         }
-      }
+      })
+      this.play_data_message = ""
     },
-    inputFilterSongData(newFile, oldFile, prevent) {
-      if (newFile && !oldFile) {
-        if (newFile.name !== "songdata.db") {
-          return prevent()
+    onSongDataUploaded(e) {
+      e.target.files.forEach(file => {
+        if (file.name === "songdata.db") {
+          this.song_data_db = file
         }
-      }
+      })
+      this.song_data_message = ""
     },
-    uploadScoreUrl() {
-      return Api.get_upload_score_url();
+    async uploadPlayData() {
+      await Api.upload_play_data(this.$store.getters.accessToken, this.score_db, this.score_log_db)
+      this.score_db = null
+      this.score_log_db = null
+      this.play_data_message = "OK"
     },
-    uploadScoreLogUrl() {
-      return Api.get_upload_score_log_url();
+    async uploadSongData() {
+      await Api.upload_song_data(this.$store.getters.accessToken, this.song_data_db)
+      this.song_data_db = null
+      this.song_data_message = "OK"
+    }
+  },
+  computed: {
+    ready_upload_play_data() {
+      return !(!this.score_db || !this.score_log_db)
     },
-    uploadSongDataUrl() {
-      return Api.get_upload_song_data_url();
-    },
-    bytes_format(bytes) {
-      return format(bytes);
+    ready_upload_song_data() {
+      return !!this.song_data_db
     }
   }
 }
@@ -174,42 +108,15 @@ export default {
   padding-top: 20px;
 }
 
-.file-uploads {
-  overflow: hidden;
-  position: relative;
-  text-align: center;
-  display: inline-block;
+input#play_data {
+  display: none;
 }
 
-.btn {
-  display: inline-block;
-  font-weight: 400;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  border: 1px solid transparent;
-  padding: .5rem .75rem;
-  font-size: 1rem;
-  line-height: 1.25;
-  border-radius: .25rem;
-  transition: all .15s ease-in-out;
+input#song_data {
+  display: none;
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #007bff;
-  border-color: #007bff;
-}
-
-ul {
-  list-style: none;
-}
-
-.thumb {
-  width: 50px;
+label {
+  margin-bottom: 0;
 }
 </style>

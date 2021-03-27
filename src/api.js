@@ -144,19 +144,38 @@ export default class Api {
         return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
-    static get_upload_score_url() {
+    static async upload_play_data(token, score, scorelog) {
         const obj = new Api()
-        return obj.host + "/upload/score"
+        const uri = obj.host + "/upload/play_data"
+        const formData = new FormData()
+        formData.append("score", score)
+        formData.append("scorelog", scorelog)
+        const init = {
+            method: 'POST',
+            headers: {
+                'session-token': token,
+                'access-control-request-headers': 'session-token,content-type'
+            },
+            body: formData
+        }
+        return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
-    static get_upload_score_log_url() {
+    static async upload_song_data(token, file) {
         const obj = new Api()
-        return obj.host + "/upload/score_log"
-    }
-
-    static get_upload_song_data_url() {
-        const obj = new Api()
-        return obj.host + "/upload/song_data"
+        const uri = obj.host + "/upload/song_data"
+        const formData = new FormData()
+        formData.append("songdata", file)
+        const init = {
+            method: 'POST',
+            headers: {
+                'session-token': token,
+                'access-control-request-headers': 'session-token,content-type'
+            },
+            body: formData
+        }
+        log.debug(init);
+        return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
     async handler(response) {

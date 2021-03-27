@@ -20,6 +20,9 @@ import {
     faUndo,
     faSync,
     faUsers,
+    faStop,
+    faArrowUp,
+    faPlus,
 } from '@fortawesome/free-solid-svg-icons'
 library.add(
     faHome,
@@ -36,6 +39,9 @@ library.add(
     faUndo,
     faSync,
     faUsers,
+    faStop,
+    faArrowUp,
+    faPlus,
 )
 
 import {faTwitterSquare} from '@fortawesome/free-brands-svg-icons'
