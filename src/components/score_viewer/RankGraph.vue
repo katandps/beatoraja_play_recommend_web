@@ -1,5 +1,6 @@
 <template>
   <div id="rank-graph">
+    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
     凡例
     <table style="width:100%">
       <tr>
@@ -54,9 +55,13 @@ import config from "../../const.js"
 import Model from "../../models/model"
 import * as log from "loglevel"
 import SongDetail from "../../models/song_detail"
+import TableSelector from "./TableSelector";
 
 export default {
   name: "RankGraph",
+  components: {
+    TableSelector,
+  },
   props: {
     model: {
       type: Model,
@@ -83,7 +88,13 @@ export default {
     },
     list(level_index, rank_index) {
       return this.rank_list[level_index][rank_index].sort(SongDetail.cmp_title).map(s => s.title)
-    }
+    },
+    /**
+     * @param {string} table
+     */
+    set_table(table) {
+      this.model = this.model.set_table(table)
+    },
   },
   computed: {
     /**
@@ -108,6 +119,7 @@ export default {
   padding: 5px 25px;
   font-size: 0.9rem;
 }
+
 .modal-body li {
   text-align: left;
 }

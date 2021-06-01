@@ -169,6 +169,8 @@ export default class Model {
     }
 
     /**
+     * Detailで表示する曲のリストを得る
+     *
      * @public
      * @returns {SongDetail[]}
      */
@@ -183,6 +185,23 @@ export default class Model {
         const length = parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length;
         return songs.sort(this.cmp.bind(this)).slice(0, length)
     }
+
+    /**
+     * Recentで表示する曲のリストを得る
+     *
+     * @todo 複数の難易度表を対象にする
+     * @public
+     * @returns {SongDetail[]}
+     */
+    get_recent_song_list() {
+        if (!this.is_initialized()) {
+            return [SongDetail.dummy()]
+        }
+        let songs = this.get_selected_table().get_filtered_score(new SongFilter())
+        const length = parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length;
+        return songs.sort((a, b) =>  {
+            return a.updated_at === b.updated_at ? 0 : (a.updated_at < b.updated_at) ? 1 : -1
+        }).slice(0, length)    }
 
     /**
      * @private
@@ -201,6 +220,13 @@ export default class Model {
      */
     get_active_columns() {
         return config.DETAIL_COLUMNS.filter(obj => this.filter.columns[obj.key])
+    }
+
+    /**
+     * @returns {({name: string, title: string, class: string, key: string})[]}
+     */
+    get_recent_columns() {
+        return config.RECENT_COLUMNS
     }
 
     /**
@@ -249,6 +275,9 @@ export default class Model {
      * @return Model
      */
     set_table(table_name) {
+        if (!this) {
+            return null
+        }
         let model = this
         model.selected_table = this.tables ? this.tables.get_table(table_name) : null
         model = model.init_table_score()

@@ -7,28 +7,31 @@
       <div>
         <div class="form-group row">
           <div class="btn-group col-sm-12">
-            <label class="btn btn-outline-secondary col-sm-4 text-nowrap">
+            <label class="btn btn-outline-secondary col-sm-3 text-nowrap">
               <input type="radio" :checked="mode==='lamp'" @click="changeMode('lamp')" value="lamp"/>
               ランプグラフ
             </label>
-            <label class="btn btn-outline-secondary col-sm-4 text-nowrap">
+            <label class="btn btn-outline-secondary col-sm-3 text-nowrap">
               <input type="radio" :checked="mode==='rank'" @click="changeMode('rank')" value="rank"/>
               ランクグラフ
             </label>
-            <label class="btn btn-outline-secondary col-sm-4 text-nowrap">
+            <label class="btn btn-outline-secondary col-sm-3 text-nowrap">
               <input type="radio" :checked="mode==='detail'" @click="changeMode('detail')" value="detail"/>
               詳細表
+            </label>
+            <label class="btn btn-outline-secondary col-sm-3 text-nowrap">
+              <input type="radio" :checked="mode==='recent'" @click="changeMode('recent')" value="recent"/>
+              最近更新
             </label>
           </div>
         </div>
 
         <DateSelector @setDate="set_date"/>
-        <TableSelector :model="model" @setTable="set_table"
-                       v-if="model.tables_is_set ()"/>
         <hr>
         <LampGraph :model="model" v-if="mode === 'lamp'"/>
         <RankGraph :model="model" v-if="mode === 'rank'"/>
         <Detail :model="model" v-if="mode === 'detail'"/>
+        <Recent :model="model" v-if="mode === 'recent'"/>
       </div>
     </div>
     <p v-else>{{ message }}</p>
@@ -42,8 +45,8 @@ import ScoreViewerHeader from "./score_viewer/ScoreViewerHeader"
 import DateSelector from "./score_viewer/DateSelector"
 import LampGraph from "./score_viewer/LampGraph"
 import Detail from "./score_viewer/Detail"
+import Recent from "./score_viewer/Recent"
 import RankGraph from "./score_viewer/RankGraph"
-import TableSelector from "./score_viewer/TableSelector"
 import Api from "../api"
 import * as log from "loglevel"
 
@@ -56,7 +59,7 @@ export default {
     LampGraph,
     Detail,
     RankGraph,
-    TableSelector
+    Recent
   },
   props: {
     user_id: {
@@ -69,7 +72,6 @@ export default {
   data: () => ({
     model: Model.default(),
     message: "",
-    viewType: "detail",
     loaded: {user_id: null, date: ""},
   }),
   async beforeMount() {
@@ -118,12 +120,6 @@ export default {
     async set_date(date) {
       this.model = this.model.set_date(date)
       await this.fetch_detail()
-    },
-    /**
-     * @param {string} table
-     */
-    set_table(table) {
-      this.model = this.model.set_table(table)
     },
   },
   watch: {

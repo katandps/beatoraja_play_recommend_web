@@ -1,7 +1,10 @@
 <template>
   <div id="table_selector">
-    <div class="form-group row align-items-center">
-      <div class="input-group col-sm-6" role="group"
+    <div class="row align-items-center">
+      <div
+           :class="can_level_select ? 'col-sm-6' : 'col-auto'"
+           class="input-group"
+           role="group"
            aria-label="Difficulty Table">
         <div class="input-group-prepend">
           <label for="table" class="btn btn-info text-nowrap"
@@ -17,7 +20,7 @@
           </option>
         </select>
       </div>
-      <div class="input-group col-sm-6" role="group" aria-label="Difficulty">
+      <div class="input-group col-sm-6" role="group" aria-label="Difficulty" v-if="can_level_select">
         <div class="input-group-prepend">
           <label for="level" class="btn btn-info text-nowrap"
                  v-tooltip="'詳細表で表示する難易度'">
@@ -46,6 +49,10 @@ export default {
     model: {
       type: Model,
       required: true,
+    },
+    can_level_select: {
+      type: Boolean,
+      required: false,
     }
   },
   data: () => ({

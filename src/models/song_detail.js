@@ -225,6 +225,12 @@ export default class SongDetail {
                 return '<a href="https://www.gaftalk.com/minir/#/viewer/song/' + this.sha256 + '/' + this.mode + '" target="_blank">MinIR</a>'
             case 'mocha':
                 return '<a href="https://mocha-repository.info/song.php?sha256=' + this.sha256 + '" target="_blank">Mocha</a>'
+            case "clear_update":
+                return this.clear_updated_at.split("T")[0] === this.updated_at.split("T")[0] ? `${this.clear_type_before} -> ${this.clear_type}` : "-"
+            case "score_update":
+                return this.score_before !== 0 ? `+${this.score - this.score_before} (${this.score})` : `${this.score}(new)`
+            case "bp_update":
+                return this.min_bp_before !== -1 ? `${this.min_bp - this.min_bp_before} (${this.min_bp})` : `${this.min_bp}(new)`
         }
     }
 }
