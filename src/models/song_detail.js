@@ -226,11 +226,20 @@ export default class SongDetail {
             case 'mocha':
                 return '<a href="https://mocha-repository.info/song.php?sha256=' + this.sha256 + '" target="_blank">Mocha</a>'
             case "clear_update":
-                return this.clear_updated_at.split("T")[0] === this.updated_at.split("T")[0] ? `${this.clear_type_before} -> ${this.clear_type}` : "-"
+                return this.clear_updated_at.split("T")[0] === this.updated_at.split("T")[0]
+                    ? `${this.clear_type_before} -> <span class="update_strong">${this.clear_type}</span>`
+                    : "-"
             case "score_update":
-                return this.score_before !== 0 ? `+${this.score - this.score_before} (${this.score})` : `${this.score}(new)`
+                return this.score_updated_at.split("T")[0] === this.updated_at.split("T")[0]
+                    ? `<span class="update_strong">+${this.score - this.score_before}</span> (${this.score})`
+                    : this.score
             case "bp_update":
-                return this.min_bp_before !== -1 ? `${this.min_bp - this.min_bp_before} (${this.min_bp})` : `${this.min_bp}(new)`
+                return this.min_bp_updated_at.split("T")[0] !== this.updated_at.split("T")[0]
+                    ? this.min_bp
+                    : this.min_bp_before !== -1
+                        ? `<span class="update_strong">${this.min_bp - this.min_bp_before}</span> (${this.min_bp})`
+                        : `<span class="update_strong">new</span> (${this.min_bp})`
+
         }
     }
 }

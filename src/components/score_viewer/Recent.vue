@@ -130,6 +130,7 @@ export default {
   z-index: 3;
   padding: .3rem;
   font-size: .8rem;
+  background-color: #ffffff;
   border-bottom: 3px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -179,5 +180,12 @@ export default {
 .update {
   width: 1px;
   white-space: nowrap;
+}
+
+</style>
+
+<style>
+.update_strong {
+  font-weight: bold;
 }
 </style>
