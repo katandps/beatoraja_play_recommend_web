@@ -8,7 +8,7 @@
     <div class="table-wrapper">
       <div class="table">
         <div class="colgroup">
-          <div class="col" v-for="obj in model.get_active_columns()"
+          <div class="col" v-for="obj in model.get_recent_columns()"
                :cass="obj.class" :key="obj.key"/>
         </div>
 
@@ -16,8 +16,6 @@
           <div class="tr">
             <div class="th sticky-top"
                  v-for="obj in model.get_recent_columns()"
-                 @click="model.filter.set_sort(obj.key)"
-                 :class="header_class(obj)"
                  :key="obj.key">
               {{ obj.title }}
             </div>
@@ -91,15 +89,6 @@ export default {
 </script>
 
 <style scoped>
-
-.sort_active {
-  background-color: #e0e0e0;
-}
-
-.sort_inactive {
-  background-color: #ffffff;
-}
-
 .table-wrapper {
   display: block;
   width: 100%;
@@ -183,6 +172,11 @@ export default {
 }
 
 .rate {
+  width: 1px;
+  white-space: nowrap;
+}
+
+.update {
   width: 1px;
   white-space: nowrap;
 }
