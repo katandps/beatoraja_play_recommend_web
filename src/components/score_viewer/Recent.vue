@@ -9,13 +9,14 @@
       <div class="table">
         <div class="colgroup">
           <div class="col" v-for="obj in model.get_recent_columns()"
-               :cass="obj.class" :key="obj.key"/>
+               :class="obj.class" :key="obj.key"/>
         </div>
 
         <div class="thead">
           <div class="tr">
             <div class="th sticky-top"
                  v-for="obj in model.get_recent_columns()"
+                 :class="header_class(obj)"
                  :key="obj.key">
               {{ obj.title }}
             </div>
@@ -89,6 +90,14 @@ export default {
 </script>
 
 <style scoped>
+.sort_active {
+  background-color: #e0e0e0;
+}
+
+.sort_inactive {
+  background-color: #ffffff;
+}
+
 .table-wrapper {
   display: block;
   width: 100%;
@@ -148,7 +157,7 @@ export default {
 .title {
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 360px;
+  max-width: 360px;
 }
 
 .clear, .clear_before {
