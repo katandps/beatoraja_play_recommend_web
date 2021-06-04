@@ -108,7 +108,7 @@ export default class Model {
             return this;
         }
         let model = this;
-        model.selected_table = model.selected_table.set_score(this.songs, this.scores)
+        this.tables = model.tables.set_score(this.songs, this.scores)
         return model
     }
 
@@ -189,7 +189,6 @@ export default class Model {
     /**
      * Recentで表示する曲のリストを得る
      *
-     * @todo 複数の難易度表を対象にする
      * @public
      * @returns {SongDetail[]}
      */
@@ -197,11 +196,12 @@ export default class Model {
         if (!this.is_initialized()) {
             return [SongDetail.dummy()]
         }
-        let songs = this.get_selected_table().get_filtered_score(new SongFilter())
+        let songs = this.tables.get_filtered_score(new SongFilter)
         const length = parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length;
-        return songs.sort((a, b) =>  {
+        return songs.sort((a, b) => {
             return a.updated_at === b.updated_at ? 0 : (a.updated_at < b.updated_at) ? 1 : -1
-        }).slice(0, length)    }
+        }).slice(0, length)
+    }
 
     /**
      * @private

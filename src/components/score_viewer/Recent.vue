@@ -1,7 +1,6 @@
 <template>
   <div id="recent">
     <div class="row align-items-center">
-      <TableSelector class="col-sm-6" :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
       <display-songs-limiter class="col-sm-6" :model="model"/>
     </div>
     <hr/>
@@ -41,13 +40,11 @@
 <script>
 import Model from "../../models/model";
 import DisplaySongsLimiter from "./detail/DisplaySongsLimiter";
-import TableSelector from "./TableSelector";
 
 export default {
   name: "Recent",
   components: {
     DisplaySongsLimiter,
-    TableSelector,
   },
   props: {
     model: {

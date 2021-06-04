@@ -49,6 +49,38 @@ export default class Tables {
     get_table(table_name) {
         return this.tables[this.table_index(table_name)] || null
     }
+
+    /**
+     * 設定でフィルタリングされた曲データを返す
+     * 対象は全曲
+     * @param {SongFilter} filter
+     * @return {SongDetail[]}
+     */
+    get_filtered_score(filter) {
+        let ret = [];
+        let md5s = {};
+        this.tables.forEach((table) => {
+            table.get_filtered_score(filter).forEach((song) => {
+                if (!md5s[song.md5]) {
+                    md5s[song.md5] = true;
+                    ret.push(song)
+                }
+            })
+        })
+        return ret
+    }
+
+    /**
+     * @public
+     * @param {Songs} songs
+     * @param {Scores} scores
+     * @return {Tables}
+     */
+    set_score(songs, scores) {
+        let tables = this;
+        tables.tables = this.tables.map((table) => table.set_score(songs, scores))
+        return tables
+    }
 }
 
 export class DifficultyTable {
