@@ -23,13 +23,13 @@
         <td style="width:30px">{{ level }}</td>
         <td class="progress" style="width:100%;height:1.8em">
           <div
-              v-for="(clear_type,lamp_index) in config().LAMP_TYPE"
-              :key="clear_type"
-              :class="'progress-bar bg-' + clear_type"
+              v-for="(lamp_index) in config().LAMP_GRAPH_LIST"
+              :key="config().LAMP_INDEX[lamp_index]"
+              :class="'progress-bar bg-' + config().LAMP_INDEX[lamp_index]"
               role="progressbar"
               :style="'width: ' + lamp_list[level_index][lamp_index].length * 100 + '%;color:#000'"
               v-on:click="show_modal(
-                  level + ' ' +  clear_type,
+                  level + ' ' +  config().LAMP_INDEX[lamp_index],
                    list(level_index, lamp_index)
                    )"
           >

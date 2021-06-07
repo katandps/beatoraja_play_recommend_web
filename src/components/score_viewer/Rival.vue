@@ -1,20 +1,24 @@
 <template>
   <div id="recent">
     <div class="row align-items-center">
+      <input-user-id :user_id="rival_id" @refresh="refresh_rival_id" class="col-sm-6"/>
       <display-songs-limiter class="col-sm-6" :model="model"/>
     </div>
+    <TableSelector class="col-sm-12" :model="model" @setTable="set_table" v-if="model.tables_is_set()"
+                   :can_level_select="true"/>
+    <level-selector :model="model" class="col-sm-6"/>
     <hr/>
     <div class="table-wrapper">
       <div class="table">
         <div class="colgroup">
-          <div class="col" v-for="obj in model.get_recent_columns()"
+          <div class="col" v-for="obj in columns"
                :class="obj.class" :key="obj.key"/>
         </div>
 
         <div class="thead">
           <div class="tr">
             <div class="th sticky-top"
-                 v-for="obj in model.get_recent_columns()"
+                 v-for="obj in columns"
                  :class="header_class(obj)"
                  :key="obj.key">
               {{ obj.title }}
@@ -22,10 +26,10 @@
           </div>
         </div>
         <transition-group tag="div" class="tbody" name="flip-list">
-          <div v-for="song in model.get_recent_song_list()"
+          <div v-for="song in model.get_sorted_song_list()"
                :key="song.md5"
                :class="clear_type_class(song)" class="tr">
-            <div class="td text-nowrap" v-for="obj in model.get_recent_columns()"
+            <div class="td text-nowrap" v-for="obj in columns"
                  :class="row_class(obj, song)"
                  :key="obj.key">
               <span v-html="song.get(obj.key)"/>
@@ -38,19 +42,28 @@
 </template>
 
 <script>
-import Model from "../../models/model";
-import DisplaySongsLimiter from "./detail/DisplaySongsLimiter";
-import config from "../../const";
+import Model from "../../models/model"
+import DisplaySongsLimiter from "./detail/DisplaySongsLimiter"
+import TableSelector from "./TableSelector"
+import InputUserId from "./InputUserId"
+import config from "../../const"
+import LevelSelector from "./detail/LevelSelector"
 
 export default {
-  name: "Recent",
+  name: "Rival",
   components: {
     DisplaySongsLimiter,
+    TableSelector,
+    InputUserId,
+    LevelSelector
   },
   props: {
     model: {
       type: Model,
       require: true,
+    },
+    rival_id: {
+      type: Number,
     }
   },
   methods: {
@@ -83,7 +96,15 @@ export default {
     set_table(table) {
       this.model = this.model.set_table(table)
     },
-  }
+    refresh_rival_id(input_rival_id) {
+      this.$emit("updateRival", input_rival_id)
+    }
+  },
+  computed: {
+    columns() {
+      return config.RIVAL_COLUMNS
+    }
+  },
 }
 </script>
 
@@ -185,6 +206,21 @@ export default {
 }
 
 .update {
+  width: 1px;
+  white-space: nowrap;
+}
+
+.clear_vs {
+  width: 1px;
+  white-space: nowrap;
+}
+
+.score_vs {
+  width: 1px;
+  white-space: nowrap;
+}
+
+.bp_vs {
   width: 1px;
   white-space: nowrap;
 }

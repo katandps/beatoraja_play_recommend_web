@@ -33,6 +33,7 @@
 
 <script>
 import Model from "../../../models/model";
+import config from "../../../const.js"
 
 export default {
   name: "DetailTable",
@@ -47,10 +48,10 @@ export default {
       let ret = obj.class;
       switch (obj.key) {
         case 'clear':
-          ret += ' table-' + song.clear_type;
+          ret += ' table-' + config.LAMP_INDEX[song.clear_type];
           break;
         case 'clear_before':
-          ret += ' table-' + song.clear_type_before;
+          ret += ' table-' + config.LAMP_INDEX[song.clear_type_before];
           break;
         case 'rate':
           ret += ' bg-' + song.clear_rank;
@@ -59,7 +60,7 @@ export default {
       return ret;
     },
     clear_type_class(song) {
-      return "table-line-" + song.clear_type;
+      return "table-line-" + config.LAMP_INDEX[song.clear_type];
     },
   },
 }

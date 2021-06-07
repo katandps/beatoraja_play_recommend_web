@@ -1,5 +1,5 @@
 import SongDetail from "./song_detail"
-import * as log from "loglevel"
+// import * as log from "loglevel"
 
 export default class Tables {
     /**
@@ -81,6 +81,17 @@ export default class Tables {
         tables.tables = this.tables.map((table) => table.set_score(songs, scores))
         return tables
     }
+
+    /**
+     * @public
+     * @param scores
+     * @returns {Tables}
+     */
+    set_rival_score(scores) {
+        let tables = this;
+        tables.tables = this.tables.map((table) => table.set_rival_score(scores))
+        return tables
+    }
 }
 
 export class DifficultyTable {
@@ -111,8 +122,6 @@ export class DifficultyTable {
      * @return DifficultyTable
      */
     set_score(songs, scores) {
-        log.debug(songs)
-        log.debug(scores)
         let table = this
         Object.entries(table.levels).forEach(
             ([level_label, hashes]) => hashes.forEach(
@@ -123,6 +132,26 @@ export class DifficultyTable {
                     table.table_score[level_label][hash].init_score(scores.get_score(hash))
                     table.table_score[level_label][hash].init_song(songs.get_score(hash), hash)
                     table.table_score[level_label][hash].set_level(level_label)
+                }
+            )
+        )
+        return table
+    }
+
+    /**
+     * @public
+     * @param {Scores} scores
+     * @return DifficultyTable
+     */
+    set_rival_score(scores) {
+        let table = this
+        Object.entries(table.levels).forEach(
+            ([level_label, hashes]) => hashes.forEach(
+                hash => {
+                    if (!table.table_score[level_label][hash]) {
+                        table.table_score[level_label][hash] = new SongDetail()
+                    }
+                    table.table_score[level_label][hash].init_rival_score(scores.get_score(hash))
                 }
             )
         )

@@ -1,5 +1,5 @@
 <template>
-  <div class="input-group col-auto">
+  <div class="input-group">
     <div class="input-group-prepend">
       <label for="max_length" class="btn btn-info text-nowrap"
              v-tooltip="'詳細表上に表示する曲数を制限します フィルタリングは全曲から行われます'">

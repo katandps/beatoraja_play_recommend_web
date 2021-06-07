@@ -1,7 +1,10 @@
 import config from "../const"
+import Score from "./score";
 
 export default class SongDetail {
     constructor() {
+        this.init_score(new Score())
+        this.init_rival_score(new Score())
     }
 
     /**
@@ -47,6 +50,18 @@ export default class SongDetail {
         this.updated_at = score.updated_at
         this.play_count = score.play_count
         this.mode = 0
+    }
+
+    /**
+     * @param {Score} score
+     */
+    init_rival_score(score) {
+        this.rival_max_combo = score.max_combo
+        this.rival_clear_type = score.clear_type
+        this.rival_score = score.score
+        this.rival_min_bp = score.min_bp
+        this.rival_clear_rank = SongDetail.make_clear_rank(this.total_notes, this.rival_score)
+        this.rival_updated_at = score.updated_at
     }
 
     /**
@@ -121,18 +136,6 @@ export default class SongDetail {
         return ret
     }
 
-    clear_type_description() {
-        return `${this.clear_type_before}→${this.clear_type}(${this.clear_updated_at.split("T")[0]})`
-    }
-
-    score_description() {
-        return `${this.score_before}→${this.score}(${this.score_updated_at.split("T")[0]})`
-    }
-
-    min_bp_description() {
-        return `${this.min_bp_before}→${this.min_bp}(${this.min_bp_updated_at.split("T")[0]})`
-    }
-
     /**
      * @param {SongDetail} a
      * @param {SongDetail} b
@@ -155,7 +158,7 @@ export default class SongDetail {
             case "level":
                 return level_list.indexOf(this.level)
             case "clear":
-                return config.LAMP_TYPE.length - config.LAMP_TYPE.indexOf(this.clear_type)
+                return this.clear_type
             case "title":
                 return this.title.toLowerCase()
             case "rate":
@@ -181,7 +184,7 @@ export default class SongDetail {
             case 'clear_date':
                 return this.clear_updated_at
             case 'clear_before':
-                return config.LAMP_TYPE.length - config.LAMP_TYPE.indexOf(this.clear_type_before)
+                return this.clear_type_before
             case 'random_select':
                 return Math.floor(Math.random() * Math.floor(100000000))
             default:
@@ -220,7 +223,7 @@ export default class SongDetail {
             case 'play':
                 return this.play_count === -1 ? "---" : this.play_count
             case 'date':
-                return this.updated_at.split("T")[0]
+                return this.updated_at.split("T")[0] === "1970-01-01" ? "---" : this.updated_at.split("T")[0]
             case 'minir':
                 return '<a href="https://www.gaftalk.com/minir/#/viewer/song/' + this.sha256 + '/' + this.mode + '" target="_blank">MinIR</a>'
             case 'mocha':
@@ -239,7 +242,14 @@ export default class SongDetail {
                     : this.min_bp_before !== -1
                         ? `<span class="update_strong">${this.min_bp - this.min_bp_before}</span> (${this.min_bp})`
                         : `<span class="update_strong">new</span> (${this.min_bp})`
-
+            case "clear_diff_rival":
+                return this.clear_type === this.rival_clear_type ? "draw" : this.clear_type < this.rival_clear_type ? "lose" : "win"
+            case "score_diff_rival":
+                return this.score - this.rival_score
+            case "bp_diff_rival":
+                return this.rival_min_bp === -1 ? "---" : this.min_bp - this.rival_min_bp
+            case "rival_date":
+                return this.rival_updated_at.split("T")[0] === "1970-01-01" ? "---" : this.rival_updated_at.split("T")[0]
         }
     }
 }

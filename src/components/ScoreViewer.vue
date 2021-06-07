@@ -1,6 +1,6 @@
 <template>
   <section id="score-table">
-    <InputUserId :user_id="user_id" @refreshData="fetch_detail"/>
+    <InputUserId :user_id="user_id" @refresh="refreshUserId" class="col-sm-8"/>
     <hr>
     <div v-if="model.is_initialized()">
       <score-viewer-header :model="model"/>
@@ -23,6 +23,10 @@
               <input type="radio" :checked="mode==='recent'" @click="changeMode('recent')" value="recent"/>
               最近更新
             </label>
+            <label class="btn btn-outline-secondary col-sm-3 text-nowrap">
+              <input type="radio" :checked="mode==='rival'" @click="changeMode('rival')" value="rival"/>
+              ライバル比較
+            </label>
           </div>
         </div>
 
@@ -32,6 +36,7 @@
         <RankGraph :model="model" v-if="mode === 'rank'"/>
         <Detail :model="model" v-if="mode === 'detail'"/>
         <Recent :model="model" v-if="mode === 'recent'"/>
+        <Rival :model="model" v-if="mode === 'rival'" :rival_id="rival_id" @updateRival="set_rival"/>
       </div>
     </div>
     <p v-else>{{ message }}</p>
@@ -47,6 +52,7 @@ import LampGraph from "./score_viewer/LampGraph"
 import Detail from "./score_viewer/Detail"
 import Recent from "./score_viewer/Recent"
 import RankGraph from "./score_viewer/RankGraph"
+import Rival from "./score_viewer/Rival"
 import Api from "../api"
 import * as log from "loglevel"
 
@@ -59,7 +65,8 @@ export default {
     LampGraph,
     Detail,
     RankGraph,
-    Recent
+    Recent,
+    Rival,
   },
   props: {
     user_id: {
@@ -67,12 +74,15 @@ export default {
     },
     mode: {
       type: String,
+    },
+    rival_id: {
+      type: Number,
     }
   },
   data: () => ({
     model: Model.default(),
     message: "",
-    loaded: {user_id: null, date: ""},
+    loaded: {user_id: null, rival_id: null, date: ""},
   }),
   async beforeMount() {
     // this.model = this.model.init_filter(Object.assign(new SongFilter(), this.$store.getters.filter))
@@ -82,35 +92,66 @@ export default {
     Api.fetch_songs(this.$store.getters.accessToken).then(
         s => this.model = this.model.init_songs(s)
     )
-    await this.fetch_detail()
+    await this.fetch_detail(this.$route.query)
+    await this.set_rival(this.rival_id)
   },
   methods: {
-    async fetch_detail() {
+    async refreshUserId(input_user_id) {
+      let query = Object.assign({}, this.$route.query)
+      query.user_id = input_user_id
+      await this.fetch_detail(query)
+    },
+
+    async set_rival(input_rival_id) {
+      let query = Object.assign({}, this.$route.query)
+      query.rival_id = input_rival_id
+      await this.$router.push({name: 'ScoreViewer', query: query}).catch(() => {
+      })
+
+      if (this.loaded.rival_id !== this.rival_id) {
+        await Api.fetch_score(
+            this.model.get_date_str(),
+            this.rival_id,
+            this.$store.getters.accessToken
+        ).then(s => {
+          this.model = this.model.renew_with_rival_score(s)
+        })
+        this.loaded.rival_id = this.rival_id
+      }
+    },
+
+    async fetch_detail(query) {
       if (!this.user_id) {
         return
       }
-      if (this.loaded.user_id === this.user_id && this.loaded.date === this.model.get_date_str()) {
-        log.debug("load skipped")
-        return
+
+      log.debug(query)
+      await this.$router.push({name: 'ScoreViewer', query: query}).catch(() => {
+      })
+
+      log.debug(this.user_id, this.loaded)
+      if (this.loaded.user_id !== this.user_id || this.loaded.date !== this.model.get_date_str()) {
+        log.debug("fetch!")
+        this.message = "読込中..."
+        await Api.fetch_score(
+            this.model.get_date_str(),
+            this.user_id,
+            this.$store.getters.accessToken
+        ).then(s => {
+          this.model = this.model.init_score(s)
+          this.message = this.model.score_is_set() ? "" : "読み込み失敗"
+        })
+        this.loaded.user_id = this.user_id
+        this.loaded.date = this.model.get_date_str()
       }
 
-      this.loaded.user_id = this.user_id
-      this.loaded.date = this.model.get_date_str()
-      this.message = "読込中..."
-      Api.fetch_score(
-          this.model.get_date_str(),
-          this.user_id,
-          this.$store.getters.accessToken
-      ).then(s => {
-        this.model = this.model.init_score(s)
-        this.message = this.model.score_is_set() ? "" : "読み込み失敗"
-      })
     },
 
     async changeMode(mode) {
       let query = Object.assign({}, this.$route.query)
       query.mode = mode
-      await this.$router.push({name:'ScoreViewer', query: query}).catch(() => {})
+      await this.$router.push({name: 'ScoreViewer', query: query}).catch(() => {
+      })
     },
 
     /**

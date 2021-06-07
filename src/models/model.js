@@ -46,6 +46,8 @@ export default class Model {
          * @type {Date}
          */
         this.date = Model.default_date()
+
+        this.rival_name = ""
     }
 
     /**
@@ -105,10 +107,25 @@ export default class Model {
      */
     init_table_score() {
         if (!this.is_initialized()) {
-            return this;
+            return this
         }
-        let model = this;
-        this.tables = model.tables.set_score(this.songs, this.scores)
+        let model = this
+        model.tables = model.tables.set_score(this.songs, this.scores)
+        return model
+    }
+
+    /**
+     * @public
+     * @param {Scores} scores
+     * @returns {Model}
+     */
+    renew_with_rival_score(scores) {
+        if (!this.is_initialized()) {
+            return this
+        }
+        let model = Object.assign(new Model(), this)
+        model.tables = this.tables.set_rival_score(scores)
+        model.rival_name = scores.name
         return model
     }
 
@@ -141,11 +158,11 @@ export default class Model {
             return []
         }
         let levels = this.get_selected_table().level_list;
-        let lamps = config.LAMP_TYPE;
+        let lamps = config.LAMP_INDEX;
         let songs = this.get_selected_table().get_filtered_score(this.filter)
         return levels.map(
             level => lamps.map(
-                lamp => songs.filter(s => s.clear_type === lamp && s.level === level).sort(SongDetail.cmp_title)
+                (_lamp, index) => songs.filter(s => s.clear_type === index && s.level === level).sort(SongDetail.cmp_title)
             )
         )
     }
@@ -228,6 +245,7 @@ export default class Model {
     get_recent_columns() {
         return config.RECENT_COLUMNS
     }
+
 
     /**
      * @public

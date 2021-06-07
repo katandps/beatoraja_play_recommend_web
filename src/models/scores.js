@@ -9,7 +9,8 @@ export default class Scores {
     constructor(score_json, name, user_id) {
         let scores = {};
         for (const [hash, score] of Object.entries(score_json)) {
-            scores[hash] = new Score(score)
+            scores[hash] = new Score()
+            scores[hash].set_score(score)
         }
         /**
          * @type {Object.<string, Score>}
@@ -26,6 +27,6 @@ export default class Scores {
      * @param md5
      */
     get_score(md5) {
-        return this.scores[md5]
+        return this.scores[md5] ? this.scores[md5] : new Score()
     }
 }

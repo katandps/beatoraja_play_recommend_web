@@ -13,6 +13,24 @@ export default Object.freeze({
         'NoPlay',
     ],
 
+    LAMP_INDEX: [
+        'NoPlay',
+        'Failed',
+        'AssistEasy',
+        'LightAssistEasy',
+        'Easy',
+        'Normal',
+        'Hard',
+        'ExHard',
+        'FullCombo',
+        'Perfect',
+        'Max',
+    ],
+
+    LAMP_GRAPH_LIST: [
+        10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+    ],
+
     RANK_TYPE: [
         'AAA',
         'AA',
@@ -48,10 +66,21 @@ export default Object.freeze({
         {key: 'clear', name: 'クリア', title: ' ', class: 'clear'},
         {key: 'level', name: '難易度', title: 'Lv', class: 'level'},
         {key: 'title', name: '曲名', title: 'Title', class: 'title'},
-        {key: 'clear_update', name: 'クリア更新', title: 'ClearUpdate', class: 'update'},
-        {key: 'score_update', name: 'スコア更新', title: 'ScoreUpdate', class: 'update'},
-        {key: 'bp_update', name: 'BP更新', title: 'BpUpdate', class: 'update'},
+        {key: 'clear_update', name: 'クリア更新', title: 'Clear', class: 'update'},
+        {key: 'score_update', name: 'スコア更新', title: 'Score', class: 'update'},
+        {key: 'bp_update', name: 'ミスカウント更新', title: 'Bp', class: 'update'},
         {key: 'date', name: '更新日', title: 'Date', class: 'date'},
+    ],
+
+    RIVAL_COLUMNS: [
+        {key: 'clear', name: 'クリア', title: ' ', class: 'clear'},
+        {key: 'level', name: '難易度', title: 'Lv', class: 'level'},
+        {key: 'title', name: '曲名', title: 'Title', class: 'title'},
+        {key: 'date', name: '更新日', title: 'Date', class: 'date'},
+        {key: 'clear_diff_rival', name: "クリア比較", title: "ClearVS", class: "clear_vs"},
+        {key: 'score_diff_rival', name: "スコア比較", title: "ScoreVS", class: "score_vs"},
+        {key: 'bp_diff_rival', name: "ミスカウント比較", title: "BPVS", class: "bp_vs"},
+        {key: 'rival_date', name: "ライバル更新日", title: "RivalDate", class: "date"},
     ],
 
     SONG_FORMAT: [

@@ -1,6 +1,6 @@
 <template>
-  <div id="input-user" class="form-group row align-items-center">
-    <div class="input-group col-sm-6">
+  <div class="form-group align-items-center">
+    <div class="input-group">
       <div class="input-group-prepend">
         <label for="input_user_id" class="btn btn-info text-nowrap"
                v-tooltip="'IDを入力後、更新をタップすると反映されます'">
@@ -20,7 +20,6 @@
 </template>
 
 <script>
-import * as log from 'loglevel'
 
 export default {
   name: "InputUserId",
@@ -38,21 +37,10 @@ export default {
   },
   methods: {
     async onClick() {
-      let query = Object.assign({}, this.$route.query)
-      query.user_id = this.input_user_id
-      log.debug(query)
-      await this.$router.push({
-        name: 'ScoreViewer',
-        query: query
-      }).catch(() => {})
-      this.$emit('refreshData')
+      await this.$emit('refresh', this.input_user_id)
     }
   }
 }
 </script>
 
-<style scoped>
-#input-user {
-  margin-right: 40px;
-}
-</style>
+<style scoped></style>

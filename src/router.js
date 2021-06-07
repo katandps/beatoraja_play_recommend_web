@@ -23,6 +23,7 @@ const router = new Router({
             component: ScoreViewer,
             props: (route) => ({
                 user_id: parseInt(route.query.user_id || 1),
+                rival_id: parseInt(route.query.rival_id || 1),
                 mode: route.query.mode || 'detail'
             })
         },

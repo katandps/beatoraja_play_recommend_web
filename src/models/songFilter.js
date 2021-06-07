@@ -225,58 +225,43 @@ class Columns {
 
 class VisibleLamp {
     constructor() {
-        this.Max = true;
-        this.Perfect = true;
-        this.FullCombo = true;
-        this.ExHard = true;
-        this.Hard = true;
-        this.Normal = true;
-        this.Easy = true;
-        this.LightAssistEasy = true;
-        this.AssistEasy = true;
-        this.Failed = true;
-        this.NoPlay = true;
+        for (let i = 0; i < config.LAMP_TYPE.length; i += 1) {
+            this[i] = true;
+        }
     }
 
     reverse() {
-        this.Max = !this.Max;
-        this.Perfect = !this.Perfect;
-        this.FullCombo = !this.FullCombo;
-        this.ExHard = !this.ExHard;
-        this.Hard = !this.Hard;
-        this.Normal = !this.Normal;
-        this.Easy = !this.Easy;
-        this.LightAssistEasy = !this.LightAssistEasy;
-        this.AssistEasy = !this.AssistEasy;
-        this.Failed = !this.Failed;
-        this.NoPlay = !this.NoPlay;
+        for (let i = 0; i < config.LAMP_TYPE.length; i += 1) {
+            this[i] = !this[i];
+        }
     }
 
     to_all() {
-        config.LAMP_TYPE.forEach(type => this[type] = true);
+        for (let i = 0; i < config.LAMP_TYPE.length; i += 1) {
+            this[i] = true;
+        }
     }
 
     to_not_full_combo() {
         this.to_all();
-        this.Max = false;
-        this.Perfect = false;
-        this.FullCombo = false;
+        this[10] = false;
+        this[9] = false;
+        this[8] = false;
     }
 
     to_not_ex_hard() {
         this.to_not_full_combo();
-        this.ExHard = false;
+        this[7] = false;
     }
 
     to_not_hard() {
         this.to_not_ex_hard();
-        this.Hard = false;
-    }
+        this[6] = false;    }
 
     to_not_easy() {
         this.to_not_hard();
-        this.Normal = false;
-        this.Easy = false;
+        this[5] = false;
+        this[4] = false;
     }
 }
 
