@@ -19,6 +19,7 @@
           <div class="tr">
             <div class="th sticky-top"
                  v-for="obj in columns"
+                 @click="model.filter.set_sort(obj.key)"
                  :class="header_class(obj)"
                  :key="obj.key">
               {{ obj.title }}

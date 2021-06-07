@@ -185,6 +185,14 @@ export default class SongDetail {
                 return this.clear_updated_at
             case 'clear_before':
                 return this.clear_type_before
+            case "clear_diff_rival":
+                return this.clear_type - this.rival_clear_type
+            case "score_diff_rival":
+                return this.score - this.rival_score
+            case "bp_diff_rival":
+                return this.rival_min_bp === -1 ? -1000000 : this.rival_min_bp - this.min_bp
+            case "rival_date":
+                return this.rival_updated_at
             case 'random_select':
                 return Math.floor(Math.random() * Math.floor(100000000))
             default:
