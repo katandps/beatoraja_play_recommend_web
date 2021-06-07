@@ -230,7 +230,7 @@ export default class SongDetail {
                 return '<a href="https://mocha-repository.info/song.php?sha256=' + this.sha256 + '" target="_blank">Mocha</a>'
             case "clear_update":
                 return this.clear_updated_at.split("T")[0] === this.updated_at.split("T")[0]
-                    ? `${this.clear_type_before} -> <span class="update_strong">${this.clear_type}</span>`
+                    ? `${config.LAMP_INDEX[this.clear_type_before]} -> <span class="update_strong">${config.LAMP_INDEX[this.clear_type]}</span>`
                     : "-"
             case "score_update":
                 return this.score_updated_at.split("T")[0] === this.updated_at.split("T")[0]
