@@ -22,10 +22,12 @@
             <label class="btn btn-outline-secondary col-sm-3 text-nowrap">
               <input type="radio" :checked="mode==='recent'" @click="changeMode('recent')" value="recent"/>
               最近更新
+              <font-awesome-icon :icon="['fas', 'wrench']"/>
             </label>
             <label class="btn btn-outline-secondary col-sm-3 text-nowrap">
               <input type="radio" :checked="mode==='rival'" @click="changeMode('rival')" value="rival"/>
               ライバル比較
+              <font-awesome-icon :icon="['fas', 'wrench']"/>
             </label>
           </div>
         </div>
