@@ -251,11 +251,22 @@ export default class SongDetail {
                         ? `<span class="update_strong">${this.min_bp - this.min_bp_before}</span> (${this.min_bp})`
                         : `<span class="update_strong">new</span> (${this.min_bp})`
             case "clear_diff_rival":
-                return this.clear_type === this.rival_clear_type ? "draw" : this.clear_type < this.rival_clear_type ? "lose" : "win"
-            case "score_diff_rival":
-                return this.score - this.rival_score
+                return this.clear_type === this.rival_clear_type
+                    ? '<span class="draw">draw</span>'
+                    : this.clear_type < this.rival_clear_type ? '<span class="lose">lose</span>' : '<span class="win">win</span>'
+            case "score_diff_rival": {
+                let diff = this.score - this.rival_score
+                let span_class = diff === 0 ? 'draw' : diff > 0 ? 'win' : 'lose'
+                return "<span class=" + span_class + ">" + diff + "</span>"
+            }
             case "bp_diff_rival":
-                return this.rival_min_bp === -1 ? "---" : this.min_bp - this.rival_min_bp
+                if (this.rival_min_bp === -1 || this.min_bp === -1) {
+                    return "---"
+                } else {
+                    let diff = this.min_bp - this.rival_min_bp
+                    let span_class = diff === 0 ? 'draw' : diff > 0 ? 'lose' : 'win'
+                    return "<span class=" + span_class + ">" + diff + "</span>"
+                }
             case "rival_date":
                 return this.rival_updated_at.split("T")[0] === "1970-01-01" ? "---" : this.rival_updated_at.split("T")[0]
         }

@@ -5,7 +5,7 @@
     </div>
     <hr/>
     <div class="table-wrapper">
-      <div class="table">
+      <div class="score-table">
         <div class="colgroup">
           <div class="col" v-for="obj in model.get_recent_columns()"
                :class="obj.class" :key="obj.key"/>
@@ -25,7 +25,7 @@
           <div v-for="song in model.get_recent_song_list()"
                :key="song.md5"
                :class="clear_type_class(song)" class="tr">
-            <div class="td text-nowrap" v-for="obj in model.get_recent_columns()"
+            <div class="td" v-for="obj in model.get_recent_columns()"
                  :class="row_class(obj, song)"
                  :key="obj.key">
               <span v-html="song.get(obj.key)"/>
@@ -87,112 +87,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.sort_active {
-  background-color: #e0e0e0;
-}
-
-.sort_inactive {
-  background-color: #ffffff;
-}
-
-.table-wrapper {
-  display: block;
-  width: 100%;
-  height: 90vh;
-  overflow: scroll;
-  -webkit-overflow-scrolling: touch;
-}
-
-.table {
-  display: table;
-  table-layout: auto;
-}
-
-.colgroup {
-  display: table-column-group;
-}
-
-.col {
-  display: table-column;
-}
-
-.thead {
-  display: table-header-group;
-}
-
-.tbody {
-  display: table-row-group;
-}
-
-.tr {
-  display: table-row;
-}
-
-.th {
-  display: table-cell;
-  font-weight: bold;
-  position: sticky;
-  top: -1px;
-  z-index: 3;
-  padding: .3rem;
-  font-size: .8rem;
-  background-color: #ffffff;
-  border-bottom: 3px solid rgba(0, 0, 0, 0.1);
-}
-
-.td {
-  display: table-cell;
-  padding: .3rem;
-  font-size: .8rem;
-}
-
-.flip-list-move {
-  transition: transform 800ms;
-}
-
-/* Each Column CSS*/
-.title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 360px;
-}
-
-.clear, .clear_before {
-  width: 14px;
-}
-
-.date, .clear_date, .bp_date, .score_date {
-  max-width: 80px;
-  min-width: 80px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.bp .combo .play {
-  width: 1px;
-  white-space: nowrap;
-}
-
-.level {
-  width: 1px;
-  white-space: nowrap;
-}
-
-.rate {
-  width: 1px;
-  white-space: nowrap;
-}
-
-.update {
-  width: 1px;
-  white-space: nowrap;
-}
-
-</style>
-
-<style>
-.update_strong {
-  font-weight: bold;
-}
-</style>
+<style scoped></style>

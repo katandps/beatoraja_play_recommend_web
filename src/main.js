@@ -77,6 +77,7 @@ log.setLevel(logLevel, false)
 
 require('./assets/sass/main.scss')
 require('./assets/sass/tooltip.css')
+require('./assets/sass/table.css')
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 

@@ -1,0 +1,141 @@
+.table-wrapper {
+    display: block;
+    width: 100%;
+    height: 90vh;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+.score-table {
+    display: table;
+    table-layout: auto;
+}
+
+.score-table .sort_active {
+    background-color: #e0e0e0;
+}
+
+.score-table .sort_inactive {
+    background-color: #ffffff;
+}
+
+.score-table .colgroup {
+    display: table-column-group;
+}
+
+.score-table .col {
+    display: table-column;
+}
+
+.score-table .thead {
+    display: table-header-group;
+}
+
+.score-table .tbody {
+    display: table-row-group;
+}
+
+.score-table .tr {
+    display: table-row;
+}
+
+.score-table .th {
+    display: table-cell;
+    font-weight: bold;
+    position: sticky;
+    top: -1px;
+    z-index: 3;
+    padding: .3rem;
+    font-size: .8rem;
+    background-color: #ffffff;
+    border-bottom: 3px solid rgba(0, 0, 0, 0.1);
+}
+
+.score-table .td {
+    white-space: nowrap;
+    display: table-cell;
+    padding: .3rem;
+    font-size: .8rem;
+}
+
+.score-table .flip-list-move {
+    transition: transform 800ms;
+}
+
+
+/* each column */
+
+.score-table .clear {
+    width: 14px;
+}
+
+.score-table .title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 360px;
+}
+
+.score-table .date {
+    max-width: 80px;
+    min-width: 80px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.score-table .level {
+    width: 1px;
+    white-space: nowrap
+}
+
+.score-table .rate {
+    width: 1px;
+    white-space: nowrap
+}
+
+.score-table .bp {
+    width: 1px;
+    white-space: nowrap;
+}
+
+.score-table .combo {
+    width: 1px;
+    white-space: nowrap;
+}
+
+.score-table .play {
+    width: 1px;
+    white-space: nowrap;
+}
+
+.score-table .clear_vs {
+    width: 1px;
+    white-space: nowrap;
+}
+
+.score-table .score_vs {
+    width: 1px;
+    white-space: nowrap;
+}
+
+.score-table .bp_vs {
+    width: 1px;
+    white-space: nowrap;
+}
+
+.score-table .update_strong {
+    font-weight: bold;
+}
+
+.score-table .win {
+    font-weight: bold;
+    color: #0000ff;
+}
+
+.score-table .lose {
+    font-weight: bold;
+    color: #ff0000;
+}
+
+.score-table .draw {
+    font-weight: bold;
+}

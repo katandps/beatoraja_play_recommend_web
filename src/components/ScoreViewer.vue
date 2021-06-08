@@ -3,7 +3,7 @@
     <InputUserId :user_id="user_id" @refresh="refreshUserId" class="col-sm-8"/>
     <hr>
     <div v-if="model.is_initialized()">
-      <score-viewer-header :model="model"/>
+      <score-viewer-header :model="model" :mode="mode"/>
       <div>
         <div class="form-group row">
           <div class="btn-group col-sm-12">

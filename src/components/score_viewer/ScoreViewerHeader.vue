@@ -7,7 +7,7 @@
         <font-awesome-icon :icon="['fab', 'twitter-square']"/>
       </a>
     </h2>
-    <h3 v-if="model.rival_name">
+    <h3 v-if="model.rival_name && mode==='rival'">
       ライバル表示: {{ model.rival_name }}
     </h3>
   </div>
@@ -18,7 +18,10 @@ import Model from "../../models/model";
 
 export default {
   name: "ScoreViewerHeader",
-  props: {model: {type: Model, require: true}},
+  props: {
+    model: {type: Model, require: true},
+    mode: {type: String},
+  },
 }
 </script>
 
