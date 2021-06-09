@@ -1,6 +1,7 @@
 <template>
   <div id="recommend-table">
     <h2>おすすめ譜面表</h2>
+    難易度ごとにプレイ日時が古そうな曲をピックアップして難易度表にします。
     <div class="input-group col-sm-12" role="group"
          aria-label="Difficulty Table">
       <div class="input-group-prepend">

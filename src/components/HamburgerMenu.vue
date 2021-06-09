@@ -20,7 +20,7 @@
             </router-link>
           </li>
           <li>
-            <router-link class="text-dark px-2" to="/view">
+            <router-link class="text-dark px-2" :to="'/view?user_id='+user_id">
               <font-awesome-icon :icon="['fas', 'cubes']"/>
               スコア閲覧
             </router-link>
@@ -38,12 +38,6 @@
             <router-link class="text-dark px-2" to="/profile">
               <font-awesome-icon :icon="['fas', 'pencil-alt']"/>
               プロフィール
-            </router-link>
-          </li>
-          <li>
-            <router-link class="text-dark px-2" :to="'/view?user_id='+user_id">
-              <font-awesome-icon :icon="['fas', 'cube']"/>
-              マイスコア
             </router-link>
           </li>
           <li>

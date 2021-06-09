@@ -21,7 +21,7 @@
       </div>
       <div class="col-lg-3 panel">
         <h4>
-          <router-link class="text-dark px-2" to="/view">
+          <router-link class="text-dark px-2" :to="'/view?user_id='+user_id">
             <font-awesome-icon :icon="['fas', 'cubes']"/>
             スコア閲覧
           </router-link>
@@ -46,15 +46,6 @@
           </router-link>
         </h4>
         自分のプロフィールが<br/>編集できます。
-      </div>
-      <div class="col-lg-3 panel" v-if="is_login">
-        <h4>
-          <router-link class="text-dark px-2" :to="'/view?user_id='+user_id">
-            <font-awesome-icon :icon="['fas', 'cube']"/>
-            マイスコア
-          </router-link>
-        </h4>
-        自分のスコアが<br/>閲覧できます。
       </div>
       <div class="col-lg-3 panel" v-if="is_login">
         <h4>
