@@ -55,9 +55,7 @@ export default {
   },
   methods: {
     header_class(obj) {
-      let ret = obj.class;
-      ret += this.model.sort_key_is(obj.key) ? ' sort_active' : ' sort_inactive'
-      return ret;
+      return obj.class + ' sort_inactive';
     },
     row_class(obj, song) {
       let ret = obj.class;

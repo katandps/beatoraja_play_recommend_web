@@ -190,7 +190,7 @@ export default class SongDetail {
             case "score_diff_rival":
                 return this.score - this.rival_score
             case "bp_diff_rival":
-                return this.rival_min_bp === -1 ? -1000000 : this.rival_min_bp - this.min_bp
+                return this.rival_min_bp === -1 ? this.total_notes - this.min_bp : this.rival_min_bp - this.min_bp
             case "rival_date":
                 return this.rival_updated_at
             case 'random_select':
