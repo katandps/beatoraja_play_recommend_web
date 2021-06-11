@@ -72,8 +72,8 @@
 </template>
 
 <script>
-import config from "../../../const";
-import Model from "../../../models/model";
+import config from "../../../../const";
+import Model from "../../../../models/model";
 
 export default {
   name: "SongFilterController",

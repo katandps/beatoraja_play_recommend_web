@@ -32,8 +32,8 @@
 </template>
 
 <script>
-import Model from "../../../models/model";
-import config from "../../../const.js"
+import Model from "../../../../models/model";
+import config from "../../../../const.js"
 
 export default {
   name: "DetailTable",

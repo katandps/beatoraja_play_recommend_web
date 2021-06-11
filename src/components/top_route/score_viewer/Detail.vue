@@ -18,7 +18,7 @@ import TableSelector from "./TableSelector";
 import SongFilterController from "./detail/SongFilterController";
 import DetailColumns from "./detail/DetailColumns";
 import FilterPreset from "./detail/FilterPreset";
-import Model from "../../models/model";
+import Model from "../../../models/model";
 import DetailTable from "./detail/DetailTable";
 import DisplaySongsLimiter from "./detail/DisplaySongsLimiter";
 

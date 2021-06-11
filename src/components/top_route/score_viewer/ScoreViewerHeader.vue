@@ -7,21 +7,25 @@
         <font-awesome-icon :icon="['fab', 'twitter-square']"/>
       </a>
     </h2>
-    <h3 v-if="model.rival_name && mode==='rival'">
+    <h3 v-if="model.rival_name && here_is_rival">
       ライバル表示: {{ model.rival_name }}
     </h3>
   </div>
 </template>
 
 <script>
-import Model from "../../models/model";
+import Model from "../../../models/model";
 
 export default {
   name: "ScoreViewerHeader",
   props: {
     model: {type: Model, require: true},
-    mode: {type: String},
   },
+  computed: {
+    here_is_rival() {
+      return this.$route.name === 'ViewRival'
+    }
+  }
 }
 </script>
 

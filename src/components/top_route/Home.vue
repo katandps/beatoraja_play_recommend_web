@@ -21,7 +21,7 @@
       </div>
       <div class="col-lg-3 panel">
         <h4>
-          <router-link class="text-dark px-2" :to="'/view?user_id='+user_id">
+          <router-link class="text-dark px-2" :to="{path: '/view', query: Object.assign({}, $route.query, {user_id: 1})}">
             <font-awesome-icon :icon="['fas', 'cubes']"/>
             スコア閲覧
           </router-link>
@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import ReleaseNote from "./ReleaseNote";
+import ReleaseNote from "./home/ReleaseNote";
 
 export default {
   name: "Home",

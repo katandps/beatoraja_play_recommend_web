@@ -52,10 +52,10 @@
 </template>
 
 <script>
-import config from "../../const.js"
-import Model from "../../models/model"
+import config from "../../../const.js"
+import Model from "../../../models/model"
 import * as log from "loglevel"
-import SongDetail from "../../models/song_detail"
+import SongDetail from "../../../models/song_detail"
 import TableSelector from "./TableSelector";
 
 export default {

@@ -1,8 +1,6 @@
 <template>
   <div id="lamp-graph">
-    <transition tag="div" class="score-header" v-if="header_visible">
-      <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
-    </transition>
+    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
     <hr>
     凡例
     <table style="width:100%">
@@ -56,10 +54,10 @@
 </template>
 
 <script>
-import config from "../../const.js"
-import Model from "../../models/model";
+import config from "../../../const.js"
+import Model from "../../../models/model";
 import * as log from "loglevel";
-import SongDetail from "../../models/song_detail";
+import SongDetail from "../../../models/song_detail";
 import TableSelector from "./TableSelector";
 
 export default {

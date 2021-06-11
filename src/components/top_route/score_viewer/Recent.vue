@@ -38,9 +38,9 @@
 </template>
 
 <script>
-import Model from "../../models/model";
+import Model from "../../../models/model";
 import DisplaySongsLimiter from "./detail/DisplaySongsLimiter";
-import config from "../../const";
+import config from "../../../const";
 
 export default {
   name: "Recent",

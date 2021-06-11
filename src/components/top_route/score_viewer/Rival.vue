@@ -42,11 +42,11 @@
 </template>
 
 <script>
-import Model from "../../models/model"
+import Model from "../../../models/model"
 import DisplaySongsLimiter from "./detail/DisplaySongsLimiter"
 import TableSelector from "./TableSelector"
 import InputUserId from "./InputUserId"
-import config from "../../const"
+import config from "../../../const"
 
 export default {
   name: "Rival",
@@ -97,8 +97,10 @@ export default {
     set_table(table) {
       this.model = this.model.set_table(table)
     },
-    refresh_rival_id(input_rival_id) {
-      this.$emit("updateRival", input_rival_id)
+    async refresh_rival_id(rival_id) {
+      let query = Object.assign({}, this.$route.query)
+      query.rival_id = rival_id
+      await this.$router.push({query: query})
     }
   },
   computed: {

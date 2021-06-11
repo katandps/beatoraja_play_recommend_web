@@ -157,8 +157,8 @@ export default class Model {
         if (!this.is_initialized()) {
             return []
         }
-        let levels = this.get_selected_table().level_list;
-        let lamps = config.LAMP_INDEX;
+        let levels = this.get_selected_table().level_list
+        let lamps = config.LAMP_INDEX
         let songs = this.get_selected_table().get_filtered_score(this.filter)
         return levels.map(
             level => lamps.map(
@@ -175,13 +175,49 @@ export default class Model {
         if (!this.is_initialized()) {
             return []
         }
-        let levels = this.get_selected_table().level_list;
-        let ranks = config.RANK_TYPE;
+        let levels = this.get_selected_table().level_list
+        let ranks = config.RANK_TYPE
         let songs = this.get_selected_table().get_filtered_score(this.filter)
         return levels.map(
             l => ranks.map(
                 r => songs.filter(s => s.clear_rank === r && s.level === l).sort(SongDetail.cmp_title)
             )
+        )
+    }
+
+    /**
+     * @public
+     * @returns {SongDetail[][]}
+     */
+    get_lamp_stat() {
+        if (!this.is_initialized()) {
+            return []
+        }
+        let lamps = config.LAMP_INDEX
+        let songs = this.get_selected_table().get_filtered_score(this.filter)
+        if (!this.filter.visible_all_levels) {
+            songs = songs.filter(s => s.level === this.selected_level)
+        }
+        return lamps.map(
+            (_lamp, index) => songs.filter(s => s.clear_type === index).sort(SongDetail.cmp_title)
+        )
+    }
+
+    /**
+     * @public
+     * @returns {SongDetail[][]}
+     */
+    get_rank_stat() {
+        if (!this.is_initialized()) {
+            return []
+        }
+        let ranks = config.RANK_TYPE
+        let songs = this.get_selected_table().get_filtered_score(this.filter)
+        if (!this.filter.visible_all_levels) {
+            songs = songs.filter(s => s.level === this.selected_level)
+        }
+        return ranks.map(
+            (r) => songs.filter(s => s.clear_rank === r).sort(SongDetail.cmp_title)
         )
     }
 
@@ -199,7 +235,7 @@ export default class Model {
         if (!this.filter.visible_all_levels) {
             songs = songs.filter(s => s.level === this.selected_level)
         }
-        const length = parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length;
+        const length = parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length
         return songs.sort(this.cmp.bind(this)).slice(0, length)
     }
 
@@ -214,7 +250,7 @@ export default class Model {
             return [SongDetail.dummy()]
         }
         let songs = this.tables.get_filtered_score(new SongFilter)
-        const length = parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length;
+        const length = parseInt(this.filter.max_length) > 0 ? this.filter.max_length : songs.length
         return songs.sort((a, b) => {
             return a.updated_at === b.updated_at ? 0 : (a.updated_at < b.updated_at) ? 1 : -1
         }).slice(0, length)
@@ -358,7 +394,7 @@ export default class Model {
      * @return String[]
      */
     level_list() {
-        const table = this.get_selected_table();
+        const table = this.get_selected_table()
         return table.level_list || []
     }
 }

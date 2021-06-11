@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import Api from "../api";
+import Api from "../../api";
 import * as log from 'loglevel'
 
 export default {
