@@ -2,10 +2,9 @@
   <div id="table_selector">
     <div class="row align-items-center">
       <div
-           :class="can_level_select ? 'col-sm-6' : 'col-auto'"
-           class="input-group"
-           role="group"
-           aria-label="Difficulty Table">
+          class="input-group col-sm-5"
+          role="group"
+          aria-label="Difficulty Table">
         <div class="input-group-prepend">
           <label for="table" class="btn btn-info text-nowrap"
                  v-tooltip="'表示する難易度表'">
@@ -20,7 +19,19 @@
           </option>
         </select>
       </div>
-      <div class="input-group col-sm-6" role="group" aria-label="Difficulty" v-if="can_level_select">
+      <div class="input-group col-sm-4" role="group" v-if="can_level_select">
+        <div class="input-group-prepend">
+          <label for="all_list" class="btn btn-info text-nowrap"
+                 v-tooltip="'難易度表に登録されているすべてのレベルを表示対象にします'">
+            全難易度表示
+            <font-awesome-icon :icon="['fas', 'question-circle']"/>
+          </label>
+        </div>
+        <input class="form-control" type="checkbox" id="all_list"
+               v-model="model.filter.visible_all_levels">
+      </div>
+      <div class="input-group col-sm-3" role="group" aria-label="Difficulty"
+           v-if="can_level_select && !model.filter.visible_all_levels">
         <div class="input-group-prepend">
           <label for="level" class="btn btn-info text-nowrap"
                  v-tooltip="'詳細表で表示する難易度'">
@@ -72,10 +83,4 @@ export default {
 }
 </script>
 
-<style scoped>
-#table_selector {
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
-</style>
+<style scoped></style>

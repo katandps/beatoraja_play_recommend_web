@@ -1,6 +1,9 @@
 <template>
   <section id="score-table">
-    <InputUserId :user_id="user_id" @refresh="refreshUserId" class="col-sm-8"/>
+    <div class="row">
+      <InputUserId :user_id="user_id" @refresh="refreshUserId" class="col-sm-6"/>
+      <DateSelector @setDate="set_date" class="col-sm-6"/>
+    </div>
     <hr>
     <div v-if="model.is_initialized()">
       <score-viewer-header :model="model" :mode="mode"/>
@@ -15,6 +18,10 @@
               <input type="radio" :checked="mode==='rank'" @click="changeMode('rank')" value="rank"/>
               ランクグラフ
             </label>
+            <!--            <label class="btn btn-outline-secondary col-sm-3 text-nowrap">-->
+            <!--              <input type="radio" :checked="mode==='stat'" @click="changeMode('stat')" value="stat"/>-->
+            <!--              統計-->
+            <!--            </label>-->
             <label class="btn btn-outline-secondary col-sm-3 text-nowrap">
               <input type="radio" :checked="mode==='detail'" @click="changeMode('detail')" value="detail"/>
               詳細表
@@ -32,10 +39,10 @@
           </div>
         </div>
 
-        <DateSelector @setDate="set_date"/>
         <hr>
-        <LampGraph :model="model" v-if="mode === 'lamp'"/>
+        <LampGraph :model="model" :header_visible="header_visible" v-if="mode === 'lamp'"/>
         <RankGraph :model="model" v-if="mode === 'rank'"/>
+        <!--        <Stat :model="model" v-if="mode === 'stat'"/>-->
         <Detail :model="model" v-if="mode === 'detail'"/>
         <Recent :model="model" v-if="mode === 'recent'"/>
         <Rival :model="model" v-if="mode === 'rival'" :rival_id="rival_id" @updateRival="set_rival"/>
@@ -51,6 +58,7 @@ import InputUserId from "./score_viewer/InputUserId"
 import ScoreViewerHeader from "./score_viewer/ScoreViewerHeader"
 import DateSelector from "./score_viewer/DateSelector"
 import LampGraph from "./score_viewer/LampGraph"
+// import Stat from "./score_viewer/Stat"
 import Detail from "./score_viewer/Detail"
 import Recent from "./score_viewer/Recent"
 import RankGraph from "./score_viewer/RankGraph"
@@ -65,8 +73,9 @@ export default {
     InputUserId,
     DateSelector,
     LampGraph,
-    Detail,
     RankGraph,
+    // Stat,
+    Detail,
     Recent,
     Rival,
   },
@@ -83,6 +92,7 @@ export default {
   },
   data: () => ({
     model: Model.default(),
+    header_visible: true,
     message: "",
     loaded: {user_id: null, rival_id: null, date: ""},
   }),
@@ -98,6 +108,10 @@ export default {
     await this.set_rival(this.rival_id)
   },
   methods: {
+    switch_header() {
+      this.header_visible = !this.header_visible
+    },
+
     async refreshUserId(input_user_id) {
       let query = Object.assign({}, this.$route.query)
       query.user_id = input_user_id

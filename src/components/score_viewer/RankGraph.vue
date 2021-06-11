@@ -1,6 +1,7 @@
 <template>
   <div id="rank-graph">
     <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
+    <hr>
     凡例
     <table style="width:100%">
       <tr>
@@ -35,8 +36,8 @@
         </td>
       </tr>
     </table>
-    <div id="song-list-modal">
-      <modal name="modal-area" :scrollable="true" width="90%" height="auto">
+    <div id="song-list-modal" @click="close_modal">
+      <modal name="modal-area" :scrollable="true" :maxWidth="920" height="auto">
         <div class="modal-header">
           {{ modal_title }}
         </div>
@@ -85,6 +86,9 @@ export default {
       this.modal_text = text;
       this.modal_title = title;
       this.$modal.show("modal-area")
+    },
+    close_modal() {
+      this.$modal.hide("modal-area")
     },
     list(level_index, rank_index) {
       return this.rank_list[level_index][rank_index].sort(SongDetail.cmp_title).map(s => s.title)

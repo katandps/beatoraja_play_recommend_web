@@ -1,7 +1,7 @@
 <template>
   <div id="date-selector">
-    <div class="form-group row align-items-center">
-      <div class="input-group col-sm-6" role="group">
+    <div class="form-group">
+      <div class="input-group" role="group">
         <div class="input-group-prepend">
           <div class="btn btn-info text-nowrap" v-tooltip="'指定した日付の当時の状態を再現します 右のボタンで今日に戻ります'">
             日付

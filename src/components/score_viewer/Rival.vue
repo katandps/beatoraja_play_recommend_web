@@ -1,12 +1,11 @@
 <template>
   <div id="recent">
-    <div class="row align-items-center">
+    <div class="row">
       <input-user-id :user_id="rival_id" @refresh="refresh_rival_id" class="col-sm-6"/>
       <display-songs-limiter class="col-sm-6" :model="model"/>
     </div>
-    <TableSelector class="col-sm-12" :model="model" @setTable="set_table" v-if="model.tables_is_set()"
+    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"
                    :can_level_select="true"/>
-    <level-selector :model="model" class="col-sm-6"/>
     <hr/>
     <div class="table-wrapper">
       <div class="score-table">
@@ -48,7 +47,6 @@ import DisplaySongsLimiter from "./detail/DisplaySongsLimiter"
 import TableSelector from "./TableSelector"
 import InputUserId from "./InputUserId"
 import config from "../../const"
-import LevelSelector from "./detail/LevelSelector"
 
 export default {
   name: "Rival",
@@ -56,7 +54,6 @@ export default {
     DisplaySongsLimiter,
     TableSelector,
     InputUserId,
-    LevelSelector
   },
   props: {
     model: {

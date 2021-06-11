@@ -8,12 +8,12 @@
         <div class="filter">
           <h5>クリアタイプ</h5>
           <div class="form-group row align-items-center">
-            <div v-for="lamp in config().LAMP_TYPE" :key="lamp"
+            <div v-for="lamp in config().LAMP_GRAPH_LIST" :key="lamp"
                  class="form-control col-sm-3 text-nowrap" >
               <label :for="lamp" style="font-size:0.9rem">
                 <input type="checkbox" :id="lamp" :value="lamp"
                        v-model="model.filter.visible_lamp[lamp]">
-                {{ lamp }}
+                {{ config().LAMP_INDEX[lamp] }}
               </label>
             </div>
           </div>

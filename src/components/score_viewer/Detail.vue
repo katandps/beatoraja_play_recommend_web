@@ -2,7 +2,6 @@
   <div id="detail">
     <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()" :can_level_select="true"/>
     <div class="form-group row align-items-center">
-      <level-selector :model="model" class="col-sm-6"/>
       <display-songs-limiter :model="model" class="col-sm-6"/>
     </div>
     <hr>
@@ -21,7 +20,6 @@ import DetailColumns from "./detail/DetailColumns";
 import FilterPreset from "./detail/FilterPreset";
 import Model from "../../models/model";
 import DetailTable from "./detail/DetailTable";
-import LevelSelector from "./detail/LevelSelector";
 import DisplaySongsLimiter from "./detail/DisplaySongsLimiter";
 
 export default {
@@ -29,7 +27,6 @@ export default {
   components: {
     TableSelector,
     DisplaySongsLimiter,
-    LevelSelector,
     DetailTable,
     FilterPreset,
     DetailColumns,

@@ -1,6 +1,9 @@
 <template>
   <div id="lamp-graph">
-    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
+    <transition tag="div" class="score-header" v-if="header_visible">
+      <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
+    </transition>
+    <hr>
     凡例
     <table style="width:100%">
       <tr>
@@ -16,7 +19,6 @@
       </tr>
     </table>
     <hr>
-
     <table style="width:100%">
       <tr v-for="(level, level_index) in level_list" :key="level_index"
           style="width:100%">
@@ -38,8 +40,8 @@
         </td>
       </tr>
     </table>
-    <div id="song-list-modal">
-      <modal name="modal-area" :scrollable="true" width="90%" height="auto">
+    <div id="song-list-modal" @click="close_modal">
+      <modal name="modal-area" :scrollable="true" :maxWidth="920" height="auto">
         <div class="modal-header">
           {{ modal_title }}
         </div>
@@ -68,6 +70,9 @@ export default {
       type: Model,
       required: true,
     },
+    header_visible: {
+      type: Boolean
+    }
   },
   data: () => ({
     modal_title: "",
@@ -86,6 +91,9 @@ export default {
       this.modal_text = text;
       this.modal_title = title;
       this.$modal.show("modal-area")
+    },
+    close_modal() {
+      this.$modal.hide("modal-area")
     },
     list(level_index, rank_index) {
       return this.lamp_list[level_index][rank_index].sort(SongDetail.cmp_title).map(s => s.title)
