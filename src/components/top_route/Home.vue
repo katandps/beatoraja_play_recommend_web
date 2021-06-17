@@ -21,7 +21,7 @@
       </div>
       <div class="col-lg-3 panel">
         <h4>
-          <router-link class="text-dark px-2" :to="{path: '/view', query: Object.assign({}, $route.query, {user_id: 1})}">
+          <router-link class="text-dark px-2" :to="{path: '/view', query: Object.assign({}, $route.query, {user_id: user_id})}">
             <font-awesome-icon :icon="['fas', 'cubes']"/>
             スコア閲覧
           </router-link>
@@ -131,7 +131,7 @@ export default {
   computed: {
     user_id() {
       if (!this.$store.getters.userInfo) {
-        return ""
+        return 1
       }
       return this.$store.getters.userInfo.user_id;
     }
