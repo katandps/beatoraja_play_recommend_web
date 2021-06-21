@@ -243,6 +243,15 @@ export default class SongDetail {
                 return this.clear_updated_at.split("T")[0] === this.updated_at.split("T")[0]
                     ? `${config.LAMP_INDEX[this.clear_type_before]} -> <span class="update_strong">${config.LAMP_INDEX[this.clear_type]}</span>`
                     : "-"
+            case "rank_update": {
+                let rank_a = SongDetail.make_clear_rank(this.total_notes, this.score_before)
+                let rank_b = SongDetail.make_clear_rank(this.total_notes, this.score)
+                return this.score_updated_at.split("T")[0] === this.updated_at.split("T")[0]
+                    ? (rank_a !== rank_b)
+                        ? `${rank_a} -> <span class="update_strong">${rank_b}</span>`
+                        : "-"
+                    : "-"
+            }
             case "score_update":
                 return this.score_updated_at.split("T")[0] === this.updated_at.split("T")[0]
                     ? `<span class="update_strong">+${this.score - this.score_before}</span> (${this.score})`

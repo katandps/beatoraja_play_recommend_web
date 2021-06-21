@@ -67,6 +67,7 @@ export default Object.freeze({
         {key: 'level', name: '難易度', title: 'Lv', class: 'level'},
         {key: 'title', name: '曲名', title: 'Title', class: 'title'},
         {key: 'clear_update', name: 'クリア更新', title: 'Clear', class: 'update'},
+        {key: 'rank_update', name: 'ランク更新', title: 'Rank', class: 'update'},
         {key: 'score_update', name: 'スコア更新', title: 'Score', class: 'update'},
         {key: 'bp_update', name: 'ミスカウント更新', title: 'Bp', class: 'update'},
         {key: 'date', name: '更新日', title: 'Date', class: 'date'},
