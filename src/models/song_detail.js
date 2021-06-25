@@ -235,6 +235,8 @@ export default class SongDetail {
                 return this.play_count === -1 ? "---" : this.play_count
             case 'date':
                 return this.updated_at.split("T")[0] === "1970-01-01" ? "---" : this.updated_at.split("T")[0]
+            case 'viewer':
+                return '<a href="http://www.ribbit.xyz/bms/score/view?md5=' + this.md5 + '" target="_blank">Viewer</a>'
             case 'minir':
                 return '<a href="https://www.gaftalk.com/minir/#/viewer/song/' + this.sha256 + '/' + this.mode + '" target="_blank">MinIR</a>'
             case 'mocha':

@@ -48,6 +48,7 @@ export default Object.freeze({
         {key: 'clear_before', name: '更新前クリア', title: ' ', class: 'clear'},
         {key: 'level', name: '難易度', title: 'Lv', class: 'level'},
         {key: 'title', name: '曲名', title: 'Title', class: 'title'},
+        {key: 'viewer',name: 'BMS Score Viewer', title: "Viewer", class: 'viewer'},
         {key: 'minir', name: 'MinIR', title: 'MinIR', class: 'minir'},
         {key: 'mocha', name: 'Mocha Repository', title: 'Mocha', class: 'mocha'},
         {key: 'rate', name: 'スコア%', title: 'Rate', class: 'rate'},
