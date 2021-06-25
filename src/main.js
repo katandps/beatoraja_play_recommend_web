@@ -53,11 +53,6 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(require('vue-cookies'))
 
 
-import VueJSModal from "vue-js-modal";
-
-Vue.use(VueJSModal)
-
-
 import VueClipboard from 'vue-clipboard2'
 
 Vue.use(VueClipboard)
@@ -90,12 +85,4 @@ new Vue({
     render: h => h(App),
     router,
     store,
-    methods: {
-        show: function () {
-            this.$modal.show('modal-area')
-        },
-        hide: function () {
-            this.$modal.hide('modal-area')
-        },
-    }
 }).$mount('#app')

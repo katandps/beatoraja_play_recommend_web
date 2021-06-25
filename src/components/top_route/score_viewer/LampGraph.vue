@@ -38,31 +38,30 @@
         </td>
       </tr>
     </table>
-    <div id="song-list-modal" @click="close_modal">
-      <modal name="modal-area" :scrollable="true" :maxWidth="920" height="auto">
-        <div class="modal-header">
-          {{ modal_title }}
-        </div>
-        <div class="modal-body">
-          <ul>
-            <li v-for="(text, index) in modal_text" :key="index">{{ text }}</li>
-          </ul>
-        </div>
-      </modal>
-    </div>
+    <graph-modal id="song-list-modal" ref="modal">
+      <div class="modal-header">
+        {{ modal_title }}
+      </div>
+      <div class="modal-body">
+        <ul>
+          <li v-for="(text, index) in modal_text" :key="index">{{ text }}</li>
+        </ul>
+      </div>
+    </graph-modal>
   </div>
 </template>
 
 <script>
 import config from "../../../const.js"
-import Model from "../../../models/model";
-import * as log from "loglevel";
-import SongDetail from "../../../models/song_detail";
-import TableSelector from "./TableSelector";
+import Model from "../../../models/model"
+import * as log from "loglevel"
+import SongDetail from "../../../models/song_detail"
+import TableSelector from "./TableSelector"
+import GraphModal from "./GraphModal"
 
 export default {
   name: "LampGraph",
-  components: {TableSelector},
+  components: {TableSelector, GraphModal},
   props: {
     model: {
       type: Model,
@@ -88,10 +87,7 @@ export default {
       log.debug("open clicked")
       this.modal_text = text;
       this.modal_title = title;
-      this.$modal.show("modal-area")
-    },
-    close_modal() {
-      this.$modal.hide("modal-area")
+      this.$refs.modal.show_modal()
     },
     list(level_index, rank_index) {
       return this.lamp_list[level_index][rank_index].sort(SongDetail.cmp_title).map(s => s.title)

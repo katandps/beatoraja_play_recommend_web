@@ -12,8 +12,8 @@
         </div>
 
         <div class="thead">
-          <div class="tr">
-            <div class="th sticky-top"
+          <div class="tr sticky-top">
+            <div class="th"
                  v-for="obj in model.get_recent_columns()"
                  :class="header_class(obj)"
                  :key="obj.key">

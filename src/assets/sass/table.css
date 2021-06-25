@@ -42,7 +42,6 @@
 .score-table .th {
     display: table-cell;
     font-weight: bold;
-    position: sticky;
     top: -1px;
     z-index: 3;
     padding: .3rem;

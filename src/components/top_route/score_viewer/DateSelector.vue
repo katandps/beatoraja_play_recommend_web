@@ -42,7 +42,7 @@ export default {
   },
   watch: {
     date: {
-      handler: function () {
+      handler() {
         this.$emit('setDate', this.date);
       }
     }
