@@ -207,14 +207,22 @@ export default class SongDetail {
         switch (type) {
             case 'clear':
                 return ''
+            case 'clear_type':
+                return this.clear_type
             case 'title':
                 return this.title
             case 'level':
                 return this.level
+            case 'notes':
+                return this.total_notes
             case 'rate':
                 return this.score_rate_format()
+            case 'rank':
+                return SongDetail.make_clear_rank(this.total_notes, this.score)
             case 'score':
                 return `${this.score}/${this.total_notes * 2}`
+            case 'score_rate':
+                return this.total_notes === 0 ? 0 : this.score / this.total_notes / 2;
             case 'score_before':
                 return this.score_before
             case 'score_date':
@@ -231,6 +239,10 @@ export default class SongDetail {
                 return this.clear_updated_at.split("T")[0]
             case 'combo':
                 return this.max_combo
+            case 'combos':
+                return `${this.max_combo}/${this.total_notes}`
+            case 'combo_rate':
+                return this.total_notes === 0 ? 0 : this.max_combo / this.total_notes
             case 'play':
                 return this.play_count === -1 ? "---" : this.play_count
             case 'date':

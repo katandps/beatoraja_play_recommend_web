@@ -23,20 +23,25 @@
           <div class="td" v-for="obj in model.get_active_columns()"
                :class="row_class(obj, song)"
                :key="obj.key">
-            <span v-html="song.get(obj.key)"></span>
+            <span v-html="song.get(obj.key)" @click="obj.key === 'title' ? show_modal(song) : null"/>
           </div>
         </div>
       </transition-group>
     </div>
+    <song-modal id="song-list-modal" ref="modal" />
   </div>
 </template>
 
 <script>
-import Model from "../../../../models/model";
+import Model from "../../../../models/model"
 import config from "../../../../const.js"
+import SongModal from "../SongModal"
 
 export default {
   name: "DetailTable",
+  components: {
+    SongModal
+  },
   props: {model: {type: Model, require: true}},
   methods: {
     header_class(obj) {
@@ -62,6 +67,9 @@ export default {
     clear_type_class(song) {
       return "table-line-" + config.LAMP_INDEX[song.clear_type];
     },
+    show_modal(song) {
+      this.$refs.modal.show_modal(song)
+    }
   },
 }
 </script>

@@ -33,7 +33,6 @@
           <router-link class="text-dark px-2" to="/users">
             <font-awesome-icon :icon="['fas','users']"/>
             ユーザー
-            <font-awesome-icon :icon="['fas', 'wrench']"/>
           </router-link>
         </h4>
         表示をONにしている<br/>ユーザのリストです。

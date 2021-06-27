@@ -1,13 +1,20 @@
 <template>
-  <div id="modalArea" @click="close_modal">
+  <div id="modal-area">
     <transition name="fade">
-      <div class="modalArea" v-if="show">
-        <div id="modalBg" class="modalBg"></div>
-        <div class="modalWrapper">
-          <div class="modalContents">
-            <slot></slot>
+      <div class="modal-area" v-if="show">
+        <div id="modal-bg" class="modal-bg" @click="close_modal"></div>
+        <div class="modal-wrapper">
+          <div class="modal-contents">
+            <div class="modal-header">
+              {{ title }}
+            </div>
+            <div class="modal-body">
+              <ul>
+                <li v-for="(text, index) in text" :key="index">{{ text }}</li>
+              </ul>
+            </div>
           </div>
-          <div id="closeModal" class="closeModal">
+          <div id="close-modal" class="close-modal" @click="close_modal">
             ×
           </div>
         </div>
@@ -20,10 +27,14 @@
 export default {
   name: "GraphModal",
   data: () => ({
-    show: false
+    show: false,
+    text: "",
+    title: ""
   }),
   methods: {
-    show_modal() {
+    show_modal(title, text) {
+      this.text = text
+      this.title = title
       this.show = true
     },
     close_modal() {
@@ -34,24 +45,22 @@ export default {
 </script>
 
 <style scoped>
-
-/* モーダルCSS */
-.modalArea {
+.modal-area {
   position: fixed;
-  z-index: 10; /*サイトによってここの数値は調整 */
+  z-index: 10;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
 }
 
-.modalBg {
+.modal-bg {
   width: 100%;
   height: 100%;
   background-color: rgba(30, 30, 30, 0.9);
 }
 
-.modalWrapper {
+.modal-wrapper {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -64,17 +73,33 @@ export default {
   background-color: #fff;
 }
 
-.closeModal {
+.close-modal {
   position: absolute;
-  top: 0.5rem;
-  right: 1rem;
+  top: 1.5rem;
+  right: 2rem;
   cursor: pointer;
 }
 
 .fade-enter-active, .fade-leave-active {
   transition: opacity .2s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+
+.fade-enter, .fade-leave-to {
   opacity: 0;
+}
+
+.modal-body {
+  padding: 5px 25px;
+  font-size: 0.9rem;
+}
+
+.modal-body li {
+  text-align: left;
+}
+
+.modal-header {
+  padding: 5px 25px;
+  font-size: 1.4rem;
+  border-bottom: 1px solid #ddd;
 }
 </style>

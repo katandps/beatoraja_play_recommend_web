@@ -36,16 +36,7 @@
         </td>
       </tr>
     </table>
-    <graph-modal id="song-list-modal" ref="modal">
-      <div class="modal-header">
-        {{ modal_title }}
-      </div>
-      <div class="modal-body">
-        <ul>
-          <li v-for="(text, index) in modal_text" :key="index">{{ text }}</li>
-        </ul>
-      </div>
-    </graph-modal>
+    <graph-modal id="song-list-modal" ref="modal" />
   </div>
 </template>
 
@@ -83,9 +74,7 @@ export default {
      */
     show_modal(title, text) {
       log.debug("open clicked")
-      this.modal_text = text
-      this.modal_title = title
-      this.$refs.modal.show_modal()
+      this.$refs.modal.show_modal(title, text)
     },
     list(level_index, rank_index) {
       return this.rank_list[level_index][rank_index].sort(SongDetail.cmp_title).map(s => s.title)
@@ -114,20 +103,5 @@ export default {
 <style scoped>
 .progress-bar {
   cursor: pointer;
-}
-
-.modal-body {
-  padding: 5px 25px;
-  font-size: 0.9rem;
-}
-
-.modal-body li {
-  text-align: left;
-}
-
-.modal-header {
-  padding: 5px 25px;
-  font-size: 1.4rem;
-  border-bottom: 1px solid #ddd;
 }
 </style>
