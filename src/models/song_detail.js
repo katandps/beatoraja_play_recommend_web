@@ -108,14 +108,14 @@ export default class SongDetail {
         return new SongDetail(config.SONG_FORMAT[0][0].songs)
     }
 
-    score_rate_format() {
+    score_rate_format(score) {
         if (this.total_notes === 0) {
             return "00.00"
         }
-        if (this.score === this.total_notes * 2) {
+        if (score === this.total_notes * 2) {
             return "100.0"
         }
-        return (this.score / this.total_notes * 50).toFixed(2)
+        return (score / this.total_notes * 50).toFixed(2)
     }
 
     score_rate() {
@@ -207,8 +207,12 @@ export default class SongDetail {
         switch (type) {
             case 'clear':
                 return ''
-            case 'clear_type':
+            case 'clear_type_index':
                 return this.clear_type
+            case 'clear_type':
+                return config.LAMP_INDEX[this.clear_type]
+            case 'rival_clear_type':
+                return config.LAMP_INDEX[this.rival_clear_type]
             case 'title':
                 return this.title
             case 'level':
@@ -216,19 +220,27 @@ export default class SongDetail {
             case 'notes':
                 return this.total_notes
             case 'rate':
-                return this.score_rate_format()
+                return this.score_rate_format(this.score)
+            case 'rival_rate':
+                return this.score_rate_format(this.rival_score)
             case 'rank':
                 return SongDetail.make_clear_rank(this.total_notes, this.score)
+            case 'rival_rank':
+                return SongDetail.make_clear_rank(this.total_notes, this.rival_score)
             case 'score':
                 return `${this.score}/${this.total_notes * 2}`
             case 'score_rate':
-                return this.total_notes === 0 ? 0 : this.score / this.total_notes / 2;
+                return this.total_notes === 0 ? 0 : this.score / this.total_notes / 2
+            case 'rival_score':
+                return this.rival_score
             case 'score_before':
                 return this.score_before
             case 'score_date':
                 return this.score_updated_at.split("T")[0]
             case 'bp':
                 return this.min_bp === -1 ? "---" : this.min_bp
+            case 'rival_bp':
+                return this.rival_min_bp
             case 'bp_before':
                 return this.min_bp_before === -1 ? "---" : this.min_bp_before
             case 'bp_date':
@@ -239,6 +251,8 @@ export default class SongDetail {
                 return this.clear_updated_at.split("T")[0]
             case 'combo':
                 return this.max_combo
+            case 'rival_combo':
+                return this.rival_max_combo
             case 'combos':
                 return `${this.max_combo}/${this.total_notes}`
             case 'combo_rate':

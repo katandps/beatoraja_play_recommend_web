@@ -32,12 +32,13 @@
             <div class="td" v-for="obj in columns"
                  :class="row_class(obj, song)"
                  :key="obj.key">
-              <span v-html="song.get(obj.key)"/>
+              <span v-html="song.get(obj.key)" @click="obj.key === 'title' ? show_modal(song) : null"/>
             </div>
           </div>
         </transition-group>
       </div>
     </div>
+    <rival-modal id="song-list-modal" ref="modal" />
   </div>
 </template>
 
@@ -47,6 +48,7 @@ import DisplaySongsLimiter from "./detail/DisplaySongsLimiter"
 import TableSelector from "./TableSelector"
 import InputUserId from "./InputUserId"
 import config from "../../../const"
+import RivalModal from "./RivalModal"
 
 export default {
   name: "Rival",
@@ -54,6 +56,7 @@ export default {
     DisplaySongsLimiter,
     TableSelector,
     InputUserId,
+    RivalModal
   },
   props: {
     model: {
@@ -74,13 +77,13 @@ export default {
       let ret = obj.class;
       switch (obj.key) {
         case 'clear':
-          ret += ' table-' + config.LAMP_INDEX[song.clear_type];
+          ret += ' table-' + song.get('clear_type');
           break;
         case 'clear_before':
           ret += ' table-' + config.LAMP_INDEX[song.clear_type_before];
           break;
         case 'clear_diff_rival':
-          ret += ' table-' + config.LAMP_INDEX[song.rival_clear_type];
+          ret += ' table-' + song.get('rival_clear_type');
           break;
         case 'rate':
           ret += ' bg-' + song.clear_rank;
@@ -101,6 +104,9 @@ export default {
       let query = Object.assign({}, this.$route.query)
       query.rival_id = rival_id
       await this.$router.push({query: query})
+    },
+    show_modal(song) {
+      this.$refs.modal.show_modal(song)
     }
   },
   computed: {
