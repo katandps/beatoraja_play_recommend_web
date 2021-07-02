@@ -12,7 +12,7 @@
         </div>
 
         <div class="thead">
-          <div class="tr sticky-top">
+          <div class="tr">
             <div class="th"
                  v-for="obj in model.get_recent_columns()"
                  :class="header_class(obj)"
@@ -28,24 +28,27 @@
             <div class="td" v-for="obj in model.get_recent_columns()"
                  :class="row_class(obj, song)"
                  :key="obj.key">
-              <span v-html="song.get(obj.key)"/>
+              <span v-html="song.get(obj.key)" @click="obj.key === 'title' ? show_modal(song) : null"/>
             </div>
           </div>
         </transition-group>
       </div>
     </div>
+    <recent-modal id="recent-list-modal" ref="modal" />
   </div>
 </template>
 
 <script>
-import Model from "../../../models/model";
-import DisplaySongsLimiter from "./detail/DisplaySongsLimiter";
-import config from "../../../const";
+import Model from "../../../models/model"
+import DisplaySongsLimiter from "./detail/DisplaySongsLimiter"
+import config from "../../../const"
+import RecentModal from "./RecentModal"
 
 export default {
   name: "Recent",
   components: {
     DisplaySongsLimiter,
+    RecentModal
   },
   props: {
     model: {
@@ -81,6 +84,9 @@ export default {
     set_table(table) {
       this.model = this.model.set_table(table)
     },
+    show_modal(song) {
+      this.$refs.modal.show_modal(song)
+    }
   }
 }
 </script>

@@ -9,53 +9,20 @@
               {{ song.get('level') }} {{ song.get('title') }}
             </div>
             <div class="modal-body">
-              <div id="win-lose">
-                勝敗
+              <div id="update">
+                更新内容
                 <div class="row">
                   <div class="card col-sm-4">
-                    <div class="header">クリア比較</div>
-                    <div class="body"><span v-html="song.get('clear_diff_rival')" /></div>
+                    <div class="header">クリア更新</div>
+                    <div class="body"><span v-html="song.get('clear_update')" /></div>
                   </div>
                   <div class="card col-sm-4">
-                    <div class="header">スコア比較</div>
-                    <div class="body"><span v-html="song.get('score_diff_rival')" /></div>
+                    <div class="header">スコア更新</div>
+                    <div class="body"><span v-html="song.get('score_update')" /></div>
                   </div>
                   <div class="card col-sm-4">
-                    <div class="header">ミスカウント比較</div>
-                    <div class="body"><span v-html="song.get('bp_diff_rival')" /></div>
-                  </div>
-                </div>
-              </div>
-              <div id="rival-stats">
-                ライバル情報
-                <div class="row">
-                  <div class="card col-sm-4" :class="'bg-' + song.get('rival_clear_type')">
-                    <div class="header">クリアタイプ</div>
-                    <div class="body"><span v-html="song.get('rival_clear_type')"/></div>
-                  </div>
-                  <div class="card col-sm-4" :class="'bg-' + song.get('rival_rank')">
-                    <div class="header">スコアランク</div>
-                    <div class="body"><span v-html="song.get('rival_rank')"/></div>
-                  </div>
-                  <div class="card col-sm-4">
-                    <div class="header">最終更新日</div>
-                    <div class="body"><span v-html="song.get('rival_date')"/></div>
-                  </div>
-                  <div class="card col-sm-4">
-                    <div class="header">スコア</div>
-                    <div class="body"><span v-html="song.get('rival_score')"/></div>
-                  </div>
-                  <div class="card col-sm-4">
-                    <div class="header">スコアレート</div>
-                    <div class="body"><span v-html="song.get('rival_rate')"/></div>
-                  </div>
-                  <div class="card col-sm-4">
-                    <div class="header">ミスカウント</div>
-                    <div class="body"><span v-html="song.get('rival_bp')"/></div>
-                  </div>
-                  <div class="card col-sm-4">
-                    <div class="header">コンボ</div>
-                    <div class="body"><span v-html="song.get('rival_combo')"/></div>
+                    <div class="header">ミスカウント更新</div>
+                    <div class="body"><span v-html="song.get('bp_update')" /></div>
                   </div>
                 </div>
               </div>
@@ -135,7 +102,7 @@
 
 <script>
 export default {
-  name: "RivalModal",
+  name: "RecentModal",
   data: () => ({
     show: false,
     song: null

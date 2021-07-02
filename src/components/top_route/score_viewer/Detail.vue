@@ -17,7 +17,7 @@
         </div>
         <div class="thead">
           <div class="tr">
-            <div class="th sticky-top"
+            <div class="th"
                  v-for="obj in model.get_active_columns()"
                  @click="model.filter.set_sort(obj.key)"
                  :class="header_class(obj)"

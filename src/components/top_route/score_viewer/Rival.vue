@@ -16,7 +16,7 @@
 
         <div class="thead">
           <div class="tr">
-            <div class="th sticky-top"
+            <div class="th"
                  v-for="obj in columns"
                  @click="model.filter.set_sort(obj.key)"
                  :class="header_class(obj)"
@@ -38,7 +38,7 @@
         </transition-group>
       </div>
     </div>
-    <rival-modal id="song-list-modal" ref="modal" />
+    <rival-modal id="rival-list-modal" ref="modal" />
   </div>
 </template>
 

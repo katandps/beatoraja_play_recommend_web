@@ -3,7 +3,7 @@ import Vue from 'vue'
 /**
  * FontAwesomeの登録
  */
-import {library} from '@fortawesome/fontawesome-svg-core'
+import {library, dom} from '@fortawesome/fontawesome-svg-core'
 
 import {
     faHome,
@@ -23,6 +23,7 @@ import {
     faStop,
     faArrowUp,
     faPlus,
+    faAngleRight,
 } from '@fortawesome/free-solid-svg-icons'
 library.add(
     faHome,
@@ -42,6 +43,7 @@ library.add(
     faStop,
     faArrowUp,
     faPlus,
+    faAngleRight,
 )
 
 import {faTwitterSquare} from '@fortawesome/free-brands-svg-icons'
@@ -49,6 +51,8 @@ library.add(faTwitterSquare)
 
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome"
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+dom.watch()
 
 Vue.use(require('vue-cookies'))
 
