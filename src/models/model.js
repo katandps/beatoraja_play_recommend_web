@@ -11,12 +11,6 @@ export default class Model {
     constructor() {
         /**
          * @private
-         * @type {SongFilter}
-         */
-        this.filter = new SongFilter()
-
-        /**
-         * @private
          * @type {Tables}
          */
         this.tables = null
@@ -269,17 +263,9 @@ export default class Model {
     /**
      * @returns {({name: string, title: string, class: string, key: string})[]}
      */
-    get_active_columns() {
-        return config.DETAIL_COLUMNS.filter(obj => this.filter.columns[obj.key])
-    }
-
-    /**
-     * @returns {({name: string, title: string, class: string, key: string})[]}
-     */
     get_recent_columns() {
         return config.RECENT_COLUMNS
     }
-
 
     /**
      * @public
@@ -377,14 +363,6 @@ export default class Model {
         }
         return "https://twitter.com/intent/tweet?url="
             + window.location.host + "/%23/view?user_id=" + this.scores.user_id
-    }
-
-    /**
-     * @param {string} key
-     * @return {boolean}
-     */
-    sort_key_is(key) {
-        return this.filter.sort_key === key
     }
 
     /**
