@@ -8,16 +8,16 @@
       </label>
     </div>
     <input class="form-control" type="checkbox" id="all_list"
-           v-model="model.filter.visible_all_levels">
+           v-model="filter.visible_all_levels">
   </div>
 </template>
 
 <script>
-import Model from "../../../../models/model";
+import SongFilter from "../../../../models/songFilter"
 
 export default {
   name: "LevelSelector",
-  props: {model: {type: Model, require: true}},
+  props: {filter: {type: SongFilter, require: true}},
 }
 </script>
 

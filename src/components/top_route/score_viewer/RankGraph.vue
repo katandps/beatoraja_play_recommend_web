@@ -1,6 +1,6 @@
 <template>
   <div id="rank-graph">
-    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
+    <TableSelector :model="model" :filter="filter" @setTable="set_table" v-if="model.tables_is_set()"/>
     <hr>
     凡例
     <table style="width:100%">
@@ -47,6 +47,7 @@ import * as log from "loglevel"
 import SongDetail from "../../../models/song_detail"
 import TableSelector from "./TableSelector"
 import GraphModal from "./GraphModal"
+import SongFilter from "../../../models/songFilter"
 
 export default {
   name: "RankGraph",
@@ -57,6 +58,10 @@ export default {
   props: {
     model: {
       type: Model,
+      required: true,
+    },
+    filter: {
+      type: SongFilter,
       required: true,
     },
   },
@@ -91,7 +96,7 @@ export default {
      * @returns {SongDetail[][][]}
      */
     rank_list() {
-      return this.model.get_rank_list()
+      return this.model.get_rank_list(this.filter)
     },
     level_list() {
       return this.model.get_selected_table().level_list

@@ -45,7 +45,7 @@
         </div>
 
         <hr>
-        <router-view :model="model" :rival_id="rival_id"></router-view>
+        <router-view :model="model" :rival_id="rival_id" :filter="filter"></router-view>
       </div>
     </div>
     <p v-else>{{ message }}</p>
@@ -59,6 +59,7 @@ import ScoreViewerHeader from "./score_viewer/ScoreViewerHeader"
 import DateSelector from "./score_viewer/DateSelector"
 import Api from "../../api"
 import * as log from "loglevel"
+import SongFilter from "../../models/songFilter"
 
 export default {
   name: "ScoreViewer",
@@ -80,6 +81,7 @@ export default {
   },
   data: () => ({
     model: Model.default(),
+    filter: new SongFilter(),
     header_visible: true,
     message: "",
     loaded: {user_id: null, rival_id: null, date: ""},
@@ -146,12 +148,6 @@ export default {
     date: {
       async handler() {
         await this.fetch_detail()
-      }
-    },
-    model: {
-      deep: true,
-      handler() {
-        this.$store.commit('setFilter', this.model.filter)
       }
     },
     '$route' () {

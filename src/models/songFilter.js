@@ -13,11 +13,38 @@ export default class SongFilter {
         this.visible_all_levels = false;
     }
 
+    /**
+     * @public
+     * @param {string} key
+     */
     set_sort(key) {
         if (this.sort_key === key) {
             this.sort_desc = !this.sort_desc;
         }
         this.sort_key = key;
+    }
+
+    /**
+     * ヘッダーに使えるクラス名を得る
+     * @public
+     * @param {string} key
+     * @return {"sort_active" | "sort_inactive"}
+     */
+    sort_key_is_active(key) {
+        if (this.sort_key === key) {
+            return "sort_active"
+        } else {
+            return "sort_inactive"
+        }
+    }
+
+    /**
+     * カラムを表示すべきかどうかを返す
+     * @param {string} column_name
+     * @return boolean
+     */
+    column_is_active(column_name) {
+        return this.columns[column_name]
     }
 
     visible_reverse() {

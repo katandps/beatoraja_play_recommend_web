@@ -4,7 +4,7 @@
       <input-user-id :user_id="rival_id" @refresh="refresh_rival_id" class="col-sm-6"/>
       <display-songs-limiter class="col-sm-6" :model="model"/>
     </div>
-    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"
+    <TableSelector :model="model" :filter="filter" @setTable="set_table" v-if="model.tables_is_set()"
                    :can_level_select="true"/>
     <hr/>
     <div class="table-wrapper">
@@ -18,7 +18,7 @@
           <div class="tr">
             <div class="th"
                  v-for="obj in columns"
-                 @click="model.filter.set_sort(obj.key)"
+                 @click="filter.set_sort(obj.key)"
                  :class="header_class(obj)"
                  :key="obj.key">
               {{ obj.title }}
@@ -26,7 +26,7 @@
           </div>
         </div>
         <transition-group tag="div" class="tbody" name="flip-list">
-          <div v-for="song in model.get_sorted_song_list()"
+          <div v-for="song in model.get_sorted_song_list(filter)"
                :key="song.md5"
                :class="clear_type_class(song)" class="tr">
             <div class="td" v-for="obj in columns"
@@ -49,6 +49,7 @@ import TableSelector from "./TableSelector"
 import InputUserId from "./InputUserId"
 import config from "../../../const"
 import RivalModal from "./RivalModal"
+import SongFilter from "../../../models/songFilter"
 
 export default {
   name: "Rival",
@@ -63,6 +64,10 @@ export default {
       type: Model,
       require: true,
     },
+    filter: {
+      type: SongFilter,
+      required: true,
+    },
     rival_id: {
       type: Number,
     }
@@ -70,7 +75,7 @@ export default {
   methods: {
     header_class(obj) {
       let ret = obj.class;
-      ret += this.model.sort_key_is(obj.key) ? ' sort_active' : ' sort_inactive'
+      ret += this.filter.sort_key === obj.key ? ' sort_active' : ' sort_inactive'
       return ret;
     },
     row_class(obj, song) {

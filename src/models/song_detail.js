@@ -247,6 +247,8 @@ export default class SongDetail {
                 return this.min_bp_updated_at.split("T")[0]
             case 'clear_before':
                 return ''
+            case 'clear_type_before':
+                return config.LAMP_INDEX[this.clear_type_before]
             case 'clear_date':
                 return this.clear_updated_at.split("T")[0]
             case 'combo':

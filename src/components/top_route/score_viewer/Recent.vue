@@ -22,7 +22,7 @@
           </div>
         </div>
         <transition-group tag="div" class="tbody" name="flip-list">
-          <div v-for="song in model.get_recent_song_list()"
+          <div v-for="song in model.get_recent_song_list(filter)"
                :key="song.md5"
                :class="clear_type_class(song)" class="tr">
             <div class="td" v-for="obj in model.get_recent_columns()"
@@ -43,6 +43,7 @@ import Model from "../../../models/model"
 import DisplaySongsLimiter from "./detail/DisplaySongsLimiter"
 import config from "../../../const"
 import RecentModal from "./RecentModal"
+import SongFilter from "../../../models/songFilter"
 
 export default {
   name: "Recent",
@@ -53,6 +54,10 @@ export default {
   props: {
     model: {
       type: Model,
+      require: true,
+    },
+    filter: {
+      type: SongFilter,
       require: true,
     }
   },

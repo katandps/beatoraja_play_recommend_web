@@ -9,7 +9,7 @@
              class="form-control col-sm-3 text-nowrap">
           <label style="font-size:0.9rem">
             <input type="checkbox" :id="obj.key"
-                   v-model="model.filter.columns[obj.key]">
+                   v-model="filter.columns[obj.key]">
             {{ obj.name }}
           </label>
         </div>
@@ -19,16 +19,13 @@
 </template>
 
 <script>
-import config from '../../../../const.js';
-import Model from "../../../../models/model";
+import config from '../../../../const.js'
+import SongFilter from "../../../../models/songFilter"
 
 export default {
   name: "DetailColumns",
   props: {
-    model: {
-      type: Model,
-      required: true,
-    }
+    filter: SongFilter
   },
   data: () => ({
     show: false,

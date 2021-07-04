@@ -28,10 +28,10 @@
           </label>
         </div>
         <input class="form-control" type="checkbox" id="all_list"
-               v-model="model.filter.visible_all_levels">
+               v-model="filter.visible_all_levels">
       </div>
       <div class="input-group col-sm-3" role="group" aria-label="Difficulty"
-           v-if="can_level_select && !model.filter.visible_all_levels">
+           v-if="can_level_select && !filter.visible_all_levels">
         <div class="input-group-prepend">
           <label for="level" class="btn btn-info text-nowrap"
                  v-tooltip="'詳細表で表示する難易度'">
@@ -52,13 +52,18 @@
 </template>
 
 <script>
-import Model from "../../../models/model";
+import Model from "../../../models/model"
+import SongFilter from "../../../models/songFilter"
 
 export default {
   name: "TableSelector",
   props: {
     model: {
       type: Model,
+      required: true,
+    },
+    filter: {
+      type: SongFilter,
       required: true,
     },
     can_level_select: {
