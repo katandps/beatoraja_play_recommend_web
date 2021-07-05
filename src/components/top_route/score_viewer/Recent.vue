@@ -1,7 +1,7 @@
 <template>
   <div id="recent">
     <div class="row align-items-center">
-      <display-songs-limiter class="col-sm-6" :model="model"/>
+      <display-songs-limiter class="col-sm-6" :filter="filter"/>
     </div>
     <hr/>
     <div class="table-wrapper">

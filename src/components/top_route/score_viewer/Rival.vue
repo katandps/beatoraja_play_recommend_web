@@ -2,7 +2,7 @@
   <div id="recent">
     <div class="row">
       <input-user-id :user_id="rival_id" @refresh="refresh_rival_id" class="col-sm-6"/>
-      <display-songs-limiter class="col-sm-6" :model="model"/>
+      <display-songs-limiter class="col-sm-6" :filter="filter"/>
     </div>
     <TableSelector :model="model" :filter="filter" @setTable="set_table" v-if="model.tables_is_set()"
                    :can_level_select="true"/>

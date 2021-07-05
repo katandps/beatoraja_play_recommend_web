@@ -8,7 +8,7 @@
           <font-awesome-icon :icon="['fas', 'question-circle']"/>
         </label>
       </div>
-      <input id="max_length" v-model="model.filter.max_length"
+      <input id="max_length" v-model="filter.max_length"
              class="form-control">
       <div class="input-group-append">
         <label for="max_length" class="btn btn-info text-nowrap">曲</label>
@@ -18,11 +18,11 @@
 </template>
 
 <script>
-import Model from "../../../../models/model";
+import SongFilter from "../../../../models/songFilter"
 
 export default {
   name: "DisplaySongsLimiter",
-  props: {model: {type: Model, require: true}},
+  props: {filter: SongFilter},
 }
 </script>
 

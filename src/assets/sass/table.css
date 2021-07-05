@@ -79,6 +79,7 @@
 .score-table .date {
     max-width: 80px;
     min-width: 80px;
+    width: 80px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }

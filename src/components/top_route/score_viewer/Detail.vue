@@ -3,7 +3,7 @@
     <TableSelector :model="model" :filter="filter" @setTable="set_table" v-if="model.tables_is_set()"
                    :can_level_select="true"/>
     <div class="form-group row align-items-center">
-      <display-songs-limiter :model="model" class="col-sm-6"/>
+      <display-songs-limiter :filter="filter" class="col-sm-6"/>
     </div>
     <hr>
     <FilterPreset :filter="filter"/>
@@ -31,64 +31,21 @@
         </div>
         <div class="thead">
           <div class="tr">
-            <div class="th clear" v-if="filter.column_is_active('clear')"
-                 :class="filter.sort_key_is_active('clear')"
-                 @click="filter.set_sort('clear')"/>
-            <div class="th date" v-if="filter.column_is_active('clear_date')"
-                 :class="filter.sort_key_is_active('clear_date')"
-                 @click="filter.set_sort('clear_date')">Date(clear)
-            </div>
-            <div class="th clear" v-if="filter.column_is_active('clear_before')"
-                 :class="filter.sort_key_is_active('clear_before')"
-                 @click="filter.set_sort('clear_before')"/>
-            <div class="th level" v-if="filter.column_is_active('level')"
-                 :class="filter.sort_key_is_active('level')"
-                 @click="filter.set_sort('level')">Lv
-            </div>
-            <div class="th title" v-if="filter.column_is_active('title')"
-                 :class="filter.sort_key_is_active('title')"
-                 @click="filter.set_sort('title')">Title
-            </div>
-            <div class="th rate" v-if="filter.column_is_active('rate')"
-                 :class="filter.sort_key_is_active('rate')"
-                 @click="filter.set_sort('rate')">Rate
-            </div>
-            <div class="th score" v-if="filter.column_is_active('score')"
-                 :class="filter.sort_key_is_active('score')"
-                 @click="filter.set_sort('score')">Ex/Max
-            </div>
-            <div class="th date" v-if="filter.column_is_active('score_date')"
-                 :class="filter.sort_key_is_active('score_date')"
-                 @click="filter.set_sort('score_date')">Date(Score)
-            </div>
-            <div class="th score" v-if="filter.column_is_active('score_before')"
-                 :class="filter.sort_key_is_active('score_before')"
-                 @click="filter.set_sort('score_before')">Ex(old)
-            </div>
-            <div class="th bp" v-if="filter.column_is_active('bp')"
-                 :class="filter.sort_key_is_active('bp')"
-                 @click="filter.set_sort('bp')">BP
-            </div>
-            <div class="th date" v-if="filter.column_is_active('bp_date')"
-                 :class="filter.sort_key_is_active('bp_date')"
-                 @click="filter.set_sort('bp_date')">Date(BP)
-            </div>
-            <div class="th bp" v-if="filter.column_is_active('bp_before')"
-                 :class="filter.sort_key_is_active('bp_before')"
-                 @click="filter.set_sort('bp_before')">BP(old)
-            </div>
-            <div class="th combo" v-if="filter.column_is_active('combo')"
-                 :class="filter.sort_key_is_active('combo')"
-                 @click="filter.set_sort('combo')">Combo
-            </div>
-            <div class="th play" v-if="filter.column_is_active('play')"
-                 :class="filter.sort_key_is_active('play')"
-                 @click="filter.set_sort('play')">Play
-            </div>
-            <div class="th date" v-if="filter.column_is_active('date')"
-                 :class="filter.sort_key_is_active('date')"
-                 @click="filter.set_sort('date')">Date
-            </div>
+            <header-cell class="clear" :filter="filter" column_name="clear"/>
+            <header-cell class="date" :filter="filter" column_name="clear_date">Date(clear)</header-cell>
+            <header-cell class="clear" :filter="filter" column_name="clear_before"/>
+            <header-cell class="level" :filter="filter" column_name="level">Lv</header-cell>
+            <header-cell class="title" :filter="filter" column_name="title">Title</header-cell>
+            <header-cell class="rate" :filter="filter" column_name="rate">Rate</header-cell>
+            <header-cell class="score" :filter="filter" column_name="score">Ex/Max</header-cell>
+            <header-cell class="date" :filter="filter" column_name="score_date">Date(Score)</header-cell>
+            <header-cell class="score" :filter="filter" column_name="score_before">Ex(old)</header-cell>
+            <header-cell class="bp" :filter="filter" column_name="bp">BP</header-cell>
+            <header-cell class="date" :filter="filter" column_name="bp_date">Date(BP)</header-cell>
+            <header-cell class="bp" :filter="filter" column_name="bp_before">BP(old)</header-cell>
+            <header-cell class="combo" :filter="filter" column_name="combo">Combo</header-cell>
+            <header-cell class="play" :filter="filter" column_name="play">Play</header-cell>
+            <header-cell class="date" :filter="filter" column_name="date">Date</header-cell>
           </div>
         </div>
         <transition-group tag="div" class="tbody" name="flip-list">
@@ -99,21 +56,21 @@
               :class="clear_type_class(song)"
               :song="song"
           >
-            <clear-cell :song="song" :filter="filter"/>
-            <clear-date-cell :song="song" :filter="filter"/>
-            <clear-before-cell :song="song" :filter="filter"/>
-            <level-cell :song="song" :filter="filter"/>
-            <title-cell :song="song" :filter="filter" @click="show_modal(song)"/>
-            <rate-cell :song="song" :filter="filter"/>
-            <score-cell :song="song" :filter="filter"/>
-            <score-date-cell :song="song" :filter="filter"/>
-            <score-before-cell :song="song" :filter="filter"/>
-            <min-bp-cell :song="song" :filter="filter"/>
-            <min-bp-date-cell :song="song" :filter="filter"/>
-            <min-bp-before-cell :song="song" :filter="filter"/>
-            <combo-cell :song="song" :filter="filter"/>
-            <play-count-cell :song="song" :filter="filter"/>
-            <date-cell :song="song" :filter="filter"/>
+            <data-cell :filter="filter" column_name="clear" :class="song.clear_type_bg_class()"/>
+            <data-cell :filter="filter" column_name="clear_date">{{ song.clear_updated_at.split("T")[0] }}</data-cell>
+            <data-cell :filter="filter" column_name="clear_before" :class="song.clear_type_before_bg_class()"/>
+            <data-cell :filter="filter" column_name="level">{{ song.level }}</data-cell>
+            <data-cell :filter="filter" column_name="title" @click="show_modal">{{ song.title }}</data-cell>
+            <data-cell :filter="filter" column_name="rate" :class="'bg-' + song.clear_rank">{{ song.score_rate_format(song.score) }}</data-cell>
+            <data-cell :filter="filter" column_name="score">{{ `${song.score}/${song.total_notes * 2}` }}</data-cell>
+            <data-cell :filter="filter" column_name="score_date">{{ song.score_updated_at.split("T")[0] }}</data-cell>
+            <data-cell :filter="filter" column_name="score_before">{{ song.score_before }}</data-cell>
+            <data-cell :filter="filter" column_name="bp">{{ song.min_bp }}</data-cell>
+            <data-cell :filter="filter" column_name="bp_date">{{ song.min_bp_updated_at.split("T")[0] }}</data-cell>
+            <data-cell :filter="filter" column_name="bp_before">{{ song.min_bp_before }}</data-cell>
+            <data-cell :filter="filter" column_name="combo">{{ song.max_combo }}</data-cell>
+            <data-cell :filter="filter" column_name="play">{{ song.play_count }}</data-cell>
+            <data-cell :filter="filter" column_name="date">{{ song.updated_at.split("T")[0] }}</data-cell>
           </div>
         </transition-group>
       </div>
@@ -132,46 +89,20 @@ import DisplaySongsLimiter from "./detail/DisplaySongsLimiter"
 import SongModal from "./SongModal"
 import config from "../../../const"
 import SongFilter from "../../../models/songFilter"
-import ClearCell from "./cell/ClearCell"
-import ClearDateCell from "./cell/ClearDateCell"
-import ClearBeforeCell from "./cell/ClearBeforeCell"
-import LevelCell from "./cell/LevelCell"
-import TitleCell from "./cell/TitleCell"
-import RateCell from "./cell/RateCell"
-import ScoreCell from "./cell/ScoreCell"
-import ScoreDateCell from "./cell/ScoreDateCell"
-import ScoreBeforeCell from "./cell/ScoreBeforeCell"
-import MinBpCell from "./cell/MinBpCell";
-import MinBpDateCell from "./cell/MinBpDateCell";
-import MinBpBeforeCell from "./cell/MinBpBeforeCell";
-import ComboCell from "./cell/ComboCell";
-import PlayCountCell from "./cell/PlayCountCell";
-import DateCell from "./cell/DateCell";
+import HeaderCell from "./cell/HeaderCell"
+import DataCell from "./cell/DataCell"
 
 export default {
   name: "Detail",
   components: {
-    DateCell,
-    PlayCountCell,
-    ComboCell,
-    MinBpBeforeCell,
-    MinBpDateCell,
-    MinBpCell,
-    ScoreBeforeCell,
-    ScoreDateCell,
-    ScoreCell,
-    RateCell,
-    TitleCell,
-    LevelCell,
-    ClearBeforeCell,
-    ClearDateCell,
-    ClearCell,
     TableSelector,
     DisplaySongsLimiter,
     FilterPreset,
     DetailColumns,
     SongFilterController,
     SongModal,
+    HeaderCell,
+    DataCell
   },
   props: {
     model: {

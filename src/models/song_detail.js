@@ -125,6 +125,14 @@ export default class SongDetail {
         return (this.score / this.total_notes)
     }
 
+    clear_type_bg_class() {
+        return 'bg-' + config.LAMP_INDEX[this.clear_type]
+    }
+
+    clear_type_before_bg_class(){
+        return 'bg-' +config.LAMP_INDEX[this.clear_type_before]
+    }
+
     /**
      * @public
      * @param {string} level
