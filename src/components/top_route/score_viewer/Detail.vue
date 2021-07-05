@@ -85,19 +85,19 @@
           </div>
         </transition-group>
       </div>
-      <song-modal id="song-list-modal" ref="song_modal"/>
     </div>
+    <song-modal id="song-list-modal" ref="song_modal"/>
   </div>
 </template>
 
 <script>
-import TableSelector from "./TableSelector"
-import SongFilterController from "./detail/SongFilterController"
-import DetailColumns from "./detail/DetailColumns"
-import FilterPreset from "./detail/FilterPreset"
+import TableSelector from "./selector/TableSelector"
+import SongFilterController from "./selector/SongFilterController"
+import DetailColumns from "./selector/DetailColumns"
+import FilterPreset from "./selector/FilterPreset"
 import Model from "../../../models/model"
-import DisplaySongsLimiter from "./detail/DisplaySongsLimiter"
-import SongModal from "./SongModal"
+import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
+import SongModal from "./modal/SongModal"
 import config from "../../../const"
 import SongFilter from "../../../models/songFilter"
 import HeaderCell from "./cell/HeaderCell"

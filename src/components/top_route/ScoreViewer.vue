@@ -54,9 +54,9 @@
 
 <script>
 import Model from "../../models/model"
-import InputUserId from "./score_viewer/InputUserId"
+import InputUserId from "./score_viewer/selector/InputUserId"
 import ScoreViewerHeader from "./score_viewer/ScoreViewerHeader"
-import DateSelector from "./score_viewer/DateSelector"
+import DateSelector from "./score_viewer/selector/DateSelector"
 import Api from "../../api"
 import * as log from "loglevel"
 import SongFilter from "../../models/songFilter"

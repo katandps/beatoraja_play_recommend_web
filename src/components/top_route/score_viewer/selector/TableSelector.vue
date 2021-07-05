@@ -52,8 +52,8 @@
 </template>
 
 <script>
-import Model from "../../../models/model"
-import SongFilter from "../../../models/songFilter"
+import Model from "../../../../models/model"
+import SongFilter from "../../../../models/songFilter"
 
 export default {
   name: "TableSelector",

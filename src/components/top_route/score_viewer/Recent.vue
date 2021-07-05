@@ -77,9 +77,9 @@
 
 <script>
 import Model from "../../../models/model"
-import DisplaySongsLimiter from "./detail/DisplaySongsLimiter"
+import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
 import config from "../../../const"
-import RecentModal from "./RecentModal"
+import RecentModal from "./modal/RecentModal"
 import SongFilter from "../../../models/songFilter"
 import HeaderCell from "./cell/HeaderCell"
 import DataCell from "./cell/DataCell"

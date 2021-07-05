@@ -71,11 +71,11 @@
 
 <script>
 import Model from "../../../models/model"
-import DisplaySongsLimiter from "./detail/DisplaySongsLimiter"
-import TableSelector from "./TableSelector"
-import InputUserId from "./InputUserId"
+import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
+import TableSelector from "./selector/TableSelector"
+import InputUserId from "./selector/InputUserId"
 import config from "../../../const"
-import RivalModal from "./RivalModal"
+import RivalModal from "./modal/RivalModal"
 import SongFilter from "../../../models/songFilter"
 import HeaderCell from "./cell/HeaderCell"
 import DataCell from "./cell/DataCell"

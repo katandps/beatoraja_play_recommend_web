@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import TableSelector from "./TableSelector"
+import TableSelector from "./selector/TableSelector"
 import Model from "../../../models/model"
 import config from "../../../const.js"
 import SongFilter from "../../../models/songFilter"
