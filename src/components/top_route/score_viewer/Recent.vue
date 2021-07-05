@@ -53,16 +53,18 @@
               <span v-else>-</span>
             </data-cell>
             <data-cell class="update" :filter="filter" column_name="score_update">
-              <span v-if=" song.score_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
+              <span v-if="song.score_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
                <span class="update_strong">+{{ song.score - song.score_before }}</span> ({{ song.score }})
               </span>
               <span v-else>{{ song.score }}</span>
             </data-cell>
             <data-cell class="update" :filter="filter" column_name="bp_update">
-              <span v-if="song.min_bp_updated_at.split('T')[0] !== song.updated_at.split('T')[0]">
-                <span class="update_strong">{{ song.min_bp - song.min_bp_before }}</span> ({{ song.min_bp }})
+              <span v-if="song.min_bp_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
+                <span class="update_strong" v-if="song.min_bp_before !== -1">{{ song.min_bp - song.min_bp_before }}</span>
+                <span class="update_strong" v-else>new</span>
+                ({{ song.min_bp }})
               </span>
-              <span v-else><span class="update_strong">new</span>({{ song.min_bp }})</span>
+              <span v-else>{{ song.min_bp }}</span>
             </data-cell>
             <date-cell :filter="filter" column_name="date" :date="song.updated_at" />
           </div>
