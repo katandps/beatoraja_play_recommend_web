@@ -23,7 +23,7 @@ import {
     faStop,
     faArrowUp,
     faPlus,
-    faAngleRight,
+    faLongArrowAltRight,
 } from '@fortawesome/free-solid-svg-icons'
 library.add(
     faHome,
@@ -43,7 +43,7 @@ library.add(
     faStop,
     faArrowUp,
     faPlus,
-    faAngleRight,
+    faLongArrowAltRight,
 )
 
 import {faTwitterSquare} from '@fortawesome/free-brands-svg-icons'

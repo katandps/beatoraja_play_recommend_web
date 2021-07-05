@@ -39,7 +39,7 @@
             <data-cell class="update" :filter="filter" column_name="clear_update">
               <span v-if="song.clear_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
                 {{ config().LAMP_INDEX[song.clear_type_before] }}
-                <font-awesome-icon :icon="['fas', 'angle-right']"/>
+                <font-awesome-icon :icon="['fas', 'long-arrow-alt-right']" style="margin-right:0.2em"/>
                 <span class="update_strong">{{ config().LAMP_INDEX[song.clear_type] }}</span>
               </span>
               <span v-else>-</span>
@@ -47,7 +47,7 @@
             <data-cell class="update" :filter="filter" column_name="rank_update">
               <span v-if="rank_a(song) !== rank_b(song)&& song.score_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
                 {{ rank_a(song) }}
-                <font-awesome-icon :icon="['fas', 'angle-right']"/>
+                <font-awesome-icon :icon="['fas', 'long-arrow-alt-right']" style="margin-right:0.2em"/>
                 <span class="update_strong">{{ rank_b(song) }}</span>
               </span>
               <span v-else>-</span>
