@@ -50,7 +50,8 @@
               <span v-else class="win">win</span>
             </data-cell>
             <data-cell class="score_vs" :filter="filter" column_name="score_diff_rival">
-              <span v-if="song.score === song.rival_score" class="draw">{{ song.score - song.rival_score }}</span>
+              <span v-if="song.score === 0 || song.rival_score === 0">-</span>
+              <span v-else-if="song.score === song.rival_score" class="draw">{{ song.score - song.rival_score }}</span>
               <span v-else-if="song.score < song.rival_score" class="lose">{{ song.score - song.rival_score }}</span>
               <span v-else class="win">+{{ song.score - song.rival_score }}</span>
             </data-cell>
