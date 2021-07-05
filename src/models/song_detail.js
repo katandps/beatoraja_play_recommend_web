@@ -65,7 +65,7 @@ export default class SongDetail {
     }
 
     /**
-     * @private
+     * @public
      * @param {number} total_notes
      * @param {number} ex_score
      * @return string
@@ -129,8 +129,12 @@ export default class SongDetail {
         return 'bg-' + config.LAMP_INDEX[this.clear_type]
     }
 
-    clear_type_before_bg_class(){
-        return 'bg-' +config.LAMP_INDEX[this.clear_type_before]
+    clear_type_before_bg_class() {
+        return 'bg-' + config.LAMP_INDEX[this.clear_type_before]
+    }
+
+    clear_type_rival_bg_class() {
+        return 'bg-' + config.LAMP_INDEX[this.rival_clear_type]
     }
 
     /**
@@ -277,29 +281,6 @@ export default class SongDetail {
                 return '<a href="https://www.gaftalk.com/minir/#/viewer/song/' + this.sha256 + '/' + this.mode + '" target="_blank">MinIR</a>'
             case 'mocha':
                 return '<a href="https://mocha-repository.info/song.php?sha256=' + this.sha256 + '" target="_blank">Mocha</a>'
-            case "clear_update":
-                return this.clear_updated_at.split("T")[0] === this.updated_at.split("T")[0]
-                    ? `${config.LAMP_INDEX[this.clear_type_before]} -> <span class="update_strong">${config.LAMP_INDEX[this.clear_type]}</span>`
-                    : "-"
-            case "rank_update": {
-                let rank_a = SongDetail.make_clear_rank(this.total_notes, this.score_before)
-                let rank_b = SongDetail.make_clear_rank(this.total_notes, this.score)
-                return this.score_updated_at.split("T")[0] === this.updated_at.split("T")[0]
-                    ? (rank_a !== rank_b)
-                        ? `${rank_a} -> <span class="update_strong">${rank_b}</span>`
-                        : "-"
-                    : "-"
-            }
-            case "score_update":
-                return this.score_updated_at.split("T")[0] === this.updated_at.split("T")[0]
-                    ? `<span class="update_strong">+${this.score - this.score_before}</span> (${this.score})`
-                    : this.score
-            case "bp_update":
-                return this.min_bp_updated_at.split("T")[0] !== this.updated_at.split("T")[0]
-                    ? this.min_bp
-                    : this.min_bp_before !== -1
-                        ? `<span class="update_strong">${this.min_bp - this.min_bp_before}</span> (${this.min_bp})`
-                        : `<span class="update_strong">new</span> (${this.min_bp})`
             case "clear_diff_rival":
                 return this.clear_type === this.rival_clear_type
                     ? '<span class="draw">draw</span>'

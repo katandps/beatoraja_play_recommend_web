@@ -261,13 +261,6 @@ export default class Model {
     }
 
     /**
-     * @returns {({name: string, title: string, class: string, key: string})[]}
-     */
-    get_recent_columns() {
-        return config.RECENT_COLUMNS
-    }
-
-    /**
      * @public
      * @returns {boolean}
      */

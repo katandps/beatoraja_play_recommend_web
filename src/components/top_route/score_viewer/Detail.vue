@@ -56,21 +56,32 @@
               :class="clear_type_class(song)"
               :song="song"
           >
-            <data-cell :filter="filter" column_name="clear" :class="song.clear_type_bg_class()"/>
-            <data-cell :filter="filter" column_name="clear_date">{{ song.clear_updated_at.split("T")[0] }}</data-cell>
-            <data-cell :filter="filter" column_name="clear_before" :class="song.clear_type_before_bg_class()"/>
-            <data-cell :filter="filter" column_name="level">{{ song.level }}</data-cell>
-            <data-cell :filter="filter" column_name="title" @click="show_modal">{{ song.title }}</data-cell>
-            <data-cell :filter="filter" column_name="rate" :class="'bg-' + song.clear_rank">{{ song.score_rate_format(song.score) }}</data-cell>
-            <data-cell :filter="filter" column_name="score">{{ `${song.score}/${song.total_notes * 2}` }}</data-cell>
-            <data-cell :filter="filter" column_name="score_date">{{ song.score_updated_at.split("T")[0] }}</data-cell>
-            <data-cell :filter="filter" column_name="score_before">{{ song.score_before }}</data-cell>
-            <data-cell :filter="filter" column_name="bp">{{ song.min_bp }}</data-cell>
-            <data-cell :filter="filter" column_name="bp_date">{{ song.min_bp_updated_at.split("T")[0] }}</data-cell>
-            <data-cell :filter="filter" column_name="bp_before">{{ song.min_bp_before }}</data-cell>
-            <data-cell :filter="filter" column_name="combo">{{ song.max_combo }}</data-cell>
-            <data-cell :filter="filter" column_name="play">{{ song.play_count }}</data-cell>
-            <data-cell :filter="filter" column_name="date">{{ song.updated_at.split("T")[0] }}</data-cell>
+            <data-cell class="clear" :filter="filter" column_name="clear" :class="song.clear_type_bg_class()"/>
+            <date-cell :filter="filter" column_name="clear_date" :date="song.clear_updated_at"/>
+            <data-cell class="clear" :filter="filter" column_name="clear_before"
+                       :class="song.clear_type_before_bg_class()"/>
+            <data-cell class="level" :filter="filter" column_name="level">{{ song.level }}</data-cell>
+            <data-cell class="title" :filter="filter" column_name="title" @click="show_modal(song)">
+              {{ song.title }}
+            </data-cell>
+            <data-cell class="rate" :filter="filter" column_name="rate" :class="'bg-' + song.clear_rank">
+              {{ song.score_rate_format(song.score) }}
+            </data-cell>
+            <data-cell class="score" :filter="filter" column_name="score">
+              {{ `${song.score}/${song.total_notes * 2}` }}
+            </data-cell>
+            <date-cell :filter="filter" column_name="score_date" :date="song.score_updated_at"/>
+            <data-cell class="score" :filter="filter" column_name="score_before">{{ song.score_before }}</data-cell>
+            <data-cell class="bp" :filter="filter" column_name="bp">
+              {{ song.min_bp === -1 ? '-' : song.min_bp }}
+            </data-cell>
+            <date-cell :filter="filter" column_name="bp_date" :date="song.min_bp_updated_at"/>
+            <data-cell class="bp" :filter="filter" column_name="bp_before">
+              {{ song.min_bp_before === -1 ? '-' : song.min_bp_before }}
+            </data-cell>
+            <data-cell class="combo" :filter="filter" column_name="combo">{{ song.max_combo }}</data-cell>
+            <data-cell class="play" :filter="filter" column_name="play">{{ song.play_count }}</data-cell>
+            <date-cell :filter="filter" column_name="date" :date="song.updated_at"/>
           </div>
         </transition-group>
       </div>
@@ -91,10 +102,12 @@ import config from "../../../const"
 import SongFilter from "../../../models/songFilter"
 import HeaderCell from "./cell/HeaderCell"
 import DataCell from "./cell/DataCell"
+import DateCell from "./cell/DateCell";
 
 export default {
   name: "Detail",
   components: {
+    DateCell,
     TableSelector,
     DisplaySongsLimiter,
     FilterPreset,
@@ -130,5 +143,3 @@ export default {
   }
 }
 </script>
-
-<style scoped></style>

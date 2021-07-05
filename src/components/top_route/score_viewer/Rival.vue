@@ -10,35 +10,62 @@
     <div class="table-wrapper">
       <div class="score-table">
         <div class="colgroup">
-          <div class="col" v-for="obj in columns"
-               :class="obj.class" :key="obj.key"/>
+          <div class="col clear" v-if="filter.column_is_active('clear')"/>
+          <div class="col level" v-if="filter.column_is_active('level')"/>
+          <div class="col title" v-if="filter.column_is_active('title')"/>
+          <div class="col date" v-if="filter.column_is_active('date')"/>
+          <div class="col clear_vs" v-if="filter.column_is_active('clear_diff_rival')"/>
+          <div class="col score_vs" v-if="filter.column_is_active('score_diff_rival')"/>
+          <div class="col bp_vs" v-if="filter.column_is_active('bp_diff_rival')"/>
+          <div class="col date" v-if="filter.column_is_active('rival_date')"/>
         </div>
 
         <div class="thead">
           <div class="tr">
-            <div class="th"
-                 v-for="obj in columns"
-                 @click="filter.set_sort(obj.key)"
-                 :class="header_class(obj)"
-                 :key="obj.key">
-              {{ obj.title }}
-            </div>
+            <header-cell class="clear" :filter="filter" column_name="clear"/>
+            <header-cell class="level" :filter="filter" column_name="level">Lv</header-cell>
+            <header-cell class="title" :filter="filter" column_name="title">Title</header-cell>
+            <header-cell class="date" :filter="filter" column_name="date">Date</header-cell>
+            <header-cell class="clear_vs" :filter="filter" column_name="clear_diff_rival">ClearVS</header-cell>
+            <header-cell class="score_vs" :filter="filter" column_name="score_diff_rival">ScoreVS</header-cell>
+            <header-cell class="bp_vs" :filter="filter" column_name="bp_diff_rival">BPVS</header-cell>
+            <header-cell class="date" :filter="filter" column_name="rival_date">RivalDate</header-cell>
           </div>
         </div>
         <transition-group tag="div" class="tbody" name="flip-list">
           <div v-for="song in model.get_sorted_song_list(filter)"
                :key="song.md5"
                :class="clear_type_class(song)" class="tr">
-            <div class="td" v-for="obj in columns"
-                 :class="row_class(obj, song)"
-                 :key="obj.key">
-              <span v-html="song.get(obj.key)" @click="obj.key === 'title' ? show_modal(song) : null"/>
-            </div>
+            <data-cell class="clear" :filter="filter" column_name="clear" :class="song.clear_type_bg_class()"/>
+            <data-cell class="level" :filter="filter" column_name="level">{{ song.level }}</data-cell>
+            <data-cell class="title" :filter="filter" column_name="title" @click="show_modal(song)">{{
+                song.title
+              }}
+            </data-cell>
+            <date-cell :filter="filter" column_name="date" :date="song.updated_at" />
+            <data-cell class="clear_vs" :filter="filter" column_name="clear_diff_rival"
+                       :class="song.clear_type_rival_bg_class()">
+              <span v-if="song.clear_type === song.rival_clear_type" class="draw">draw</span>
+              <span v-else-if="song.clear_type < song.rival_clear_type" class="lose">lose</span>
+              <span v-else class="win">win</span>
+            </data-cell>
+            <data-cell class="score_vs" :filter="filter" column_name="score_diff_rival">
+              <span v-if="song.score === song.rival_score" class="draw">{{ song.score - song.rival_score }}</span>
+              <span v-else-if="song.score < song.rival_score" class="lose">{{ song.score - song.rival_score }}</span>
+              <span v-else class="win">+{{ song.score - song.rival_score }}</span>
+            </data-cell>
+            <data-cell class="bp_vs" :filter="filter" column_name="bp_diff_rival">
+              <span v-if="song.rival_min_bp === -1 || song.min_bp === -1">-</span>
+              <span v-else-if="song.rival_min_bp === song.min_bp" class="draw">{{ song.min_bp - song.rival_min_bp }}</span>
+              <span v-else-if="song.rival_min_bp < song.min_bp" class="lose">+{{ song.min_bp - song.rival_min_bp }}</span>
+              <span v-else class="win">{{ song.min_bp - song.rival_min_bp }}</span>
+            </data-cell>
+            <date-cell :filter="filter" column_name="rival_date" :date="song.rival_updated_at" />
           </div>
         </transition-group>
       </div>
     </div>
-    <rival-modal id="rival-list-modal" ref="modal" />
+    <rival-modal id="rival-list-modal" ref="modal"/>
   </div>
 </template>
 
@@ -50,14 +77,20 @@ import InputUserId from "./InputUserId"
 import config from "../../../const"
 import RivalModal from "./RivalModal"
 import SongFilter from "../../../models/songFilter"
+import HeaderCell from "./cell/HeaderCell"
+import DataCell from "./cell/DataCell"
+import DateCell from "./cell/DateCell"
 
 export default {
   name: "Rival",
   components: {
+    DateCell,
     DisplaySongsLimiter,
     TableSelector,
     InputUserId,
-    RivalModal
+    RivalModal,
+    HeaderCell,
+    DataCell
   },
   props: {
     model: {
@@ -73,31 +106,8 @@ export default {
     }
   },
   methods: {
-    header_class(obj) {
-      let ret = obj.class;
-      ret += this.filter.sort_key === obj.key ? ' sort_active' : ' sort_inactive'
-      return ret;
-    },
-    row_class(obj, song) {
-      let ret = obj.class;
-      switch (obj.key) {
-        case 'clear':
-          ret += ' table-' + song.get('clear_type');
-          break;
-        case 'clear_before':
-          ret += ' table-' + config.LAMP_INDEX[song.clear_type_before];
-          break;
-        case 'clear_diff_rival':
-          ret += ' table-' + song.get('rival_clear_type');
-          break;
-        case 'rate':
-          ret += ' bg-' + song.clear_rank;
-          break;
-      }
-      return ret;
-    },
     clear_type_class(song) {
-      return "table-line-" + config.LAMP_INDEX[song.clear_type];
+      return "table-line-" + config.LAMP_INDEX[song.clear_type]
     },
     /**
      * @param {string} table
@@ -114,12 +124,5 @@ export default {
       this.$refs.modal.show_modal(song)
     }
   },
-  computed: {
-    columns() {
-      return config.RIVAL_COLUMNS
-    }
-  },
 }
 </script>
-
-<style scoped></style>

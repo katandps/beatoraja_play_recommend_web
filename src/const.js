@@ -60,28 +60,6 @@ export default Object.freeze({
         {key: 'date', name: '更新日', title: 'Date', class: 'date'}
     ],
 
-    RECENT_COLUMNS: [
-        {key: 'clear', name: 'クリア', title: ' ', class: 'clear'},
-        {key: 'level', name: '難易度', title: 'Lv', class: 'level'},
-        {key: 'title', name: '曲名', title: 'Title', class: 'title'},
-        {key: 'clear_update', name: 'クリア更新', title: 'Clear', class: 'update'},
-        {key: 'rank_update', name: 'ランク更新', title: 'Rank', class: 'update'},
-        {key: 'score_update', name: 'スコア更新', title: 'Score', class: 'update'},
-        {key: 'bp_update', name: 'ミスカウント更新', title: 'Bp', class: 'update'},
-        {key: 'date', name: '更新日', title: 'Date', class: 'date'},
-    ],
-
-    RIVAL_COLUMNS: [
-        {key: 'clear', name: 'クリア', title: ' ', class: 'clear'},
-        {key: 'level', name: '難易度', title: 'Lv', class: 'level'},
-        {key: 'title', name: '曲名', title: 'Title', class: 'title'},
-        {key: 'date', name: '更新日', title: 'Date', class: 'date'},
-        {key: 'clear_diff_rival', name: "クリア比較", title: "ClearVS", class: "clear_vs"},
-        {key: 'score_diff_rival', name: "スコア比較", title: "ScoreVS", class: "score_vs"},
-        {key: 'bp_diff_rival', name: "ミスカウント比較", title: "BPVS", class: "bp_vs"},
-        {key: 'rival_date', name: "ライバル更新日", title: "RivalDate", class: "date"},
-    ],
-
     SONG_FORMAT: [
         [
             {

@@ -235,6 +235,16 @@ class Columns {
         this.combo = true;
         this.play = true;
         this.date = true;
+
+        this.clear_update = true;
+        this.rank_update = true;
+        this.score_update = true;
+        this.bp_update = true;
+
+        this.clear_diff_rival = true;
+        this.score_diff_rival = true;
+        this.bp_diff_rival = true;
+        this.rival_date = true;
     }
 
     for_score() {

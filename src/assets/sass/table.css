@@ -84,6 +84,10 @@
     white-space: nowrap;
 }
 
+.score-table .update {
+    min-width: 80px;
+}
+
 .score-table .level {
     width: 1px;
     white-space: nowrap
