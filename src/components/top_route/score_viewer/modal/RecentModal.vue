@@ -14,15 +14,34 @@
                 <div class="row">
                   <div class="card col-sm-4">
                     <div class="header">クリア更新</div>
-                    <div class="body"><span v-html="song.get('clear_update')" /></div>
+                    <div class="body">
+                      <span v-if="song.clear_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
+                        {{ config().LAMP_INDEX[song.clear_type_before] }}
+                        <font-awesome-icon :icon="['fas', 'long-arrow-alt-right']"/>
+                        {{ config().LAMP_INDEX[song.clear_type] }}
+                      </span>
+                      <span v-else>-</span>
+                    </div>
                   </div>
                   <div class="card col-sm-4">
                     <div class="header">スコア更新</div>
-                    <div class="body"><span v-html="song.get('score_update')" /></div>
+                    <div class="body">
+                      <span v-if="song.score_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
+                      +{{ song.score - song.score_before }} ({{ song.score }})
+                      </span>
+                      <span v-else>{{ song.score }}</span>
+                    </div>
                   </div>
                   <div class="card col-sm-4">
                     <div class="header">ミスカウント更新</div>
-                    <div class="body"><span v-html="song.get('bp_update')" /></div>
+                    <div class="body">
+                      <span v-if="song.min_bp_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
+                        <span v-if="song.min_bp_before !== -1">{{song.min_bp - song.min_bp_before }}</span>
+                        <span v-else>new</span>
+                        ({{ song.min_bp }})
+                      </span>
+                      <span v-else>{{ song.min_bp }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -101,6 +120,8 @@
 </template>
 
 <script>
+import config from "../../../../const.js"
+
 export default {
   name: "RecentModal",
   data: () => ({
@@ -117,6 +138,9 @@ export default {
     },
     close_modal() {
       this.show = false
+    },
+    config() {
+      return config
     }
   },
 }
