@@ -103,6 +103,15 @@
                     <div class="header">ノーツ</div>
                     <div class="body"><span v-html="song.get('notes')"></span></div>
                   </div>
+                  <div class="card col-sm-4">
+                    <div class="header">Ranking</div>
+                    <div class="body">
+                      <router-link
+                          :to="{path:'/song', query: Object.assign({}, $route.query, {sha256: song.sha256})}">
+                        IRへ移動
+                      </router-link>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div id="links">

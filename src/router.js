@@ -3,16 +3,17 @@ import Router from 'vue-router'
 
 import Home from "./components/top_route/Home"
 import DataUploader from './components/top_route/DataUploader'
-import ScoreViewer from "./components/top_route/ScoreViewer";
-import ProfileEdit from "./components/top_route/ProfileEdit";
-import RecommendTable from "./components/top_route/RecommendTable";
-import UserList from "./components/top_route/UserList";
-import Detail from "./components/top_route/score_viewer/Detail";
-import LampGraph from "./components/top_route/score_viewer/LampGraph";
-import RankGraph from "./components/top_route/score_viewer/RankGraph";
-import Stat from "./components/top_route/score_viewer/Stat";
-import Recent from "./components/top_route/score_viewer/Recent";
-import Rival from "./components/top_route/score_viewer/Rival";
+import ScoreViewer from "./components/top_route/ScoreViewer"
+import ProfileEdit from "./components/top_route/ProfileEdit"
+import RecommendTable from "./components/top_route/RecommendTable"
+import UserList from "./components/top_route/UserList"
+import Detail from "./components/top_route/score_viewer/Detail"
+import LampGraph from "./components/top_route/score_viewer/LampGraph"
+import RankGraph from "./components/top_route/score_viewer/RankGraph"
+import Stat from "./components/top_route/score_viewer/Stat"
+import Recent from "./components/top_route/score_viewer/Recent"
+import Rival from "./components/top_route/score_viewer/Rival"
+import SongRanking from "./components/top_route/SongRanking"
 
 Vue.use(Router)
 const router = new Router({
@@ -78,6 +79,12 @@ const router = new Router({
             name: 'RecommendTable',
             component: RecommendTable,
             props: (route) => ({user_id: parseInt(route.query.user_id)})
+        },
+        {
+            path: '/song',
+            name: 'SongRanking',
+            component: SongRanking,
+            props: (route) => ({sha256: route.query.sha256, date: route.query.date})
         },
         {
             path: '/users',

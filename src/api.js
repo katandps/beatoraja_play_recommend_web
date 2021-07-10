@@ -75,6 +75,13 @@ export default class Api {
         }
     }
 
+    static async fetch_ranking(token, sha256, date) {
+        const obj = new Api()
+        const uri = obj.host + "/ranking/?sha256=" + sha256 + "&date=" + date
+        const init = {headers: {'session-token': token}}
+        return await fetch(uri, init).then(obj.handler).catch(obj.error)
+    }
+
     /**
      * @param {string} token
      * @returns {Promise<Songs>}

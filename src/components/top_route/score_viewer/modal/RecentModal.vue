@@ -36,7 +36,7 @@
                     <div class="header">ミスカウント更新</div>
                     <div class="body">
                       <span v-if="song.min_bp_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
-                        <span v-if="song.min_bp_before !== -1">{{song.min_bp - song.min_bp_before }}</span>
+                        <span v-if="song.min_bp_before !== -1">{{ song.min_bp - song.min_bp_before }}</span>
                         <span v-else>new</span>
                         ({{ song.min_bp }})
                       </span>
@@ -88,6 +88,15 @@
                   <div class="card col-sm-4">
                     <div class="header">ノーツ</div>
                     <div class="body"><span v-html="song.get('notes')"></span></div>
+                  </div>
+                  <div class="card col-sm-4">
+                    <div class="header">Ranking</div>
+                    <div class="body">
+                      <router-link
+                          :to="{path:'/song', query: Object.assign({}, $route.query, {sha256: song.sha256})}">
+                        IRへ移動
+                      </router-link>
+                    </div>
                   </div>
                 </div>
               </div>
