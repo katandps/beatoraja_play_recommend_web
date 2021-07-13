@@ -1,6 +1,6 @@
 <template>
   <div id="profile-edit">
-    <h1>プロフィール</h1>
+    <h2>プロフィール</h2>
     <div class="input-group">
       <div class="input-group-prepend">
         <label for="name-input" class="btn btn-outline-secondary">

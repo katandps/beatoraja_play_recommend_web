@@ -1,6 +1,6 @@
 <template>
   <div id="data-uploader">
-    <h1 id="uploader-title" class="uploader-title">各種データアップロード</h1>
+    <h2 id="uploader-title" class="uploader-title">各種データアップロード</h2>
     <div>
       score.db と scorelog.db をアップロードするとスコア情報が更新されます。<br/>
       ファイルは<em>beatoraja/player/player*</em>にあります。

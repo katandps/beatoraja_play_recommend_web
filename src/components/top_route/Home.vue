@@ -21,7 +21,8 @@
       </div>
       <div class="col-lg-3 panel">
         <h4>
-          <router-link class="text-dark px-2" :to="{path: '/view', query: Object.assign({}, $route.query, {user_id: user_id})}">
+          <router-link class="text-dark px-2"
+                       :to="{path: '/view', query: Object.assign({}, $route.query, {user_id: user_id})}">
             <font-awesome-icon :icon="['fas', 'cubes']"/>
             スコア閲覧
           </router-link>
@@ -41,10 +42,10 @@
         <h4>
           <router-link class="text-dark px-2" to="/profile">
             <font-awesome-icon :icon="['fas', 'pencil-alt']"/>
-            プロフィール
+            マイページ
           </router-link>
         </h4>
-        自分のプロフィールが<br/>編集できます。
+        スコアを登録したり、<br/>プロフィールが編集できます。
       </div>
       <div class="col-lg-3 panel" v-if="is_login">
         <h4>
@@ -54,15 +55,6 @@
           </router-link>
         </h4>
         難易度表を指定して<br/>おすすめ譜面の表を作ります。
-      </div>
-      <div class="col-lg-3 panel" v-if="is_login">
-        <h4>
-          <router-link class="text-dark px-2" to="/upload">
-            <font-awesome-icon :icon="['fas', 'file-upload']"/>
-            アップロード
-          </router-link>
-        </h4>
-        自分のスコアを<br/>アップロードできます。
       </div>
       <div class="col-lg-3 panel" v-if="is_login">
         <h4>

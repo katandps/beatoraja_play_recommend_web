@@ -34,21 +34,15 @@
         </ul>
         <ul v-if="is_login">
           <li>
-            <router-link class="text-dark px-2" to="/profile">
+            <router-link class="text-dark px-2" to="/mypage">
               <font-awesome-icon :icon="['fas', 'pencil-alt']"/>
-              プロフィール
+              マイページ
             </router-link>
           </li>
           <li>
             <router-link class="text-dark px-2" :to="'/table?user_id='+user_id">
               <font-awesome-icon :icon="['fas', 'thumbs-up']"/>
               おすすめ譜面表
-            </router-link>
-          </li>
-          <li>
-            <router-link v-if="is_login" class="text-dark px-2" to="/upload">
-              <font-awesome-icon :icon="['fas', 'file-upload']"/>
-              スコアアップロード
             </router-link>
           </li>
           <li><a class="text-dark px-3" href="javascript:void(0);"
