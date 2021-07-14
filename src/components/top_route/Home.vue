@@ -40,7 +40,7 @@
       </div>
       <div class="col-lg-3 panel" v-if="is_login">
         <h4>
-          <router-link class="text-dark px-2" to="/profile">
+          <router-link class="text-dark px-2" to="/mypage">
             <font-awesome-icon :icon="['fas', 'pencil-alt']"/>
             マイページ
           </router-link>
