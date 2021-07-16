@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import Api from "../../api.js"
+import Api from "../../../api.js"
 import * as log from "loglevel"
 
 export default {
