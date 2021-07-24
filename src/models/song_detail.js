@@ -124,7 +124,7 @@ export default class SongDetail {
         if (this.total_notes === 0) {
             return 0.0
         }
-        return (this.score / this.total_notes)
+        return (this.score / this.total_notes) * 50
     }
 
     clear_type_bg_class() {
