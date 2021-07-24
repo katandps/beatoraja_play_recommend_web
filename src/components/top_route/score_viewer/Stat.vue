@@ -36,6 +36,7 @@
 import TableSelector from "./selector/TableSelector"
 import Model from "../../../models/model"
 import config from "../../../const.js"
+import SongDetail from "../../../models/song_detail"
 
 export default {
   name: "Stat",
@@ -60,11 +61,36 @@ export default {
     },
   },
   computed: {
+    /**
+     * @returns {SongDetail[][]}
+     */
     lamp_stat() {
-      return this.model.get_lamp_stat(this.filter)
+      if (!this.model.is_initialized()) {
+        return []
+      }
+      let songs = this.model.filtered_score(this.$store.state.filter)
+      if (!this.$store.state.filter.visible_all_levels) {
+        songs = songs.filter(s => s.level === this.selected_level)
+      }
+      return config.LAMP_INDEX.map(
+          (lamp, index) => songs.filter(s => s.clear_type === index).sort(SongDetail.cmp_title)
+      )
     },
+
+    /**
+     * @returns {SongDetail[][]}
+     */
     rank_stat() {
-      return this.model.get_rank_stat(this.filter)
+      if (!this.model.is_initialized()) {
+        return []
+      }
+      let songs = this.model.filtered_score(this.$store.state.filter)
+      if (!this.$store.state.filter.visible_all_levels) {
+        songs = songs.filter(s => s.level === this.selected_level)
+      }
+      return config.RANK_TYPE.map(
+          r => songs.filter(s => s.clear_rank === r).sort(SongDetail.cmp_title)
+      )
     },
     filter() {
       return this.$store.getters.filter

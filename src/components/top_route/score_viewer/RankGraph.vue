@@ -90,13 +90,21 @@ export default {
   },
   computed: {
     /**
-     * @returns {SongDetail[][][]}
+     * @returns {SongDetail[][][]} SongDetail[level][rank][index]
      */
     rank_list() {
-      return this.model.get_rank_list(this.$store.getters.filter)
+      if (!this.model.is_initialized()) {
+        return []
+      }
+      let songs = this.model.filtered_score(this.$store.state.filter)
+      return this.level_list.map(
+          l => config.RANK_TYPE.map(
+              r => songs.filter(s => s.clear_rank === r && s.level === l).sort(SongDetail.cmp_title)
+          )
+      )
     },
     level_list() {
-      return this.model.get_selected_table().level_list
+      return this.model.level_list()
     }
   }
 }

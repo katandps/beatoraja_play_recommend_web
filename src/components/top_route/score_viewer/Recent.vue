@@ -30,7 +30,7 @@
           </div>
         </div>
         <transition-group tag="div" class="tbody" name="flip-list">
-          <div v-for="song in model.get_recent_song_list(filter)"
+          <div v-for="song in song_list"
                :key="song.md5"
                :class="clear_type_class(song)" class="tr">
             <data-cell class="clear" column_name="clear" :class="song.clear_type_bg_class()"/>
@@ -45,7 +45,8 @@
               <span v-else>-</span>
             </data-cell>
             <data-cell class="update" column_name="rank_update">
-              <span v-if="rank_a(song) !== rank_b(song)&& song.score_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
+              <span
+                  v-if="rank_a(song) !== rank_b(song)&& song.score_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
                 {{ rank_a(song) }}
                 <font-awesome-icon :icon="['fas', 'long-arrow-alt-right']" style="margin-right:0.2em"/>
                 <span class="update_strong">{{ rank_b(song) }}</span>
@@ -60,13 +61,15 @@
             </data-cell>
             <data-cell class="update" column_name="bp_update">
               <span v-if="song.min_bp_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
-                <span class="update_strong" v-if="song.min_bp_before !== -1">{{ song.min_bp - song.min_bp_before }}</span>
+                <span class="update_strong" v-if="song.min_bp_before !== -1">{{
+                    song.min_bp - song.min_bp_before
+                  }}</span>
                 <span class="update_strong" v-else>new</span>
                 ({{ song.min_bp }})
               </span>
               <span v-else>{{ song.min_bp }}</span>
             </data-cell>
-            <date-cell column_name="date" :date="song.updated_at" />
+            <date-cell column_name="date" :date="song.updated_at"/>
           </div>
         </transition-group>
       </div>
@@ -127,9 +130,19 @@ export default {
     }
   },
   computed: {
-    filter() {
-      return this.$store.state.filter
-    }
+    /**
+     * @returns {SongDetail[]}
+     */
+    song_list() {
+      if (!this.model.is_initialized()) {
+        return [SongDetail.dummy()]
+      }
+      let filter = this.$store.state.filter
+      let songs = this.model.filtered_score(filter)
+      return songs.sort((a, b) => {
+        return a.updated_at === b.updated_at ? 0 : (a.updated_at < b.updated_at) ? 1 : -1
+      }).slice(0, filter.max_length > 0 ? filter.max_length : songs.length)
+    },
   }
 }
 </script>

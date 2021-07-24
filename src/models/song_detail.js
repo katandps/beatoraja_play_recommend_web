@@ -7,17 +7,19 @@ export default class SongDetail {
         this.init_rival_score(new Score())
     }
 
+    title = "曲データなし"
+    total_notes = 0
+    md5
+    sha256 = ""
+    clear_rank = SongDetail.make_clear_rank(0, 0)
+
     /**
      * @param {Song} song
      * @param {string} hash
      */
     init_song(song, hash) {
         if (!song) {
-            this.title = "曲データなし"
-            this.total_notes = 0
             this.md5 = hash
-            this.sha256 = ""
-            this.clear_rank = SongDetail.make_clear_rank(this.total_notes, this.score)
             return;
         }
         this.title = song.title

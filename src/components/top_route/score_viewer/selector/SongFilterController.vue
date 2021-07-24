@@ -53,18 +53,10 @@
 
         <div class="filter">
           <h5>更新日時</h5>
-          <button class="btn btn-success"
-                  @click="filter.filter_all_term()">全期間
-          </button>
-          <button class="btn btn-success"
-                  @click="filter.filter_older_half_year()">半年以上更新なし
-          </button>
-          <button class="btn btn-success"
-                  @click="filter.filter_older_one_year()">1年以上更新なし
-          </button>
-          <button class="btn btn-success"
-                  @click="filter.filter_older_two_year()">2年以上更新なし
-          </button>
+          <button class="btn btn-success" @click="filter.filter_all_term()">全期間</button>
+          <button class="btn btn-success" @click="filter.filter_older_half_year()">半年以上更新なし</button>
+          <button class="btn btn-success" @click="filter.filter_older_one_year()">1年以上更新なし</button>
+          <button class="btn btn-success" @click="filter.filter_older_two_year()">2年以上更新なし</button>
         </div>
       </div>
     </transition>
