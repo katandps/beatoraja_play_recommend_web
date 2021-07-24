@@ -1,6 +1,6 @@
 <template>
   <div id="stat">
-    <TableSelector :model="model" :filter="filter" @setTable="set_table" v-if="model.tables_is_set()" :can_level_select="true"/>
+    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()" :can_level_select="true"/>
     <hr>
     <h3>クリアランプ分布</h3>
     <table style="width:100%; table-layout:fixed">
@@ -36,7 +36,6 @@
 import TableSelector from "./selector/TableSelector"
 import Model from "../../../models/model"
 import config from "../../../const.js"
-import SongFilter from "../../../models/songFilter"
 
 export default {
   name: "Stat",
@@ -47,10 +46,6 @@ export default {
     model: {
       type: Model,
       require: true
-    },
-    filter: {
-      type: SongFilter,
-      required: true,
     },
   },
   methods: {
@@ -70,11 +65,10 @@ export default {
     },
     rank_stat() {
       return this.model.get_rank_stat(this.filter)
+    },
+    filter() {
+      return this.$store.getters.filter
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

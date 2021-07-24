@@ -73,13 +73,9 @@
 
 <script>
 import config from "../../../../const"
-import SongFilter from "../../../../models/songFilter"
 
 export default {
   name: "SongFilterController",
-  props: {
-    filter: SongFilter,
-  },
   data: () => ({
     show: false,
   }),
@@ -91,6 +87,11 @@ export default {
       this.show = !this.show;
     },
   },
+  computed: {
+    filter() {
+      return this.$store.getters.filter
+    }
+  }
 }
 </script>
 

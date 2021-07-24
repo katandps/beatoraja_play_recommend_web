@@ -1,6 +1,6 @@
 <template>
   <div id="rank-graph">
-    <TableSelector :model="model" :filter="filter" @setTable="set_table" v-if="model.tables_is_set()"/>
+    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
     <hr>
     凡例
     <table style="width:100%">
@@ -60,14 +60,11 @@ export default {
       type: Model,
       required: true,
     },
-    filter: {
-      type: SongFilter,
-      required: true,
-    },
   },
   data: () => ({
     modal_title: "",
     modal_text: "",
+    filter: new SongFilter()
   }),
   methods: {
     config() {
@@ -96,7 +93,7 @@ export default {
      * @returns {SongDetail[][][]}
      */
     rank_list() {
-      return this.model.get_rank_list(this.filter)
+      return this.model.get_rank_list(this.$store.getters.filter)
     },
     level_list() {
       return this.model.get_selected_table().level_list

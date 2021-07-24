@@ -18,16 +18,8 @@
 </template>
 
 <script>
-import SongFilter from "../../../../models/songFilter"
-
 export default {
   name: "FilterPreset",
-  props: {
-    filter: {
-      type: SongFilter,
-      required: true,
-    }
-  },
   data: () => ({
     show: true,
 
@@ -36,6 +28,11 @@ export default {
     filter_visible() {
       this.show = !this.show;
     },
+  },
+  computed: {
+    filter() {
+      return this.$store.getters.filter
+    }
   }
 }
 </script>

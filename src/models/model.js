@@ -171,6 +171,9 @@ export default class Model {
         if (!this.is_initialized()) {
             return []
         }
+        if (!filter) {
+            filter = new SongFilter()
+        }
         let levels = this.get_selected_table().level_list
         let ranks = config.RANK_TYPE
         let songs = this.get_selected_table().get_filtered_score(filter)
@@ -190,6 +193,9 @@ export default class Model {
         if (!this.is_initialized()) {
             return []
         }
+        if (!filter) {
+            filter = new SongFilter()
+        }
         let lamps = config.LAMP_INDEX
         let songs = this.get_selected_table().get_filtered_score(filter)
         if (!filter.visible_all_levels) {
@@ -208,6 +214,9 @@ export default class Model {
     get_rank_stat(filter) {
         if (!this.is_initialized()) {
             return []
+        }
+        if (!filter) {
+            filter = new SongFilter()
         }
         let ranks = config.RANK_TYPE
         let songs = this.get_selected_table().get_filtered_score(filter)
@@ -229,6 +238,9 @@ export default class Model {
     get_sorted_song_list(filter) {
         if (!this.is_initialized()) {
             return [SongDetail.dummy()]
+        }
+        if (!filter) {
+            filter = new SongFilter()
         }
         let songs = this.get_selected_table().get_filtered_score(filter)
         if (!filter.visible_all_levels) {
@@ -252,6 +264,9 @@ export default class Model {
     get_recent_song_list(filter) {
         if (!this.is_initialized()) {
             return [SongDetail.dummy()]
+        }
+        if (!filter) {
+            filter = new SongFilter()
         }
         let songs = this.tables.get_filtered_score(new SongFilter)
         const length = parseInt(filter.max_length) > 0 ? filter.max_length : songs.length

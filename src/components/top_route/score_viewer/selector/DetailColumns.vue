@@ -9,7 +9,7 @@
              class="form-control col-sm-3 text-nowrap">
           <label style="font-size:0.9rem">
             <input type="checkbox" :id="obj.key"
-                   v-model="filter.columns[obj.key]">
+                   v-model="columns[obj.key]">
             {{ obj.name }}
           </label>
         </div>
@@ -20,20 +20,21 @@
 
 <script>
 import config from '../../../../const.js'
-import SongFilter from "../../../../models/songFilter"
+import Columns from "../../../../models/columns"
 
 export default {
   name: "DetailColumns",
-  props: {
-    filter: SongFilter
-  },
   data: () => ({
     show: false,
+    columns: new Columns()
   }),
   computed: {
     column_list() {
       return config.DETAIL_COLUMNS.filter(c => c.key !== "title")
     },
+  },
+  beforeMount() {
+    this.columns = this.$store.state.filter.columns
   },
   methods: {
     config() {
@@ -43,7 +44,13 @@ export default {
       this.show = !this.show;
     },
   },
+  watch: {
+    columns: {
+      deep: true,
+      handler() {
+        this.$store.commit('setColumns', this.columns)
+      }
+    }
+  }
 }
 </script>
-
-<style scoped></style>

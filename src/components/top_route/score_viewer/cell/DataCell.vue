@@ -1,18 +1,21 @@
 <template>
-  <div class="td" v-if="filter.column_is_active(column_name)" @click="click">
+  <div class="td" v-if="is_active" @click="click">
     <slot />
   </div>
 </template>
 
 <script>
-import SongFilter from "../../../../models/songFilter"
-
 export default {
   name: "DataCell",
-  props: {filter: SongFilter, column_name: String},
+  props: {column_name: String},
   methods: {
     click() {
       this.$emit('click')
+    }
+  },
+  computed: {
+    is_active() {
+      return this.$store.getters.filter.column_is_active(this.column_name)
     }
   }
 }

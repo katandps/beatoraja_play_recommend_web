@@ -45,7 +45,7 @@
         </div>
 
         <hr>
-        <router-view :model="model" :rival_id="rival_id" :filter="filter"></router-view>
+        <router-view :model="model" :rival_id="rival_id" />
       </div>
     </div>
     <p v-else>{{ message }}</p>
@@ -81,13 +81,13 @@ export default {
   },
   data: () => ({
     model: Model.default(),
-    filter: new SongFilter(),
     header_visible: true,
     message: "",
     loaded: {user_id: null, rival_id: null, date: ""},
   }),
   async beforeMount() {
-    // this.model = this.model.init_filter(Object.assign(new SongFilter(), this.$store.getters.filter))
+    log.debug(this.$store.getters.filter)
+    this.$store.commit('setFilter', new SongFilter(this.$store.getters.filter))
     Api.fetch_tables(this.$store.getters.accessToken).then(
         t => this.model = this.model.init_table(t)
     )
@@ -153,7 +153,7 @@ export default {
     '$route' () {
       this.fetch_detail()
       this.set_rival()
-    }
+    },
   }
 }
 </script>

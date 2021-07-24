@@ -1,51 +1,50 @@
 <template>
   <div id="detail">
-    <TableSelector :model="model" :filter="filter" @setTable="set_table" v-if="model.tables_is_set()"
-                   :can_level_select="true"/>
+    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()" :can_level_select="true"/>
     <div class="form-group row align-items-center">
-      <display-songs-limiter :filter="filter" class="col-sm-6"/>
+      <display-songs-limiter class="col-sm-6"/>
     </div>
     <hr>
-    <FilterPreset :filter="filter"/>
-    <SongFilterController :filter="filter"/>
-    <DetailColumns :filter="filter"/>
+    <FilterPreset/>
+    <SongFilterController/>
+    <DetailColumns/>
     <hr>
     <div class="table-wrapper">
       <div class="score-table detail">
         <div class="colgroup">
-          <div class="col clear" v-if="filter.column_is_active('clear')"/>
-          <div class="col date" v-if="filter.column_is_active('clear_date')"/>
-          <div class="col clear" v-if="filter.column_is_active('clear_before')"/>
-          <div class="col level" v-if="filter.column_is_active('level')"/>
-          <div class="col title" v-if="filter.column_is_active('title')"/>
-          <div class="col rate" v-if="filter.column_is_active('rate')"/>
-          <div class="col score" v-if="filter.column_is_active('score')"/>
-          <div class="col date" v-if="filter.column_is_active('score_date')"/>
-          <div class="col score" v-if="filter.column_is_active('score_before')"/>
-          <div class="col bp" v-if="filter.column_is_active('bp')"/>
-          <div class="col date" v-if="filter.column_is_active('bp_date')"/>
-          <div class="col bp" v-if="filter.column_is_active('bp_before')"/>
-          <div class="col combo" v-if="filter.column_is_active('combo')"/>
-          <div class="col play" v-if="filter.column_is_active('play')"/>
-          <div class="col date" v-if="filter.column_is_active('date')"/>
+          <div class="col clear" v-if="column_is_active('clear')"/>
+          <div class="col date" v-if="column_is_active('clear_date')"/>
+          <div class="col clear" v-if="column_is_active('clear_before')"/>
+          <div class="col level" v-if="column_is_active('level')"/>
+          <div class="col title" v-if="column_is_active('title')"/>
+          <div class="col rate" v-if="column_is_active('rate')"/>
+          <div class="col score" v-if="column_is_active('score')"/>
+          <div class="col date" v-if="column_is_active('score_date')"/>
+          <div class="col score" v-if="column_is_active('score_before')"/>
+          <div class="col bp" v-if="column_is_active('bp')"/>
+          <div class="col date" v-if="column_is_active('bp_date')"/>
+          <div class="col bp" v-if="column_is_active('bp_before')"/>
+          <div class="col combo" v-if="column_is_active('combo')"/>
+          <div class="col play" v-if="column_is_active('play')"/>
+          <div class="col date" v-if="column_is_active('date')"/>
         </div>
         <div class="thead">
           <div class="tr">
-            <header-cell class="clear" :filter="filter" column_name="clear"/>
-            <header-cell class="date" :filter="filter" column_name="clear_date">Date(clear)</header-cell>
-            <header-cell class="clear" :filter="filter" column_name="clear_before"/>
-            <header-cell class="level" :filter="filter" column_name="level">Lv</header-cell>
-            <header-cell class="title" :filter="filter" column_name="title">Title</header-cell>
-            <header-cell class="rate" :filter="filter" column_name="rate">Rate</header-cell>
-            <header-cell class="score" :filter="filter" column_name="score">Ex/Max</header-cell>
-            <header-cell class="date" :filter="filter" column_name="score_date">Date(Score)</header-cell>
-            <header-cell class="score" :filter="filter" column_name="score_before">Ex(old)</header-cell>
-            <header-cell class="bp" :filter="filter" column_name="bp">BP</header-cell>
-            <header-cell class="date" :filter="filter" column_name="bp_date">Date(BP)</header-cell>
-            <header-cell class="bp" :filter="filter" column_name="bp_before">BP(old)</header-cell>
-            <header-cell class="combo" :filter="filter" column_name="combo">Combo</header-cell>
-            <header-cell class="play" :filter="filter" column_name="play">Play</header-cell>
-            <header-cell class="date" :filter="filter" column_name="date">Date</header-cell>
+            <header-cell class="clear" column_name="clear"/>
+            <header-cell class="date" column_name="clear_date">Date(clear)</header-cell>
+            <header-cell class="clear" column_name="clear_before"/>
+            <header-cell class="level" column_name="level">Lv</header-cell>
+            <header-cell class="title" column_name="title">Title</header-cell>
+            <header-cell class="rate" column_name="rate">Rate</header-cell>
+            <header-cell class="score" column_name="score">Ex/Max</header-cell>
+            <header-cell class="date" column_name="score_date">Date(Score)</header-cell>
+            <header-cell class="score" column_name="score_before">Ex(old)</header-cell>
+            <header-cell class="bp" column_name="bp">BP</header-cell>
+            <header-cell class="date" column_name="bp_date">Date(BP)</header-cell>
+            <header-cell class="bp" column_name="bp_before">BP(old)</header-cell>
+            <header-cell class="combo" column_name="combo">Combo</header-cell>
+            <header-cell class="play" column_name="play">Play</header-cell>
+            <header-cell class="date" column_name="date">Date</header-cell>
           </div>
         </div>
         <transition-group tag="div" class="tbody" name="flip-list">
@@ -56,32 +55,32 @@
               :class="clear_type_class(song)"
               :song="song"
           >
-            <data-cell class="clear" :filter="filter" column_name="clear" :class="song.clear_type_bg_class()"/>
-            <date-cell :filter="filter" column_name="clear_date" :date="song.clear_updated_at"/>
-            <data-cell class="clear" :filter="filter" column_name="clear_before"
+            <data-cell class="clear" column_name="clear" :class="song.clear_type_bg_class()"/>
+            <date-cell column_name="clear_date" :date="song.clear_updated_at"/>
+            <data-cell class="clear" column_name="clear_before"
                        :class="song.clear_type_before_bg_class()"/>
-            <data-cell class="level" :filter="filter" column_name="level">{{ song.level }}</data-cell>
-            <data-cell class="title" :filter="filter" column_name="title" @click="show_modal(song)">
+            <data-cell class="level" column_name="level">{{ song.level }}</data-cell>
+            <data-cell class="title" column_name="title" @click="show_modal(song)">
               {{ song.title }}
             </data-cell>
-            <data-cell class="rate" :filter="filter" column_name="rate" :class="'bg-' + song.clear_rank">
+            <data-cell class="rate" column_name="rate" :class="'bg-' + song.clear_rank">
               {{ song.score_rate_format(song.score) }}
             </data-cell>
-            <data-cell class="score" :filter="filter" column_name="score">
+            <data-cell class="score" column_name="score">
               {{ `${song.score}/${song.total_notes * 2}` }}
             </data-cell>
-            <date-cell :filter="filter" column_name="score_date" :date="song.score_updated_at"/>
-            <data-cell class="score" :filter="filter" column_name="score_before">{{ song.score_before }}</data-cell>
-            <data-cell class="bp" :filter="filter" column_name="bp">
+            <date-cell column_name="score_date" :date="song.score_updated_at"/>
+            <data-cell class="score" column_name="score_before">{{ song.score_before }}</data-cell>
+            <data-cell class="bp" column_name="bp">
               {{ song.min_bp === -1 ? '-' : song.min_bp }}
             </data-cell>
-            <date-cell :filter="filter" column_name="bp_date" :date="song.min_bp_updated_at"/>
-            <data-cell class="bp" :filter="filter" column_name="bp_before">
+            <date-cell column_name="bp_date" :date="song.min_bp_updated_at"/>
+            <data-cell class="bp" column_name="bp_before">
               {{ song.min_bp_before === -1 ? '-' : song.min_bp_before }}
             </data-cell>
-            <data-cell class="combo" :filter="filter" column_name="combo">{{ song.max_combo }}</data-cell>
-            <data-cell class="play" :filter="filter" column_name="play">{{ song.play_count }}</data-cell>
-            <date-cell :filter="filter" column_name="date" :date="song.updated_at"/>
+            <data-cell class="combo" column_name="combo">{{ song.max_combo }}</data-cell>
+            <data-cell class="play" column_name="play">{{ song.play_count }}</data-cell>
+            <date-cell column_name="date" :date="song.updated_at"/>
           </div>
         </transition-group>
       </div>
@@ -99,10 +98,9 @@ import Model from "../../../models/model"
 import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
 import SongModal from "./modal/SongModal"
 import config from "../../../const"
-import SongFilter from "../../../models/songFilter"
 import HeaderCell from "./cell/HeaderCell"
 import DataCell from "./cell/DataCell"
-import DateCell from "./cell/DateCell";
+import DateCell from "./cell/DateCell"
 
 export default {
   name: "Detail",
@@ -122,10 +120,6 @@ export default {
       type: Model,
       require: true,
     },
-    filter: {
-      type: SongFilter,
-      require: true,
-    }
   },
   methods: {
     /**
@@ -139,6 +133,14 @@ export default {
     },
     show_modal(song) {
       this.$refs.song_modal.show_modal(song)
+    },
+    column_is_active(name) {
+      return this.$store.getters.column_is_active(name)
+    }
+  },
+  computed: {
+    filter() {
+      return this.$store.getters.filter
     }
   }
 }

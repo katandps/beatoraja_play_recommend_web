@@ -1,22 +1,29 @@
 <template>
   <div class="th"
-       v-if="filter.column_is_active(column_name)"
-       :class="filter.sort_key_is_active(column_name)"
-       @click="filter.set_sort(column_name)"
+       v-show="is_active"
+       :class="is_sorted"
+       @click="set_sort"
   >
     <slot/>
   </div>
 </template>
 
 <script>
-import SongFilter from "../../../../models/songFilter"
-
 export default {
   name: "HeaderCell",
-  props: {filter: SongFilter, column_name: String}
+  props: {column_name: String},
+  computed: {
+    is_active() {
+      return this.$store.getters.filter.column_is_active(this.column_name)
+    },
+    is_sorted() {
+      return this.$store.getters.filter.sort_key_is_active(this.column_name)
+    },
+  },
+  methods: {
+    set_sort() {
+      this.$store.commit('setSort', this.column_name)
+    }
+  }
 }
 </script>
-
-<style scoped>
-
-</style>
