@@ -133,34 +133,34 @@ export default {
     },
     bp_sum() {
       let sum = 0
-      this.filtered.forEach(song => sum += song.min_bp)
+      this.filtered.filter(s =>  s.clear_type !== 0).forEach(song => sum += song.min_bp)
       return sum
     },
     bp_average() {
       let sum = 0
-      let songs = this.filtered
+      let songs = this.filtered.filter(s =>  s.clear_type !== 0)
       songs.forEach(song => sum += song.min_bp)
       return (sum / songs.length).toFixed(3)
     },
     score_sum() {
       let sum = 0
-      this.filtered.forEach(song => sum += song.score)
+      this.filtered.filter(s =>  s.clear_type !== 0).forEach(song => sum += song.score)
       return sum
     },
     score_average() {
       let sum = 0
-      let songs = this.filtered
+      let songs = this.filtered.filter(s =>  s.clear_type !== 0)
       songs.forEach(song => sum += song.score)
       return (sum / songs.length).toFixed(3)
     },
     rate_sum() {
       let sum = 0
-      this.filtered.forEach(song => sum += song.score_rate())
+      this.filtered.filter(s =>  s.clear_type !== 0).forEach(song => sum += song.score_rate())
       return sum.toFixed(3)
     },
     rate_average() {
       let sum = 0
-      let songs = this.filtered
+      let songs = this.filtered.filter(s =>  s.clear_type !== 0)
       songs.forEach(song => sum += song.score_rate())
       return (sum / songs.length).toFixed(3)
     },
