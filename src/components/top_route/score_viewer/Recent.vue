@@ -138,7 +138,7 @@ export default {
         return [SongDetail.dummy()]
       }
       let filter = this.$store.state.filter
-      let songs = this.model.filtered_score(filter)
+      let songs = this.model.tables.get_filtered_score(filter)
       return songs.sort((a, b) => {
         return a.updated_at === b.updated_at ? 0 : (a.updated_at < b.updated_at) ? 1 : -1
       }).slice(0, filter.max_length > 0 ? filter.max_length : songs.length)
