@@ -117,8 +117,8 @@ export default {
       await this.$router.push({query: query})
     },
     show_modal(song) {
-      this.$refs.modal.show_modal(song)
-    }
+      this.$refs.modal.show_modal(song, this.model.get_date_str())
+    },
   },
   computed: {
     filter() {

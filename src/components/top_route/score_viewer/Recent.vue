@@ -117,7 +117,7 @@ export default {
       this.model = this.model.set_table(table)
     },
     show_modal(song) {
-      this.$refs.modal.show_modal(song)
+      this.$refs.modal.show_modal(song, this.model.get_date_str())
     },
     rank_a(song) {
       return SongDetail.make_clear_rank(song.total_notes, song.score_before)

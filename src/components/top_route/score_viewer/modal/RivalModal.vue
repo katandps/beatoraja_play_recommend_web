@@ -107,7 +107,7 @@
                     <div class="header">Ranking</div>
                     <div class="body">
                       <router-link
-                          :to="{path:'/song', query: Object.assign({}, $route.query, {sha256: song.sha256})}">
+                          :to="{path:'/song', query: Object.assign({}, $route.query, {sha256: song.sha256, date: date})}">
                         IRへ移動
                       </router-link>
                     </div>
@@ -153,9 +153,10 @@ export default {
     /**
      * @param {SongDetail} song
      */
-    show_modal(song) {
+    show_modal(song, date) {
       this.show = true
       this.song = song
+      this.date = date
     },
     close_modal() {
       this.show = false
