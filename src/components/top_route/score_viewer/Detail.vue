@@ -132,7 +132,7 @@ export default {
       return "table-line-" + config.LAMP_INDEX[song.clear_type];
     },
     show_modal(song) {
-      this.$refs.song_modal.show_modal(song)
+      this.$refs.song_modal.show_modal(song, this.model.get_date_str())
     },
     column_is_active(name) {
       return this.$store.getters.column_is_active(name)
