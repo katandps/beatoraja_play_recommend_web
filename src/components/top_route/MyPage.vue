@@ -7,8 +7,8 @@
 </template>
 
 <script>
-import ProfileEdit from "./my_page/ProfileEdit";
-import DataUploader from "./my_page/DataUploader";
+import ProfileEdit from "./my_page/ProfileEdit"
+import DataUploader from "./my_page/DataUploader"
 
 export default {
   name: "MyPage",

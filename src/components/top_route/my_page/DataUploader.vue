@@ -21,7 +21,13 @@
         >
           Submit
         </button>
-        <div class="btn">{{ play_data_message }}</div>
+        <router-link
+          v-if="is_play_data_uploaded"
+          class="btn"
+          :to="{path: '/view/recent', query: Object.assign({}, $route.query, {user_id: user_id})}"
+        >
+          結果を見る
+        </router-link>
       </form>
     </div>
     <hr>
@@ -57,7 +63,7 @@ export default {
     score_db: null,
     score_log_db: null,
     song_data_db: null,
-    play_data_message: "",
+    is_play_data_uploaded: false,
     song_data_message: "",
   }),
   methods: {
@@ -70,7 +76,7 @@ export default {
           this.score_log_db = file
         }
       })
-      this.play_data_message = ""
+      this.is_play_data_uploaded = false
     },
     onSongDataUploaded(e) {
       e.target.files.forEach(file => {
@@ -84,7 +90,7 @@ export default {
       await Api.upload_play_data(this.$store.getters.accessToken, this.score_db, this.score_log_db)
       this.score_db = null
       this.score_log_db = null
-      this.play_data_message = "OK"
+      this.is_play_data_uploaded = true
     },
     async uploadSongData() {
       await Api.upload_song_data(this.$store.getters.accessToken, this.song_data_db)
@@ -98,6 +104,12 @@ export default {
     },
     ready_upload_song_data() {
       return !!this.song_data_db
+    },
+    user_id() {
+      if (!this.$store.getters.userInfo) {
+        return 1
+      }
+      return this.$store.getters.userInfo.user_id
     }
   }
 }
