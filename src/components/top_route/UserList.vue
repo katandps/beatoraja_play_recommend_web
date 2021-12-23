@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import Api from "../../api";
+import Api from "../../api"
 
 export default {
   name: "UserList",
@@ -34,6 +34,7 @@ export default {
   }),
   async mounted() {
     this.users = await Api.get_user_list(this.$store.getters.accessToken)
+    this.users.sort((a,b) => a.id - b.id)
   }
 }
 </script>
