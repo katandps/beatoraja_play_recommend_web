@@ -1,7 +1,8 @@
 import Scores from "./models/scores"
 import * as log from "loglevel"
-import Songs from "./models/songs";
-import Tables from "./models/difficultyTable";
+import Songs from "./models/songs"
+import Tables from "./models/difficultyTable"
+import PlayStats from "./models/playStats"
 
 export default class Api {
     constructor() {
@@ -25,7 +26,7 @@ export default class Api {
 
     /**
      * @public
-     * @param {string|null}token
+     * @param {string} token
      * @returns {[]| {error:*}}>}
      */
     static async get_user_list(token) {
@@ -48,9 +49,9 @@ export default class Api {
 
     /**
      *
-     * @param date
-     * @param user_id
-     * @param token
+     * @param {string} date
+     * @param {number} user_id
+     * @param {string} token
      * @returns {Promise<null|{user_id: number, user_name: string, score: {}}>}
      */
     static async fetch_score(date, user_id, token) {
@@ -102,6 +103,18 @@ export default class Api {
         const uri = obj.host + "/tables"
         const init = {headers: {'session-token': token}}
         return new Tables(await fetch(uri, init).then(obj.handler).catch(obj.error))
+    }
+
+    /**
+     * @param {string} token
+     * @param {number} user_id
+     * @returns {Promise<Object>}
+     */
+    static async fetch_play_stats(token, user_id) {
+        const obj = new Api()
+        const uri = obj.host + "/stats/" + user_id
+        const init = {headers: {'session-token': token}}
+        return new PlayStats(await fetch(uri, init).then(obj.handler).catch(obj.error))
     }
 
     static async logout(token) {

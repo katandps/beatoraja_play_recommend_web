@@ -13,6 +13,7 @@ import Recent from "./components/top_route/score_viewer/Recent"
 import Rival from "./components/top_route/score_viewer/Rival"
 import SongRanking from "./components/top_route/SongRanking"
 import MyPage from "./components/top_route/MyPage"
+import PlayStats from "./components/top_route/PlayStats"
 
 Vue.use(Router)
 const router = new Router({
@@ -67,6 +68,12 @@ const router = new Router({
             path: '/mypage',
             name: 'MyPage',
             component: MyPage,
+        },
+        {
+            path: '/stats',
+            name: 'PlayStats',
+            component: PlayStats,
+            props: (route) => ({user_id: parseInt(route.query.user_id)})
         },
         {
             path: '/table',

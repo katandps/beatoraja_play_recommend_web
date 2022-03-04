@@ -40,6 +40,12 @@
             </router-link>
           </li>
           <li>
+            <router-link class="text-dark px-2" :to="'/stats?user_id='+user_id">
+              <font-awesome-icon :icon="['fas', 'wrench']"/>
+              プレイ履歴
+            </router-link>
+          </li>
+          <li>
             <router-link class="text-dark px-2" :to="'/table?user_id='+user_id">
               <font-awesome-icon :icon="['fas', 'thumbs-up']"/>
               おすすめ譜面表

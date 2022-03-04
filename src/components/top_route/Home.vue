@@ -38,6 +38,15 @@
         </h4>
         表示をONにしている<br/>ユーザのリストです。
       </div>
+      <div class="col-lg-3 panel">
+        <h4>
+          <router-link class="text-dark px-2" :to="'/stats?user_id='+user_id">
+            <font-awesome-icon :icon="['fas', 'wrench']"/>
+            プレイ履歴
+          </router-link>
+        </h4>
+        今までのプレイ履歴を<br/>確認できます。
+      </div>
       <div class="col-lg-3 panel" v-if="is_login">
         <h4>
           <router-link class="text-dark px-2" to="/mypage">
