@@ -43,8 +43,8 @@ export class PlayStat {
      */
     time() {
         return "" + ~~(this.play_time / 3600)
-            + ":" + ~~(this.play_time / 60 % 60)
-            + ":" + ~~(this.play_time % 60)
+            + ":" + ('0' + ~~(this.play_time / 60 % 60)).slice(-2)
+            + ":" + ('0' + ~~(this.play_time % 60)).slice(-2)
     }
 
     notes() {
