@@ -36,14 +36,7 @@
             <data-cell class="clear" column_name="clear" :class="song.clear_type_bg_class()"/>
             <data-cell class="level" column_name="level">{{ song.level }}</data-cell>
             <data-cell class="title" column_name="title" @click="show_modal(song)">{{ song.title }}</data-cell>
-            <data-cell class="update" column_name="clear_update">
-              <span v-if="song.clear_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
-                {{ config().LAMP_INDEX[song.clear_type_before] }}
-                <font-awesome-icon :icon="['fas', 'long-arrow-alt-right']" style="margin-right:0.2em"/>
-                <span class="update_strong">{{ config().LAMP_INDEX[song.clear_type] }}</span>
-              </span>
-              <span v-else>-</span>
-            </data-cell>
+            <clear-update-cell :song="song" />
             <data-cell class="update" column_name="rank_update">
               <span
                   v-if="rank_a(song) !== rank_b(song)&& song.score_updated_at.split('T')[0] === song.updated_at.split('T')[0]">
@@ -87,6 +80,7 @@ import HeaderCell from "./cell/HeaderCell"
 import DataCell from "./cell/DataCell"
 import SongDetail from "../../../models/song_detail"
 import DateCell from "./cell/DateCell"
+import ClearUpdateCell from "./cell/ClearUpdateCell"
 
 export default {
   name: "Recent",
@@ -95,7 +89,8 @@ export default {
     RecentModal,
     HeaderCell,
     DataCell,
-    DateCell
+    DateCell,
+    ClearUpdateCell
   },
   props: {
     model: {

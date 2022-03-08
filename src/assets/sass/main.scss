@@ -2,16 +2,16 @@
 @import "~bootstrap-vue/src";
 
 $theme-colors: (
-        "Failed": #b0b0b0,
-        "NoPlay": #909090,
+        "Failed": #b06464,
+        "NoPlay": #646464,
         "AssistEasy": #b0b0ff,
         "LightAssistEasy": #ffb0ff,
-        "Easy": #d0ffd0,
-        "Normal": #ffe0b0,
-        "Hard": #ffb0b0,
-        "ExHard": #ffffb0,
-        "FullCombo": #b0ffff,
-        "Perfect": #d0d0ff,
+        "Easy": #88ff88,
+        "Normal": #ffb000,
+        "Hard": #ff6666,
+        "ExHard": #ffe088,
+        "FullCombo": #88ffff,
+        "Perfect": #c0c0ff,
         "Max": #d0d0ff,
         "AAA": #ffffb0,
         "AA": #d0d0d0,
@@ -31,6 +31,10 @@ $theme-colors: (
     > div {
       background-color: $color;
     }
+  }
+
+  .color-#{$value} {
+    color: $color !important;
   }
 
   #{'.bg-#{$value}'} {

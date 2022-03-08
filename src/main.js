@@ -24,6 +24,7 @@ import {
     faArrowUp,
     faPlus,
     faLongArrowAltRight,
+    faSquare,
 } from '@fortawesome/free-solid-svg-icons'
 library.add(
     faHome,
@@ -44,6 +45,7 @@ library.add(
     faArrowUp,
     faPlus,
     faLongArrowAltRight,
+    faSquare,
 )
 
 import {faTwitterSquare} from '@fortawesome/free-brands-svg-icons'
