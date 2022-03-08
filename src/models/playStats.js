@@ -1,6 +1,8 @@
+import {DateFormatter} from "@/models/date_formatter";
+
 export default class PlayStats {
     /**
-     * @param {{log: {play_count: number, clear_count: number, play_time: number}}} json
+     * @param {{log: [{play_count: number, clear_count: number, play_time: number, date: Date, total_judge: {}}]}} json
      */
     constructor(json) {
         this.logs = []
@@ -32,8 +34,17 @@ export class PlayStat {
         this.play_count = play_count
         this.clear_count = clear_count
         this.play_time = play_time
-        this.date = date
+        this.date = DateFormatter.format(new Date(date))
         this.total_judge = new TotalJudge(total_judge)
+    }
+
+    /**
+     * @return {string} h:m:s
+     */
+    time() {
+        return "" + ~~(this.play_time / 3600)
+            + ":" + ~~(this.play_time / 60 % 60)
+            + ":" + ~~(this.play_time % 60)
     }
 
     notes() {
