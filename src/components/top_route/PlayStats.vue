@@ -16,7 +16,7 @@
           <div v-for="stat in history.logs" :key="stat.date" class="tr">
             <div class="td">{{ stat.date }}</div>
             <div class="td">{{ stat.time() }}</div>
-            <div class="td">{{ stat.notes() }}</div>
+            <div class="td">{{ stat.notes().toLocaleString() }}</div>
             <div class="td">{{ stat.play_count }}</div>
             <div class="td">{{ stat.clear_count }}</div>
           </div>
