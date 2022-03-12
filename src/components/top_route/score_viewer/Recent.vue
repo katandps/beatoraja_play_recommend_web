@@ -2,6 +2,15 @@
   <div id="recent">
     <div class="row align-items-center">
       <display-songs-limiter class="col-sm-6"/>
+      <div class="form-group input-group col-sm-6">
+        <div class="input-group-prepend">
+          <label for="all_list" class="btn btn-info text-nowrap" v-tooltip="'スコア差分を割合で表示します'">
+            パーセント表示
+            <font-awesome-icon :icon="['fas', 'question-circle']"/>
+          </label>
+        </div>
+        <input class="form-control" type="checkbox" id="all_list" v-model="percentile">
+      </div>
     </div>
     <hr/>
     <div class="table-wrapper">
@@ -39,7 +48,7 @@
             <data-cell class="title" column_name="title" @click="show_modal(song)">{{ song.title }}</data-cell>
             <clear-update-cell :song="song" />
             <rank-update-cell :song="song" />
-            <score-update-cell :song="song" />
+            <score-update-cell :song="song" :percentile="percentile"/>
             <bp-update-cell :song="song" />
             <date-cell column_name="date" :date="song.updated_at"/>
           </div>
@@ -83,6 +92,9 @@ export default {
       require: true,
     },
   },
+  data: () => ({
+    percentile: false
+  }),
   methods: {
     config() {
       return config
