@@ -56,7 +56,7 @@
               <span v-else class="win">+{{ song.score - song.rival_score }}</span>
             </data-cell>
             <data-cell class="bp_vs" column_name="bp_diff_rival">
-              <span v-if="song.rival_min_bp === -1 || song.min_bp === -1">-</span>
+              <span v-if="song.rival_min_bp === -1 || song.min_bp === -1 || song.rival_min_bp === 2147483647 || song.min_bp === 2147483647">---</span>
               <span v-else-if="song.rival_min_bp === song.min_bp" class="draw">{{ song.min_bp - song.rival_min_bp }}</span>
               <span v-else-if="song.rival_min_bp < song.min_bp" class="lose">+{{ song.min_bp - song.rival_min_bp }}</span>
               <span v-else class="win">{{ song.min_bp - song.rival_min_bp }}</span>

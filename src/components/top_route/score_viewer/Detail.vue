@@ -72,14 +72,15 @@
             <date-cell column_name="score_date" :date="song.score_updated_at"/>
             <data-cell class="score" column_name="score_before">{{ song.score_before }}</data-cell>
             <data-cell class="bp" column_name="bp">
-              {{ song.min_bp === -1 ? '-' : song.min_bp }}
+              {{ song.min_bp === -1 || song.min_bp === 2147483647 ? '---' : song.min_bp }}
             </data-cell>
             <date-cell column_name="bp_date" :date="song.min_bp_updated_at"/>
             <data-cell class="bp" column_name="bp_before">
-              {{ song.min_bp_before === -1 ? '-' : song.min_bp_before }}
+              {{ song.min_bp_before === -1 ? '---' : song.min_bp_before }}
             </data-cell>
             <data-cell class="combo" column_name="combo">{{ song.max_combo }}</data-cell>
-            <data-cell class="play" column_name="play">{{ song.play_count }}</data-cell>
+            <data-cell class="play" column_name="play" v-if="song.play_count !== -1">{{ song.play_count }}</data-cell>
+            <data-cell class="play" column_name="play" v-else>---</data-cell>
             <date-cell column_name="date" :date="song.updated_at"/>
           </div>
         </transition-group>
