@@ -77,29 +77,15 @@ export default class SongDetail {
             return "F"
         }
         const max = total_notes * 2
-        const rate = ex_score / max;
-        if (rate >= 8 / 9) {
-            return "AAA"
+        return config.RANK_TYPE[config.RANK_RATE_BY_9.findIndex(v => ~~((v * max + 8) / 9) <= ex_score )]
+    }
+
+    static make_clear_rank2(total_notes, ex_score) {
+        if (!total_notes || !ex_score) {
+            return "F6"
         }
-        if (rate >= 7 / 9) {
-            return "AA"
-        }
-        if (rate >= 6 / 9) {
-            return "A"
-        }
-        if (rate >= 5 / 9) {
-            return "B"
-        }
-        if (rate >= 4 / 9) {
-            return "C"
-        }
-        if (rate >= 3 / 9) {
-            return "D"
-        }
-        if (rate >= 2 / 9) {
-            return "E"
-        }
-        return "F"
+        const max = total_notes * 2
+        return config.DETAIL_RANK_TYPE[config.DETAIL_RANK_BY_27.findIndex(v => ~~((v * max + 26) / 27) <= ex_score )]
     }
 
     /**
@@ -177,6 +163,10 @@ export default class SongDetail {
                 return this.title.toLowerCase()
             case "rate":
                 return this.score_rate()
+            case "score_rank":
+                return this.score_rate()
+            case "score_rank2":
+                return this.score_rate()
             case "score":
                 return this.score
             case "bp":
@@ -239,6 +229,8 @@ export default class SongDetail {
                 return this.score_rate_format(this.rival_score)
             case 'rank':
                 return SongDetail.make_clear_rank(this.total_notes, this.score)
+            case 'rank2':
+                return SongDetail.make_clear_rank2(this.total_notes, this.score)
             case 'rival_rank':
                 return SongDetail.make_clear_rank(this.total_notes, this.rival_score)
             case 'score':

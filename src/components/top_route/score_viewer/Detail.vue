@@ -17,6 +17,8 @@
           <div class="col clear" v-if="column_is_active('clear_before')"/>
           <div class="col level" v-if="column_is_active('level')"/>
           <div class="col title" v-if="column_is_active('title')"/>
+          <div class="col rank" v-if="column_is_active('score_rank')"/>
+          <div class="col rank" v-if="column_is_active('score_rank2')"/>
           <div class="col rate" v-if="column_is_active('rate')"/>
           <div class="col score" v-if="column_is_active('score')"/>
           <div class="col date" v-if="column_is_active('score_date')"/>
@@ -35,6 +37,8 @@
             <header-cell class="clear" column_name="clear_before"/>
             <header-cell class="level" column_name="level">Lv</header-cell>
             <header-cell class="title" column_name="title">Title</header-cell>
+            <header-cell class="rank" column_name="score_rank">Rank</header-cell>
+            <header-cell class="rank" column_name="score_rank2">Rank2</header-cell>
             <header-cell class="rate" column_name="rate">Rate</header-cell>
             <header-cell class="score" column_name="score">Ex/Max</header-cell>
             <header-cell class="date" column_name="score_date">Date(Score)</header-cell>
@@ -63,6 +67,8 @@
             <data-cell class="title" column_name="title" @click="show_modal(song)">
               {{ song.title }}
             </data-cell>
+            <data-cell class="rank" column_name="score_rank">{{song.get('rank')}}</data-cell>
+            <data-cell class="rank" column_name="score_rank2">{{song.get('rank2')}}</data-cell>
             <data-cell class="rate" column_name="rate" :class="'bg-' + song.clear_rank">
               {{ song.score_rate_format(song.score) }}
             </data-cell>

@@ -43,7 +43,7 @@
 <script>
 import config from "../../../const.js"
 import Model from "../../../models/model"
-import * as log from "loglevel"
+import log from "loglevel"
 import SongDetail from "../../../models/song_detail"
 import TableSelector from "./selector/TableSelector"
 import GraphModal from "./modal/GraphModal"

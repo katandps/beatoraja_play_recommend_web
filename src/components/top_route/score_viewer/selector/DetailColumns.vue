@@ -22,6 +22,27 @@
 import config from '../../../../const.js'
 import Columns from "../../../../models/columns"
 
+
+const DETAIL_COLUMNS= [
+    {key: 'clear', name: 'クリア', title: ' ', class: 'clear'},
+    {key: 'clear_date', name: 'クリア更新日', title: 'Date(clear)', class: 'date'},
+    {key: 'clear_before', name: '更新前クリア', title: ' ', class: 'clear'},
+    {key: 'level', name: '難易度', title: 'Lv', class: 'level'},
+    {key: 'title', name: '曲名', title: 'Title', class: 'title'},
+    {key: 'score_rank', name: 'スコアランク', title:'Rank', class: 'rank'},
+    {key: 'score_rank2', name: '細分化ランク', title:'Rank', class: 'rank'},
+    {key: 'rate', name: 'スコア%', title: 'Rate', class: 'rate'},
+    {key: 'score', name: 'EXスコア', title: 'Ex/Max', class: 'score'},
+    {key: 'score_date', name: 'スコア更新日', title: 'Date(score)', class: 'date'},
+    {key: 'score_before', name: '更新前スコア', title: 'Ex(old)', class: 'score'},
+    {key: 'bp', name: 'ミスカウント', title: 'BP', class: 'bp'},
+    {key: 'bp_date', name: 'ミスカウント更新日', title: 'Date(BP)', class: 'date'},
+    {key: 'bp_before', name: '更新前ミスカウント', title: 'BP(old)', class: 'bp'},
+    {key: 'combo', name: '最高コンボ', title: 'Combo', class: 'combo'},
+    {key: 'play', name: 'プレイ回数', title: 'Play', class: 'play'},
+    {key: 'date', name: '更新日', title: 'Date', class: 'date'}
+]
+
 export default {
   name: "DetailColumns",
   data: () => ({
@@ -30,7 +51,7 @@ export default {
   }),
   computed: {
     column_list() {
-      return config.DETAIL_COLUMNS.filter(c => c.key !== "title")
+      return DETAIL_COLUMNS.filter(c => c.key !== "title")
     },
   },
   beforeMount() {
