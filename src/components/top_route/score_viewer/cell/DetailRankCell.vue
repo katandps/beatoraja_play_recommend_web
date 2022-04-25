@@ -1,5 +1,5 @@
 <template>
-  <data-cell class="rank" column_name="score_rank"
+  <data-cell class="rank" column_name="detail_rank"
       v-tooltip="song.get('next_detail_rank') + '-' + song.get('next_detail_rank_score')">
     {{song.get('detail_rank')}}
   </data-cell>
