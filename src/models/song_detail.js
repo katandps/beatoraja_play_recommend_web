@@ -121,8 +121,8 @@ export default class SongDetail {
             return 0
         }
         const max = total_notes * 2
-        const i = config.DETAIL_RANK_BY_27.findIndex(v => ~~((v * max + 8) / 9) <= ex_score );
-        return ~~((config.DETAIL_RANK_BY_27[i == 0 ? 0 : i - 1] * max + 8) / 9) - ex_score    }
+        const i = config.DETAIL_RANK_BY_27.findIndex(v => ~~((v * max + 26) / 27) <= ex_score );
+        return ~~((config.DETAIL_RANK_BY_27[i == 0 ? 0 : i - 1] * max + 26) / 27) - ex_score    }
 
     /**
      * @public //データがないときに使う
