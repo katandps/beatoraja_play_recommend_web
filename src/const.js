@@ -32,14 +32,15 @@ export default Object.freeze({
     ],
 
     RANK_TYPE: [
-        'AAA', 'AA', 'A', 'B', 'C', 'D', 'E', 'F',
+        'MAX', 'AAA', 'AA', 'A', 'B', 'C', 'D', 'E', 'F',
     ],
 
     RANK_RATE_BY_9: [
-        8, 7, 6, 5, 4, 3, 2, 0
+        9, 8, 7, 6, 5, 4, 3, 2, 0
     ],
 
     DETAIL_RANK_TYPE: [
+        'MAX',
         'AAA1', 'AAA2', 'AAA3',
         'AA1', 'AA2', 'AA3',
         'A1', 'A2', 'A3',
@@ -52,7 +53,7 @@ export default Object.freeze({
     ],
 
     DETAIL_RANK_BY_27: [
-        26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
+        27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
     ],
 
     SONG_FORMAT: [

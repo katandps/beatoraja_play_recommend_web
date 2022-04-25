@@ -30,7 +30,7 @@ const DETAIL_COLUMNS= [
     {key: 'level', name: '難易度', title: 'Lv', class: 'level'},
     {key: 'title', name: '曲名', title: 'Title', class: 'title'},
     {key: 'score_rank', name: 'スコアランク', title:'Rank', class: 'rank'},
-    {key: 'score_rank2', name: '細分化ランク', title:'Rank', class: 'rank'},
+    {key: 'detail_rank', name: '細分化ランク', title:'Rank', class: 'rank'},
     {key: 'rate', name: 'スコア%', title: 'Rate', class: 'rate'},
     {key: 'score', name: 'EXスコア', title: 'Ex/Max', class: 'score'},
     {key: 'score_date', name: 'スコア更新日', title: 'Date(score)', class: 'date'},

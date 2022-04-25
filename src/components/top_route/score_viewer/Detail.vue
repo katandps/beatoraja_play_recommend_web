@@ -18,7 +18,7 @@
           <div class="col level" v-if="column_is_active('level')"/>
           <div class="col title" v-if="column_is_active('title')"/>
           <div class="col rank" v-if="column_is_active('score_rank')"/>
-          <div class="col rank" v-if="column_is_active('score_rank2')"/>
+          <div class="col rank" v-if="column_is_active('detail_rank')"/>
           <div class="col rate" v-if="column_is_active('rate')"/>
           <div class="col score" v-if="column_is_active('score')"/>
           <div class="col date" v-if="column_is_active('score_date')"/>
@@ -38,7 +38,7 @@
             <header-cell class="level" column_name="level">Lv</header-cell>
             <header-cell class="title" column_name="title">Title</header-cell>
             <header-cell class="rank" column_name="score_rank">Rank</header-cell>
-            <header-cell class="rank" column_name="score_rank2">Rank2</header-cell>
+            <header-cell class="rank" column_name="detail_rank">DRank</header-cell>
             <header-cell class="rate" column_name="rate">Rate</header-cell>
             <header-cell class="score" column_name="score">Ex/Max</header-cell>
             <header-cell class="date" column_name="score_date">Date(Score)</header-cell>
@@ -67,8 +67,8 @@
             <data-cell class="title" column_name="title" @click="show_modal(song)">
               {{ song.title }}
             </data-cell>
-            <data-cell class="rank" column_name="score_rank">{{song.get('rank')}}</data-cell>
-            <data-cell class="rank" column_name="score_rank2">{{song.get('rank2')}}</data-cell>
+            <rank-cell :song="song" />
+            <detail-rank-cell :song="song" />
             <data-cell class="rate" column_name="rate" :class="'bg-' + song.clear_rank">
               {{ song.score_rate_format(song.score) }}
             </data-cell>
@@ -108,6 +108,8 @@ import config from "../../../const"
 import HeaderCell from "./cell/HeaderCell"
 import DataCell from "./cell/DataCell"
 import DateCell from "./cell/DateCell"
+import RankCell from "./cell/RankCell"
+import DetailRankCell from "./cell/DetailRankCell"
 
 export default {
   name: "Detail",
@@ -120,7 +122,9 @@ export default {
     SongFilterController,
     SongModal,
     HeaderCell,
-    DataCell
+    DataCell,
+    RankCell,
+    DetailRankCell
   },
   props: {
     model: {

@@ -1,5 +1,5 @@
 import config from "../const"
-import Score from "./score";
+import Score from "./score"
 
 export default class SongDetail {
     constructor() {
@@ -80,13 +80,49 @@ export default class SongDetail {
         return config.RANK_TYPE[config.RANK_RATE_BY_9.findIndex(v => ~~((v * max + 8) / 9) <= ex_score )]
     }
 
-    static make_clear_rank2(total_notes, ex_score) {
+    static make_next_rank(total_notes, ex_score) {
+        if (!total_notes || !ex_score) {
+            return "E"
+        }
+        const max = total_notes * 2
+        const i = config.RANK_RATE_BY_9.findIndex(v => ~~((v * max + 8) / 9) <= ex_score );
+        return config.RANK_TYPE[i == 0 ? 0 : i - 1]
+    }
+
+    static make_next_rank_score(total_notes, ex_score) {
+        if (!total_notes) {
+            return 0
+        }
+        const max = total_notes * 2
+        const i = config.RANK_RATE_BY_9.findIndex(v => ~~((v * max + 8) / 9) <= ex_score );
+        return ~~((config.RANK_RATE_BY_9[i == 0 ? 0 : i - 1] * max + 8) / 9) - ex_score
+
+    }
+
+    static make_detail_rank(total_notes, ex_score) {
         if (!total_notes || !ex_score) {
             return "F6"
         }
         const max = total_notes * 2
         return config.DETAIL_RANK_TYPE[config.DETAIL_RANK_BY_27.findIndex(v => ~~((v * max + 26) / 27) <= ex_score )]
     }
+
+    static make_next_detail_rank(total_notes, ex_score) {
+        if (!total_notes || !ex_score) {
+            return "E"
+        }
+        const max = total_notes * 2
+        const i = config.DETAIL_RANK_BY_27.findIndex(v => ~~((v * max + 26) / 27) <= ex_score );
+        return config.DETAIL_RANK_TYPE[i == 0 ? 0 : i - 1]
+    }
+
+    static make_next_detail_rank_score (total_notes, ex_score) {
+        if (!total_notes) {
+            return 0
+        }
+        const max = total_notes * 2
+        const i = config.DETAIL_RANK_BY_27.findIndex(v => ~~((v * max + 8) / 9) <= ex_score );
+        return ~~((config.DETAIL_RANK_BY_27[i == 0 ? 0 : i - 1] * max + 8) / 9) - ex_score    }
 
     /**
      * @public //データがないときに使う
@@ -165,7 +201,7 @@ export default class SongDetail {
                 return this.score_rate()
             case "score_rank":
                 return this.score_rate()
-            case "score_rank2":
+            case "detail_rank":
                 return this.score_rate()
             case "score":
                 return this.score
@@ -227,10 +263,18 @@ export default class SongDetail {
                 return this.score_rate_format(this.score)
             case 'rival_rate':
                 return this.score_rate_format(this.rival_score)
-            case 'rank':
+            case 'score_rank':
                 return SongDetail.make_clear_rank(this.total_notes, this.score)
-            case 'rank2':
-                return SongDetail.make_clear_rank2(this.total_notes, this.score)
+            case 'next_rank':
+                return SongDetail.make_next_rank(this.total_notes, this.score)
+            case 'next_rank_score': 
+                return SongDetail.make_next_rank_score(this.total_notes, this.score)
+            case 'detail_rank':
+                return SongDetail.make_detail_rank(this.total_notes, this.score)
+            case 'next_detail_rank':
+                return SongDetail.make_next_detail_rank(this.total_notes, this.score)
+            case 'next_detail_rank_score':
+                return SongDetail.make_next_detail_rank_score(this.total_notes, this.score)
             case 'rival_rank':
                 return SongDetail.make_clear_rank(this.total_notes, this.rival_score)
             case 'score':
