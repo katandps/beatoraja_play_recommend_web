@@ -1,6 +1,7 @@
 <template>
   <div id="stat">
     <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()" :can_level_select="true"/>
+    <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
     <hr>
     <h3>クリアランプ分布</h3>
     <div class="row">
@@ -80,6 +81,7 @@
         </div>
       </div>
     </div>
+    <filter-modal id="filter-modal" ref="filter_modal"/>
   </div>
 </template>
 
@@ -88,12 +90,11 @@ import TableSelector from "./selector/TableSelector"
 import Model from "../../../models/model"
 import config from "../../../const.js"
 import SongDetail from "../../../models/song_detail"
+import FilterModal from "./modal/FilterModal"
 
 export default {
   name: "Stat",
-  components: {
-    TableSelector,
-  },
+  components: {TableSelector, FilterModal},
   props: {
     model: {
       type: Model,
@@ -109,6 +110,9 @@ export default {
      */
     set_table(table) {
       this.model = this.model.set_table(table)
+    },
+    show_filter_modal() {
+      this.$refs.filter_modal.show_modal()
     },
   },
   computed: {

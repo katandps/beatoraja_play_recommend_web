@@ -73,16 +73,16 @@ export default class SongDetail {
      * @return string
      */
     static make_clear_rank(total_notes, ex_score) {
-        if (!total_notes || !ex_score) {
-            return "F"
+        if (!total_notes) {
+            return config.RANK_TYPE.slice(-1)[0]
         }
         const max = total_notes * 2
         return config.RANK_TYPE[config.RANK_RATE_BY_9.findIndex(v => ~~((v * max + 8) / 9) <= ex_score )]
     }
 
     static make_next_rank(total_notes, ex_score) {
-        if (!total_notes || !ex_score) {
-            return "E"
+        if (!total_notes) {
+            return config.RANK_TYPE.slice(-1)[0]
         }
         const max = total_notes * 2
         const i = config.RANK_RATE_BY_9.findIndex(v => ~~((v * max + 8) / 9) <= ex_score );
@@ -100,16 +100,16 @@ export default class SongDetail {
     }
 
     static make_detail_rank(total_notes, ex_score) {
-        if (!total_notes || !ex_score) {
-            return "F6"
+        if (!total_notes) {
+            return config.DETAIL_RANK_TYPE.slice(-1)[0]
         }
         const max = total_notes * 2
         return config.DETAIL_RANK_TYPE[config.DETAIL_RANK_BY_27.findIndex(v => ~~((v * max + 26) / 27) <= ex_score )]
     }
 
     static make_next_detail_rank(total_notes, ex_score) {
-        if (!total_notes || !ex_score) {
-            return "E"
+        if (!total_notes) {
+            return config.DETAIL_RANK_TYPE.slice(-1)[0]
         }
         const max = total_notes * 2
         const i = config.DETAIL_RANK_BY_27.findIndex(v => ~~((v * max + 26) / 27) <= ex_score );

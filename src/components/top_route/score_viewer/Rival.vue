@@ -1,8 +1,9 @@
 <template>
   <div id="recent">
     <div class="row">
-      <input-user-id :user_id="rival_id" @refresh="refresh_rival_id" class="col-sm-6"/>
-      <display-songs-limiter class="col-sm-6"/>
+      <input-user-id :user_id="rival_id" @refresh="refresh_rival_id" class="col-sm-5"/>
+      <display-songs-limiter class="col-sm-4"/>
+      <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
     </div>
     <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"
                    :can_level_select="true"/>
@@ -67,6 +68,7 @@
       </div>
     </div>
     <rival-modal id="rival-list-modal" ref="modal"/>
+    <filter-modal id="filter-modal" ref="filter_modal"/>
   </div>
 </template>
 
@@ -80,6 +82,7 @@ import RivalModal from "./modal/RivalModal"
 import HeaderCell from "./cell/HeaderCell"
 import DataCell from "./cell/DataCell"
 import DateCell from "./cell/DateCell"
+import FilterModal from "./modal/FilterModal"
 
 export default {
   name: "Rival",
@@ -90,7 +93,8 @@ export default {
     InputUserId,
     RivalModal,
     HeaderCell,
-    DataCell
+    DataCell,
+    FilterModal
   },
   props: {
     model: {
@@ -118,6 +122,9 @@ export default {
     },
     show_modal(song) {
       this.$refs.modal.show_modal(song, this.model.get_date_str())
+    },
+    show_filter_modal() {
+      this.$refs.filter_modal.show_modal()
     },
   },
   computed: {

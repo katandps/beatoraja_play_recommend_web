@@ -1,6 +1,7 @@
 <template>
   <div id="rank-graph">
     <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
+    <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
     <hr>
     凡例
     <table style="width:100%">
@@ -36,7 +37,8 @@
         </td>
       </tr>
     </table>
-    <graph-modal id="song-list-modal" ref="modal" />
+    <graph-modal id="song-list-modal" ref="modal"/>
+    <filter-modal id="filter-modal" ref="filter_modal"/>
   </div>
 </template>
 
@@ -47,13 +49,13 @@ import log from "loglevel"
 import SongDetail from "../../../models/song_detail"
 import TableSelector from "./selector/TableSelector"
 import GraphModal from "./modal/GraphModal"
+import FilterModal from "./modal/FilterModal"
 import SongFilter from "../../../models/songFilter"
 
 export default {
   name: "RankGraph",
   components: {
-    TableSelector,
-    GraphModal
+    TableSelector, GraphModal, FilterModal
   },
   props: {
     model: {
@@ -86,6 +88,9 @@ export default {
      */
     set_table(table) {
       this.model = this.model.set_table(table)
+    },
+    show_filter_modal() {
+      this.$refs.filter_modal.show_modal()
     },
   },
   computed: {

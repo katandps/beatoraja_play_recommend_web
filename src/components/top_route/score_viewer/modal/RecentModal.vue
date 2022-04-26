@@ -120,7 +120,7 @@
             </div>
           </div>
           <div id="close-modal" class="close-modal" @click="close_modal">
-            ×
+            <font-awesome-icon :icon="['fas', 'xmark']"/>
           </div>
         </div>
       </div>

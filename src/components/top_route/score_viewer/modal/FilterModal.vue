@@ -6,12 +6,10 @@
         <div class="modal-wrapper">
           <div class="modal-contents">
             <div class="modal-header">
-              {{ title }}
+                <h2>譜面フィルター設定</h2>
             </div>
             <div class="modal-body">
-              <ul>
-                <li v-for="(text, index) in text" :key="index">{{ text }}</li>
-              </ul>
+              <song-filter-controller/>
             </div>
           </div>
           <div id="close-modal" class="close-modal" @click="close_modal">
@@ -24,17 +22,18 @@
 </template>
 
 <script>
+import SongFilterController from "../selector/SongFilterController"
+
 export default {
-  name: "GraphModal",
+  name: "FilterModal",
+  components: {
+      SongFilterController
+  },
   data: () => ({
     show: false,
-    text: "",
-    title: ""
   }),
   methods: {
-    show_modal(title, text) {
-      this.text = text
-      this.title = title
+    show_modal() {
       this.show = true
     },
     close_modal() {
@@ -52,6 +51,7 @@ export default {
   left: 0;
   width: 100vw;
   height: 100vh;
+  opacity: 0.95;
 }
 
 .modal-bg {
@@ -86,20 +86,5 @@ export default {
 
 .fade-enter, .fade-leave-to {
   opacity: 0;
-}
-
-.modal-body {
-  padding: 5px 25px;
-  font-size: 0.9rem;
-}
-
-.modal-body li {
-  text-align: left;
-}
-
-.modal-header {
-  padding: 5px 25px;
-  font-size: 1.4rem;
-  border-bottom: 1px solid #ddd;
 }
 </style>

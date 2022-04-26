@@ -1,34 +1,26 @@
 <template>
   <div id="DetailColumns">
-    <h6 class="sidebar-title" @click="filter_visible">目標{{ show ? "▼" : "▶" }}</h6>
-    <transition>
-      <div v-show="show" class="filter sidebar-body">
-        <button class="btn btn-primary" @click="filter.for_random()">ランダムセレクト</button>
-        <button class="btn btn-success" @click="filter.for_score()">スコア更新</button>
-        <button class="btn btn-success" @click="filter.for_bp()">BP更新</button>
-        <button class="btn btn-success" @click="filter.for_aaa()">AAA</button>
-        <button class="btn btn-success" @click="filter.for_aa()">AA</button>
-        <button class="btn btn-success" @click="filter.for_easy()">Easy</button>
-        <button class="btn btn-success" @click="filter.for_hard()">Hard</button>
-        <button class="btn btn-success" @click="filter.for_ex_hard()">EXH</button>
-        <button class="btn btn-success" @click="filter.for_full_combo()">FC</button>
-      </div>
-    </transition>
+    <div class="filter sidebar-body">
+      <h3>更新狙い</h3>
+      <button class="btn btn-success" @click="filter.for_score()">スコア更新狙い</button>
+      <button class="btn btn-success" @click="filter.for_bp()">BP更新狙い</button>
+      <h3>スコアランク狙い</h3>
+      <button class="btn btn-success" @click="filter.for_aaa()">AAA狙い</button>
+      <button class="btn btn-success" @click="filter.for_aa()">AA狙い</button>
+      <h3>クリアランプ狙い</h3>
+      <button class="btn btn-success" @click="filter.for_easy()">Easy狙い</button>
+      <button class="btn btn-success" @click="filter.for_hard()">Hard狙い</button>
+      <button class="btn btn-success" @click="filter.for_ex_hard()">EXH狙い</button>
+      <button class="btn btn-success" @click="filter.for_full_combo()">FC狙い</button>
+      <h3>ランダムセレクト</h3>
+      <button class="btn btn-primary" @click="filter.for_random()">ランダムセレクト</button>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: "FilterPreset",
-  data: () => ({
-    show: true,
-
-  }),
-  methods: {
-    filter_visible() {
-      this.show = !this.show;
-    },
-  },
   computed: {
     filter() {
       return this.$store.getters.filter

@@ -1,16 +1,17 @@
 <template>
   <div id="recent">
     <div class="row align-items-center">
-      <display-songs-limiter class="col-sm-6"/>
-      <div class="form-group input-group col-sm-6">
+      <display-songs-limiter class="col-sm-4"/>
+      <div class="input-group col-sm-4">
         <div class="input-group-prepend">
-          <label for="all_list" class="btn btn-info text-nowrap" v-tooltip="'スコア差分を割合で表示します'">
+          <label for="all_list" class="btn btn-info text-nowrap" v-tooltip="'スコア差分を百分率で表示します'">
             パーセント表示
             <font-awesome-icon :icon="['fas', 'question-circle']"/>
           </label>
         </div>
         <input class="form-control" type="checkbox" id="all_list" v-model="percentile">
       </div>
+      <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
     </div>
     <hr/>
     <div class="table-wrapper">
@@ -56,6 +57,7 @@
       </div>
     </div>
     <recent-modal id="recent-list-modal" ref="modal"/>
+    <filter-modal id="filter-modal" ref="filter_modal"/>
   </div>
 </template>
 
@@ -72,6 +74,7 @@ import ClearUpdateCell from "./cell/ClearUpdateCell"
 import ScoreUpdateCell from "./cell/ScoreUpdateCell"
 import RankUpdateCell from "./cell/RankUpdateCell"
 import BpUpdateCell from "./cell/BpUpdateCell"
+import FilterModal from "./modal/FilterModal"
 
 export default {
   name: "Recent",
@@ -84,7 +87,8 @@ export default {
     HeaderCell,
     DataCell,
     DateCell,
-    ClearUpdateCell
+    ClearUpdateCell,
+    FilterModal
   },
   props: {
     model: {
@@ -113,7 +117,10 @@ export default {
     },
     column_is_active(name) {
       return this.$store.getters.column_is_active(name)
-    }
+    },
+    show_filter_modal() {
+      this.$refs.filter_modal.show_modal()
+    },
   },
   computed: {
     /**

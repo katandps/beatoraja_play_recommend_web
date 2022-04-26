@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import ReleaseNote from "./home/ReleaseNote";
+import ReleaseNote from "./home/ReleaseNote"
 
 export default {
   name: "Home",

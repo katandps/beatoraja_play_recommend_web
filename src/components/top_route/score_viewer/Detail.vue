@@ -2,12 +2,13 @@
   <div id="detail">
     <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()" :can_level_select="true"/>
     <div class="form-group row align-items-center">
-      <display-songs-limiter class="col-sm-6"/>
+      <display-songs-limiter class="col-sm-5"/>
+      <div class="col-sm-7">
+        <label class="col-sm-4 btn btn-primary" @click="show_recommend_modal">おまかせ設定</label>
+        <label class="col-sm-4 btn btn-success" @click="show_column_modal">表示列設定</label>
+        <label class="col-sm-4 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
+      </div>
     </div>
-    <hr>
-    <FilterPreset/>
-    <SongFilterController/>
-    <DetailColumns/>
     <hr>
     <div class="table-wrapper">
       <div class="score-table detail">
@@ -64,7 +65,7 @@
             <data-cell class="clear" column_name="clear_before"
                        :class="song.clear_type_before_bg_class()"/>
             <data-cell class="level" column_name="level">{{ song.level }}</data-cell>
-            <data-cell class="title" column_name="title" @click="show_modal(song)">
+            <data-cell class="title" column_name="title" @click="show_song_modal(song)">
               {{ song.title }}
             </data-cell>
             <rank-cell :song="song" />
@@ -93,14 +94,14 @@
       </div>
     </div>
     <song-modal id="song-list-modal" ref="song_modal"/>
+    <filter-modal id="filter-modal" ref="filter_modal"/>
+    <column-modal id="column-modal" ref="column_modal"/>
+    <recommend-modal id="recommend-modal" ref="recommend_modal"/>
   </div>
 </template>
 
 <script>
 import TableSelector from "./selector/TableSelector"
-import SongFilterController from "./selector/SongFilterController"
-import DetailColumns from "./selector/DetailColumns"
-import FilterPreset from "./selector/FilterPreset"
 import Model from "../../../models/model"
 import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
 import SongModal from "./modal/SongModal"
@@ -110,6 +111,9 @@ import DataCell from "./cell/DataCell"
 import DateCell from "./cell/DateCell"
 import RankCell from "./cell/RankCell"
 import DetailRankCell from "./cell/DetailRankCell"
+import FilterModal from "./modal/FilterModal"
+import ColumnModal from "./modal/ColumnModal"
+import RecommendModal from "./modal/RecommendModal"
 
 export default {
   name: "Detail",
@@ -117,14 +121,14 @@ export default {
     DateCell,
     TableSelector,
     DisplaySongsLimiter,
-    FilterPreset,
-    DetailColumns,
-    SongFilterController,
-    SongModal,
     HeaderCell,
     DataCell,
     RankCell,
-    DetailRankCell
+    DetailRankCell,
+    SongModal,
+    FilterModal,
+    ColumnModal,
+    RecommendModal
   },
   props: {
     model: {
@@ -142,7 +146,16 @@ export default {
     clear_type_class(song) {
       return "table-line-" + config.LAMP_INDEX[song.clear_type];
     },
-    show_modal(song) {
+    show_recommend_modal() {
+      this.$refs.recommend_modal.show_modal()
+    },
+    show_filter_modal() {
+      this.$refs.filter_modal.show_modal()
+    },
+    show_column_modal() {
+      this.$refs.column_modal.show_modal()
+    },
+    show_song_modal(song) {
       this.$refs.song_modal.show_modal(song, this.model.get_date_str())
     },
     column_is_active(name) {

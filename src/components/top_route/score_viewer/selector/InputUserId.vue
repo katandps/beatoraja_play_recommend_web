@@ -1,5 +1,5 @@
 <template>
-  <div class="form-group align-items-center">
+  <div class="align-items-center">
     <div class="input-group">
       <div class="input-group-prepend">
         <label for="input_user_id" class="btn btn-info text-nowrap"

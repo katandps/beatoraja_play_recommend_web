@@ -1,20 +1,13 @@
 <template>
-  <div id="DetailColumns">
-    <h6 class="sidebar-title" @click="filter_visible">
-      表示カラム{{ show ? "▼" : "▶" }}
-    </h6>
-    <transition>
-      <div v-show="show" class="form-group row align-items-center">
-        <div v-for="obj in column_list" :key="obj.key"
-             class="form-control col-sm-3 text-nowrap">
-          <label style="font-size:0.9rem">
-            <input type="checkbox" :id="obj.key"
-                   v-model="columns[obj.key]">
-            {{ obj.name }}
-          </label>
-        </div>
-      </div>
-    </transition>
+  <div id="DetailColumns" class="form-group row align-items-center">
+    <div v-for="obj in column_list" :key="obj.key"
+          class="form-control col-sm-3 text-nowrap">
+      <label style="font-size:0.9rem">
+        <input type="checkbox" :id="obj.key"
+                v-model="columns[obj.key]">
+        {{ obj.name }}
+      </label>
+    </div>
   </div>
 </template>
 
@@ -46,7 +39,6 @@ const DETAIL_COLUMNS= [
 export default {
   name: "DetailColumns",
   data: () => ({
-    show: false,
     columns: new Columns()
   }),
   computed: {
@@ -60,9 +52,6 @@ export default {
   methods: {
     config() {
       return config;
-    },
-    filter_visible() {
-      this.show = !this.show;
     },
   },
   watch: {

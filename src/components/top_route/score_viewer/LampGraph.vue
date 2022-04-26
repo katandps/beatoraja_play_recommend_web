@@ -1,6 +1,7 @@
 <template>
   <div id="lamp-graph">
-    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
+    <table-selector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
+    <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
     <hr>
     凡例
     <table style="width:100%">
@@ -39,6 +40,7 @@
       </tr>
     </table>
     <graph-modal id="song-list-modal" ref="modal" />
+    <filter-modal id="filter-modal" ref="filter_modal"/>
   </div>
 </template>
 
@@ -49,10 +51,11 @@ import * as log from "loglevel"
 import SongDetail from "../../../models/song_detail"
 import TableSelector from "./selector/TableSelector"
 import GraphModal from "./modal/GraphModal"
+import FilterModal from "./modal/FilterModal"
 
 export default {
   name: "LampGraph",
-  components: {TableSelector, GraphModal},
+  components: {TableSelector, GraphModal, FilterModal},
   props: {
     model: {
       type: Model,
@@ -82,6 +85,9 @@ export default {
      */
     set_table(table) {
       this.model = this.model.set_table(table)
+    },
+    show_filter_modal() {
+      this.$refs.filter_modal.show_modal()
     },
   },
   computed: {
