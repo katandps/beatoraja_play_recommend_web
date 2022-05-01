@@ -20,4 +20,4 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-beatoraja_play_recommend_web
+.VSCodeCounter
