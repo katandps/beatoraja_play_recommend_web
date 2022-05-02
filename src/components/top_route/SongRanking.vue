@@ -21,14 +21,14 @@
             <div class="tr" v-for="(score, user_id) in ranking.score" :key="user_id">
               <div class="th">
                 <router-link :to="{path:'view', query: Object.assign({}, $route.query, {user_id: user_id})}">
-                  {{ user_id }}
+                  {{ score[0] }}
                 </router-link>
               </div>
-              <div class="th">{{ score.score ? score.score.current : '-'}}</div>
-              <div class="th">{{ score.min_bp ? score.min_bp.current : '-'}}</div>
-              <div class="th">{{ score.max_combo }}</div>
-              <div class="th">{{ score.clear_type ? score.clear_type.current : 0 }}</div>
-              <div class="th">{{ score.updated_at.split('T')[0] }}</div>
+              <div class="th">{{ score[1].score ? score[1].score.current : '-'}}</div>
+              <div class="th">{{ score[1].min_bp ? score[1].min_bp.current : '-'}}</div>
+              <div class="th">{{ score[1].max_combo }}</div>
+              <div class="th">{{ score[1].clear_type ? config().LAMP_TYPE[10-score[1].clear_type.current] : config().LAMP_TYPE[10] }}</div>
+              <div class="th">{{ score[1].updated_at.split('T')[0] }}</div>
             </div>
           </div>
         </div>
@@ -45,6 +45,7 @@
 
 <script>
 import Api from "../../api"
+import config from "../../const"
 
 export default {
   name: "SongRanking",
@@ -59,6 +60,11 @@ export default {
     Api.fetch_ranking(this.$store.getters.accessToken, this.sha256, this.date).then(
         r => this.ranking = r.song.sha256 === "" ? null : r
     )
+  },
+  methods: {
+    config() {
+      return config;
+    }
   }
 }
 </script>
