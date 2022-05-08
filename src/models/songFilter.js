@@ -272,6 +272,7 @@ class VisibleLamp {
 
 class VisibleRank {
     constructor(rank) {
+        this.Max = true
         this.AAA = true
         this.AA = true
         this.A = true
@@ -289,6 +290,7 @@ class VisibleRank {
 
     to_not_aaa() {
         this.to_all()
+        this.Max = false
         this.AAA = false
     }
 

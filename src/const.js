@@ -32,7 +32,7 @@ export default Object.freeze({
     ],
 
     RANK_TYPE: [
-        'MAX', 'AAA', 'AA', 'A', 'B', 'C', 'D', 'E', 'F',
+        'Max', 'AAA', 'AA', 'A', 'B', 'C', 'D', 'E', 'F',
     ],
 
     RANK_RATE_BY_9: [
@@ -40,7 +40,7 @@ export default Object.freeze({
     ],
 
     DETAIL_RANK_TYPE: [
-        'MAX',
+        'Max',
         'AAA1', 'AAA2', 'AAA3',
         'AA1', 'AA2', 'AA3',
         'A1', 'A2', 'A3',
