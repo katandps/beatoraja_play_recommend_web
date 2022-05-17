@@ -100,15 +100,13 @@ export default class Model {
 
     /**
      * @private
-     * @return Model
      */
     init_table_score() {
         if (!this.is_initialized()) {
-            return this
+            return
         }
-        let model = this
-        model.tables = model.tables.set_score(this.songs, this.scores)
-        return model
+
+        this.tables = this.tables.set_score(this.songs, this.scores)
     }
 
     /**
@@ -231,9 +229,9 @@ export default class Model {
             return null
         }
         let model = this
-        model.selected_table = this.tables ? this.tables.get_table(table_name) : null
-        model = model.init_table_score()
-        model = model.set_default_selected_level()
+        this.selected_table = this.tables ? this.tables.get_table(table_name) : null
+        this.init_table_score()
+        this.set_default_selected_level()
         return model
     }
 
@@ -241,12 +239,10 @@ export default class Model {
      * @return Model
      */
     set_default_selected_level() {
-        let model = this
         const table = this.selected_table
         if (!table.contains_level(this.selected_level)) {
-            model.selected_level = table.level_list[0]
+            this.selected_level = table.level_list[0]
         }
-        return model
     }
 
     /**

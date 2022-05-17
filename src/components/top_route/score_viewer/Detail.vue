@@ -141,7 +141,7 @@ export default {
      * @param {string} table
      */
     set_table(table) {
-      this.model = this.model.set_table(table)
+      this.model.set_table(table)
     },
     clear_type_class(song) {
       return "table-line-" + config.LAMP_INDEX[song.clear_type];

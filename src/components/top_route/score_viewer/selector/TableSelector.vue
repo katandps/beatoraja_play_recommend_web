@@ -30,7 +30,7 @@
           <font-awesome-icon :icon="['fas', 'question-circle']"/>
         </label>
       </div>
-      <select id="level" class="form-control" name="level" v-model="model.selected_level">
+      <select id="level" class="form-control" name="level" v-model="selected_level">
         <option v-for="(level,key) in model.level_list()" :key="key">
           {{ level }}
         </option>
@@ -56,6 +56,7 @@ export default {
   },
   data: () => ({
     selected: "",
+    selected_level: "",
     visible_all_levels: false,
   }),
   beforeMount() {
@@ -63,12 +64,18 @@ export default {
   },
   mounted() {
     this.selected = this.model.get_selected_table_name()
+    this.selected_level = this.model.get_selected_table().selected_level
   },
   methods: {},
   watch: {
     selected: {
       handler() {
         this.$emit('setTable', this.selected);
+      }
+    },
+    selected_level: {
+      handler() {
+        this.$emit('setSelectedTable', this.selected_level)
       }
     },
     visible_all_levels: {

@@ -84,7 +84,7 @@ export default {
      * @param {string} table
      */
     set_table(table) {
-      this.model = this.model.set_table(table)
+      this.model.set_table(table)
     },
     show_filter_modal() {
       this.$refs.filter_modal.show_modal()

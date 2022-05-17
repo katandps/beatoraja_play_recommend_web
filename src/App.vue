@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <HamburgerMenu :is_login="is_login" @handleSignOut="handleSignOut"/>
+    <hamburger-menu :is_login="is_login" @handleSignOut="handleSignOut"/>
     <router-view :is_login="is_login" @handleSignOut="handleSignOut"/>
     <footer id="footer" class="footer mt-auto py-3">
       <div class="container">
@@ -13,9 +13,10 @@
 </template>
 
 <script>
-import HamburgerMenu from "./components/HamburgerMenu";
-import Api from "./api";
+import HamburgerMenu from "./components/HamburgerMenu"
+import Api from "./api"
 import * as log from "loglevel"
+import {onMounted} from "vue"
 
 export default {
   name: "App",
@@ -23,15 +24,17 @@ export default {
   data: () => ({
     is_login: false,
   }),
-  async mounted() {
-    if (this.$cookies.get("session-token")) {
-      this.$store.commit("setAccessToken", this.$cookies.get("session-token"))
-    }
+  setup () {
+    onMounted(async()  => {
+      if (this.$cookies.get("session-token")) {
+        this.$store.commit("setAccessToken", this.$cookies.get("session-token"))
+      }
 
-    const account = await Api.get_account(this.$store.getters.accessToken);
-    log.debug(account);
-    this.is_login = !account.error;
-    if (!account.error) this.$store.commit('setUserInfo', account);
+      const account = await Api.get_account(this.$store.getters.accessToken);
+      log.debug(account);
+      this.is_login = !account.error;
+      if (!account.error) this.$store.commit('setUserInfo', account);
+    })
   },
   watch: {
     // ルート切り替え検出

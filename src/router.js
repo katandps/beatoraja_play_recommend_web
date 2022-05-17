@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router"
 
 import Home from "./components/top_route/Home"
 import ScoreViewer from "./components/top_route/ScoreViewer"
@@ -15,8 +14,8 @@ import SongRanking from "./components/top_route/SongRanking"
 import MyPage from "./components/top_route/MyPage"
 import PlayStats from "./components/top_route/PlayStats"
 
-Vue.use(Router)
-const router = new Router({
+export const router = createRouter({
+    history: createWebHistory(),
     routes: [
         {
             path: '/',
@@ -94,5 +93,3 @@ const router = new Router({
         }
     ]
 })
-
-export default router

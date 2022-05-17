@@ -1,11 +1,8 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import {createStore} from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import SongFilter from "./models/songFilter"
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
+export const store = createStore({
     plugins: [createPersistedState({
         key: 'vue-gauth',
         paths: ['userInfo', 'accessToken', 'filter'],

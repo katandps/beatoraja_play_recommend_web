@@ -1,7 +1,11 @@
 module.exports = {
     publicPath: './',
     outputDir: 'docs',
+
     devServer: {
-        disableHostCheck: true
+        allowedHosts: [
+          'localhost.katand.net'
+        ]
     },
+    transpileDependencies: true,
 }

@@ -110,7 +110,7 @@ export default {
      * @param {string} table
      */
     set_table(table) {
-      this.model = this.model.set_table(table)
+      this.model.set_table(table)
     },
     show_modal(song) {
       this.$refs.modal.show_modal(song, this.model.get_date_str())

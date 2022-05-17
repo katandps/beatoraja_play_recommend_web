@@ -113,7 +113,7 @@ export default {
      * @param {string} table
      */
     set_table(table) {
-      this.model = this.model.set_table(table)
+      this.model.set_table(table)
     },
     async refresh_rival_id(rival_id) {
       let query = Object.assign({}, this.$route.query)
