@@ -1,6 +1,15 @@
 <template>
   <div id="detail">
-    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()" :can_level_select="true"/>
+    <TableSelector
+      :table_list="table_list"
+      :level_list="level_list"
+      :selected_table="selected_table"
+      :selected_level="selected_level"
+      @setTable="set_table"
+      @setLevel="set_level"
+      v-if="tables_is_set"
+      :can_level_select="true"
+    />
     <div class="form-group row align-items-center">
       <display-songs-limiter class="col-sm-5"/>
       <div class="col-sm-7">
@@ -54,7 +63,7 @@
         </div>
         <transition-group tag="div" class="tbody" name="flip-list">
           <div
-              v-for="song in model.get_sorted_song_list(filter)"
+              v-for="song in sorted_song_list"
               :key="song.md5"
               class="tr"
               :class="clear_type_class(song)"
@@ -102,7 +111,6 @@
 
 <script>
 import TableSelector from "./selector/TableSelector"
-import Model from "../../../models/model"
 import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
 import SongModal from "./modal/SongModal"
 import config from "../../../const"
@@ -131,17 +139,21 @@ export default {
     RecommendModal
   },
   props: {
-    model: {
-      type: Model,
-      require: true,
-    },
+    sorted_song_list: {require: true},
+    tables_is_set: { type: Boolean, require: true },
+    date: { type: String, require: true },
+    table_list: { require: true},
+    level_list: { required: true },
+    can_level_select: { type: Boolean, required: false },
+    selected_table: { type: String, required: true },
+    selected_level: { type: String, required: true }
   },
   methods: {
-    /**
-     * @param {string} table
-     */
     set_table(table) {
-      this.model.set_table(table)
+      this.$emit('setTable', table)
+    },
+    set_level(level) {
+      this.$emit('setLevel', level)
     },
     clear_type_class(song) {
       return "table-line-" + config.LAMP_INDEX[song.clear_type];
@@ -156,7 +168,7 @@ export default {
       this.$refs.column_modal.show_modal()
     },
     show_song_modal(song) {
-      this.$refs.song_modal.show_modal(song, this.model.get_date_str())
+      this.$refs.song_modal.show_modal(song, this.date)
     },
     column_is_active(name) {
       return this.$store.getters.column_is_active(name)

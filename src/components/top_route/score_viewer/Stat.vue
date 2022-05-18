@@ -87,7 +87,6 @@
 
 <script>
 import TableSelector from "./selector/TableSelector"
-import Model from "../../../models/model"
 import config from "../../../const.js"
 import SongDetail from "../../../models/song_detail"
 import FilterModal from "./modal/FilterModal"
@@ -96,10 +95,7 @@ export default {
   name: "Stat",
   components: {TableSelector, FilterModal},
   props: {
-    model: {
-      type: Model,
-      require: true
-    },
+
   },
   methods: {
     config() {
@@ -109,7 +105,7 @@ export default {
      * @param {string} table
      */
     set_table(table) {
-      this.model.set_table(table)
+      this.$emit('setTable', table)
     },
     show_filter_modal() {
       this.$refs.filter_modal.show_modal()

@@ -1,6 +1,13 @@
 <template>
   <div id="lamp-graph">
-    <table-selector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
+    <TableSelector
+      :table_list="table_list"
+      :level_list="level_list"
+      :selected_table="selected_table"
+      :selected_level="selected_level"
+      @setTable="set_table"
+      @setLevel="set_level"
+    />
     <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
     <hr>
     凡例
@@ -46,7 +53,6 @@
 
 <script>
 import config from "../../../const.js"
-import Model from "../../../models/model"
 import * as log from "loglevel"
 import SongDetail from "../../../models/song_detail"
 import TableSelector from "./selector/TableSelector"
@@ -57,13 +63,10 @@ export default {
   name: "LampGraph",
   components: {TableSelector, GraphModal, FilterModal},
   props: {
-    model: {
-      type: Model,
-      required: true,
-    },
-    header_visible: {
-      type: Boolean
-    }
+    filtered_score: { required: true },
+    table_list: { type: [String], required: true },
+    level_list: { type: [String], required: true },
+    header_visible: { type: Boolean }
   },
   methods: {
     config() {
@@ -84,7 +87,7 @@ export default {
      * @param {string} table
      */
     set_table(table) {
-      this.model.set_table(table)
+      this.$emit('setTable', table)
     },
     show_filter_modal() {
       this.$refs.filter_modal.show_modal()
@@ -95,18 +98,11 @@ export default {
      * @returns {SongDetail[][][]} SongDetail[level][rank][index]
      */
     lamp_list() {
-      if (!this.model.is_initialized()) {
-        return []
-      }
-      let songs = this.model.filtered_score(this.$store.state.filter)
       return this.level_list.map(
           level => config.LAMP_INDEX.map(
-              (_lamp, index) => songs.filter(s => s.clear_type === index && s.level === level).sort(SongDetail.cmp_title)
+              (_lamp, index) => this.filtered_score.filter(s => s.clear_type === index && s.level === level).sort(SongDetail.cmp_title)
           )
       )
-    },
-    level_list() {
-      return this.model.selected_table.level_list
     },
   }
 }

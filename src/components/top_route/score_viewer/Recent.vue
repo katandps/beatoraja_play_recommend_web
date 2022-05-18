@@ -62,7 +62,6 @@
 </template>
 
 <script>
-import Model from "../../../models/model"
 import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
 import config from "../../../const"
 import RecentModal from "./modal/RecentModal"
@@ -91,10 +90,7 @@ export default {
     FilterModal
   },
   props: {
-    model: {
-      type: Model,
-      require: true,
-    },
+    date: {type: String}
   },
   data: () => ({
     percentile: false
@@ -110,10 +106,10 @@ export default {
      * @param {string} table
      */
     set_table(table) {
-      this.model.set_table(table)
+      this.$emit('setTable', table)
     },
     show_modal(song) {
-      this.$refs.modal.show_modal(song, this.model.get_date_str())
+      this.$refs.modal.show_modal(song, this.date)
     },
     column_is_active(name) {
       return this.$store.getters.column_is_active(name)

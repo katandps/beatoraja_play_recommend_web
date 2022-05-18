@@ -73,7 +73,6 @@
 </template>
 
 <script>
-import Model from "../../../models/model"
 import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
 import TableSelector from "./selector/TableSelector"
 import InputUserId from "./selector/InputUserId"
@@ -97,13 +96,10 @@ export default {
     FilterModal
   },
   props: {
-    model: {
-      type: Model,
-      require: true,
-    },
     rival_id: {
       type: Number,
-    }
+    },
+    date: {type: String}
   },
   methods: {
     clear_type_class(song) {
@@ -113,7 +109,7 @@ export default {
      * @param {string} table
      */
     set_table(table) {
-      this.model.set_table(table)
+      this.$emit('setTable', table)
     },
     async refresh_rival_id(rival_id) {
       let query = Object.assign({}, this.$route.query)
@@ -121,7 +117,7 @@ export default {
       await this.$router.push({query: query})
     },
     show_modal(song) {
-      this.$refs.modal.show_modal(song, this.model.get_date_str())
+      this.$refs.modal.show_modal(song, this.date)
     },
     show_filter_modal() {
       this.$refs.filter_modal.show_modal()

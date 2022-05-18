@@ -44,7 +44,6 @@
 
 <script>
 import config from "../../../const.js"
-import Model from "../../../models/model"
 import log from "loglevel"
 import SongDetail from "../../../models/song_detail"
 import TableSelector from "./selector/TableSelector"
@@ -58,10 +57,6 @@ export default {
     TableSelector, GraphModal, FilterModal
   },
   props: {
-    model: {
-      type: Model,
-      required: true,
-    },
   },
   data: () => ({
     modal_title: "",
@@ -87,7 +82,7 @@ export default {
      * @param {string} table
      */
     set_table(table) {
-      this.model.set_table(table)
+      this.$emit('setTable', table)
     },
     show_filter_modal() {
       this.$refs.filter_modal.show_modal()
