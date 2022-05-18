@@ -1,95 +1,80 @@
-import { createRouter, createWebHistory } from "vue-router"
-
-import Home from "./components/top_route/Home"
-import ScoreViewer from "./components/top_route/ScoreViewer"
-import RecommendTable from "./components/top_route/RecommendTable"
-import UserList from "./components/top_route/UserList"
-import Detail from "./components/top_route/score_viewer/Detail"
-import LampGraph from "./components/top_route/score_viewer/LampGraph"
-import RankGraph from "./components/top_route/score_viewer/RankGraph"
-import Stat from "./components/top_route/score_viewer/Stat"
-import Recent from "./components/top_route/score_viewer/Recent"
-import Rival from "./components/top_route/score_viewer/Rival"
-import SongRanking from "./components/top_route/SongRanking"
-import MyPage from "./components/top_route/MyPage"
-import PlayStats from "./components/top_route/PlayStats"
+import { createRouter, createWebHashHistory } from "vue-router"
 
 export const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHashHistory(),
     routes: [
         {
             path: '/',
             name: 'Home',
-            component: Home,
-            props: true
+            component: import('./components/top_route/Home'),
         },
         {
             path: '/view',
-            component: ScoreViewer,
+            component: import('./components/top_route/ScoreViewer'),
             props: (route) => ({
                 user_id: parseInt(route.query.user_id || 1),
                 rival_id: parseInt(route.query.rival_id || 1),
             }),
             children: [
                 {
+                    path: '',
+                    name: 'Detail',
+                    component: import('./components/top_route/score_viewer/Detail')
+                },
+                {
                     path: 'lamp',
-                    name: 'ViewLampGraph',
-                    component: LampGraph
+                    name: 'LampGraph',
+                    component: import('./components/top_route/score_viewer/LampGraph')
                 },
                 {
                     path: 'rank',
-                    name: 'ViewRankGraph',
-                    component: RankGraph
+                    name: 'RankGraph',
+                    component: import('./components/top_route/score_viewer/RankGraph')
                 },
                 {
                     path: 'stat',
-                    name: 'ViewStat',
-                    component: Stat
-                },
-                {
-                    path: '',
-                    name: 'ViewDetail',
-                    component: Detail
+                    name: 'Stat',
+                    component: import('./components/top_route/score_viewer/Stat')
                 },
                 {
                     path: 'recent',
-                    name: 'ViewRecent',
-                    component: Recent
+                    name: 'Recent',
+                    component: import('./components/top_route/score_viewer/Recent')
                 },
                 {
                     path: 'rival',
-                    name: 'ViewRival',
-                    component: Rival
+                    name: 'Rival',
+                    component: import('./components/top_route/score_viewer/Rival')
                 }
             ]
         },
         {
             path: '/mypage',
             name: 'MyPage',
-            component: MyPage,
+            component: import('./components/top_route/MyPage'),
         },
         {
             path: '/stats',
             name: 'PlayStats',
-            component: PlayStats,
+            component: import('./components/top_route/PlayStats'),
             props: (route) => ({user_id: parseInt(route.query.user_id)})
         },
         {
             path: '/table',
             name: 'RecommendTable',
-            component: RecommendTable,
+            component: import('./components/top_route/RecommendTable'),
             props: (route) => ({user_id: parseInt(route.query.user_id)})
         },
         {
             path: '/song',
             name: 'SongRanking',
-            component: SongRanking,
+            component: import('./components/top_route/SongRanking'),
             props: (route) => ({sha256: route.query.sha256, date: route.query.date})
         },
         {
             path: '/users',
             name: 'UserList',
-            component: UserList,
+            component: import('./components/top_route/UserList'),
         }
     ]
 })
