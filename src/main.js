@@ -62,8 +62,6 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome"
 app.component('font-awesome-icon', FontAwesomeIcon)
 dom.watch()
 
-app.use(require('vue-cookies'))
-
 import VTooltip from 'v-tooltip'
 let options = {defaultTrigger: 'hover focus click'}
 app.use(VTooltip, options)
@@ -76,5 +74,6 @@ require('./assets/sass/main.scss')
 require('./assets/sass/tooltip.css')
 require('./assets/sass/table.css')
 app.config.productionTip = false
+import "bootstrap/dist/css/bootstrap.min.css"
 
 app.mount('#app')

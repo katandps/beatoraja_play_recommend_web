@@ -16,7 +16,9 @@
 import HamburgerMenu from "./components/HamburgerMenu"
 import Api from "./api"
 import * as log from "loglevel"
-import {onMounted} from "vue"
+import {useCookies} from "vue3-cookies"
+import { useStore } from "vuex"
+import {onMounted, computed} from "vue"
 
 export default {
   name: "App",
@@ -25,22 +27,27 @@ export default {
     is_login: false,
   }),
   setup () {
-    onMounted(async()  => {
-      if (this.$cookies.get("session-token")) {
-        this.$store.commit("setAccessToken", this.$cookies.get("session-token"))
+    const {cookies} = useCookies()
+    const store = useStore()
+    onMounted(async () => {
+      if (this.cookies.get("session-token")) {
+        this.store.commit("setAccessToken", this.cookies.get("session-token"))
       }
-
-      const account = await Api.get_account(this.$store.getters.accessToken);
+      const account = await Api.get_account(this.accessToken);
       log.debug(account);
       this.is_login = !account.error;
-      if (!account.error) this.$store.commit('setUserInfo', account);
+      if (!account.error) this.store.commit('setUserInfo', account);
     })
+    return {
+      cookies: cookies,
+      accessToken: computed(() => store.getters.accessToken)
+    }
   },
   watch: {
     // ルート切り替え検出
     '$route': async function (to, from) {
       if (this.is_login && to.path !== from.path) {
-        const account = await Api.get_account(this.$store.getters.accessToken);
+        const account = await Api.get_account(this.accessToken);
         log.debug(account);
         if (account.error) await this.handleSignOut();
       }
