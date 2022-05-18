@@ -16,9 +16,9 @@
 import HamburgerMenu from "./components/HamburgerMenu"
 import Api from "./api"
 import * as log from "loglevel"
-import {useCookies} from "vue3-cookies"
+import { useCookies } from "vue3-cookies"
 import { useStore } from "vuex"
-import {onMounted, computed} from "vue"
+import { computed } from "vue"
 
 export default {
   name: "App",
@@ -29,19 +29,19 @@ export default {
   setup () {
     const {cookies} = useCookies()
     const store = useStore()
-    onMounted(async () => {
-      if (this.cookies.get("session-token")) {
-        this.store.commit("setAccessToken", this.cookies.get("session-token"))
-      }
-      const account = await Api.get_account(this.accessToken);
-      log.debug(account);
-      this.is_login = !account.error;
-      if (!account.error) this.store.commit('setUserInfo', account);
-    })
     return {
       cookies: cookies,
       accessToken: computed(() => store.getters.accessToken)
     }
+  },
+  async mounted() {
+    if (this.cookies.get("session-token")) {
+      this.store.commit("setAccessToken", this.cookies.get("session-token"))
+    }
+    const account = await Api.get_account(this.accessToken);
+    log.debug(account);
+    this.is_login = !account.error;
+    if (!account.error) this.store.commit('setUserInfo', account)
   },
   watch: {
     // ルート切り替え検出

@@ -66,36 +66,27 @@ export default class Model {
     /**
      * @public
      * @param {Tables} tables
-     * @returns {Model}
      */
     init_table(tables) {
-        let model = this
-        model.tables = tables
-        model.selected_table = model.tables ? model.tables.first() : null
-        model = model.init_table_score()
-        return model
+        this.tables = tables
+        this.selected_table = this.tables ? this.tables.first() : null
+        this.init_table_score()
     }
 
     /**
      * @param {Scores} scores
-     * @returns {Model}
      */
     init_score(scores) {
-        let model = this
-        model.scores = scores
-        model = model.init_table_score()
-        return model
+        this.scores = scores
+        this.init_table_score()
     }
 
     /**
      * @param {Songs} songs
-     * @returns {Model}
      */
     init_songs(songs) {
-        let model = this
-        model.songs = songs
-        model = model.init_table_score()
-        return model
+        this.songs = songs
+        this.init_table_score()
     }
 
     /**
@@ -105,23 +96,19 @@ export default class Model {
         if (!this.is_initialized()) {
             return
         }
-
         this.tables = this.tables.set_score(this.songs, this.scores)
     }
 
     /**
      * @public
      * @param {Scores} scores
-     * @returns {Model}
      */
     renew_with_rival_score(scores) {
         if (!this.is_initialized()) {
-            return this
+            return
         }
-        let model = Object.assign(new Model(), this)
-        model.tables = this.tables.set_rival_score(scores)
-        model.rival_name = scores.name
-        return model
+        this.tables = this.tables.set_rival_score(scores)
+        this.rival_name = scores.name
     }
 
     /**

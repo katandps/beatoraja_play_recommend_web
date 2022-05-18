@@ -60,6 +60,8 @@ import DateSelector from "./score_viewer/selector/DateSelector"
 import Api from "../../api"
 import * as log from "loglevel"
 import SongFilter from "../../models/songFilter"
+import {useStore} from "vuex"
+import {computed} from "vue"
 
 export default {
   name: "ScoreViewer",
@@ -85,14 +87,21 @@ export default {
     message: "",
     loaded: {user_id: null, rival_id: null, date: ""},
   }),
+  setup () {
+    const store = useStore()
+    return {
+      accessToken: computed(() => store.getters.accessToken),
+      filter: computed(() => store.getters.filter)
+    }
+  },
   async beforeMount() {
-    log.debug(this.$store.getters.filter)
-    this.$store.commit('setFilter', new SongFilter(this.$store.getters.filter))
-    Api.fetch_tables(this.$store.getters.accessToken).then(
-        t => this.model = this.model.init_table(t)
+    log.debug(this.filter)
+    this.$store.commit('setFilter', new SongFilter(this.filter))
+    Api.fetch_tables(this.accessToken).then(
+        t => this.model.init_table(t)
     )
-    Api.fetch_songs(this.$store.getters.accessToken).then(
-        s => this.model = this.model.init_songs(s)
+    Api.fetch_songs(this.accessToken).then(
+        s => this.model.init_songs(s)
     )
     await this.fetch_detail(this.$route.query)
     // await this.set_rival(this.rival_id)
@@ -111,7 +120,7 @@ export default {
             this.rival_id,
             this.$store.getters.accessToken
         ).then(s => {
-          this.model = this.model.renew_with_rival_score(s)
+          this.model.renew_with_rival_score(s)
         })
         this.loaded.rival_id = this.rival_id
       }
@@ -127,7 +136,7 @@ export default {
             this.user_id,
             this.$store.getters.accessToken
         ).then(s => {
-          this.model = this.model.init_score(s)
+          this.model.init_score(s)
           this.message = this.model.score_is_set() ? "" : "読み込み失敗"
         })
         this.loaded.user_id = this.user_id
@@ -140,7 +149,7 @@ export default {
      * @param {Date} date
      */
     async set_date(date) {
-      this.model = this.model.set_date(date)
+      this.model.set_date(date)
       await this.fetch_detail()
     },
   },
