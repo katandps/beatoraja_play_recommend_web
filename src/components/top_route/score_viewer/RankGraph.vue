@@ -1,17 +1,21 @@
 <template>
   <div id="rank-graph">
-    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
+    <TableSelector
+      :table_list="table_list"
+      :selected_table="selected_table"
+      @setTable="set_table"
+    />
     <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
     <hr>
     凡例
     <table style="width:100%">
       <tr>
         <td class="progress" style="width:100%;height:1.8em">
-          <div v-for="rank in config().RANK_TYPE" :key="rank"
+          <div v-for="rank in config.RANK_TYPE" :key="rank"
                :class="'progress-bar bg-' + rank"
                role="progressbar"
                style="color:#000"
-               :style="'width: ' + 100.0/config().RANK_TYPE.length + '%'"
+               :style="'width: ' + 100.0/config.RANK_TYPE.length + '%'"
           >{{ rank }}
           </div>
         </td>
@@ -23,7 +27,7 @@
         <td style="width:30px">{{ level }}</td>
         <td class="progress" style="width:100%;height:1.8em">
           <div
-              v-for="(rank, rank_index) in config().RANK_TYPE" :key="rank"
+              v-for="(rank, rank_index) in config.RANK_TYPE" :key="rank"
               :class="'progress-bar bg-' + rank"
               role="progressbar"
               :style="'width: ' + rank_list[level_index][rank_index].length * 100 + '%;color:#000'"
@@ -42,14 +46,17 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import config from "../../../const.js"
+</script>
+
+<script>
 import log from "loglevel"
 import SongDetail from "../../../models/song_detail"
 import TableSelector from "./selector/TableSelector"
 import GraphModal from "./modal/GraphModal"
 import FilterModal from "./modal/FilterModal"
-import SongFilter from "../../../models/songFilter"
+import { DifficultyTable } from "../../../models/difficultyTable.js"
 
 export default {
   name: "RankGraph",
@@ -57,16 +64,12 @@ export default {
     TableSelector, GraphModal, FilterModal
   },
   props: {
+    filtered_score: { required: true },
+    table_list: { required: true },
+    level_list: { required: true },
+    selected_table: { type: DifficultyTable ,required: true },
   },
-  data: () => ({
-    modal_title: "",
-    modal_text: "",
-    filter: new SongFilter()
-  }),
   methods: {
-    config() {
-      return config;
-    },
     /**
      * @param {string} title
      * @param {string[]} text
@@ -93,19 +96,12 @@ export default {
      * @returns {SongDetail[][][]} SongDetail[level][rank][index]
      */
     rank_list() {
-      if (!this.model.is_initialized()) {
-        return []
-      }
-      let songs = this.model.filtered_score(this.$store.state.filter)
       return this.level_list.map(
           l => config.RANK_TYPE.map(
-              r => songs.filter(s => s.clear_rank === r && s.level === l).sort(SongDetail.cmp_title)
+              r => this.filtered_score.filter(s => s.clear_rank === r && s.level === l).sort(SongDetail.cmp_title)
           )
       )
     },
-    level_list() {
-      return this.model.level_list()
-    }
   }
 }
 </script>

@@ -2,11 +2,8 @@
   <div id="lamp-graph">
     <TableSelector
       :table_list="table_list"
-      :level_list="level_list"
       :selected_table="selected_table"
-      :selected_level="selected_level"
       @setTable="set_table"
-      @setLevel="set_level"
     />
     <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
     <hr>
@@ -14,11 +11,11 @@
     <table style="width:100%">
       <tr>
         <td class="progress" style="width:100%;height:1.8em">
-          <div v-for="clear_type in config().LAMP_TYPE" :key="clear_type"
+          <div v-for="clear_type in config.LAMP_TYPE" :key="clear_type"
                :class="'progress-bar bg-' + clear_type"
                role="progressbar"
                style="color:#000000"
-               :style="'width: ' + 100.0/config().LAMP_TYPE.length + '%'"
+               :style="'width: ' + 100.0/config.LAMP_TYPE.length + '%'"
           >{{ clear_type }}
           </div>
         </td>
@@ -31,13 +28,13 @@
         <td style="width:30px">{{ level }}</td>
         <td class="progress" style="width:100%;height:1.8em">
           <div
-              v-for="(lamp_index) in config().LAMP_GRAPH_LIST"
-              :key="config().LAMP_INDEX[lamp_index]"
-              :class="'progress-bar bg-' + config().LAMP_INDEX[lamp_index]"
+              v-for="(lamp_index) in config.LAMP_GRAPH_LIST"
+              :key="config.LAMP_INDEX[lamp_index]"
+              :class="'progress-bar bg-' + config.LAMP_INDEX[lamp_index]"
               role="progressbar"
               :style="'width: ' + lamp_list[level_index][lamp_index].length * 100 + '%;color:#000'"
               v-on:click="show_modal(
-                  level + ' ' +  config().LAMP_INDEX[lamp_index],
+                  level + ' ' +  config.LAMP_INDEX[lamp_index],
                    list(level_index, lamp_index)
                    )"
           >
@@ -51,27 +48,28 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import config from "../../../const.js"
+</script>
+
+<script>
 import * as log from "loglevel"
 import SongDetail from "../../../models/song_detail"
 import TableSelector from "./selector/TableSelector"
 import GraphModal from "./modal/GraphModal"
 import FilterModal from "./modal/FilterModal"
+import { DifficultyTable } from "../../../models/difficultyTable.js"
 
 export default {
   name: "LampGraph",
   components: {TableSelector, GraphModal, FilterModal},
   props: {
     filtered_score: { required: true },
-    table_list: { type: [String], required: true },
-    level_list: { type: [String], required: true },
-    header_visible: { type: Boolean }
+    table_list: { required: true },
+    level_list: { required: true },
+    selected_table: { type: DifficultyTable ,required: true },
   },
   methods: {
-    config() {
-      return config;
-    },
     /**
      * @param {string} title
      * @param {string[]} text

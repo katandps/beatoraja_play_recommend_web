@@ -22,7 +22,7 @@
           <font-awesome-icon :icon="['fas', 'question-circle']"/>
       </label>
     </div>
-    <div class="col-sm-4" v-if="can_level_select">
+    <div class="col-sm-4" v-if="can_level_select && !visible_all_levels">
       <div class="input-group" role="group" aria-label="Difficulty">
         <div class="input-group-prepend">
           <label for="level" class="btn btn-info text-nowrap" v-tooltip="'詳細表で表示する難易度'">
@@ -41,40 +41,29 @@
 </template>
 
 <script>
+import { DifficultyTable } from '../../../../models/difficultyTable'
 export default {
   name: "TableSelector",
   props: {
     table_list: { required: true },
-    level_list: { required: true },
-    can_level_select: { type: Boolean, required: false },
-    selected_table: { type: String, required: true },
-    selected_level: { type: String, required: true }
+    level_list: { required: false },
+    can_level_select: { type: Boolean },
+    selected_table: { type: DifficultyTable, required: true },
+    selected_level: { type: String },
+    visible_all_level: {type: Boolean },
   },
-  data: () => ({
-    table: "",
-    level: "",
-    visible_all_levels: false,
-  }),
-  beforeMount() {
-    this.visible_all_levels = this.$store.state.filter.visible_all_levels
-  },
-  mounted() {
-    this.table = this.selected_table
-    this.level = this.selected_level
-  },
-  methods: {},
-  watch: {
-    selected_level() {
-      this.level = this.selected_level
+  computed: {
+    table: {
+      get() { return this.selected_table.name },
+      set(value) { this.$emit('setTable', value) }
     },
-    table() {
-      this.$emit('setTable', this.table);
+    level: {
+      get() { return this.selected_level },
+      set(value) { this.$emit('setLevel', value) }
     },
-    level() {
-      this.$emit('setLevel', this.level)
-    },
-    visible_all_levels() {
-      this.$store.commit('setVisibleAllLevelsFlag', this.visible_all_levels)
+    visible_all_levels: {
+      get() { return !!this.visible_all_level },
+      set(value) { this.$emit('setVisibleAllLevelsFlag', value) }
     }
   }
 }

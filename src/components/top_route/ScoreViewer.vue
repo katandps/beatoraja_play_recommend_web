@@ -50,13 +50,16 @@
           :tables_is_set="tables_is_set"
           :filtered_score="filtered_score"
           :sorted_song_list="sorted_song_list"
+          :recent_song_list="recent_song_list"
           :table_list="table_list"
           :level_list="level_list"
           :rival_id="rival_id"
           :selected_table="selected_table"
           :selected_level="selected_level"
+          :visible_all_level="visible_all_level"
           @setTable="set_table"
           @setLevel="set_level"
+          @setVisibleAllLevelsFlag="set_visible_all_level"
           v-if="is_initialized"
         />
       </div>
@@ -98,7 +101,6 @@ export default {
     scores: null,
     date: new Date(new Date().setHours(0, 0, 0, 0)),
     rival_name: "",
-    header_visible: true,
     message: "",
     loaded: {user_id: null, rival_id: null, date: ""},
   }),
@@ -112,12 +114,10 @@ export default {
   async beforeMount() {
     log.debug(this.filter)
     this.$store.commit('setFilter', new SongFilter(this.filter))
-    Api.fetch_tables(this.accessToken).then(
-        t => this.init_table(t)
-    )
-    Api.fetch_songs(this.accessToken).then(
-        s => this.init_songs(s)
-    )
+    const t = await Api.fetch_tables(this.accessToken)
+    this.init_table(t)
+    const s = await Api.fetch_songs(this.accessToken)
+    this.init_songs(s)
     await this.fetch_detail(this.$route.query)
   },
   computed: {
@@ -136,8 +136,14 @@ export default {
     song_is_set() {
       return !!this.songs
     },
+    table_is_selected() {
+      return !!this.selected_table
+    },
     is_initialized() {
-      return this.tables_is_set && this.song_is_set && this.score_is_set
+      return this.tables_is_set && this.song_is_set && this.score_is_set && this.table_is_selected
+    },
+    visible_all_level() {
+      return this.filter.visible_all_levels
     },
     date_str() {
       return DateFormatter.format(this.date)
@@ -178,6 +184,12 @@ export default {
           return valA === valB ? 0 : (valA < valB) ^ this.filter.sort_desc ? -1 : 1
         })
         .slice(0, length)
+    },
+    recent_song_list() {
+      let songs = this.filtered_score
+      return songs.sort((a, b) => {
+        return a.updated_at === b.updated_at ? 0 : (a.updated_at < b.updated_at) ? 1 : -1
+      }).slice(0, this.filter.max_length > 0 ? this.filter.max_length : songs.length)
     }
   },
   methods: {
@@ -186,9 +198,11 @@ export default {
       this.init_table_score()
     },
     init_table(tables) {
-        this.tables = tables
-        this.selected_table = this.tables ? this.tables.first() : null
-        this.init_table_score()
+      this.tables = tables
+      log.debug(this.tables, this.tables.first())
+      this.selected_table = this.tables.first()
+      this.selected_level = this.selected_table.level_list[0]
+      this.init_table_score()
     },
     init_score(scores) {
       this.scores = scores
@@ -201,7 +215,7 @@ export default {
       this.tables.tables = this.tables.tables.map((table) => table.set_score(this.songs, this.scores))
     },
     set_table(table_name) {
-      this.selected_table = this.tables ? this.tables.get_table(table_name) : null
+      this.selected_table = this.tables ? this.tables.get_table(table_name) : this.selected_table
       this.init_table_score()
       if (this.selected_table) {
         this.selected_level = this.selected_table.level_list[0]
@@ -210,6 +224,7 @@ export default {
     set_level(level) {
       this.selected_level = level
     },
+    set_visible_all_level(flag) { this.filter.visible_all_levels = flag },
     renew_with_rival_score(scores) {
       if (!this.is_initialized) {
         return
@@ -262,6 +277,11 @@ export default {
   },
   watch: {
     date: {
+      async handler() {
+        await this.fetch_detail()
+      }
+    },
+    user_id: {
       async handler() {
         await this.fetch_detail()
       }

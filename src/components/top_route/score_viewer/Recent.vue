@@ -2,14 +2,12 @@
   <div id="recent">
     <div class="row align-items-center">
       <display-songs-limiter class="col-sm-4"/>
-      <div class="input-group col-sm-4">
-        <div class="input-group-prepend">
-          <label for="all_list" class="btn btn-info text-nowrap" v-tooltip="'スコア差分を百分率で表示します'">
+      <div class="col-sm-4" v-tooltip="'スコア差分を百分率で表示します'">
+        <input class="btn-check" type="checkbox" id="percentile" v-model="percentile">
+        <label class="btn btn-outline-info" for="percentile">
             パーセント表示
             <font-awesome-icon :icon="['fas', 'question-circle']"/>
-          </label>
-        </div>
-        <input class="form-control" type="checkbox" id="all_list" v-model="percentile">
+        </label>
       </div>
       <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
     </div>
@@ -41,7 +39,7 @@
         </div>
 
         <transition-group tag="div" class="tbody" name="flip-list">
-          <div v-for="song in song_list"
+          <div v-for="song in recent_song_list"
                :key="song.md5"
                :class="clear_type_class(song)" class="tr">
             <data-cell class="clear" column_name="clear" :class="song.clear_type_bg_class()"/>
@@ -61,13 +59,14 @@
   </div>
 </template>
 
+<script setup>
+import config from "../../../const"
+</script>
 <script>
 import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
-import config from "../../../const"
 import RecentModal from "./modal/RecentModal"
 import HeaderCell from "./cell/HeaderCell"
 import DataCell from "./cell/DataCell"
-import SongDetail from "../../../models/song_detail"
 import DateCell from "./cell/DateCell"
 import ClearUpdateCell from "./cell/ClearUpdateCell"
 import ScoreUpdateCell from "./cell/ScoreUpdateCell"
@@ -90,15 +89,13 @@ export default {
     FilterModal
   },
   props: {
-    date: {type: String}
+    date: {type: String},
+    recent_song_list: {require: true}
   },
   data: () => ({
     percentile: false
   }),
   methods: {
-    config() {
-      return config
-    },
     clear_type_class(song) {
       return "table-line-" + config.LAMP_INDEX[song.clear_type]
     },
@@ -118,20 +115,5 @@ export default {
       this.$refs.filter_modal.show_modal()
     },
   },
-  computed: {
-    /**
-     * @returns {SongDetail[]}
-     */
-    song_list() {
-      if (!this.model.is_initialized()) {
-        return [SongDetail.dummy()]
-      }
-      let filter = this.$store.state.filter
-      let songs = this.model.tables.get_filtered_score(filter)
-      return songs.sort((a, b) => {
-        return a.updated_at === b.updated_at ? 0 : (a.updated_at < b.updated_at) ? 1 : -1
-      }).slice(0, filter.max_length > 0 ? filter.max_length : songs.length)
-    },
-  }
 }
 </script>

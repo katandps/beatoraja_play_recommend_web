@@ -5,8 +5,17 @@
       <display-songs-limiter class="col-sm-4"/>
       <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
     </div>
-    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"
-                   :can_level_select="true"/>
+    <TableSelector
+      :table_list="table_list"
+      :level_list="level_list"
+      :selected_table="selected_table"
+      :selected_level="selected_level"
+      :visible_all_level="visible_all_level"
+      @setTable="set_table"
+      @setLevel="set_level"
+      @setVisibleAllLevelsFlag="set_visible_all_levels_flag"
+      :can_level_select="true"
+    />
     <hr/>
     <div class="table-wrapper">
       <div class="score-table">
@@ -34,7 +43,7 @@
           </div>
         </div>
         <transition-group tag="div" class="tbody" name="flip-list">
-          <div v-for="song in model.get_sorted_song_list(filter)"
+          <div v-for="song in sorted_song_list"
                :key="song.md5"
                :class="clear_type_class(song)" class="tr">
             <data-cell class="clear" column_name="clear" :class="song.clear_type_bg_class()"/>
@@ -82,6 +91,7 @@ import HeaderCell from "./cell/HeaderCell"
 import DataCell from "./cell/DataCell"
 import DateCell from "./cell/DateCell"
 import FilterModal from "./modal/FilterModal"
+import { DifficultyTable } from "../../../models/difficultyTable"
 
 export default {
   name: "Rival",
@@ -96,10 +106,16 @@ export default {
     FilterModal
   },
   props: {
-    rival_id: {
-      type: Number,
-    },
-    date: {type: String}
+    sorted_song_list: { require: true },
+    tables_is_set: { type: Boolean, require: true },
+    date: { type: String, require: true },
+    table_list: { require: true},
+    level_list: { required: true },
+    can_level_select: { type: Boolean, required: false },
+    visible_all_level: {type: Boolean},
+    selected_table: { type: DifficultyTable ,required: true },
+    selected_level: { type: String, required: true },
+    rival_id: { type: Number},
   },
   methods: {
     clear_type_class(song) {
@@ -110,6 +126,12 @@ export default {
      */
     set_table(table) {
       this.$emit('setTable', table)
+    },
+    set_level(level) {
+      this.$emit('setLevel', level)
+    },
+    set_visible_all_levels_flag(flag) {
+      this.$emit('setVisibleAllLevelsFlag', flag)
     },
     async refresh_rival_id(rival_id) {
       let query = Object.assign({}, this.$route.query)
