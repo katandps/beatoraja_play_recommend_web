@@ -95,11 +95,6 @@ const table_score = computed(() => {
         songs.value.get_score(hash),
         hash
       )
-      log.debug(
-        songs.value.get_score(hash),
-        rival_score.value,
-        rival_score.value.get_score(hash)
-      )
       table_score[level_label][hash].init_rival_score(
         rival_score.value.get_score(hash)
       )
