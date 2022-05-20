@@ -1,15 +1,13 @@
 <script setup>
 import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
 import InputUserId from "./selector/InputUserId"
-import config from "../../../const"
 import RivalModal from "./modal/RivalModal"
 import HeaderCell from "./cell/HeaderCell"
-import DataCell from "./cell/DataCell"
-import DateCell from "./cell/DateCell"
 import FilterModal from "./modal/FilterModal"
 import { computed, ref } from "@vue/reactivity"
 import { useStore } from "vuex"
 import { useRoute, useRouter } from "vue-router"
+import RowSong from "./cell/RowSong"
 
 const store = useStore()
 const route = useRoute()
@@ -34,16 +32,12 @@ const props = defineProps({
 const filter = computed(() => store.getters.filter)
 
 // --- methods ---
-const clear_type_class = (song) =>
-  "table-line-" + config.LAMP_INDEX[song.clear_type]
-
 const refresh_rival_id = async (rival_id) => {
   let query = Object.assign({}, route.query)
   query.rival_id = rival_id
   await router.push({ query: query })
 }
 const show_modal = (song) => rival_modal.value.show_modal(song, props.date)
-
 const show_filter_modal = () => filter_modal.value.show_modal()
 </script>
 
@@ -104,81 +98,12 @@ const show_filter_modal = () => filter_modal.value.show_modal()
           </div>
         </div>
         <transition-group tag="div" class="tbody" name="flip-list">
-          <div
+          <RowSong
             v-for="song in sorted_song_list"
             :key="song.md5"
-            :class="clear_type_class(song)"
-            class="tr"
-          >
-            <data-cell
-              class="clear"
-              column_name="clear"
-              :class="song.clear_type_bg_class()"
-            />
-            <data-cell class="level" column_name="level">{{
-              song.level
-            }}</data-cell>
-            <data-cell
-              class="title"
-              column_name="title"
-              @click="show_modal(song)"
-            >
-              {{ song.title }}
-            </data-cell>
-            <date-cell column_name="date" :date="song.updated_at" />
-            <data-cell
-              class="clear_vs"
-              column_name="clear_diff_rival"
-              :class="song.clear_type_rival_bg_class()"
-            >
-              <span
-                v-if="song.clear_type === song.rival_clear_type"
-                class="draw"
-                >draw</span
-              >
-              <span
-                v-else-if="song.clear_type < song.rival_clear_type"
-                class="lose"
-                >lose</span
-              >
-              <span v-else class="win">win</span>
-            </data-cell>
-            <data-cell class="score_vs" column_name="score_diff_rival">
-              <span v-if="song.score === 0 || song.rival_score === 0">-</span>
-              <span v-else-if="song.score === song.rival_score" class="draw">{{
-                song.score - song.rival_score
-              }}</span>
-              <span v-else-if="song.score < song.rival_score" class="lose">{{
-                song.score - song.rival_score
-              }}</span>
-              <span v-else class="win"
-                >+{{ song.score - song.rival_score }}</span
-              >
-            </data-cell>
-            <data-cell class="bp_vs" column_name="bp_diff_rival">
-              <span
-                v-if="
-                  song.rival_min_bp === -1 ||
-                  song.min_bp === -1 ||
-                  song.rival_min_bp === 2147483647 ||
-                  song.min_bp === 2147483647
-                "
-                >---</span
-              >
-              <span
-                v-else-if="song.rival_min_bp === song.min_bp"
-                class="draw"
-                >{{ song.min_bp - song.rival_min_bp }}</span
-              >
-              <span v-else-if="song.rival_min_bp < song.min_bp" class="lose"
-                >+{{ song.min_bp - song.rival_min_bp }}</span
-              >
-              <span v-else class="win">{{
-                song.min_bp - song.rival_min_bp
-              }}</span>
-            </data-cell>
-            <date-cell column_name="rival_date" :date="song.rival_updated_at" />
-          </div>
+            :song="song"
+            @showModal="show_modal"
+          />
         </transition-group>
       </div>
     </div>

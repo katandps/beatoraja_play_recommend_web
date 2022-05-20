@@ -58,6 +58,7 @@ const exists_tables = computed(() => !!tables.value)
 const exists_scores = computed(() => !!scores.value)
 const exists_songs = computed(() => !!songs.value)
 const exists_table_selected = computed(() => !!selected_table.value)
+const exists_rival_score = computed(() => !!rival_score.value)
 const is_initialized = computed(
   () =>
     exists_tables.value &&
@@ -95,9 +96,11 @@ const table_score = computed(() => {
         songs.value.get_score(hash),
         hash
       )
-      table_score[level_label][hash].init_rival_score(
-        rival_score.value.get_score(hash)
-      )
+      if (exists_rival_score.value) {
+        table_score[level_label][hash].init_rival_score(
+          rival_score.value.get_score(hash)
+        )
+      }
       table_score[level_label][hash].set_level(level_label)
     })
   )
@@ -179,19 +182,14 @@ const set_table = (table_name) => {
     selected_level.value = selected_table.value.level_list[0]
   }
 }
-const set_level = (level) => {
-  selected_level.value = level
-}
-const set_visible_all_level = (flag) => {
-  filter.value.visible_all_levels = flag
-}
+const set_level = (level) => (selected_level.value = level)
+const set_visible_all_level = (flag) => (filter.value.visible_all_levels = flag)
+
 const set_date = async (d) => {
   date.value = d
   await this.fetch_detail()
 }
-const show_modal = () => {
-  tables_modal.value.show_modal()
-}
+const show_modal = () => tables_modal.value.show_modal()
 </script>
 
 <style scoped>
@@ -270,14 +268,9 @@ const show_modal = () => {
           v-if="is_initialized"
         />
         <ModalForSelectTable
-          :date="date_str"
-          :exists_tables="exists_tables"
-          :filtered_score="filtered_score"
-          :sorted_song_list="sorted_song_list"
-          :recent_song_list="recent_song_list"
+          :can_level_select="true"
           :table_list="table_list"
           :level_list="level_list"
-          :rival_id="rival_id"
           :selected_table="selected_table"
           :selected_level="selected_level"
           :visible_all_level="visible_all_level"
