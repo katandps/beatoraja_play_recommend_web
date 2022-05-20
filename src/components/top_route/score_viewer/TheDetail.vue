@@ -1,16 +1,5 @@
 <template>
   <div id="detail">
-    <TableSelector
-      :table_list="table_list"
-      :level_list="level_list"
-      :selected_table="selected_table"
-      :selected_level="selected_level"
-      :visible_all_level="visible_all_level"
-      @setTable="set_table"
-      @setLevel="set_level"
-      @setVisibleAllLevelsFlag="set_visible_all_levels_flag"
-      :can_level_select="true"
-    />
     <div class="form-group row align-items-center">
       <display-songs-limiter class="col-sm-5"/>
       <div class="col-sm-7">
@@ -110,11 +99,11 @@
   </div>
 </template>
 
-<script>
-import TableSelector from "./selector/TableSelector"
-import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
-import SongModal from "./modal/SongModal"
+<script setup>
 import config from "../../../const"
+
+import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
+
 import HeaderCell from "./cell/HeaderCell"
 import DataCell from "./cell/DataCell"
 import DateCell from "./cell/DateCell"
@@ -123,23 +112,11 @@ import DetailRankCell from "./cell/DetailRankCell"
 import FilterModal from "./modal/FilterModal"
 import ColumnModal from "./modal/ColumnModal"
 import RecommendModal from "./modal/RecommendModal"
-import { DifficultyTable } from '../../../models/difficultyTable'
+import SongModal from "./modal/SongModal"
+</script>
+<script>
 
 export default {
-  name: "Detail",
-  components: {
-    DateCell,
-    TableSelector,
-    DisplaySongsLimiter,
-    HeaderCell,
-    DataCell,
-    RankCell,
-    DetailRankCell,
-    SongModal,
-    FilterModal,
-    ColumnModal,
-    RecommendModal
-  },
   props: {
     sorted_song_list: {require: true},
     tables_is_set: { type: Boolean, require: true },
@@ -147,20 +124,8 @@ export default {
     table_list: { require: true},
     level_list: { required: true },
     can_level_select: { type: Boolean, required: false },
-    visible_all_level: {type: Boolean},
-    selected_table: { type: DifficultyTable ,required: true },
-    selected_level: { type: String, required: true }
   },
   methods: {
-    set_table(table) {
-      this.$emit('setTable', table)
-    },
-    set_level(level) {
-      this.$emit('setLevel', level)
-    },
-    set_visible_all_levels_flag(flag) {
-      this.$emit('setVisibleAllLevelsFlag', flag)
-    },
     clear_type_class(song) {
       return "table-line-" + config.LAMP_INDEX[song.clear_type];
     },

@@ -1,10 +1,5 @@
 <template>
   <div id="lamp-graph">
-    <TableSelector
-      :table_list="table_list"
-      :selected_table="selected_table"
-      @setTable="set_table"
-    />
     <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
     <hr>
     凡例
@@ -55,19 +50,16 @@ import config from "../../../const.js"
 <script>
 import * as log from "loglevel"
 import SongDetail from "../../../models/song_detail"
-import TableSelector from "./selector/TableSelector"
 import GraphModal from "./modal/GraphModal"
 import FilterModal from "./modal/FilterModal"
-import { DifficultyTable } from "../../../models/difficultyTable.js"
 
 export default {
   name: "LampGraph",
-  components: {TableSelector, GraphModal, FilterModal},
+  components: {GraphModal, FilterModal},
   props: {
     filtered_score: { required: true },
     table_list: { required: true },
     level_list: { required: true },
-    selected_table: { type: DifficultyTable ,required: true },
   },
   methods: {
     /**
@@ -80,12 +72,6 @@ export default {
     },
     list(level_index, rank_index) {
       return this.lamp_list[level_index][rank_index].sort(SongDetail.cmp_title).map(s => s.title)
-    },
-    /**
-     * @param {string} table
-     */
-    set_table(table) {
-      this.$emit('setTable', table)
     },
     show_filter_modal() {
       this.$refs.filter_modal.show_modal()

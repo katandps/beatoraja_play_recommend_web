@@ -5,17 +5,6 @@
       <display-songs-limiter class="col-sm-4"/>
       <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
     </div>
-    <TableSelector
-      :table_list="table_list"
-      :level_list="level_list"
-      :selected_table="selected_table"
-      :selected_level="selected_level"
-      :visible_all_level="visible_all_level"
-      @setTable="set_table"
-      @setLevel="set_level"
-      @setVisibleAllLevelsFlag="set_visible_all_levels_flag"
-      :can_level_select="true"
-    />
     <hr/>
     <div class="table-wrapper">
       <div class="score-table">
@@ -48,9 +37,8 @@
                :class="clear_type_class(song)" class="tr">
             <data-cell class="clear" column_name="clear" :class="song.clear_type_bg_class()"/>
             <data-cell class="level" column_name="level">{{ song.level }}</data-cell>
-            <data-cell class="title" column_name="title" @click="show_modal(song)">{{
-                song.title
-              }}
+            <data-cell class="title" column_name="title" @click="show_modal(song)">
+            {{ song.title }}
             </data-cell>
             <date-cell column_name="date" :date="song.updated_at" />
             <data-cell class="clear_vs" column_name="clear_diff_rival"
@@ -83,7 +71,6 @@
 
 <script>
 import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
-import TableSelector from "./selector/TableSelector"
 import InputUserId from "./selector/InputUserId"
 import config from "../../../const"
 import RivalModal from "./modal/RivalModal"
@@ -91,14 +78,11 @@ import HeaderCell from "./cell/HeaderCell"
 import DataCell from "./cell/DataCell"
 import DateCell from "./cell/DateCell"
 import FilterModal from "./modal/FilterModal"
-import { DifficultyTable } from "../../../models/difficultyTable"
 
 export default {
-  name: "Rival",
   components: {
     DateCell,
     DisplaySongsLimiter,
-    TableSelector,
     InputUserId,
     RivalModal,
     HeaderCell,
@@ -112,26 +96,11 @@ export default {
     table_list: { require: true},
     level_list: { required: true },
     can_level_select: { type: Boolean, required: false },
-    visible_all_level: {type: Boolean},
-    selected_table: { type: DifficultyTable ,required: true },
-    selected_level: { type: String, required: true },
     rival_id: { type: Number},
   },
   methods: {
     clear_type_class(song) {
       return "table-line-" + config.LAMP_INDEX[song.clear_type]
-    },
-    /**
-     * @param {string} table
-     */
-    set_table(table) {
-      this.$emit('setTable', table)
-    },
-    set_level(level) {
-      this.$emit('setLevel', level)
-    },
-    set_visible_all_levels_flag(flag) {
-      this.$emit('setVisibleAllLevelsFlag', flag)
     },
     async refresh_rival_id(rival_id) {
       let query = Object.assign({}, this.$route.query)

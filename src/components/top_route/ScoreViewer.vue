@@ -1,42 +1,260 @@
+<script setup lagn="ts">
+import Tables from "../../models/difficultyTable"
+import InputUserId from "./score_viewer/selector/InputUserId"
+import ScoreViewerHeader from "./score_viewer/ScoreViewerHeader"
+import DateSelector from "./score_viewer/selector/DateSelector"
+import Api from "../../api"
+import * as log from "loglevel"
+import SongFilter from "../../models/songFilter"
+import { useStore } from "vuex"
+import { computed, onMounted, ref, defineProps } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import { DateFormatter } from "../../models/date_formatter"
+import SongDetail from "../../models/song_detail"
+import ModalForSelectTable from "./score_viewer/modal/ModalForSelectTable"
+
+const store = useStore()
+const route = useRoute()
+const router = useRouter()
+onMounted(() => {
+  store.commit("setFilter", new SongFilter(filter.value))
+  Api.fetch_tables(accessToken).then((t) => init_table(t))
+  Api.fetch_songs(accessToken).then((s) => (songs.value = s))
+  fetch_detail(route.query)
+  init_rival()
+})
+
+// --- refs ---
+const tables_modal = ref(null)
+
+// --- props ---
+const props = defineProps({
+  user_id: { type: Number },
+  mode: { type: String },
+  rival_id: { type: Number }
+})
+
+// --- data ---
+const tables = ref(new Tables([]))
+const selected_table = ref()
+const selected_level = ref("")
+const songs = ref()
+const scores = ref()
+const rival_score = ref()
+const date = ref(new Date(new Date().setHours(0, 0, 0, 0)))
+const message = ref("")
+const loaded = ref({ user_id: null, rival_id: null, date: "" })
+
+// --- computed ---
+const accessToken = computed(() => store.getters.accessToken)
+const filter = computed(() => store.getters.filter)
+const table_list = computed(() =>
+  tables.value ? tables.value.name_list() : []
+)
+const level_list = computed(() =>
+  selected_table.value ? selected_table.value.level_list : []
+)
+const exists_tables = computed(() => !!tables.value)
+const exists_scores = computed(() => !!scores.value)
+const exists_songs = computed(() => !!songs.value)
+const exists_table_selected = computed(() => !!selected_table.value)
+const is_initialized = computed(
+  () =>
+    exists_tables.value &&
+    exists_songs.value &&
+    exists_scores.value &&
+    exists_table_selected.value
+)
+const visible_all_level = computed(() => filter.value.visible_all_levels)
+const date_str = computed(() => DateFormatter.format(date.value))
+const user_name = computed(() => (exists_scores.value ? scores.value.name : ""))
+const twitter_link = computed(() =>
+  exists_scores.value
+    ? "https://twitter.com/intent/tweet?url=" +
+      window.location.host +
+      "/%23/view?user_id=" +
+      scores.value.user_id
+    : ""
+)
+const table_score = computed(() => {
+  if (!is_initialized.value) {
+    return {}
+  }
+  log.debug(selected_table.value.levels)
+  let table_score = {}
+  Object.entries(selected_table.value.levels).forEach(([level_label, hashes]) =>
+    hashes.forEach((hash) => {
+      if (!table_score[level_label]) {
+        table_score[level_label] = {}
+      }
+      if (!table_score[level_label][hash]) {
+        table_score[level_label][hash] = new SongDetail()
+      }
+      table_score[level_label][hash].init_score(scores.value.get_score(hash))
+      table_score[level_label][hash].init_song(
+        songs.value.get_score(hash),
+        hash
+      )
+      log.debug(
+        songs.value.get_score(hash),
+        rival_score.value,
+        rival_score.value.get_score(hash)
+      )
+      table_score[level_label][hash].init_rival_score(
+        rival_score.value.get_score(hash)
+      )
+      table_score[level_label][hash].set_level(level_label)
+    })
+  )
+
+  log.debug(table_score)
+  return table_score
+})
+
+const filtered_score = computed(() =>
+  Object.values(table_score.value)
+    .map((scores) => Object.values(scores).filter((s) => filter.value.apply(s)))
+    .flat()
+)
+const sorted_song_list = computed(() => {
+  let songs = filtered_score.value
+  if (!filter.value.visible_all_levels) {
+    songs = songs.filter((s) => s.level === selected_level.value)
+  }
+  return songs
+    .sort((a, b) => {
+      let valA = a.sort_key(filter.value.sort_key, level_list)
+      let valB = b.sort_key(filter.value.sort_key, level_list)
+      return valA === valB ? 0 : (valA < valB) ^ filter.value.sort_desc ? -1 : 1
+    })
+    .slice(0, filter.value.max_length || songs.length)
+})
+const recent_song_list = computed(() =>
+  filtered_score.value
+    .slice()
+    .sort((a, b) =>
+      a.updated_at === b.updated_at ? 0 : a.updated_at < b.updated_at ? 1 : -1
+    )
+    .slice(0, filter.value.max_length || filtered_score.value.length)
+)
+
+// --- methods ---
+const init_table = (t) => {
+  tables.value = t
+  log.debug(tables, tables.value.first())
+  selected_table.value = tables.value.first()
+  selected_level.value = selected_table.value.level_list[0]
+}
+
+const init_rival = () => {
+  if (loaded.value.rival_id !== props.rival_id) {
+    Api.fetch_score(date_str.value, props.rival_id, accessToken).then((s) => {
+      rival_score.value = s
+    })
+  }
+  loaded.value.rival_id = props.rival_id
+}
+
+const fetch_detail = () => {
+  log.debug(props.user_id)
+  if (
+    loaded.value.user_id !== props.user_id ||
+    loaded.value.date !== date_str.value
+  ) {
+    log.debug("fetch!")
+    message.value = "読込中..."
+    Api.fetch_score(date_str.value, props.user_id, accessToken).then((s) => {
+      scores.value = s
+      message.value = exists_scores.value ? "" : "読み込み失敗"
+    })
+    loaded.value.user_id = props.user_id
+    loaded.value.date = date_str.value
+  }
+}
+const refreshUserId = async (input_user_id) => {
+  let query = Object.assign({}, this.$route.query)
+  query.user_id = input_user_id
+  await router.push({ query: query })
+}
+const set_table = (table_name) => {
+  selected_table.value = tables.value
+    ? tables.value.get_table(table_name)
+    : selected_table.value
+  if (exists_table_selected.value) {
+    selected_level.value = selected_table.value.level_list[0]
+  }
+}
+const set_level = (level) => {
+  selected_level.value = level
+}
+const set_visible_all_level = (flag) => {
+  filter.value.visible_all_levels = flag
+}
+const set_date = async (d) => {
+  date.value = d
+  await this.fetch_detail()
+}
+const show_modal = () => {
+  tables_modal.value.show_modal()
+}
+</script>
+
+<style scoped>
+#score-table {
+  padding-top: 20px;
+}
+</style>
+
 <template>
   <section id="score-table">
     <div class="row">
-      <InputUserId :user_id="user_id" @refresh="refreshUserId" class="col-sm-6"/>
-      <DateSelector @setDate="set_date" class="col-sm-6"/>
+      <InputUserId
+        :user_id="user_id"
+        @refresh="refreshUserId"
+        class="col-sm-4"
+      />
+      <DateSelector :date="date" @setDate="set_date" class="col-sm-4" />
+      <div class="col-sm-4">
+        <div class="btn btn-info" @click="show_modal">難易度表設定</div>
+      </div>
     </div>
-    <hr>
+    <hr />
     <div v-if="is_initialized">
-      <score-viewer-header :user_name="user_name" :twlink="twitter_link" :song_is_set="song_is_set"/>
+      <score-viewer-header
+        :user_name="user_name"
+        :twlink="twitter_link"
+        :exists_songs="exists_songs"
+      />
       <div>
         <div class="form-group row">
           <div class="col-sm-12">
-            <router-link :to="{path: '/view/lamp', query: $route.query}">
+            <router-link :to="{ path: '/view/lamp', query: $route.query }">
               <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
                 クリアランプ
               </div>
             </router-link>
-            <router-link :to="{path: '/view/rank', query: $route.query}">
+            <router-link :to="{ path: '/view/rank', query: $route.query }">
               <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
                 スコアランク
               </div>
             </router-link>
-            <router-link :to="{path: '/view/stat', query: $route.query}">
+            <router-link :to="{ path: '/view/stat', query: $route.query }">
               <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
                 統計
-                <font-awesome-icon :icon="['fas', 'wrench']"/>
+                <font-awesome-icon :icon="['fas', 'wrench']" />
               </div>
             </router-link>
-            <router-link :to="{path: '/view/', query: $route.query}">
+            <router-link :to="{ path: '/view/', query: $route.query }">
               <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
                 詳細
               </div>
             </router-link>
-            <router-link :to="{path: '/view/recent', query: $route.query}">
+            <router-link :to="{ path: '/view/recent', query: $route.query }">
               <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
                 最近更新
               </div>
             </router-link>
-            <router-link :to="{path: '/view/rival', query: $route.query}">
+            <router-link :to="{ path: '/view/rival', query: $route.query }">
               <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
                 ライバル比較
               </div>
@@ -44,10 +262,21 @@
           </div>
         </div>
 
-        <hr>
+        <hr />
         <router-view
           :date="date_str"
-          :tables_is_set="tables_is_set"
+          :exists_tables="exists_tables"
+          :filtered_score="filtered_score"
+          :sorted_song_list="sorted_song_list"
+          :recent_song_list="recent_song_list"
+          :table_list="table_list"
+          :level_list="level_list"
+          :rival_id="rival_id"
+          v-if="is_initialized"
+        />
+        <ModalForSelectTable
+          :date="date_str"
+          :exists_tables="exists_tables"
           :filtered_score="filtered_score"
           :sorted_song_list="sorted_song_list"
           :recent_song_list="recent_song_list"
@@ -61,243 +290,10 @@
           @setLevel="set_level"
           @setVisibleAllLevelsFlag="set_visible_all_level"
           v-if="is_initialized"
+          ref="tables_modal"
         />
       </div>
     </div>
     <p v-else>{{ message }}</p>
   </section>
 </template>
-
-<script>
-import Tables from "../../models/difficultyTable"
-import InputUserId from "./score_viewer/selector/InputUserId"
-import ScoreViewerHeader from "./score_viewer/ScoreViewerHeader"
-import DateSelector from "./score_viewer/selector/DateSelector"
-import Api from "../../api"
-import * as log from "loglevel"
-import SongFilter from "../../models/songFilter"
-import {useStore} from "vuex"
-import {computed} from "vue"
-import { DateFormatter } from "../../models/date_formatter"
-import SongDetail from "../../models/song_detail"
-
-export default {
-  name: "ScoreViewer",
-  components: {
-    ScoreViewerHeader,
-    InputUserId,
-    DateSelector,
-  },
-  props: {
-    user_id: { type: Number },
-    mode: { type: String },
-    rival_id: { type: Number },
-  },
-  data: () => ({
-    tables: new Tables([]),
-    selected_table: null,
-    selected_level: "",
-    songs: null,
-    scores: null,
-    date: new Date(new Date().setHours(0, 0, 0, 0)),
-    rival_name: "",
-    message: "",
-    loaded: {user_id: null, rival_id: null, date: ""},
-  }),
-  setup () {
-    const store = useStore()
-    return {
-      accessToken: computed(() => store.getters.accessToken),
-      filter: computed(() => store.getters.filter)
-    }
-  },
-  async beforeMount() {
-    log.debug(this.filter)
-    this.$store.commit('setFilter', new SongFilter(this.filter))
-    const t = await Api.fetch_tables(this.accessToken)
-    this.init_table(t)
-    const s = await Api.fetch_songs(this.accessToken)
-    this.init_songs(s)
-    await this.fetch_detail(this.$route.query)
-  },
-  computed: {
-    table_list() {
-      return this.tables ? this.tables.name_list() : []
-    },
-    level_list() {
-      return this.selected_table ? this.selected_table.level_list : []
-    },
-    tables_is_set() {
-      return !!this.tables
-    },
-    score_is_set() {
-      return !!this.scores
-    },
-    song_is_set() {
-      return !!this.songs
-    },
-    table_is_selected() {
-      return !!this.selected_table
-    },
-    is_initialized() {
-      return this.tables_is_set && this.song_is_set && this.score_is_set && this.table_is_selected
-    },
-    visible_all_level() {
-      return this.filter.visible_all_levels
-    },
-    date_str() {
-      return DateFormatter.format(this.date)
-    },
-    user_name() {
-      return this.score_is_set ? this.scores.name : ""
-    },
-    table_name() {
-      return this.selected_table ? this.selected_table.name : ""
-    },
-    twitter_link() {
-      if (!this.score_is_set) {
-        return ""
-      }
-      return (
-        "https://twitter.com/intent/tweet?url=" +
-        window.location.host +
-        "/%23/view?user_id=" +
-        this.scores.user_id
-      )
-    },
-    filtered_score() {
-      if (!this.is_initialized || !this.selected_table) {
-        return [SongDetail.dummy()]
-      }
-      return this.selected_table.get_filtered_score(this.filter)
-    },
-    sorted_song_list() {
-      let songs = this.filtered_score
-      if (!this.filter.visible_all_levels) {
-        songs = songs.filter((s) => s.level === this.selected_level)
-      }
-      const length = this.filter.max_length > 0 ? this.filter.max_length : songs.length
-      return songs
-        .sort((a, b) => {
-          let valA = a.sort_key(this.filter.sort_key, this.level_list)
-          let valB = b.sort_key(this.filter.sort_key, this.level_list)
-          return valA === valB ? 0 : (valA < valB) ^ this.filter.sort_desc ? -1 : 1
-        })
-        .slice(0, length)
-    },
-    recent_song_list() {
-      let songs = this.filtered_score
-      return songs.sort((a, b) => {
-        return a.updated_at === b.updated_at ? 0 : (a.updated_at < b.updated_at) ? 1 : -1
-      }).slice(0, this.filter.max_length > 0 ? this.filter.max_length : songs.length)
-    }
-  },
-  methods: {
-    init_songs(songs) {
-      this.songs = songs
-      this.init_table_score()
-    },
-    init_table(tables) {
-      this.tables = tables
-      log.debug(this.tables, this.tables.first())
-      this.selected_table = this.tables.first()
-      this.selected_level = this.selected_table.level_list[0]
-      this.init_table_score()
-    },
-    init_score(scores) {
-      this.scores = scores
-      this.init_table_score()
-    },
-    init_table_score() {
-      if (!this.is_initialized) {
-        return
-      }
-      this.tables.tables = this.tables.tables.map((table) => table.set_score(this.songs, this.scores))
-    },
-    set_table(table_name) {
-      this.selected_table = this.tables ? this.tables.get_table(table_name) : this.selected_table
-      this.init_table_score()
-      if (this.selected_table) {
-        this.selected_level = this.selected_table.level_list[0]
-      }
-    },
-    set_level(level) {
-      this.selected_level = level
-    },
-    set_visible_all_level(flag) { this.filter.visible_all_levels = flag },
-    renew_with_rival_score(scores) {
-      if (!this.is_initialized) {
-        return
-      }
-      this.tables = this.tables.set_rival_score(scores)
-      this.rival_name = scores.name
-    },
-
-    async refreshUserId(input_user_id) {
-      let query = Object.assign({}, this.$route.query)
-      query.user_id = input_user_id
-      await this.$router.push({query: query})
-    },
-
-    async set_rival() {
-      if (this.loaded.rival_id !== this.rival_id) {
-        await Api.fetch_score(
-            this.date_str,
-            this.rival_id,
-            this.$store.getters.accessToken
-        ).then(s => {
-          this.renew_with_rival_score(s)
-        })
-        this.loaded.rival_id = this.rival_id
-      }
-    },
-
-    async fetch_detail() {
-      log.debug(this.user_id)
-      if (this.loaded.user_id !== this.user_id || this.loaded.date !== this.date_str) {
-        log.debug("fetch!")
-        this.message = "読込中..."
-        await Api.fetch_score(
-            this.date_str,
-            this.user_id,
-            this.$store.getters.accessToken
-        ).then(s => {
-          this.init_score(s)
-          this.message = this.score_is_set ? "" : "読み込み失敗"
-        })
-        this.loaded.user_id = this.user_id
-        this.loaded.date = this.date_str
-      }
-    },
-
-    async set_date(date) {
-      this.date = date
-      await this.fetch_detail()
-    },
-  },
-  watch: {
-    date: {
-      async handler() {
-        await this.fetch_detail()
-      }
-    },
-    user_id: {
-      async handler() {
-        await this.fetch_detail()
-      }
-    },
-    '$route': {
-      async handler() {
-        await this.fetch_detail()
-        await this.set_rival()
-      }
-    }
-  }
-}
-</script>
-
-<style scoped>
-#score-table {
-  padding-top: 20px;
-}
-</style>
