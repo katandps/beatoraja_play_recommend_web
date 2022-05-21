@@ -1,48 +1,57 @@
 <template>
   <div id="rank-graph">
-    <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
-    <hr>
+    <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal"
+      >表示曲設定</label
+    >
+    <hr />
     凡例
-    <table style="width:100%">
+    <table style="width: 100%">
       <tr>
-        <td class="progress" style="width:100%;height:1.8em">
-          <div v-for="rank in config.RANK_TYPE" :key="rank"
-               :class="'progress-bar bg-' + rank"
-               role="progressbar"
-               style="color:#000"
-               :style="'width: ' + 100.0/config.RANK_TYPE.length + '%'"
-          >{{ rank }}
+        <td class="progress" style="width: 100%; height: 1.8em">
+          <div
+            v-for="rank in config.RANK_TYPE"
+            :key="rank"
+            :class="'progress-bar bg-' + rank"
+            role="progressbar"
+            style="color: #000"
+            :style="'width: ' + 100.0 / config.RANK_TYPE.length + '%'"
+          >
+            {{ rank }}
           </div>
         </td>
       </tr>
     </table>
-    <hr>
-    <table style="width:100%">
+    <hr />
+    <table style="width: 100%">
       <tr v-for="(level, level_index) in level_list" :key="level_index">
-        <td style="width:30px">{{ level }}</td>
-        <td class="progress" style="width:100%;height:1.8em">
+        <td style="width: 30px">{{ level }}</td>
+        <td class="progress" style="width: 100%; height: 1.8em">
           <div
-              v-for="(rank, rank_index) in config.RANK_TYPE" :key="rank"
-              :class="'progress-bar bg-' + rank"
-              role="progressbar"
-              :style="'width: ' + rank_list[level_index][rank_index].length * 100 + '%;color:#000'"
-              v-on:click="show_modal(
-                  level + ' ' +  rank,
-                  list(level_index, rank_index)
-              )"
+            v-for="(rank, rank_index) in config.RANK_TYPE"
+            :key="rank"
+            :class="'progress-bar bg-' + rank"
+            role="progressbar"
+            :style="
+              'width: ' +
+              rank_list[level_index][rank_index].length * 100 +
+              '%;color:#000'
+            "
+            v-on:click="
+              show_modal(level + ' ' + rank, list(level_index, rank_index))
+            "
           >
             {{ rank_list[level_index][rank_index].length }}
           </div>
         </td>
       </tr>
     </table>
-    <graph-modal id="song-list-modal" ref="modal"/>
-    <filter-modal id="filter-modal" ref="filter_modal"/>
+    <graph-modal id="song-list-modal" ref="modal" />
+    <filter-modal id="filter-modal" ref="filter_modal" />
   </div>
 </template>
 
 <script setup>
-import config from "../../../const.js"
+import config from "../../../const"
 import GraphModal from "./modal/GraphModal"
 import FilterModal from "./modal/FilterModal"
 </script>
@@ -56,7 +65,7 @@ export default {
   props: {
     filtered_score: { required: true },
     table_list: { required: true },
-    level_list: { required: true },
+    level_list: { required: true }
   },
   methods: {
     /**
@@ -68,23 +77,27 @@ export default {
       this.$refs.modal.show_modal(title, text)
     },
     list(level_index, rank_index) {
-      return this.rank_list[level_index][rank_index].sort(SongDetail.cmp_title).map(s => s.title)
+      return this.rank_list[level_index][rank_index]
+        .sort(SongDetail.cmp_title)
+        .map((s) => s.title)
     },
     show_filter_modal() {
       this.$refs.filter_modal.show_modal()
-    },
+    }
   },
   computed: {
     /**
      * @returns {SongDetail[][][]} SongDetail[level][rank][index]
      */
     rank_list() {
-      return this.level_list.map(
-          l => config.RANK_TYPE.map(
-              r => this.filtered_score.filter(s => s.clear_rank === r && s.level === l).sort(SongDetail.cmp_title)
-          )
+      return this.level_list.map((l) =>
+        config.RANK_TYPE.map((r) =>
+          this.filtered_score
+            .filter((s) => s.clear_rank === r && s.level === l)
+            .sort(SongDetail.cmp_title)
+        )
       )
-    },
+    }
   }
 }
 </script>

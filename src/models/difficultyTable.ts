@@ -1,22 +1,19 @@
+import SongDetail from "./song_detail"
+
 export default class Tables {
-  /**
-   * @param {Object[]} json
-   */
-  constructor(json) {
+  tables: DifficultyTable[]
+
+  constructor(json: any) {
     /**
      * @type {DifficultyTable[]}
      */
     this.tables = []
-    json.forEach((t) =>
+    json.forEach((t: any) =>
       this.tables.push(new DifficultyTable(t.name, t.levels, t.level_list))
     )
   }
 
-  /**
-   * @public
-   * @returns {string[]}
-   */
-  name_list() {
+  name_list(): string[] {
     return this.tables.map((t) => t.name)
   }
 
@@ -27,12 +24,7 @@ export default class Tables {
     return this.tables.length === 0 ? null : this.tables[0]
   }
 
-  /**
-   * @private
-   * @param table_name
-   * @returns {number}
-   */
-  table_index(table_name) {
+  table_index(table_name: string): number {
     for (let i = 0; i < this.tables.length; i++) {
       if (this.tables[i].name === table_name) {
         return i
@@ -45,17 +37,19 @@ export default class Tables {
    * @param table_name
    * @returns {DifficultyTable|null}
    */
-  get_table(table_name) {
+  get_table(table_name: string) {
     return this.tables[this.table_index(table_name)] || null
   }
 }
 
 export class DifficultyTable {
-  constructor(name, levels, level_list) {
-    /**
-     * @type string
-     */
-    this.name = name
+  name: string
+  levels: {[level: string]: string[]}
+  level_list: string[]
+  table_score: {[level: string]: {[md5: string]: SongDetail}}
+
+  constructor(table_name: string, levels: {[level: string]: string[]}, level_list: string[]) {
+    this.name = table_name
     /**
      * @type {Object.<string, string[]>} level_label: hash[]
      */
@@ -71,12 +65,7 @@ export class DifficultyTable {
     this.level_list.forEach((level) => (this.table_score[level] = {}))
   }
 
-  /**
-   * @public
-   * @param {string} table_name
-   * @returns {boolean}
-   */
-  contains_level(table_name) {
+  contains_level(table_name: string): boolean {
     return this.level_list.indexOf(table_name) !== -1
   }
 }

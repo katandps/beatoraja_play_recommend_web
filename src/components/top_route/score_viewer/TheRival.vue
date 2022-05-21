@@ -2,12 +2,13 @@
 import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
 import InputUserId from "./selector/InputUserId"
 import RivalModal from "./modal/RivalModal"
-import HeaderCell from "./cell/HeaderCell"
 import FilterModal from "./modal/FilterModal"
 import { computed, ref } from "@vue/reactivity"
 import { useStore } from "vuex"
 import { useRoute, useRouter } from "vue-router"
 import RowSong from "./cell/RowSong"
+import RowHeader from "./cell/RowHeader.vue"
+import RowColGroup from "./cell/RowColGroup.vue"
 
 const store = useStore()
 const route = useRoute()
@@ -29,7 +30,7 @@ const props = defineProps({
 })
 
 // --- computed ---
-const filter = computed(() => store.getters.filter)
+const columns = computed(() => store.getters.filter.columns_rival)
 
 // --- methods ---
 const refresh_rival_id = async (rival_id) => {
@@ -57,51 +58,14 @@ const show_filter_modal = () => filter_modal.value.show_modal()
     <hr />
     <div class="table-wrapper">
       <div class="score-table">
-        <div class="colgroup">
-          <div class="col clear" v-if="filter.column_is_active('clear')" />
-          <div class="col level" v-if="filter.column_is_active('level')" />
-          <div class="col title" v-if="filter.column_is_active('title')" />
-          <div class="col date" v-if="filter.column_is_active('date')" />
-          <div
-            class="col clear_vs"
-            v-if="filter.column_is_active('clear_diff_rival')"
-          />
-          <div
-            class="col score_vs"
-            v-if="filter.column_is_active('score_diff_rival')"
-          />
-          <div
-            class="col bp_vs"
-            v-if="filter.column_is_active('bp_diff_rival')"
-          />
-          <div class="col date" v-if="filter.column_is_active('rival_date')" />
-        </div>
-
-        <div class="thead">
-          <div class="tr">
-            <header-cell class="clear" column_name="clear" />
-            <header-cell class="level" column_name="level">Lv</header-cell>
-            <header-cell class="title" column_name="title">Title</header-cell>
-            <header-cell class="date" column_name="date">Date</header-cell>
-            <header-cell class="clear_vs" column_name="clear_diff_rival"
-              >ClearVS</header-cell
-            >
-            <header-cell class="score_vs" column_name="score_diff_rival"
-              >ScoreVS</header-cell
-            >
-            <header-cell class="bp_vs" column_name="bp_diff_rival"
-              >BPVS</header-cell
-            >
-            <header-cell class="date" column_name="rival_date"
-              >RivalDate</header-cell
-            >
-          </div>
-        </div>
+        <RowColGroup :columns="columns" />
+        <RowHeader :columns="columns" />
         <transition-group tag="div" class="tbody" name="flip-list">
           <RowSong
             v-for="song in sorted_song_list"
             :key="song.md5"
             :song="song"
+            :columns="columns"
             @showModal="show_modal"
           />
         </transition-group>

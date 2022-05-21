@@ -7,10 +7,10 @@ import Api from "../../api"
 import * as log from "loglevel"
 import SongFilter from "../../models/songFilter"
 import { useStore } from "vuex"
-import { computed, onMounted, ref, defineProps } from "vue"
+import { computed, onMounted, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { DateFormatter } from "../../models/date_formatter"
-import SongDetail from "../../models/song_detail"
+import SongDetail from "../../models/song_detail.ts"
 import ModalForSelectTable from "./score_viewer/modal/ModalForSelectTable"
 
 const store = useStore()

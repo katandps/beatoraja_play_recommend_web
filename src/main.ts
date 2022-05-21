@@ -75,7 +75,7 @@ log.setLevel(logLevel, false);
 require("./assets/sass/main.scss");
 require("./assets/sass/tooltip.css");
 require("./assets/sass/table.css");
-app.config.productionTip = false;
+
 import "bootstrap/dist/css/bootstrap.min.css";
 
 app.mount("#app");

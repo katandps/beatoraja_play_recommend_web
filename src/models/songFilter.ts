@@ -1,14 +1,28 @@
-import config from "../const.js"
+import config from "../const"
 import { DateFormatter } from "./date_formatter"
 import * as log from "loglevel"
 import Columns from "./columns"
+import SongDetail from "./song_detail"
 
 export default class SongFilter {
-  constructor(filter) {
+  sort_desc: boolean
+  sort_key: string
+  columns_detail: Columns
+  columns_rival: Columns
+  columns_recent: Columns
+  visible_lamp: VisibleLamp
+  visible_rank: VisibleRank
+  day_before: number
+  max_length: number
+  visible_all_levels: boolean
+
+  constructor(filter: any) {
     log.debug("filter constructed by ", filter)
     this.sort_desc = filter ? filter.sort_desc : true
     this.sort_key = filter ? filter.sort_key : "clear"
-    this.columns = new Columns(filter ? filter.columns : null)
+    this.columns_detail = new Columns(filter ? filter.columns_detail : null)
+    this.columns_rival = new Columns(filter ? filter.columns_rival : null)
+    this.columns_recent = new Columns(filter ? filter.columns_recent : null)
     this.visible_lamp = new VisibleLamp(filter ? filter.visible_lamp : null)
     this.visible_rank = new VisibleRank(filter ? filter.visible_rank : null)
     this.day_before = filter ? filter.day_before || 0 : 0
@@ -16,26 +30,18 @@ export default class SongFilter {
     this.visible_all_levels = filter ? filter.visible_all_levels : false
   }
 
-  /**
-   * @public
-   * @param {string} key
-   */
-  set_sort(key) {
+  set_sort(key: string) {
     if (this.sort_key === key) {
       this.sort_desc = !this.sort_desc
     }
     this.sort_key = key
   }
 
-  /**
-   * @public
-   * @param {Columns} columns
-   */
-  set_columns(columns) {
+  set_columns(columns: Columns) {
     if (!columns) {
       return
     }
-    this.columns = columns
+    this.columns_detail = columns
   }
 
   /**
@@ -44,21 +50,12 @@ export default class SongFilter {
    * @param {string} key
    * @return {"sort_active" | "sort_inactive"}
    */
-  sort_key_is_active(key) {
+  sort_key_is_active(key: string) {
     if (this.sort_key === key) {
       return "sort_active"
     } else {
       return "sort_inactive"
     }
-  }
-
-  /**
-   * カラムを表示すべきかどうかを返す
-   * @param {string} column_name
-   * @return boolean
-   */
-  column_is_active(column_name) {
-    return this.columns[column_name]
   }
 
   visible_reverse() {
@@ -106,21 +103,16 @@ export default class SongFilter {
    * @param {SongDetail} song
    * @return boolean
    */
-  apply(song) {
+  apply(song: SongDetail) {
     return (
-      this.visible_lamp[song.clear_type] &&
-      this.visible_rank[song.clear_rank] &&
+      this.visible_lamp.lamps[song.clear_type] &&
+      this.visible_rank.ranks[song.clear_rank] &&
       this.viewable_date(song)
     )
   }
 
-  /**
-   * @private
-   * @param {SongDetail} song_detail
-   * @returns {boolean}
-   */
-  viewable_date(song_detail) {
-    let date = new Date()
+  viewable_date(song_detail: SongDetail): boolean {
+    const date = new Date()
     date.setDate(date.getDate() - this.day_before)
     return DateFormatter.format(date) >= song_detail.updated_at.split("T")[0]
   }
@@ -142,7 +134,7 @@ export default class SongFilter {
     this.sort_key = "score_date"
     this.sort_desc = false
     this.day_before = 0
-    this.columns.for_score()
+    this.columns_detail.for_score()
     this.visible_all_lamp_type()
     this.visible_rank.to_all()
   }
@@ -154,7 +146,7 @@ export default class SongFilter {
     this.sort_key = "bp_date"
     this.sort_desc = false
     this.day_before = 0
-    this.columns.for_bp()
+    this.columns_detail.for_bp()
     this.visible_all_lamp_type()
     this.visible_rank.to_all()
   }
@@ -166,7 +158,7 @@ export default class SongFilter {
     this.sort_key = "rate"
     this.sort_desc = true
     this.day_before = 0
-    this.columns.for_score()
+    this.columns_detail.for_score()
     this.visible_all_lamp_type()
     this.visible_rank.to_not_aaa()
   }
@@ -178,7 +170,7 @@ export default class SongFilter {
     this.sort_key = "rate"
     this.sort_desc = true
     this.day_before = 0
-    this.columns.for_score()
+    this.columns_detail.for_score()
     this.visible_all_lamp_type()
     this.visible_rank.to_not_aa()
   }
@@ -190,7 +182,7 @@ export default class SongFilter {
     this.sort_key = "bp"
     this.sort_desc = false
     this.day_before = 0
-    this.columns.for_bp()
+    this.columns_detail.for_bp()
     this.visible_not_easy()
     this.visible_rank.to_all()
   }
@@ -202,7 +194,7 @@ export default class SongFilter {
     this.sort_key = "bp"
     this.sort_desc = false
     this.day_before = 0
-    this.columns.for_bp()
+    this.columns_detail.for_bp()
     this.visible_not_hard()
     this.visible_rank.to_all()
   }
@@ -214,7 +206,7 @@ export default class SongFilter {
     this.sort_key = "bp"
     this.sort_desc = false
     this.day_before = 0
-    this.columns.for_bp()
+    this.columns_detail.for_bp()
     this.visible_not_ex_hard()
     this.visible_rank.to_all()
   }
@@ -226,82 +218,95 @@ export default class SongFilter {
     this.sort_key = "bp"
     this.sort_desc = false
     this.day_before = 0
-    this.columns.for_bp()
+    this.columns_detail.for_bp()
     this.visible_not_full_combo()
     this.visible_rank.to_all()
   }
 }
 
 class VisibleLamp {
-  constructor(lamp) {
+  lamps: boolean[] = [false, false, false, false,false,false,false,false,false,false]
+  constructor(lamp: VisibleLamp) {
     for (let i = 0; i < config.LAMP_TYPE.length; i += 1) {
-      this[i] = true
+      this.lamps[i] = true
     }
     Object.assign(this, lamp)
   }
 
-  static reverse(self) {
+  static reverse(self: VisibleLamp) {
     for (let i = 0; i < config.LAMP_TYPE.length; i += 1) {
-      self[i] = !self[i]
+      self.lamps[i] = !self.lamps[i]
     }
   }
 
   to_all() {
     for (let i = 0; i < config.LAMP_TYPE.length; i += 1) {
-      this[i] = true
+      this.lamps[i] = true
     }
   }
 
   to_not_full_combo() {
     this.to_all()
-    this[10] = false
-    this[9] = false
-    this[8] = false
+    this.lamps[10] = false
+    this.lamps[9] = false
+    this.lamps[8] = false
   }
 
   to_not_ex_hard() {
     this.to_not_full_combo()
-    this[7] = false
+    this.lamps[7] = false
   }
 
   to_not_hard() {
     this.to_not_ex_hard()
-    this[6] = false
+    this.lamps[6] = false
   }
 
   to_not_easy() {
     this.to_not_hard()
-    this[5] = false
-    this[4] = false
+    this.lamps[5] = false
+    this.lamps[4] = false
   }
 }
 
 class VisibleRank {
-  constructor(rank) {
-    this.Max = true
-    this.AAA = true
-    this.AA = true
-    this.A = true
-    this.B = true
-    this.C = true
-    this.D = true
-    this.E = true
-    this.F = true
-    Object.assign(this, rank)
+  ranks: {[k: string]: boolean} = {
+    Max: true,
+    AAA: true,
+    AA: true,
+    A: true,
+    B:true,
+    C:true,
+    D:true,
+    E:true,
+    F:true,
+  }
+
+  constructor(rank: VisibleRank) {
+    this.ranks.Max = true
+    this.ranks.AAA = true
+    this.ranks.AA = true
+    this.ranks.A = true
+    this.ranks.B = true
+    this.ranks.C = true
+    this.ranks.D = true
+    this.ranks.E = true
+    this.ranks.F = true
+    Object.assign(this.ranks, rank)
   }
 
   to_all() {
-    config.RANK_TYPE.forEach((type) => (this[type] = true))
+    config.RANK_TYPE.forEach((type: string) => (this.ranks[type] = true))
   }
 
   to_not_aaa() {
     this.to_all()
-    this.Max = false
-    this.AAA = false
+    this.ranks.Max = false
+    this.ranks.AAA = false
   }
 
   to_not_aa() {
     this.to_not_aaa()
-    this.AA = false
+    this.ranks.AA = false
   }
 }

@@ -5,23 +5,22 @@ import Tables from "./models/difficultyTable"
 import PlayStats from "./models/playStats"
 
 export default class Api {
-    constructor() {
-        this.host = process.env.VUE_APP_HOST
-    }
+    host: string = process.env.VUE_APP_HOST
 
     /**
      * @public
      * @param {string|null} token
      * @returns {Promise<any>}
      */
-    static async get_account(token) {
+    static async get_account(token: string | null) {
         if (token === null) {
             return {'error': 'token is not set'}
         }
         const obj = new Api()
         const uri = obj.host + "/account"
-        const init = {headers: {'session-token': token}}
-        return await fetch(uri, init).then(obj.handler).catch(obj.error)
+        const headers: any = {'session-token': token}
+        const init = {headers}
+            return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
     /**
@@ -29,11 +28,12 @@ export default class Api {
      * @param {string} token
      * @returns {[]| {error:*}}>}
      */
-    static async get_user_list(token) {
+    static async get_user_list(token: string | null) {
         const obj = new Api()
         const url = obj.host + "/users"
-        const init = {headers: {'session-token': token}}
-        return await fetch(url, init).then(obj.handler).catch(obj.error)
+        const headers: any = {'session-token': token}
+        const init = {headers}
+                return await fetch(url, init).then(obj.handler).catch(obj.error)
     }
 
     /**
@@ -42,7 +42,7 @@ export default class Api {
      * @param {number} table_index
      * @return string
      */
-    static get_table_header_url(user_id, table_index) {
+    static get_table_header_url(user_id: string, table_index: string) {
         const obj = new Api()
         return obj.host + "/recommend_table/" + user_id + "/" + table_index + "/table.html"
     }
@@ -54,11 +54,12 @@ export default class Api {
      * @param {string} token
      * @returns {Promise<null|{user_id: number, user_name: string, score: {}}>}
      */
-    static async fetch_score(date, user_id, token) {
+    static async fetch_score(date: string, user_id: string, token: string | null) {
         const obj = new Api()
         const url = obj.host + "/detail/?date=" + date + "&user_id=" + user_id
-        const init = {headers: {'session-token': token}}
-        try {
+        const headers: any = {'session-token': token}
+        const init = {headers}
+                try {
             /**
              * @type {({user_id: number, user_name: string, score: {}, error: string})}
              */
@@ -76,33 +77,36 @@ export default class Api {
         }
     }
 
-    static async fetch_ranking(token, sha256, date) {
+    static async fetch_ranking(token: string | null, sha256: string, date: string) {
         const obj = new Api()
         const uri = obj.host + "/ranking/?sha256=" + sha256 + "&date=" + date
-        const init = {headers: {'session-token': token}}
-        return await fetch(uri, init).then(obj.handler).catch(obj.error)
+        const headers: any = {'session-token': token}
+        const init = {headers}
+                return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
     /**
      * @param {string} token
      * @returns {Promise<Songs>}
      */
-    static async fetch_songs(token) {
+    static async fetch_songs(token: string | null) {
         const obj = new Api()
         const uri = obj.host + "/songs"
-        const init = {headers: {'session-token': token}}
-        return new Songs(await fetch(uri, init).then(obj.handler).catch(obj.error))
+        const headers: any = {'session-token': token}
+        const init = {headers}
+                return new Songs(await fetch(uri, init).then(obj.handler).catch(obj.error))
     }
 
     /**
      * @param {string} token
      * @returns {Promise<Tables>}
      */
-    static async fetch_tables(token) {
+    static async fetch_tables(token: string | null) {
         const obj = new Api()
         const uri = obj.host + "/tables"
-        const init = {headers: {'session-token': token}}
-        return new Tables(await fetch(uri, init).then(obj.handler).catch(obj.error))
+        const headers: any = {'session-token': token}
+        const init = {headers}
+                return new Tables(await fetch(uri, init).then(obj.handler).catch(obj.error))
     }
 
     /**
@@ -110,17 +114,19 @@ export default class Api {
      * @param {number} user_id
      * @returns {Promise<Object>}
      */
-    static async fetch_play_stats(token, user_id) {
+    static async fetch_play_stats(token: string | null, user_id: number) {
         const obj = new Api()
         const uri = obj.host + "/stats/" + user_id
-        const init = {headers: {'session-token': token}}
-        return new PlayStats(await fetch(uri, init).then(obj.handler).catch(obj.error))
+        const headers: any = {'session-token': token}
+        const init = {headers}   
+             return new PlayStats(await fetch(uri, init).then(obj.handler).catch(obj.error))
     }
 
-    static async logout(token) {
+    static async logout(token: string | null) {
         const obj = new Api()
         const uri = obj.host + "/logout"
-        const init = {headers: {'session-token': token}}
+        const headers: any = {'session-token': token}
+        const init = {headers}
         await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
@@ -129,15 +135,16 @@ export default class Api {
      * @param {string} name
      * @returns {Promise<Response|{error: *}>}
      */
-    static async change_user_name(token, name) {
+    static async change_user_name(token: string | null, name: string) {
         const obj = new Api()
         const uri = obj.host + "/user/name"
         const body = JSON.stringify({'changed_name': name})
+        const headers: any = {
+            'session-token': token,
+            'content-type': 'application/json'
+        }
         const init = {
-            headers: {
-                'session-token': token,
-                'content-type': 'application/json'
-            },
+            headers ,
             method: 'POST',
             body: body
         }
@@ -149,56 +156,59 @@ export default class Api {
      * @param {boolean} visibility
      * @returns {Promise<Response|{error: *}>}
      */
-    static async change_visibility(token, visibility) {
+    static async change_visibility(token: string | null, visibility: boolean) {
         const obj = new Api()
         const uri = obj.host + "/user/visibility"
         const body = JSON.stringify({'visibility': visibility ? "true" : "false"})
+        const headers: any = {
+            'session-token': token,
+            'content-type': 'application/json'
+        }
         const init = {
-            headers: {
-                'session-token': token,
-                'content-type': 'application/json'
-            },
+            headers,
             method: 'POST',
             body: body
         }
         return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
-    static async upload_play_data(token, score, scorelog) {
+    static async upload_play_data(token: string | null, score: string, scorelog: string) {
         const obj = new Api()
         const uri = obj.host + "/upload/play_data"
         const formData = new FormData()
         formData.append("score", score)
         formData.append("scorelog", scorelog)
+        const headers: any = {
+            'session-token': token,
+            'access-control-request-headers': 'session-token,content-type'
+        }
         const init = {
             method: 'POST',
-            headers: {
-                'session-token': token,
-                'access-control-request-headers': 'session-token,content-type'
-            },
+            headers,
             body: formData
         }
         return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
-    static async upload_song_data(token, file) {
+    static async upload_song_data(token: string | null, file: string) {
         const obj = new Api()
         const uri = obj.host + "/upload/song_data"
         const formData = new FormData()
         formData.append("songdata", file)
+        const headers: any = {
+            'session-token': token,
+            'access-control-request-headers': 'session-token,content-type'
+        }
         const init = {
             method: 'POST',
-            headers: {
-                'session-token': token,
-                'access-control-request-headers': 'session-token,content-type'
-            },
+            headers,
             body: formData
         }
         log.debug(init);
         return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
-    async handler(response) {
+    async handler(response: any) {
         log.debug(response)
         if (response.status === 401) {
             log.debug("Need Login")
@@ -213,7 +223,7 @@ export default class Api {
      * @param response
      * @returns {Promise<{error}>}
      */
-    async error(response) {
+    async error(response: any) {
         return {'error': response}
     }
 }

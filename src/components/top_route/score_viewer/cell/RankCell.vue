@@ -1,7 +1,10 @@
 <template>
-  <data-cell class="rank" column_name="score_rank"
-    v-tooltip="song.get('next_rank') + '-' + song.get('next_rank_score')">
-    {{song.get('score_rank')}}
+  <data-cell
+    class="rank"
+    column_name="score_rank"
+    v-tooltip="song.get('next_rank') + '-' + song.get('next_rank_score')"
+  >
+    {{ song.get("score_rank") }}
   </data-cell>
 </template>
 
@@ -10,13 +13,13 @@ import DataCell from "@/components/top_route/score_viewer/cell/DataCell"
 import SongDetail from "@/models/song_detail"
 
 export default {
-  name: "RankUpdateCell",
-  components: {DataCell},
+  name: "RankCell",
+  components: { DataCell },
   props: {
     song: {
       type: SongDetail,
       require: true
     }
-  },
+  }
 }
 </script>

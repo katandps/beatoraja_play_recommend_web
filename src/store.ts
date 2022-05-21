@@ -11,7 +11,7 @@ export const store = createStore({
     state: {
         userInfo: null,
         accessToken: null,
-        filter: new SongFilter(),
+        filter: new SongFilter(null),
     },
     mutations: {
         setUserInfo(state, userInfo) {
@@ -47,8 +47,8 @@ export const store = createStore({
         filter(state) {
             return state.filter
         },
-        column_is_active: (state) => (column_name) => {
-            return state.filter.columns[column_name]
+        column_is_active: (state: any) => (column_name: string) => {
+            return state.filter.columns_detail[column_name]
         }
     }
 })

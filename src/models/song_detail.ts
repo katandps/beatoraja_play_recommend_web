@@ -1,23 +1,77 @@
 import config from "../const"
 import Score from "./score"
+import Song from "./song"
 
 export default class SongDetail {
-  constructor() {
-    this.init_score(new Score())
-    this.init_rival_score(new Score())
-  }
 
-  title = "曲データなし"
-  total_notes = 0
-  md5
-  sha256 = ""
-  clear_rank = SongDetail.make_clear_rank(0, 0)
+  title: string = "曲データなし"
+  total_notes:number = 0
+  md5: string = ""
+  sha256: string = ""
 
-  /**
-   * @param {Song} song
-   * @param {string} hash
-   */
-  init_song(song, hash) {
+  clear_rank: string = SongDetail.make_clear_rank(0, 0)
+  rival_clear_rank: string
+
+  score: number
+  rival_score: number
+  score_before: number
+  score_updated_at: string
+
+  min_bp: number
+  min_bp_before:number
+  rival_min_bp: number
+  min_bp_updated_at: string
+
+  play_count: number
+  max_combo: number
+  rival_max_combo: number
+
+
+  clear_type: number
+  rival_clear_type: number
+  clear_type_before:number
+  clear_updated_at: string
+
+  level: string = ""
+
+  updated_at: string = ""
+  rival_updated_at: string
+
+  mode:number
+
+constructor() {
+  const score = new Score()
+  this.max_combo = score.max_combo
+
+  this.clear_type = score.clear_type
+  this.clear_type_before = score.clear_type_before
+  this.clear_updated_at = score.clear_updated_at
+
+  this.score = score.score
+  this.score_before = score.score_before
+  this.score_updated_at = score.score_updated_at
+
+  this.min_bp = score.min_bp
+  this.min_bp_before = score.min_bp_before
+  this.min_bp_updated_at = score.min_bp_updated_at
+
+  this.clear_rank = SongDetail.make_clear_rank(this.total_notes, this.score)
+  this.updated_at = score.updated_at
+  this.play_count = score.play_count
+  this.mode = 0
+
+  this.rival_max_combo = score.max_combo
+  this.rival_clear_type = score.clear_type
+  this.rival_score = score.score
+  this.rival_min_bp = score.min_bp
+  this.rival_clear_rank = SongDetail.make_clear_rank(
+    this.total_notes,
+    this.rival_score
+  )
+  this.rival_updated_at = score.updated_at
+}
+
+  init_song(song: Song, hash: string) {
     if (!song) {
       this.md5 = hash
       return
@@ -30,34 +84,27 @@ export default class SongDetail {
     this.clear_rank = SongDetail.make_clear_rank(this.total_notes, this.score)
   }
 
-  /**
-   * @param {Score} score
-   */
-  init_score(score) {
+  init_score(score: Score) {
     this.max_combo = score.max_combo
 
     this.clear_type = score.clear_type
     this.clear_type_before = score.clear_type_before
     this.clear_updated_at = score.clear_updated_at
-
+  
     this.score = score.score
     this.score_before = score.score_before
     this.score_updated_at = score.score_updated_at
-
+  
     this.min_bp = score.min_bp
     this.min_bp_before = score.min_bp_before
     this.min_bp_updated_at = score.min_bp_updated_at
-
+  
     this.clear_rank = SongDetail.make_clear_rank(this.total_notes, this.score)
     this.updated_at = score.updated_at
-    this.play_count = score.play_count
-    this.mode = 0
+    this.play_count = score.play_count  
   }
 
-  /**
-   * @param {Score} score
-   */
-  init_rival_score(score) {
+  init_rival_score(score: Score) {
     this.rival_max_combo = score.max_combo
     this.rival_clear_type = score.clear_type
     this.rival_score = score.score
@@ -69,13 +116,7 @@ export default class SongDetail {
     this.rival_updated_at = score.updated_at
   }
 
-  /**
-   * @public
-   * @param {number} total_notes
-   * @param {number} ex_score
-   * @return string
-   */
-  static make_clear_rank(total_notes, ex_score) {
+  static make_clear_rank(total_notes:number, ex_score: number) {
     if (!total_notes) {
       return config.RANK_TYPE.slice(-1)[0]
     }
@@ -85,7 +126,7 @@ export default class SongDetail {
     ]
   }
 
-  static make_next_rank(total_notes, ex_score) {
+  static make_next_rank(total_notes: number, ex_score: number) {
     if (!total_notes) {
       return config.RANK_TYPE.slice(-1)[0]
     }
@@ -96,7 +137,7 @@ export default class SongDetail {
     return config.RANK_TYPE[i == 0 ? 0 : i - 1]
   }
 
-  static make_next_rank_score(total_notes, ex_score) {
+  static make_next_rank_score(total_notes:number, ex_score:number) {
     if (!total_notes) {
       return 0
     }
@@ -109,7 +150,7 @@ export default class SongDetail {
     )
   }
 
-  static make_detail_rank(total_notes, ex_score) {
+  static make_detail_rank(total_notes:number, ex_score: number) {
     if (!total_notes) {
       return config.DETAIL_RANK_TYPE.slice(-1)[0]
     }
@@ -121,7 +162,7 @@ export default class SongDetail {
     ]
   }
 
-  static make_next_detail_rank(total_notes, ex_score) {
+  static make_next_detail_rank(total_notes:number, ex_score:number) {
     if (!total_notes) {
       return config.DETAIL_RANK_TYPE.slice(-1)[0]
     }
@@ -132,7 +173,7 @@ export default class SongDetail {
     return config.DETAIL_RANK_TYPE[i == 0 ? 0 : i - 1]
   }
 
-  static make_next_detail_rank_score(total_notes, ex_score) {
+  static make_next_detail_rank_score(total_notes:number, ex_score:number) {
     if (!total_notes) {
       return 0
     }
@@ -151,10 +192,11 @@ export default class SongDetail {
    * @return SongDetail
    */
   static dummy() {
-    return new SongDetail(config.SONG_FORMAT[0][0].songs)
+    return Object.assign(new SongDetail(), config.SONG_FORMAT[0][0].songs)
   }
 
-  score_rate_format(score) {
+  
+  score_rate_format(score: number) {
     if (this.total_notes === 0) {
       return "00.00"
     }
@@ -171,34 +213,11 @@ export default class SongDetail {
     return (this.score / this.total_notes) * 50
   }
 
-  clear_type_bg_class() {
-    return "bg-" + config.LAMP_INDEX[this.clear_type]
+  set_level(level: string) {
+    this.level = level
   }
 
-  clear_type_before_bg_class() {
-    return "bg-" + config.LAMP_INDEX[this.clear_type_before]
-  }
-
-  clear_type_rival_bg_class() {
-    return "bg-" + config.LAMP_INDEX[this.rival_clear_type]
-  }
-
-  /**
-   * @public
-   * @param {string} level
-   * @returns {SongDetail}
-   */
-  set_level(level) {
-    let ret = this
-    ret.level = level
-    return ret
-  }
-
-  /**
-   * @param {SongDetail} a
-   * @param {SongDetail} b
-   */
-  static cmp_title(a, b) {
+  static cmp_title(a: SongDetail, b: SongDetail) {
     if (a.title === b.title) {
       return 0
     }
@@ -211,7 +230,7 @@ export default class SongDetail {
    * @param {string[]} level_list
    * @returns {string|string|*|number}
    */
-  sort_key(sort_key, level_list) {
+  sort_key(sort_key: string, level_list: string[]) {
     switch (sort_key) {
       case "level":
         return level_list.indexOf(this.level)
@@ -252,8 +271,8 @@ export default class SongDetail {
       case "score_diff_rival":
         return this.score - this.rival_score
       case "bp_diff_rival": {
-        let min_bp = this.min_bp === -1 ? this.total_notes : this.min_bp
-        let rival =
+        const min_bp = this.min_bp === -1 ? this.total_notes : this.min_bp
+        const rival =
           this.rival_min_bp === -1 ? this.total_notes : this.rival_min_bp
         return rival - min_bp
       }
@@ -266,7 +285,7 @@ export default class SongDetail {
     }
   }
 
-  get(type) {
+  get(type: string) {
     switch (type) {
       case "clear":
         return ""
@@ -368,16 +387,16 @@ export default class SongDetail {
           ? '<span class="lose">lose</span>'
           : '<span class="win">win</span>'
       case "score_diff_rival": {
-        let diff = this.score - this.rival_score
-        let span_class = diff === 0 ? "draw" : diff > 0 ? "win" : "lose"
+        const diff = this.score - this.rival_score
+        const span_class = diff === 0 ? "draw" : diff > 0 ? "win" : "lose"
         return "<span class=" + span_class + ">" + diff + "</span>"
       }
       case "bp_diff_rival":
         if (this.rival_min_bp === -1 || this.min_bp === -1) {
           return "---"
         } else {
-          let diff = this.min_bp - this.rival_min_bp
-          let span_class = diff === 0 ? "draw" : diff > 0 ? "lose" : "win"
+          const diff = this.min_bp - this.rival_min_bp
+          const span_class = diff === 0 ? "draw" : diff > 0 ? "lose" : "win"
           return "<span class=" + span_class + ">" + diff + "</span>"
         }
       case "rival_date":
