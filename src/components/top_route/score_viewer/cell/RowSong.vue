@@ -43,7 +43,9 @@ const score_update_day = computed(
   () => props.song.score_updated_at.split("T")[0]
 )
 const bp_update_day = computed(() => props.song.min_bp_updated_at.split("T")[0])
-const play_count = computed(() => props.song.play_count || "-")
+const play_count = computed(() =>
+  props.song.play_count <= 0 ? "-" : props.song.play_count
+)
 const current_rank = computed(() =>
   SongDetail.make_clear_rank(props.song.total_notes, props.song.score)
 )
