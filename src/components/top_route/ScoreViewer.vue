@@ -4,7 +4,7 @@ import InputUserId from "./score_viewer/selector/InputUserId"
 import ScoreViewerHeader from "./score_viewer/ScoreViewerHeader"
 import DateSelector from "./score_viewer/selector/DateSelector"
 import Api from "../../api"
-import * as log from "loglevel"
+import { debug } from "loglevel"
 import SongFilter from "../../models/songFilter"
 import { useStore } from "vuex"
 import { computed, onMounted, ref } from "vue"
@@ -20,8 +20,8 @@ onMounted(() => {
   store.commit("setFilter", new SongFilter(filter.value))
   Api.fetch_tables(accessToken).then((t) => init_table(t))
   Api.fetch_songs(accessToken).then((s) => (songs.value = s))
-  fetch_detail(route.query)
-  init_rival()
+  fetchDetail(route.query)
+  setRival(props.rival_id)
 })
 
 // --- refs ---
@@ -81,7 +81,7 @@ const table_score = computed(() => {
   if (!is_initialized.value) {
     return {}
   }
-  log.debug(selected_table.value.levels)
+  debug(selected_table.value.levels)
   let table_score = {}
   Object.entries(selected_table.value.levels).forEach(([level_label, hashes]) =>
     hashes.forEach((hash) => {
@@ -105,7 +105,7 @@ const table_score = computed(() => {
     })
   )
 
-  log.debug(table_score)
+  debug(table_score)
   return table_score
 })
 
@@ -139,27 +139,28 @@ const recent_song_list = computed(() =>
 // --- methods ---
 const init_table = (t) => {
   tables.value = t
-  log.debug(tables, tables.value.first())
+  debug(tables, tables.value.first())
   selected_table.value = tables.value.first()
   selected_level.value = selected_table.value.level_list[0]
 }
 
-const init_rival = () => {
-  if (loaded.value.rival_id !== props.rival_id) {
-    Api.fetch_score(date_str.value, props.rival_id, accessToken).then((s) => {
+const setRival = (rival_id) => {
+  debug(loaded.value, rival_id)
+  if (loaded.value.rival_id !== rival_id) {
+    Api.fetch_score(date_str.value, rival_id, accessToken).then((s) => {
       rival_score.value = s
     })
   }
-  loaded.value.rival_id = props.rival_id
+  loaded.value.rival_id = rival_id
 }
 
-const fetch_detail = () => {
-  log.debug(props.user_id)
+const fetchDetail = () => {
+  debug(props.user_id)
   if (
     loaded.value.user_id !== props.user_id ||
     loaded.value.date !== date_str.value
   ) {
-    log.debug("fetch!")
+    debug("fetch!")
     message.value = "読込中..."
     Api.fetch_score(date_str.value, props.user_id, accessToken).then((s) => {
       scores.value = s
@@ -170,9 +171,11 @@ const fetch_detail = () => {
   }
 }
 const refreshUserId = async (input_user_id) => {
-  let query = Object.assign({}, this.$route.query)
+  let query = Object.assign({}, route.query)
   query.user_id = input_user_id
+  debug(query)
   await router.push({ query: query })
+  fetchDetail()
 }
 const set_table = (table_name) => {
   selected_table.value = tables.value
@@ -185,9 +188,9 @@ const set_table = (table_name) => {
 const set_level = (level) => (selected_level.value = level)
 const set_visible_all_level = (flag) => (filter.value.visible_all_levels = flag)
 
-const set_date = async (d) => {
+const set_date = (d) => {
   date.value = d
-  await this.fetch_detail()
+  this.fetchDetail()
 }
 const show_modal = () => tables_modal.value.show_modal()
 </script>
@@ -265,6 +268,7 @@ const show_modal = () => tables_modal.value.show_modal()
           :table_list="table_list"
           :level_list="level_list"
           :rival_id="rival_id"
+          @setRival="setRival"
           v-if="is_initialized"
         />
         <ModalForSelectTable

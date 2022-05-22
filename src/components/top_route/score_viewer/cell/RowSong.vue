@@ -33,6 +33,8 @@ const clear_rank_bg_class = computed(() => "bg-" + props.song.clear_rank)
 const level = computed(() => props.song.level)
 const title = computed(() => props.song.title)
 
+const bp = computed(() => (props.song.min_bp === -1 ? "-" : props.song.min_bp))
+
 const update_day = computed(() => props.song.updated_at.split("T")[0])
 const clear_update_day = computed(
   () => props.song.clear_updated_at.split("T")[0]
@@ -40,7 +42,7 @@ const clear_update_day = computed(
 const score_update_day = computed(
   () => props.song.score_updated_at.split("T")[0]
 )
-const bp_update_day = computed(() => props.song.bp_updated_at.split("T")[0])
+const bp_update_day = computed(() => props.song.min_bp_updated_at.split("T")[0])
 const play_count = computed(() => props.song.play_count || "-")
 const current_rank = computed(() =>
   SongDetail.make_clear_rank(props.song.total_notes, props.song.score)
@@ -209,11 +211,7 @@ const dayFormat = (date) => {
     </DataCell>
 
     <DataCell class="update" :columns="columns" name="clear_update">
-      <span
-        v-if="
-          song.clear_updated_at.split('T')[0] === song.updated_at.split('T')[0]
-        "
-      >
+      <span v-if="song.clear_type > 0 && clear_update_day === update_day">
         <font-awesome-icon
           :icon="['fas', 'square']"
           :class="'color-' + config.LAMP_INDEX[song.clear_type_before]"
@@ -267,18 +265,14 @@ const dayFormat = (date) => {
       </span>
     </DataCell>
     <DataCell class="update" :columns="columns" name="bp_update">
-      <span
-        v-if="
-          song.min_bp_updated_at.split('T')[0] === song.updated_at.split('T')[0]
-        "
-      >
+      <span v-if="bp !== '-' && bp_update_day === update_day">
         <span class="update_strong" v-if="song.min_bp_before !== -1">{{
           song.min_bp - song.min_bp_before
         }}</span>
         <span class="update_strong" v-else>new</span>
-        ({{ song.min_bp }})
+        ({{ bp }})
       </span>
-      <span v-else>{{ song.min_bp }}</span>
+      <span v-else>{{ bp }}</span>
     </DataCell>
   </div>
 </template>

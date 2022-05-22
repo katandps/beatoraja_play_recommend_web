@@ -1,6 +1,6 @@
 <script setup>
 import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
-import InputUserId from "./selector/InputUserId"
+import InputUserId from "./selector/InputUserId.vue"
 import RivalModal from "./modal/RivalModal"
 import FilterModal from "./modal/FilterModal"
 import { computed, ref } from "@vue/reactivity"
@@ -9,6 +9,7 @@ import { useRoute, useRouter } from "vue-router"
 import RowSong from "./cell/RowSong"
 import RowHeader from "./cell/RowHeader.vue"
 import RowColGroup from "./cell/RowColGroup.vue"
+import { debug } from "loglevel"
 
 const store = useStore()
 const route = useRoute()
@@ -18,6 +19,9 @@ const router = useRouter()
 const rival_modal = ref(null)
 const filter_modal = ref(null)
 
+// --- emits ---
+const emits = defineEmits(["setRival"])
+
 // --- props ---
 const props = defineProps({
   sorted_song_list: { require: true },
@@ -26,20 +30,22 @@ const props = defineProps({
   table_list: { require: true },
   level_list: { required: true },
   can_level_select: { type: Boolean, required: false },
-  rival_id: { type: Number }
+  rival_id: { type: Number, required: true }
 })
 
 // --- computed ---
 const columns = computed(() => store.getters.filter.columns_rival)
 
 // --- methods ---
-const refresh_rival_id = async (rival_id) => {
+const refreshRivalId = async (rival_id) => {
   let query = Object.assign({}, route.query)
   query.rival_id = rival_id
-  await router.push({ query: query })
+  debug(query)
+  emits("setRival", rival_id)
+  router.push({ query: query })
 }
-const show_modal = (song) => rival_modal.value.show_modal(song, props.date)
-const show_filter_modal = () => filter_modal.value.show_modal()
+const showModal = (song) => rival_modal.value.showModal(song, props.date)
+const showFilterModal = () => filter_modal.value.showModal()
 </script>
 
 <template>
@@ -47,11 +53,11 @@ const show_filter_modal = () => filter_modal.value.show_modal()
     <div class="row">
       <input-user-id
         :user_id="rival_id"
-        @refresh="refresh_rival_id"
+        @refresh="refreshRivalId"
         class="col-sm-5"
       />
       <display-songs-limiter class="col-sm-4" />
-      <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal"
+      <label class="col-sm-3 btn btn-secondary" @click="showFilterModal"
         >表示曲設定</label
       >
     </div>
@@ -66,7 +72,7 @@ const show_filter_modal = () => filter_modal.value.show_modal()
             :key="song.md5"
             :song="song"
             :columns="columns"
-            @showModal="show_modal"
+            @showModal="showModal"
           />
         </transition-group>
       </div>

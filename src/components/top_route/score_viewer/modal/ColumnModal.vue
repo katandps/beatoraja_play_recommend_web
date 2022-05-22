@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ModalBase from "./ModalBase"
+import ModalBase from "./ModalBase.vue"
 import Columns from "../../../../models/columns"
 import { useStore } from "vuex"
 import { ref, computed } from "vue"
@@ -17,7 +17,7 @@ const props = defineProps({
 // --- computed ---
 const columns = computed({
   get: () => props.columns,
-  set: (columns) => store.commit("setColumns", this.columns)
+  set: (columns) => store.commit("setColumns", columns)
 })
 const column_list = computed(() =>
   DETAIL_COLUMNS.filter((c) => c.key !== "title")
