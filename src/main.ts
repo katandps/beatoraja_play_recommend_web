@@ -62,6 +62,10 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 app.component("font-awesome-icon", FontAwesomeIcon);
 dom.watch();
 
+import Datepicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
+app.component('DatePicker', Datepicker)
+
 import FloatingVue from "floating-vue";
 FloatingVue.options.themes.tooltip.triggers = ["hover", "focus", "click"];
 app.use(FloatingVue);
