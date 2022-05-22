@@ -190,7 +190,7 @@ const set_visible_all_level = (flag) => (filter.value.visible_all_levels = flag)
 
 const set_date = (d) => {
   date.value = d
-  this.fetchDetail()
+  fetchDetail()
 }
 const show_modal = () => tables_modal.value.show_modal()
 </script>
@@ -224,28 +224,28 @@ const show_modal = () => tables_modal.value.show_modal()
       <div>
         <div class="form-group row">
           <div class="col-sm-12">
-            <router-link :to="{ path: '/view/lamp', query: $route.query }">
+            <router-link :to="{ path: '/view/lamp', query: route.query }">
               <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
                 クリアランプ
               </div>
             </router-link>
-            <router-link :to="{ path: '/view/rank', query: $route.query }">
+            <router-link :to="{ path: '/view/rank', query: route.query }">
               <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
                 スコアランク
               </div>
             </router-link>
-            <router-link :to="{ path: '/view/stat', query: $route.query }">
+            <router-link :to="{ path: '/view/stat', query: route.query }">
               <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
                 統計
                 <font-awesome-icon :icon="['fas', 'wrench']" />
               </div>
             </router-link>
-            <router-link :to="{ path: '/view/', query: $route.query }">
+            <router-link :to="{ path: '/view/', query: route.query }">
               <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
-                詳細
+                リスト表示
               </div>
             </router-link>
-            <router-link :to="{ path: '/view/recent', query: $route.query }">
+            <!-- <router-link :to="{ path: '/view/recent', query: $route.query }">
               <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
                 最近更新
               </div>
@@ -254,7 +254,7 @@ const show_modal = () => tables_modal.value.show_modal()
               <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
                 ライバル比較
               </div>
-            </router-link>
+            </router-link> -->
           </div>
         </div>
 
