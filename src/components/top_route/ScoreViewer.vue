@@ -11,7 +11,10 @@ import SongDetail from "../../models/song_detail.ts"
 import ModalForSelectTable from "./score_viewer/modal/ModalForSelectTable.vue"
 import ModalUserSelect from "./score_viewer/modal/ModalUserSelect.vue"
 import FilterModal from "./score_viewer/modal/FilterModal.vue"
-
+import LampGraphVue from "./score_viewer/LampGraph.vue"
+import RankGraphVue from "./score_viewer/RankGraph.vue"
+import TheDetailVue from "./score_viewer/TheDetail.vue"
+import TheStatVue from "./score_viewer/TheStat.vue"
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
@@ -132,14 +135,14 @@ const sorted_song_list = computed(() => {
     })
     .slice(0, filter.value.max_length || songs.length)
 })
-const recent_song_list = computed(() =>
-  filtered_score.value
-    .slice()
-    .sort((a, b) =>
-      a.updated_at === b.updated_at ? 0 : a.updated_at < b.updated_at ? 1 : -1
-    )
-    .slice(0, filter.value.max_length || filtered_score.value.length)
-)
+// const recent_song_list = computed(() =>
+//   filtered_score.value
+//     .slice()
+//     .sort((a, b) =>
+//       a.updated_at === b.updated_at ? 0 : a.updated_at < b.updated_at ? 1 : -1
+//     )
+//     .slice(0, filter.value.max_length || filtered_score.value.length)
+// )
 
 // --- methods ---
 const init_table = (t) => {
@@ -252,52 +255,50 @@ const setRivalId = async (input_rival_id, d) => {
         <div class="form-group row">
           <div class="col-sm-12">
             <router-link :to="{ path: '/view/lamp', query: route.query }">
-              <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
+              <div class="btn btn-outline-secondary col-sm-3 text-nowrap">
                 クリアランプ
               </div>
             </router-link>
             <router-link :to="{ path: '/view/rank', query: route.query }">
-              <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
+              <div class="btn btn-outline-secondary col-sm-3 text-nowrap">
                 スコアランク
               </div>
             </router-link>
             <router-link :to="{ path: '/view/stat', query: route.query }">
-              <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
+              <div class="btn btn-outline-secondary col-sm-3 text-nowrap">
                 統計
                 <font-awesome-icon :icon="['fas', 'wrench']" />
               </div>
             </router-link>
             <router-link :to="{ path: '/view/', query: route.query }">
-              <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
+              <div class="btn btn-outline-secondary col-sm-3 text-nowrap">
                 リスト表示
               </div>
             </router-link>
-            <!-- <router-link :to="{ path: '/view/recent', query: $route.query }">
-              <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
-                最近更新
-              </div>
-            </router-link>
-            <router-link :to="{ path: '/view/rival', query: $route.query }">
-              <div class="btn btn-outline-secondary col-sm-2 text-nowrap">
-                ライバル比較
-              </div>
-            </router-link> -->
           </div>
         </div>
 
         <hr />
-        <router-view
-          :date="date_str"
-          :exists_tables="exists_tables"
-          :filtered_score="filtered_score"
-          :sorted_song_list="sorted_song_list"
-          :recent_song_list="recent_song_list"
-          :table_list="table_list"
-          :level_list="level_list"
-          :rival_id="rival_id"
-          @setRival="setRival"
-          v-if="is_initialized"
-        />
+        <template v-if="mode === 'detail'">
+          <TheDetailVue :sorted_song_list="sorted_song_list" :date="date_str" />
+        </template>
+        <template v-if="mode === 'lamp'">
+          <LampGraphVue
+            :filtered_score="filtered_score"
+            :level_list="level_list"
+          />
+        </template>
+
+        <template v-if="mode === 'rank'">
+          <RankGraphVue
+            :filtered_score="filtered_score"
+            :level_list="level_list"
+          />
+        </template>
+
+        <template v-if="mode === 'stat'">
+          <TheStatVue :filtered_score="filtered_score" />
+        </template>
       </div>
     </div>
     <p v-else>{{ message }}</p>

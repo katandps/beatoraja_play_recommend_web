@@ -20,11 +20,7 @@ const column_modal = ref(null)
 // --- props ---
 const props = defineProps({
   sorted_song_list: { type: Array, require: true },
-  tables_is_set: { type: Boolean, require: true },
-  date: { type: String, require: true },
-  table_list: { require: true },
-  level_list: { required: true },
-  can_level_select: { type: Boolean, required: false }
+  date: { type: String, require: true }
 })
 
 // --- computed ---

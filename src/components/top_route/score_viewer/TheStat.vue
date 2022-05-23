@@ -1,3 +1,72 @@
+<script setup>
+import { computed } from "vue"
+import config from "../../../const"
+import SongDetail from "../../../models/song_detail"
+
+const props = defineProps({
+  filtered_score: { require: true }
+})
+
+// --- computed ---
+const lamp_stat = computed(() =>
+  config.LAMP_INDEX.map((lamp, index) =>
+    props.filtered_score
+      .filter((s) => s.clear_type === index)
+      .sort(SongDetail.cmp_title)
+  )
+)
+
+/**
+ * @returns {SongDetail[][]}
+ */
+const rank_stat = computed(() =>
+  config.RANK_TYPE.map((r) =>
+    props.filtered_score
+      .filter((s) => s.clear_rank === r)
+      .sort(SongDetail.cmp_title)
+  )
+)
+const bp_sum = computed(() => {
+  let sum = 0
+  props.filtered_score
+    .filter((s) => s.clear_type !== 0)
+    .forEach((song) => (sum += song.min_bp))
+  return sum
+})
+const bp_average = computed(() => {
+  let sum = 0
+  let songs = props.filtered_score.filter((s) => s.clear_type !== 0)
+  songs.forEach((song) => (sum += song.min_bp))
+  return (sum / songs.length).toFixed(3)
+})
+const score_sum = computed(() => {
+  let sum = 0
+  props.filtered_score
+    .filter((s) => s.clear_type !== 0)
+    .forEach((song) => (sum += song.score))
+  return sum
+})
+const score_average = computed(() => {
+  let sum = 0
+  let songs = props.filtered_score.filter((s) => s.clear_type !== 0)
+  songs.forEach((song) => (sum += song.score))
+  return (sum / songs.length).toFixed(3)
+})
+const rate_sum = computed(() => {
+  let sum = 0
+  props.filtered_score
+    .filter((s) => s.clear_type !== 0)
+    .forEach((song) => (sum += song.score_rate()))
+  return sum.toFixed(3)
+})
+const rate_average = computed(() => {
+  let sum = 0
+  let songs = props.filtered_score.filter((s) => s.clear_type !== 0)
+  songs.forEach((song) => (sum += song.score_rate()))
+  return (sum / songs.length).toFixed(3)
+})
+</script>
+
 <template>
   <div id="stat">
     <h3>クリアランプ分布</h3>
@@ -88,84 +157,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import config from "../../../const"
-</script>
-
-<script>
-import SongDetail from "../../../models/song_detail"
-
-export default {
-  props: {
-    filtered_score: { require: true },
-    table_list: {},
-    level_list: {}
-  },
-  computed: {
-    /**
-     * @returns {SongDetail[][]}
-     */
-    lamp_stat() {
-      return config.LAMP_INDEX.map((lamp, index) =>
-        this.filtered_score
-          .filter((s) => s.clear_type === index)
-          .sort(SongDetail.cmp_title)
-      )
-    },
-
-    /**
-     * @returns {SongDetail[][]}
-     */
-    rank_stat() {
-      return config.RANK_TYPE.map((r) =>
-        this.filtered_score
-          .filter((s) => s.clear_rank === r)
-          .sort(SongDetail.cmp_title)
-      )
-    },
-    bp_sum() {
-      let sum = 0
-      this.filtered_score
-        .filter((s) => s.clear_type !== 0)
-        .forEach((song) => (sum += song.min_bp))
-      return sum
-    },
-    bp_average() {
-      let sum = 0
-      let songs = this.filtered_score.filter((s) => s.clear_type !== 0)
-      songs.forEach((song) => (sum += song.min_bp))
-      return (sum / songs.length).toFixed(3)
-    },
-    score_sum() {
-      let sum = 0
-      this.filtered_score
-        .filter((s) => s.clear_type !== 0)
-        .forEach((song) => (sum += song.score))
-      return sum
-    },
-    score_average() {
-      let sum = 0
-      let songs = this.filtered_score.filter((s) => s.clear_type !== 0)
-      songs.forEach((song) => (sum += song.score))
-      return (sum / songs.length).toFixed(3)
-    },
-    rate_sum() {
-      let sum = 0
-      this.filtered_score
-        .filter((s) => s.clear_type !== 0)
-        .forEach((song) => (sum += song.score_rate()))
-      return sum.toFixed(3)
-    },
-    rate_average() {
-      let sum = 0
-      let songs = this.filtered_score.filter((s) => s.clear_type !== 0)
-      songs.forEach((song) => (sum += song.score_rate()))
-      return (sum / songs.length).toFixed(3)
-    },
-    filter() {
-      return this.$store.getters.filter
-    }
-  }
-}
-</script>
