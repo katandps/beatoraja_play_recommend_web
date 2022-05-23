@@ -12,7 +12,6 @@ import TheStatVue from "./components/top_route/score_viewer/TheStat.vue"
 import SongRankingVue from "./components/top_route/SongRanking.vue"
 
 import TheHomeVue from "./components/top_route/TheHome.vue"
-import UserListVue from "./components/top_route/UserList.vue"
 
 const routes = [
   { path: "/", component: () => TheHomeVue },
@@ -59,10 +58,6 @@ const routes = [
     component: SongRankingVue,
     props: (route:any) => ({ sha256: route.query.sha256, date: route.query.date })
   },
-  {
-    path: "/users",
-    component: UserListVue
-  }
 ]
 export const router = createRouter({
   history: createWebHashHistory(),

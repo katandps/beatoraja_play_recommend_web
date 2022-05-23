@@ -34,15 +34,6 @@
         </h4>
         ユーザIDを指定して<br />スコアを閲覧できます。
       </div>
-      <div class="col-lg-3 panel">
-        <h4>
-          <router-link class="text-dark px-2" to="/users">
-            <font-awesome-icon :icon="['fas', 'users']" />
-            ユーザー
-          </router-link>
-        </h4>
-        表示をONにしている<br />ユーザのリストです。
-      </div>
       <div class="col-lg-3 panel" v-if="is_login">
         <h4>
           <router-link class="text-dark px-2" :to="'/stats?user_id=' + user_id">
