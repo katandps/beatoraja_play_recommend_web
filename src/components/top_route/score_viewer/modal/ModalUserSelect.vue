@@ -9,7 +9,8 @@ import { useStore } from "vuex"
 const store = useStore()
 
 defineProps({
-  user_id: { type: Number, require: false }
+  user_id: { type: Number, require: false },
+  rival_mode: { type: Boolean }
 })
 
 const emits = defineEmits(["setUser"])
@@ -46,7 +47,7 @@ defineExpose({ showModal, closeModal })
 <template>
   <ModalBase ref="modal_base">
     <template v-slot:header>
-      <h2>プレイ状況の取得</h2>
+      <h2>{{ rival_mode ? "ライバルの" : "" }}プレイ状況の取得</h2>
     </template>
     <template v-slot:body>
       <h3>日付の選択</h3>

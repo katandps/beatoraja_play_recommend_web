@@ -10,6 +10,7 @@ import { DateFormatter } from "../../models/date_formatter"
 import SongDetail from "../../models/song_detail.ts"
 import ModalForSelectTable from "./score_viewer/modal/ModalForSelectTable.vue"
 import ModalUserSelect from "./score_viewer/modal/ModalUserSelect.vue"
+import FilterModal from "./score_viewer/modal/FilterModal.vue"
 
 const store = useStore()
 const route = useRoute()
@@ -18,13 +19,15 @@ onMounted(() => {
   store.commit("setFilter", new SongFilter(filter.value))
   Api.fetch_tables(accessToken).then((t) => init_table(t))
   Api.fetch_songs(accessToken).then((s) => (songs.value = s))
-  fetchDetail(route.query)
+  fetchDetail(props.user_id)
   setRival(props.rival_id)
 })
 
 // --- refs ---
 const tables_modal = ref(null)
 const user_modal = ref(null)
+const filter_modal = ref(null)
+const rival_modal = ref(null)
 
 // --- props ---
 const props = defineProps({
@@ -41,6 +44,7 @@ const songs = ref()
 const scores = ref()
 const rival_score = ref()
 const date = ref(new Date(new Date().setHours(0, 0, 0, 0)))
+const rival_date = ref(new Date(new Date().setHours(0, 0, 0, 0)))
 const message = ref("")
 const loaded = ref({ user_id: null, rival_id: null, date: "" })
 
@@ -67,6 +71,8 @@ const is_initialized = computed(
 )
 const visible_all_level = computed(() => filter.value.visible_all_levels)
 const date_str = computed(() => DateFormatter.format(date.value))
+const rival_date_str = computed(() => DateFormatter.format(rival_date.value))
+
 const user_name = computed(() => (exists_scores.value ? scores.value.name : ""))
 const twitter_link = computed(() =>
   exists_scores.value
@@ -145,32 +151,37 @@ const init_table = (t) => {
 
 const setRival = (rival_id) => {
   debug(loaded.value, rival_id)
-  if (loaded.value.rival_id !== rival_id) {
-    Api.fetch_score(date_str.value, rival_id, accessToken).then((s) => {
+  if (rival_id > 0 && loaded.value.rival_id !== rival_id) {
+    Api.fetch_score(rival_date_str.value, rival_id, accessToken).then((s) => {
+      rival_score.value = null
       rival_score.value = s
+      loaded.value.rival_id = rival_id
     })
   }
-  loaded.value.rival_id = rival_id
 }
 
-const fetchDetail = () => {
+const fetchDetail = (user_id) => {
   debug(props.user_id)
+  if (!user_id) {
+    message.value = "プレイヤーを選択してください"
+    return
+  }
   if (
-    loaded.value.user_id !== props.user_id ||
+    loaded.value.user_id !== user_id ||
     loaded.value.date !== date_str.value
   ) {
     debug("fetch!")
     message.value = "読込中..."
-    Api.fetch_score(date_str.value, props.user_id, accessToken).then((s) => {
+    Api.fetch_score(date_str.value, user_id, accessToken).then((s) => {
       scores.value = s
       message.value = exists_scores.value ? "" : "読み込み失敗"
+      loaded.value.user_id = user_id
+      loaded.value.date = date_str.value
     })
-    loaded.value.user_id = props.user_id
-    loaded.value.date = date_str.value
   }
 }
 
-const set_table = (table_name) => {
+const setTable = (table_name) => {
   selected_table.value = tables.value
     ? tables.value.get_table(table_name)
     : selected_table.value
@@ -178,18 +189,29 @@ const set_table = (table_name) => {
     selected_level.value = selected_table.value.level_list[0]
   }
 }
-const set_level = (level) => (selected_level.value = level)
-const set_visible_all_level = (flag) => (filter.value.visible_all_levels = flag)
-const show_modal = () => tables_modal.value.show_modal()
-const show_user_modal = () => user_modal.value.showModal()
+const setLevel = (level) => (selected_level.value = level)
+const setVisibleAllLevel = (flag) => (filter.value.visible_all_levels = flag)
+const showTablesModal = () => tables_modal.value.showModal()
+const showUserModal = () => user_modal.value.showModal()
 const setUserId = async (input_user_id, d) => {
   user_modal.value.closeModal()
   let query = Object.assign({}, route.query)
   query.user_id = input_user_id
   date.value = d
   debug(query)
-  await router.push({ query: query })
-  fetchDetail()
+  await router.push({ query })
+  fetchDetail(input_user_id)
+}
+const showFilterModal = () => filter_modal.value.showModal()
+const showRivalModal = () => rival_modal.value.showModal()
+const setRivalId = async (input_rival_id, d) => {
+  rival_modal.value.closeModal()
+  let query = Object.assign({}, route.query)
+  query.rival_id = input_rival_id
+  rival_date.value = d
+  debug(query)
+  await router.push({ query })
+  setRival(input_rival_id)
 }
 </script>
 
@@ -202,13 +224,17 @@ const setUserId = async (input_user_id, d) => {
 <template>
   <section id="score-table">
     <div class="row">
-      <div class="col-sm-4">
-        <div class="btn btn-info" @click="show_user_modal">
-          表示プレイヤー選択
-        </div>
+      <div class="col-sm-3 btn btn-info" @click="showUserModal">
+        表示プレイヤー選択
       </div>
-      <div class="col-sm-4">
-        <div class="btn btn-info" @click="show_modal">難易度表設定</div>
+      <div class="col-sm-3 btn btn-secondary" @click="showFilterModal">
+        表示曲設定
+      </div>
+      <div class="col-sm-3 btn btn-info" @click="showTablesModal">
+        難易度表設定
+      </div>
+      <div class="col-sm-3 btn btn-info" @click="showRivalModal">
+        ライバル選択
       </div>
     </div>
     <hr />
@@ -220,9 +246,7 @@ const setUserId = async (input_user_id, d) => {
             <font-awesome-icon :icon="['fab', 'twitter-square']" />
           </a>
         </h2>
-        <h3 v-if="rival_name && here_is_rival">
-          ライバル表示: {{ rival_name }}
-        </h3>
+        <h3 v-if="exists_rival_score">ライバル表示: {{ rival_score.name }}</h3>
       </div>
       <div>
         <div class="form-group row">
@@ -274,26 +298,37 @@ const setUserId = async (input_user_id, d) => {
           @setRival="setRival"
           v-if="is_initialized"
         />
-        <ModalForSelectTable
-          :can_level_select="true"
-          :table_list="table_list"
-          :level_list="level_list"
-          :selected_table="selected_table"
-          :selected_level="selected_level"
-          :visible_all_level="visible_all_level"
-          @setTable="set_table"
-          @setLevel="set_level"
-          @setVisibleAllLevelsFlag="set_visible_all_level"
-          v-if="is_initialized"
-          ref="tables_modal"
-        />
-        <ModalUserSelect
-          ref="user_modal"
-          :user_id="user_id"
-          @setUser="setUserId"
-        />
       </div>
     </div>
     <p v-else>{{ message }}</p>
+    <ModalUserSelect ref="user_modal" :user_id="user_id" @setUser="setUserId" />
+    <ModalForSelectTable
+      :can_level_select="true"
+      :table_list="table_list"
+      :level_list="level_list"
+      :selected_table="selected_table"
+      :selected_level="selected_level"
+      :visible_all_level="visible_all_level"
+      @setTable="setTable"
+      @setLevel="setLevel"
+      @setVisibleAllLevelsFlag="setVisibleAllLevel"
+      v-if="is_initialized"
+      ref="tables_modal"
+    />
+
+    <ModalUserSelect
+      ref="rival_modal"
+      :user_id="rival_id"
+      @setUser="setRivalId"
+      :rival_mode="true"
+    />
+    <FilterModal ref="filter_modal" />
   </section>
 </template>
+
+<style scoped>
+.row {
+  margin-left: 0;
+  margin-right: 0;
+}
+</style>

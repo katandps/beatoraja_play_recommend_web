@@ -1,9 +1,5 @@
 <template>
   <div id="rank-graph">
-    <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal"
-      >表示曲設定</label
-    >
-    <hr />
     凡例
     <table style="width: 100%">
       <tr>
@@ -46,14 +42,12 @@
       </tr>
     </table>
     <graph-modal id="song-list-modal" ref="modal" />
-    <filter-modal id="filter-modal" ref="filter_modal" />
   </div>
 </template>
 
 <script setup>
 import config from "../../../const"
 import GraphModal from "./modal/GraphModal"
-import FilterModal from "./modal/FilterModal"
 </script>
 
 <script>
@@ -80,9 +74,6 @@ export default {
       return this.rank_list[level_index][rank_index]
         .sort(SongDetail.cmp_title)
         .map((s) => s.title)
-    },
-    show_filter_modal() {
-      this.$refs.filter_modal.show_modal()
     }
   },
   computed: {

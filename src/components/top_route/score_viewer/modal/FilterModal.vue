@@ -108,7 +108,7 @@ export default {
   name: "FilterModal",
   components: { ModalBase },
   methods: {
-    show_modal() {
+    showModal() {
       this.$refs.modal_base.show_modal()
     },
     config() {

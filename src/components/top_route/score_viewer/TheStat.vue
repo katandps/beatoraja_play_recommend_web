@@ -1,9 +1,5 @@
 <template>
   <div id="stat">
-    <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal"
-      >表示曲設定</label
-    >
-    <hr />
     <h3>クリアランプ分布</h3>
     <div class="row">
       <div
@@ -90,7 +86,6 @@
         </div>
       </div>
     </div>
-    <filter-modal id="filter-modal" ref="filter_modal" />
   </div>
 </template>
 
@@ -100,19 +95,12 @@ import config from "../../../const"
 
 <script>
 import SongDetail from "../../../models/song_detail"
-import FilterModal from "./modal/FilterModal"
 
 export default {
-  components: { FilterModal },
   props: {
     filtered_score: { require: true },
     table_list: {},
     level_list: {}
-  },
-  methods: {
-    show_filter_modal() {
-      this.$refs.filter_modal.show_modal()
-    }
   },
   computed: {
     /**

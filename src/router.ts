@@ -20,8 +20,8 @@ const routes = [
     path: "/view",
     component: ScoreViewerVue,
     props: (route:any) => ({
-      user_id: parseInt(route.query.user_id || 1),
-      rival_id: parseInt(route.query.rival_id || 1)
+      user_id: parseInt(route.query.user_id || 0),
+      rival_id: parseInt(route.query.rival_id || 0)
     }),
     children: [
       { path: "", component: TheDetailVue},

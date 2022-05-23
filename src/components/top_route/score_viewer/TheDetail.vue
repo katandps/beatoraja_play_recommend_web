@@ -1,6 +1,5 @@
 <script setup>
 import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
-import FilterModal from "./modal/FilterModal"
 import ColumnModal from "./modal/ColumnModal"
 import RecommendModal from "./modal/RecommendModal"
 import SongModal from "./modal/SongModal"
@@ -15,7 +14,6 @@ const store = useStore()
 
 // --- refs ---
 const recommend_modal = ref(null)
-const filter_modal = ref(null)
 const song_modal = ref(null)
 const column_modal = ref(null)
 
@@ -35,7 +33,6 @@ const columns = computed(() => filter.value.columns_detail)
 
 // --- methods ---
 const show_recommend_modal = () => recommend_modal.value.show_modal()
-const show_filter_modal = () => filter_modal.value.show_modal()
 const show_column_modal = () => column_modal.value.show_modal()
 const show_song_modal = (song) => song_modal.value.show_modal(song, props.date)
 </script>
@@ -50,9 +47,6 @@ const show_song_modal = (song) => song_modal.value.show_modal(song, props.date)
         >
         <label class="col-sm-4 btn btn-success" @click="show_column_modal"
           >表示列設定</label
-        >
-        <label class="col-sm-4 btn btn-secondary" @click="show_filter_modal"
-          >表示曲設定</label
         >
       </div>
     </div>
@@ -72,7 +66,6 @@ const show_song_modal = (song) => song_modal.value.show_modal(song, props.date)
         </transition-group>
       </div>
       <song-modal ref="song_modal" />
-      <filter-modal ref="filter_modal" />
       <column-modal :columns="columns" ref="column_modal" />
       <recommend-modal ref="recommend_modal" />
     </div>
