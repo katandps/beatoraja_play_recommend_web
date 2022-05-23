@@ -23,18 +23,9 @@ const resetDate = () => {
 <template>
   <div id="date-selector">
     <div class="form-group align-items-center row">
-      <label
-        class="btn btn-info text-nowrap col-sm-3"
-        v-tooltip="
-          '指定した日付の当時の状態を再現します 右のボタンで今日に戻ります'
-        "
-      >
-        日付
-        <font-awesome-icon :icon="['fas', 'question-circle']" />
-      </label>
       <DatePicker
         v-model="picked"
-        class="col-sm-7"
+        class="col-sm-10"
         format="yyyy-MM-dd"
         :enableTimePicker="false"
       />

@@ -6,14 +6,14 @@
         <div class="modal-wrapper">
           <div class="modal-contents">
             <div class="modal-header">
-                <slot name="header">Modal-header</slot>
+              <slot name="header">Modal-header</slot>
             </div>
             <div class="modal-body">
-                <slot name="body">Modal-body</slot>
+              <slot name="body">Modal-body</slot>
             </div>
           </div>
           <div id="close-modal" class="close-modal" @click="close_modal">
-            <font-awesome-icon :icon="['fas', 'xmark']"/>
+            <font-awesome-icon :icon="['fas', 'xmark']" />
           </div>
         </div>
       </div>
@@ -25,7 +25,7 @@
 export default {
   name: "ModalBase",
   data: () => ({
-    show: false,
+    show: false
   }),
   methods: {
     show_modal() {
@@ -34,7 +34,7 @@ export default {
     close_modal() {
       this.show = false
     }
-  },
+  }
 }
 </script>
 
@@ -75,11 +75,13 @@ export default {
   cursor: pointer;
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .2s;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
 }
 
-.fade-enter, .fade-leave-to {
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 </style>

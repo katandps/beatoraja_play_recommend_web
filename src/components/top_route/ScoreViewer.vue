@@ -1,8 +1,5 @@
 <script setup lagn="ts">
 import Tables from "../../models/difficultyTable"
-import InputUserId from "./score_viewer/selector/InputUserId"
-import ScoreViewerHeader from "./score_viewer/ScoreViewerHeader"
-import DateSelector from "./score_viewer/selector/DateSelector"
 import Api from "../../api"
 import { debug } from "loglevel"
 import SongFilter from "../../models/songFilter"
@@ -11,7 +8,8 @@ import { computed, onMounted, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { DateFormatter } from "../../models/date_formatter"
 import SongDetail from "../../models/song_detail.ts"
-import ModalForSelectTable from "./score_viewer/modal/ModalForSelectTable"
+import ModalForSelectTable from "./score_viewer/modal/ModalForSelectTable.vue"
+import ModalUserSelect from "./score_viewer/modal/ModalUserSelect.vue"
 
 const store = useStore()
 const route = useRoute()
@@ -26,6 +24,7 @@ onMounted(() => {
 
 // --- refs ---
 const tables_modal = ref(null)
+const user_modal = ref(null)
 
 // --- props ---
 const props = defineProps({
@@ -170,13 +169,7 @@ const fetchDetail = () => {
     loaded.value.date = date_str.value
   }
 }
-const refreshUserId = async (input_user_id) => {
-  let query = Object.assign({}, route.query)
-  query.user_id = input_user_id
-  debug(query)
-  await router.push({ query: query })
-  fetchDetail()
-}
+
 const set_table = (table_name) => {
   selected_table.value = tables.value
     ? tables.value.get_table(table_name)
@@ -187,12 +180,17 @@ const set_table = (table_name) => {
 }
 const set_level = (level) => (selected_level.value = level)
 const set_visible_all_level = (flag) => (filter.value.visible_all_levels = flag)
-
-const set_date = (d) => {
+const show_modal = () => tables_modal.value.show_modal()
+const show_user_modal = () => user_modal.value.showModal()
+const setUserId = async (input_user_id, d) => {
+  user_modal.value.closeModal()
+  let query = Object.assign({}, route.query)
+  query.user_id = input_user_id
   date.value = d
+  debug(query)
+  await router.push({ query: query })
   fetchDetail()
 }
-const show_modal = () => tables_modal.value.show_modal()
 </script>
 
 <style scoped>
@@ -204,23 +202,28 @@ const show_modal = () => tables_modal.value.show_modal()
 <template>
   <section id="score-table">
     <div class="row">
-      <InputUserId
-        :user_id="user_id"
-        @refresh="refreshUserId"
-        class="col-sm-4"
-      />
-      <DateSelector :date="date" @setDate="set_date" class="col-sm-4" />
+      <div class="col-sm-4">
+        <div class="btn btn-info" @click="show_user_modal">
+          表示プレイヤー選択
+        </div>
+      </div>
       <div class="col-sm-4">
         <div class="btn btn-info" @click="show_modal">難易度表設定</div>
       </div>
     </div>
     <hr />
     <div v-if="is_initialized">
-      <score-viewer-header
-        :user_name="user_name"
-        :twlink="twitter_link"
-        :exists_songs="exists_songs"
-      />
+      <div>
+        <h2>
+          {{ user_name }}のデータ
+          <a :href="twitter_link" target="_blank">
+            <font-awesome-icon :icon="['fab', 'twitter-square']" />
+          </a>
+        </h2>
+        <h3 v-if="rival_name && here_is_rival">
+          ライバル表示: {{ rival_name }}
+        </h3>
+      </div>
       <div>
         <div class="form-group row">
           <div class="col-sm-12">
@@ -283,6 +286,11 @@ const show_modal = () => tables_modal.value.show_modal()
           @setVisibleAllLevelsFlag="set_visible_all_level"
           v-if="is_initialized"
           ref="tables_modal"
+        />
+        <ModalUserSelect
+          ref="user_modal"
+          :user_id="user_id"
+          @setUser="setUserId"
         />
       </div>
     </div>
