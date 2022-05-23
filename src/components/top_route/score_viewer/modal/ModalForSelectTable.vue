@@ -49,7 +49,6 @@ defineExpose({ showModal })
       <h2>{{ title }}</h2>
     </template>
     <template v-slot:body>
-      <div class="">全難易度表を統合して表示</div>
       <div class="input-group" role="group" aria-label="Difficulty Table">
         <div class="input-group-prepend">
           <label
@@ -67,19 +66,19 @@ defineExpose({ showModal })
           </option>
         </select>
       </div>
-      <div v-tooltip="'難易度別表示の状態を切り替えます'">
+      <hr />
+      <div class="form-check">
         <input
-          class="btn-check"
+          class="form-check-input"
           type="checkbox"
-          id="all_list"
+          id="all_level"
           v-model="visible_all_levels"
         />
-        <label class="btn btn-outline-info" for="all_list">
-          全難易度表示
-          <font-awesome-icon :icon="['fas', 'question-circle']" />
+        <label class="form-check-label" for="all_level">
+          全難易度を表示対象にする
         </label>
       </div>
-      <div class="col-sm-4" v-if="!visible_all_levels">
+      <div v-if="!visible_all_levels">
         <div class="input-group" role="group" aria-label="Difficulty">
           <div class="input-group-prepend">
             <label
