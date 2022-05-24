@@ -19,8 +19,7 @@ const column_modal = ref(null)
 const props = defineProps({
   sorted_song_list: { type: Array, require: true },
   date: { type: String, require: true },
-  filter: { type: SongFilter, require: true },
-  rival_mode: { type: Boolean }
+  filter: { type: SongFilter, require: true }
 })
 
 // --- computed ---

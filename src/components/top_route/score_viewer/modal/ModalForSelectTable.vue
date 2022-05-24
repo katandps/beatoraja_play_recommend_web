@@ -1,10 +1,14 @@
-<script setup>
-import ModalBase from "./ModalBase"
+<script setup lang="ts">
+import ModalBaseVue, { IModalBase } from "./ModalBase.vue"
 import { DifficultyTable } from "../../../../models/difficultyTable"
 import { ref, computed } from "vue"
 
+export interface IModalForSelectTable {
+  showModal: () => void
+}
+
 // --- refs ---
-const modal_base = ref(null)
+const modal_base = ref<IModalBase>()
 
 // --- props ---
 const props = defineProps({
@@ -37,14 +41,14 @@ const visible_all_levels = computed({
 })
 
 // --- methods ---
-const showModal = () => modal_base.value.showModal()
+const showModal = () => modal_base.value?.showModal()
 
 // --- expose ---
 defineExpose({ showModal })
 </script>
 
 <template>
-  <ModalBase id="graph-modal" ref="modal_base">
+  <ModalBaseVue id="graph-modal" ref="modal_base">
     <template v-slot:header>
       <h2>{{ title }}</h2>
     </template>
@@ -98,5 +102,5 @@ defineExpose({ showModal })
         </div>
       </div>
     </template>
-  </ModalBase>
+  </ModalBaseVue>
 </template>

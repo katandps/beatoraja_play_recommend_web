@@ -8,11 +8,13 @@ import { computed, onMounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { DateFormatter } from "../../models/date_formatter"
 import SongDetail from "../../models/song_detail"
-import ModalForSelectTable from "./score_viewer/modal/ModalForSelectTable.vue"
+import ModalForSelectTable, {
+  IModalForSelectTable
+} from "./score_viewer/modal/ModalForSelectTable.vue"
 import ModalUserSelect, {
   IModalUserSelect
 } from "./score_viewer/modal/ModalUserSelect.vue"
-import FilterModal from "./score_viewer/modal/FilterModal.vue"
+import FilterModal, { IFilterModal } from "./score_viewer/modal/FilterModal.vue"
 import LampGraphVue from "./score_viewer/LampGraph.vue"
 import RankGraphVue from "./score_viewer/RankGraph.vue"
 import TheDetailVue from "./score_viewer/TheDetail.vue"
@@ -22,24 +24,25 @@ const route = useRoute()
 const router = useRouter()
 onMounted(() => {
   store.commit("setFilter", new SongFilter(filter.value))
-  Api.fetch_tables(accessToken).then((t) => init_table(t))
-  Api.fetch_songs(accessToken).then((s) => (songs.value = s))
+  Api.fetch_tables(accessToken.value).then((t) => init_table(t))
+  Api.fetch_songs(accessToken.value).then((s) => (songs.value = s))
   fetchDetail(props.user_id)
   setRival(props.rival_id)
 })
 
 // --- refs ---
-const tables_modal = ref(null)
+const tables_modal = ref<IModalForSelectTable>()
 const user_modal = ref<IModalUserSelect>()
-const filter_modal = ref(null)
+const filter_modal = ref<IFilterModal>()
 const rival_modal = ref<IModalUserSelect>()
 
 // --- props ---
-const props = defineProps({
-  user_id: { type: Number },
-  mode: { type: String },
-  rival_id: { type: Number }
-})
+interface Props {
+  user_id: number
+  mode: string
+  rival_id: number
+}
+const props = defineProps<Props>()
 
 // --- data ---
 const tables = ref(new Tables([]))
@@ -54,7 +57,7 @@ const message = ref("")
 const loaded = ref({ user_id: null, rival_id: null, date: "" })
 
 // --- computed ---
-const accessToken = computed(() => store.getters.accessToken)
+const accessToken = computed<string>(() => store.getters.accessToken)
 const filter = computed(() => store.getters.filter)
 const table_list = computed(() =>
   tables.value ? tables.value.name_list() : []
@@ -94,7 +97,7 @@ const table_score = computed(() => {
   debug(selected_table.value.levels)
   let table_score = {}
   Object.entries(selected_table.value.levels).forEach(([level_label, hashes]) =>
-    hashes.forEach((hash) => {
+    hashes.forEach((hash: string) => {
       let score = new SongDetail()
       score.init_score(scores.value.get_score(hash))
       score.init_song(songs.value.get_score(hash), hash)
@@ -166,7 +169,7 @@ const fetchDetail = (user_id: number) => {
   ) {
     debug("fetch!")
     message.value = "読込中..."
-    Api.fetch_score(date_str.value, user_id, accessToken).then((s) => {
+    Api.fetch_score(date_str.value, user_id, accessToken.value).then((s) => {
       scores.value = s
       message.value = exists_scores.value ? "" : "読み込み失敗"
       loaded.value.user_id = user_id
@@ -188,10 +191,10 @@ const setVisibleAllLevel = (flag: boolean) =>
   (filter.value.visible_all_levels = flag)
 const showTablesModal = () => tables_modal.value?.showModal()
 const showUserModal = () => user_modal.value?.showModal()
-const setUserId = async (input_user_id: string, d: Date) => {
+const setUserId = async (input_user_id: number, d: Date) => {
   user_modal.value?.closeModal()
   let query = Object.assign({}, route.query)
-  query.user_id = input_user_id
+  query.user_id = "" + input_user_id
   date.value = d
   debug(query)
   await router.push({ query })

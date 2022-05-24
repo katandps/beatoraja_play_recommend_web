@@ -1,5 +1,28 @@
+<script setup lang="ts">
+import ModalBaseVue, { IModalBase } from "./ModalBase.vue"
+import config from "../../../../const"
+import { computed, ref } from "vue"
+import { useStore } from "vuex"
+export interface IFilterModal {
+  showModal: () => void
+}
+
+const store = useStore()
+
+// --- ref ---
+const modal_base = ref<IModalBase>()
+
+// --- computed ---
+const filter = computed(() => store.getters.filter)
+
+// --- methods ---
+const showModal = () => modal_base.value?.showModal()
+
+// --- expose ---
+defineExpose({ showModal })
+</script>
 <template>
-  <modal-base id="filter-modal" ref="modal_base">
+  <ModalBaseVue id="filter-modal" ref="modal_base">
     <template v-slot:header>
       <h2>譜面フィルター設定</h2>
     </template>
@@ -9,7 +32,7 @@
           <h5>クリアタイプ</h5>
           <div class="form-group row align-items-center">
             <div
-              v-for="lamp in config().LAMP_GRAPH_LIST"
+              v-for="lamp in config.LAMP_GRAPH_LIST"
               :key="lamp"
               class="form-control col-sm-3 text-nowrap"
             >
@@ -18,9 +41,9 @@
                   type="checkbox"
                   :id="lamp"
                   :value="lamp"
-                  v-model="filter.visible_lamp[lamp]"
+                  v-model="filter.visible_lamp.lamps[lamp]"
                 />
-                {{ config().LAMP_INDEX[lamp] }}
+                {{ config.LAMP_INDEX[lamp] }}
               </label>
             </div>
           </div>
@@ -54,7 +77,7 @@
           <h5>スコアランク</h5>
           <div class="form-group row align-items-center">
             <div
-              v-for="rank in config().RANK_TYPE"
+              v-for="rank in config.RANK_TYPE"
               :key="rank"
               class="form-control col-sm-3 text-nowrap"
             >
@@ -63,7 +86,7 @@
                   type="checkbox"
                   :id="rank"
                   :value="rank"
-                  v-model="filter.visible_rank[rank]"
+                  v-model="filter.visible_rank.ranks[rank]"
                 />
                 {{ rank }}
               </label>
@@ -97,31 +120,8 @@
         </div>
       </div>
     </template>
-  </modal-base>
+  </ModalBaseVue>
 </template>
-
-<script>
-import ModalBase from "./ModalBase"
-import config from "../../../../const"
-
-export default {
-  name: "FilterModal",
-  components: { ModalBase },
-  methods: {
-    showModal() {
-      this.$refs.modal_base.showModal()
-    },
-    config() {
-      return config
-    }
-  },
-  computed: {
-    filter() {
-      return this.$store.getters.filter
-    }
-  }
-}
-</script>
 
 <style scoped>
 .filter button {
