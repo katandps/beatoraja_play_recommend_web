@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import ModalBase from "./ModalBase.vue"
 import { ref, computed, watch } from "vue"
-import SongFilter from "@/models/songFilter"
 import config from "../../../../const"
+import Columns from "@/models/columns"
 
 // --- ref ---
 const modal_base = ref(null)
 
 // --- props ---
 const props = defineProps({
-  filter: { type: SongFilter, require: true }
+  columns: { type: Columns, require: true }
 })
 
 // --- data ---
-const columns = ref(props.filter?.visible_columns())
+const columns = ref(props.columns?.visible_columns())
 
 // --- computed ---
 const column_list = computed(() =>
@@ -24,7 +24,7 @@ const column_list = computed(() =>
 const showModal = () => modal_base.value.show_modal()
 const closeModal = () => modal_base.value.close_modal()
 
-watch(columns, (cur) => props.filter?.columns.import_columns(cur))
+watch(columns, (cur) => props.columns?.import_columns(cur))
 
 // --- expose ---
 defineExpose({ showModal })

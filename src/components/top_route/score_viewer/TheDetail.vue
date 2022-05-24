@@ -61,7 +61,7 @@ const show_song_modal = (song) => song_modal.value.show_modal(song, props.date)
         </transition-group>
       </div>
       <song-modal ref="song_modal" />
-      <ColumnModal :filter="filter" ref="column_modal" />
+      <ColumnModal :columns="columns" ref="column_modal" />
       <recommend-modal ref="recommend_modal" />
     </div>
   </div>
