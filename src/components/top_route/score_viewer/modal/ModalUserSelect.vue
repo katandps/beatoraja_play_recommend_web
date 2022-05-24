@@ -1,10 +1,15 @@
-<script setup>
-import ModalBase from "./ModalBase.vue"
+<script setup lang="ts">
+import ModalBase, { IModalBase } from "./ModalBase.vue"
 import DateSelector from "../selector/DateSelector.vue"
 
 import { ref, onMounted, computed } from "vue"
-import Api from "../../../../api.ts"
+import Api from "../../../../api"
 import { useStore } from "vuex"
+
+export interface IModalUserSelect {
+  showModal: () => void
+  closeModal: () => void
+}
 
 const store = useStore()
 
@@ -13,32 +18,40 @@ defineProps({
   rival_mode: { type: Boolean }
 })
 
+interface User {
+  id: number
+  name: string
+}
+
 const emits = defineEmits(["setUser"])
 
 onMounted(() => {
-  Api.get_user_list(accessToken).then((u) => {
+  Api.get_user_list(accessToken.value).then((u: User[]) => {
     users.value = u
     users.value.sort((a, b) => a.id - b.id)
   })
 })
 
 // --- ref ---
-const modal_base = ref(null)
+const modal_base = ref<IModalBase>()
 
 // --- data ---
-const users = ref([])
+const users = ref<User[]>([])
 const date = ref(new Date(new Date().setHours(0, 0, 0, 0)))
 
 // --- computed ---
 const accessToken = computed(() => store.getters.accessToken)
 
 // --- methods ---
-const showModal = () => modal_base.value.show_modal()
-const closeModal = () => modal_base.value.close_modal()
-const setUser = (user_id) => {
+const showModal = () => {
+  console.log(modal_base.value)
+  modal_base.value?.showModal()
+}
+const closeModal = () => modal_base.value?.closeModal()
+const setUser = (user_id: number) => {
   emits("setUser", user_id, date.value)
 }
-const set_date = (d) => (date.value = d)
+const set_date = (d: Date) => (date.value = d)
 
 // --- expose ---
 defineExpose({ showModal, closeModal })

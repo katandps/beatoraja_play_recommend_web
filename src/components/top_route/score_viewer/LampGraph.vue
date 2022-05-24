@@ -24,7 +24,7 @@ const lamp_list = computed(() =>
 )
 
 // --- methods ---
-const show_modal = (title, text) => modal.value.show_modal(title, text)
+const showModal = (title, text) => modal.value.showModal(title, text)
 
 const list = (level_index, rank_index) => {
   return lamp_list.value[level_index][rank_index]
@@ -72,7 +72,7 @@ const list = (level_index, rank_index) => {
               '%;color:#000'
             "
             v-on:click="
-              show_modal(
+              showModal(
                 level + ' ' + config.LAMP_INDEX[lamp_index],
                 list(level_index, lamp_index)
               )

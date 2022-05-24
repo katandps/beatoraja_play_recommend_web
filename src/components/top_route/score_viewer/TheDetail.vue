@@ -27,9 +27,9 @@ const props = defineProps({
 const columns = computed(() => props.filter.columns)
 
 // --- methods ---
-const show_recommend_modal = () => recommend_modal.value.show_modal()
+const show_recommend_modal = () => recommend_modal.value.showModal()
 const show_column_modal = () => column_modal.value.showModal()
-const show_song_modal = (song) => song_modal.value.show_modal(song, props.date)
+const show_song_modal = (song) => song_modal.value.showModal(song, props.date)
 </script>
 
 <template>

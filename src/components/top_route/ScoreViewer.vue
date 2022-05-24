@@ -1,4 +1,4 @@
-<script setup lagn="ts">
+<script setup lang="ts">
 import Tables from "../../models/difficultyTable"
 import Api from "../../api"
 import { debug } from "loglevel"
@@ -7,9 +7,11 @@ import { useStore } from "vuex"
 import { computed, onMounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { DateFormatter } from "../../models/date_formatter"
-import SongDetail from "../../models/song_detail.ts"
+import SongDetail from "../../models/song_detail"
 import ModalForSelectTable from "./score_viewer/modal/ModalForSelectTable.vue"
-import ModalUserSelect from "./score_viewer/modal/ModalUserSelect.vue"
+import ModalUserSelect, {
+  IModalUserSelect
+} from "./score_viewer/modal/ModalUserSelect.vue"
 import FilterModal from "./score_viewer/modal/FilterModal.vue"
 import LampGraphVue from "./score_viewer/LampGraph.vue"
 import RankGraphVue from "./score_viewer/RankGraph.vue"
@@ -28,9 +30,9 @@ onMounted(() => {
 
 // --- refs ---
 const tables_modal = ref(null)
-const user_modal = ref(null)
+const user_modal = ref<IModalUserSelect>()
 const filter_modal = ref(null)
-const rival_modal = ref(null)
+const rival_modal = ref<IModalUserSelect>()
 
 // --- props ---
 const props = defineProps({
@@ -152,7 +154,7 @@ const setRival = (rival_id) => {
   }
 }
 
-const fetchDetail = (user_id) => {
+const fetchDetail = (user_id: number) => {
   debug(props.user_id)
   if (!user_id) {
     message.value = "プレイヤーを選択してください"
@@ -173,7 +175,7 @@ const fetchDetail = (user_id) => {
   }
 }
 
-const setTable = (table_name) => {
+const setTable = (table_name: string) => {
   selected_table.value = tables.value
     ? tables.value.get_table(table_name)
     : selected_table.value
@@ -181,12 +183,13 @@ const setTable = (table_name) => {
     selected_level.value = selected_table.value.level_list[0]
   }
 }
-const setLevel = (level) => (selected_level.value = level)
-const setVisibleAllLevel = (flag) => (filter.value.visible_all_levels = flag)
-const showTablesModal = () => tables_modal.value.showModal()
-const showUserModal = () => user_modal.value.showModal()
-const setUserId = async (input_user_id, d) => {
-  user_modal.value.closeModal()
+const setLevel = (level: string) => (selected_level.value = level)
+const setVisibleAllLevel = (flag: boolean) =>
+  (filter.value.visible_all_levels = flag)
+const showTablesModal = () => tables_modal.value?.showModal()
+const showUserModal = () => user_modal.value?.showModal()
+const setUserId = async (input_user_id: string, d: Date) => {
+  user_modal.value?.closeModal()
   let query = Object.assign({}, route.query)
   query.user_id = input_user_id
   date.value = d
@@ -194,10 +197,10 @@ const setUserId = async (input_user_id, d) => {
   await router.push({ query })
   fetchDetail(input_user_id)
 }
-const showFilterModal = () => filter_modal.value.showModal()
-const showRivalModal = () => rival_modal.value.showModal()
-const setRivalId = async (input_rival_id, d) => {
-  rival_modal.value.closeModal()
+const showFilterModal = () => filter_modal.value?.showModal()
+const showRivalModal = () => rival_modal.value?.showModal()
+const setRivalId = async (input_rival_id: string, d: Date) => {
+  rival_modal.value?.closeModal()
   let query = Object.assign({}, route.query)
   query.rival_id = input_rival_id
   rival_date.value = d

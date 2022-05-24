@@ -1,8 +1,26 @@
+<script setup lang="ts">
+import { ref } from "vue"
+
+export interface IModalBase {
+  showModal: () => void
+  closeModal: () => void
+}
+// --- data ---
+const show = ref(false)
+
+// --- methods ---
+const showModal = () => (show.value = true)
+const closeModal = () => (show.value = false)
+
+// --- expose ---
+defineExpose({ showModal, closeModal })
+</script>
+
 <template>
   <div id="modal-area">
     <transition name="fade">
       <div class="modal-area" v-if="show">
-        <div id="modal-bg" class="modal-bg" @click="close_modal"></div>
+        <div id="modal-bg" class="modal-bg" @click="closeModal"></div>
         <div class="modal-wrapper">
           <div class="modal-contents">
             <div class="modal-header">
@@ -12,7 +30,7 @@
               <slot name="body">Modal-body</slot>
             </div>
           </div>
-          <div id="close-modal" class="close-modal" @click="close_modal">
+          <div id="close-modal" class="close-modal" @click="closeModal">
             <font-awesome-icon :icon="['fas', 'xmark']" />
           </div>
         </div>
@@ -20,23 +38,6 @@
     </transition>
   </div>
 </template>
-
-<script>
-export default {
-  name: "ModalBase",
-  data: () => ({
-    show: false
-  }),
-  methods: {
-    show_modal() {
-      this.show = true
-    },
-    close_modal() {
-      this.show = false
-    }
-  }
-}
-</script>
 
 <style scoped>
 .modal-area {

@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import ModalBase from "./ModalBase.vue"
+import ModalBase, { IModalBase } from "./ModalBase.vue"
 import { ref, computed, watch } from "vue"
 import config from "../../../../const"
 import Columns from "@/models/columns"
 
 // --- ref ---
-const modal_base = ref(null)
+const modal_base = ref<IModalBase>()
 
 // --- props ---
-const props = defineProps({
-  columns: { type: Columns, require: true }
-})
+interface Props {
+  columns: Columns
+}
+const props = defineProps<Props>()
 
 // --- data ---
 const columns = ref(props.columns?.visible_columns())
@@ -21,8 +22,8 @@ const column_list = computed(() =>
 )
 
 // --- methods ---
-const showModal = () => modal_base.value.show_modal()
-const closeModal = () => modal_base.value.close_modal()
+const showModal = () => modal_base.value?.showModal()
+const closeModal = () => modal_base.value?.closeModal()
 
 watch(columns, (cur) => props.columns?.import_columns(cur))
 

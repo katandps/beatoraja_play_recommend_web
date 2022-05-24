@@ -37,7 +37,7 @@ const visible_all_levels = computed({
 })
 
 // --- methods ---
-const showModal = () => modal_base.value.show_modal()
+const showModal = () => modal_base.value.showModal()
 
 // --- expose ---
 defineExpose({ showModal })

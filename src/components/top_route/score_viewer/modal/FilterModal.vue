@@ -109,7 +109,7 @@ export default {
   components: { ModalBase },
   methods: {
     showModal() {
-      this.$refs.modal_base.show_modal()
+      this.$refs.modal_base.showModal()
     },
     config() {
       return config

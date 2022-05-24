@@ -54,7 +54,7 @@ export default class Api {
      * @param {string} token
      * @returns {Promise<null|{user_id: number, user_name: string, score: {}}>}
      */
-    static async fetch_score(date: string, user_id: string, token: string | null) {
+    static async fetch_score(date: string, user_id: number, token: string | null) {
         const obj = new Api()
         const url = obj.host + "/detail/?date=" + date + "&user_id=" + user_id
         const headers: any = {'session-token': token}

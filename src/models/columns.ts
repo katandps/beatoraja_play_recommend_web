@@ -69,9 +69,7 @@ export default class Columns {
   visible_columns(): string[] {
     const ret: string[] = [];
     Object.entries(this.columns).filter((a) => {
-      console.log(a)
       a[1] ? ret.push(a[0]) : null})
-    console.log(ret,this.columns);
     return ret
   }
 

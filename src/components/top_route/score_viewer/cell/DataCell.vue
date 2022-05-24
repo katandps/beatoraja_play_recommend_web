@@ -1,12 +1,14 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue"
 import Columns from "../../../../models/columns"
 
 // --- props ---
-const props = defineProps({
-  columns: { type: Columns, require: true },
-  name: { type: String, require: true }
-})
+interface Props {
+  columns: Columns
+  name: string
+}
+const props = defineProps<Props>()
+
 // --- emits ---
 const emits = defineEmits(["click"])
 

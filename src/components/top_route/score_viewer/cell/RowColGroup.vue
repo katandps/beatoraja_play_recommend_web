@@ -10,11 +10,8 @@ const props = defineProps({
 
 // --- computed ---
 const active_columns = computed(() =>
-  config.DETAIL_COLUMNS.filter((c) => is_active(c.name))
+  config.DETAIL_COLUMNS.filter((c) => props.columns?.column_is_active(c.name))
 )
-
-// -- methods --
-const is_active = (name: string) => props.columns.column_is_active(name)
 </script>
 
 <template>

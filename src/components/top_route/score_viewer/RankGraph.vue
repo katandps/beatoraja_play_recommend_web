@@ -24,7 +24,7 @@ const rank_list = computed(() =>
 )
 
 // --- methods ---
-const show_modal = (title, text) => modal.value.show_modal(title, text)
+const showModal = (title, text) => modal.value.showModal(title, text)
 
 const list = (level_index, rank_index) =>
   rank_list[level_index][rank_index]
@@ -67,7 +67,7 @@ const list = (level_index, rank_index) =>
               '%;color:#000'
             "
             v-on:click="
-              show_modal(level + ' ' + rank, list(level_index, rank_index))
+              showModal(level + ' ' + rank, list(level_index, rank_index))
             "
           >
             {{ rank_list[level_index][rank_index].length }}
