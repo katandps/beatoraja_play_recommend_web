@@ -141,6 +141,32 @@ const dayFormat = (date) => {
       {{ title }}
     </DataCell>
 
+    <DataCell class="update" :columns="columns" name="clear_update">
+      <span v-if="song.clear_type > 0 && clear_update_day === update_day">
+        <font-awesome-icon
+          :icon="['fas', 'square']"
+          :class="'color-' + config.LAMP_INDEX[song.clear_type_before]"
+          v-tooltip="config.LAMP_INDEX[song.clear_type_before]"
+        />
+        <font-awesome-icon
+          :icon="['fas', 'long-arrow-alt-right']"
+          style="margin-inline: 0.2em"
+        />
+        <font-awesome-icon
+          :icon="['fas', 'square']"
+          :class="'color-' + config.LAMP_INDEX[song.clear_type]"
+          v-tooltip="config.LAMP_INDEX[song.clear_type]"
+        />
+      </span>
+      <span v-else>
+        <font-awesome-icon
+          :icon="['fas', 'square']"
+          :class="'color-' + config.LAMP_INDEX[song.clear_type]"
+          v-tooltip="config.LAMP_INDEX[song.clear_type]"
+        />
+      </span>
+    </DataCell>
+
     <DataCell
       class="rank"
       :columns="columns"
@@ -151,6 +177,17 @@ const dayFormat = (date) => {
     </DataCell>
     <DataCell class="rank" :columns="columns" name="detail_rank" v-tooltip="">
       {{ current_detail_rank }}
+    </DataCell>
+    <DataCell class="update" :columns="columns" name="rank_update">
+      <span v-if="rank_is_update">
+        {{ rank_before }}
+        <font-awesome-icon
+          :icon="['fas', 'long-arrow-alt-right']"
+          style="margin-right: 0.2em"
+        />
+        <span class="update_strong">{{ current_rank }}</span>
+      </span>
+      <span v-else>{{ current_rank }}</span>
     </DataCell>
 
     <DataCell
@@ -171,6 +208,24 @@ const dayFormat = (date) => {
     <DataCell class="score" :columns="columns" name="score_before">
       {{ song.score_before }}
     </DataCell>
+    <DataCell class="update" :columns="columns" name="score_update">
+      <span v-if="percentile">
+        <span v-if="score_is_update">
+          <span class="update_strong">+{{ percent_diff }}</span> ({{
+            song.score_rate_format(song.score)
+          }})%
+        </span>
+        <span v-else>{{ song.score_rate_format(song.score) }}%</span>
+      </span>
+      <span v-else>
+        <span v-if="score_is_update">
+          <span class="update_strong">+{{ score_diff }}</span> ({{
+            song.score
+          }})
+        </span>
+        <span v-else>{{ song.score }}</span>
+      </span>
+    </DataCell>
 
     <DataCell class="bp" :columns="columns" name="bp">
       {{
@@ -182,6 +237,16 @@ const dayFormat = (date) => {
     }}</DataCell>
     <DataCell class="bp" :columns="columns" name="bp_before">
       {{ song.min_bp_before === -1 ? "---" : song.min_bp_before }}
+    </DataCell>
+    <DataCell class="update" :columns="columns" name="bp_update">
+      <span v-if="bp !== '-' && bp_update_day === update_day">
+        <span class="update_strong" v-if="song.min_bp_before !== -1">{{
+          song.min_bp - song.min_bp_before
+        }}</span>
+        <span class="update_strong" v-else>new</span>
+        ({{ bp }})
+      </span>
+      <span v-else>{{ bp }}</span>
     </DataCell>
 
     <DataCell class="combo" :columns="columns" name="combo">{{
@@ -210,71 +275,6 @@ const dayFormat = (date) => {
     </DataCell>
     <DataCell name="rival_date" class="date" :columns="columns">
       {{ rival_date }}
-    </DataCell>
-
-    <DataCell class="update" :columns="columns" name="clear_update">
-      <span v-if="song.clear_type > 0 && clear_update_day === update_day">
-        <font-awesome-icon
-          :icon="['fas', 'square']"
-          :class="'color-' + config.LAMP_INDEX[song.clear_type_before]"
-          v-tooltip="config.LAMP_INDEX[song.clear_type_before]"
-        />
-        <font-awesome-icon
-          :icon="['fas', 'long-arrow-alt-right']"
-          style="margin-inline: 0.2em"
-        />
-        <font-awesome-icon
-          :icon="['fas', 'square']"
-          :class="'color-' + config.LAMP_INDEX[song.clear_type]"
-          v-tooltip="config.LAMP_INDEX[song.clear_type]"
-        />
-      </span>
-      <span v-else>
-        <font-awesome-icon
-          :icon="['fas', 'square']"
-          :class="'color-' + config.LAMP_INDEX[song.clear_type]"
-          v-tooltip="config.LAMP_INDEX[song.clear_type]"
-        />
-      </span>
-    </DataCell>
-    <DataCell class="update" :columns="columns" name="rank_update">
-      <span v-if="rank_is_update">
-        {{ rank_before }}
-        <font-awesome-icon
-          :icon="['fas', 'long-arrow-alt-right']"
-          style="margin-right: 0.2em"
-        />
-        <span class="update_strong">{{ current_rank }}</span>
-      </span>
-      <span v-else>{{ current_rank }}</span>
-    </DataCell>
-    <DataCell class="update" :columns="columns" name="score_update">
-      <span v-if="percentile">
-        <span v-if="score_is_update">
-          <span class="update_strong">+{{ percent_diff }}</span> ({{
-            song.score_rate_format(song.score)
-          }})%
-        </span>
-        <span v-else>{{ song.score_rate_format(song.score) }}%</span>
-      </span>
-      <span v-else>
-        <span v-if="score_is_update">
-          <span class="update_strong">+{{ score_diff }}</span> ({{
-            song.score
-          }})
-        </span>
-        <span v-else>{{ song.score }}</span>
-      </span>
-    </DataCell>
-    <DataCell class="update" :columns="columns" name="bp_update">
-      <span v-if="bp !== '-' && bp_update_day === update_day">
-        <span class="update_strong" v-if="song.min_bp_before !== -1">{{
-          song.min_bp - song.min_bp_before
-        }}</span>
-        <span class="update_strong" v-else>new</span>
-        ({{ bp }})
-      </span>
-      <span v-else>{{ bp }}</span>
     </DataCell>
   </div>
 </template>

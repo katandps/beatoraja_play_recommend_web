@@ -26,17 +26,24 @@ export default class Columns {
       score_update:  true,
       bp_update: true,
     
-      clear_diff_rival: true,
-      score_diff_rival:  true,
-      bp_diff_rival:  true,
-      rival_date:  true
+      clear_diff_rival: false,
+      score_diff_rival:  false,
+      bp_diff_rival:  false,
+      rival_date:  false
     }
   }
 
   constructor(columns: Object) {
     this.columns = Columns.columns_default()
-    Object.assign(this, columns)
+    Object.assign(this.columns, columns)
   }
+
+  static for_rival = () => (new Columns({
+    clear_diff_rival: true,
+    score_diff_rival: true,
+    bp_diff_rival: true,
+    rival_date: true
+  }))
 
   for_score() {
     this.columns = Columns.columns_default()
@@ -57,5 +64,19 @@ export default class Columns {
    */
   column_is_active(column_name: string): boolean {
     return !!this.columns[column_name]
+  }
+
+  visible_columns(): string[] {
+    const ret: string[] = [];
+    Object.entries(this.columns).filter((a) => {
+      console.log(a)
+      a[1] ? ret.push(a[0]) : null})
+    console.log(ret,this.columns);
+    return ret
+  }
+
+  import_columns(cols: string[]) {
+    this.columns = {}
+    cols.forEach((c) => this.columns[c] = true)
   }
 }

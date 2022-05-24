@@ -46,7 +46,6 @@ export class DifficultyTable {
   name: string
   levels: {[level: string]: string[]}
   level_list: string[]
-  table_score: {[level: string]: {[md5: string]: SongDetail}}
 
   constructor(table_name: string, levels: {[level: string]: string[]}, level_list: string[]) {
     this.name = table_name
@@ -58,14 +57,5 @@ export class DifficultyTable {
      * @type string[]
      */
     this.level_list = level_list
-    /**
-     * @type {Object.<string, Object.<string, SongDetail>>}
-     */
-    this.table_score = {}
-    this.level_list.forEach((level) => (this.table_score[level] = {}))
-  }
-
-  contains_level(table_name: string): boolean {
-    return this.level_list.indexOf(table_name) !== -1
   }
 }

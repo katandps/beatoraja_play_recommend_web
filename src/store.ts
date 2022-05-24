@@ -48,7 +48,7 @@ export const store = createStore({
             return state.filter
         },
         column_is_active: (state: any) => (column_name: string) => {
-            return state.filter.columns_detail[column_name]
+            return state.filter.columns[column_name]
         }
     }
 })

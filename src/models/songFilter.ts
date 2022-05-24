@@ -7,9 +7,7 @@ import SongDetail from "./song_detail"
 export default class SongFilter {
   sort_desc: boolean
   sort_key: string
-  columns_detail: Columns
-  columns_rival: Columns
-  columns_recent: Columns
+  columns: Columns
   visible_lamp: VisibleLamp
   visible_rank: VisibleRank
   day_before: number
@@ -20,9 +18,7 @@ export default class SongFilter {
     log.debug("filter constructed by ", filter)
     this.sort_desc = filter ? filter.sort_desc : true
     this.sort_key = filter ? filter.sort_key : "clear"
-    this.columns_detail = new Columns(filter ? filter.columns_detail : null)
-    this.columns_rival = new Columns(filter ? filter.columns_rival : null)
-    this.columns_recent = new Columns(filter ? filter.columns_recent : null)
+    this.columns = new Columns(filter ? filter.columns : null)
     this.visible_lamp = new VisibleLamp(filter ? filter.visible_lamp : null)
     this.visible_rank = new VisibleRank(filter ? filter.visible_rank : null)
     this.day_before = filter ? filter.day_before || 0 : 0
@@ -41,7 +37,7 @@ export default class SongFilter {
     if (!columns) {
       return
     }
-    this.columns_detail = columns
+    this.columns = columns
   }
 
   /**
@@ -134,7 +130,7 @@ export default class SongFilter {
     this.sort_key = "score_date"
     this.sort_desc = false
     this.day_before = 0
-    this.columns_detail.for_score()
+    this.columns.for_score()
     this.visible_all_lamp_type()
     this.visible_rank.to_all()
   }
@@ -146,7 +142,7 @@ export default class SongFilter {
     this.sort_key = "bp_date"
     this.sort_desc = false
     this.day_before = 0
-    this.columns_detail.for_bp()
+    this.columns.for_bp()
     this.visible_all_lamp_type()
     this.visible_rank.to_all()
   }
@@ -158,7 +154,7 @@ export default class SongFilter {
     this.sort_key = "rate"
     this.sort_desc = true
     this.day_before = 0
-    this.columns_detail.for_score()
+    this.columns.for_score()
     this.visible_all_lamp_type()
     this.visible_rank.to_not_aaa()
   }
@@ -170,7 +166,7 @@ export default class SongFilter {
     this.sort_key = "rate"
     this.sort_desc = true
     this.day_before = 0
-    this.columns_detail.for_score()
+    this.columns.for_score()
     this.visible_all_lamp_type()
     this.visible_rank.to_not_aa()
   }
@@ -182,7 +178,7 @@ export default class SongFilter {
     this.sort_key = "bp"
     this.sort_desc = false
     this.day_before = 0
-    this.columns_detail.for_bp()
+    this.columns.for_bp()
     this.visible_not_easy()
     this.visible_rank.to_all()
   }
@@ -194,7 +190,7 @@ export default class SongFilter {
     this.sort_key = "bp"
     this.sort_desc = false
     this.day_before = 0
-    this.columns_detail.for_bp()
+    this.columns.for_bp()
     this.visible_not_hard()
     this.visible_rank.to_all()
   }
@@ -206,7 +202,7 @@ export default class SongFilter {
     this.sort_key = "bp"
     this.sort_desc = false
     this.day_before = 0
-    this.columns_detail.for_bp()
+    this.columns.for_bp()
     this.visible_not_ex_hard()
     this.visible_rank.to_all()
   }
@@ -218,9 +214,13 @@ export default class SongFilter {
     this.sort_key = "bp"
     this.sort_desc = false
     this.day_before = 0
-    this.columns_detail.for_bp()
+    this.columns.for_bp()
     this.visible_not_full_combo()
     this.visible_rank.to_all()
+  }
+
+  visible_columns(): string[] {
+    return this.columns.visible_columns()
   }
 }
 

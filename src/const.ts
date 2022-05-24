@@ -88,4 +88,62 @@ export default Object.freeze({
             }
         ]
     ],
+
+    DETAIL_COLUMNS: [
+        { key: "clear", name: "クリア", title: " ", class: "clear" },
+        {
+          key: "clear_date",
+          name: "クリア更新日",
+          title: "Date(clear)",
+          class: "date"
+        },
+        { key: "clear_before", name: "更新前クリア", title: " ", class: "clear" },
+        { key: "level", name: "難易度", title: "Lv", class: "level" },
+        { key: "title", name: "曲名", title: "Title", class: "title" },
+        { key: "clear_update", name: "クリア更新", title: " ", class: "clear_update"},
+        { key: "score_rank", name: "スコアランク", title: "Rank", class: "rank" },
+        { key: "detail_rank", name: "細分化ランク", title: "DRank", class: "rank" },
+        { key: "rank_update", name: "ランク更新", title: "RankDiff", class: "update"},
+        { key: "rate", name: "スコア%", title: "Rate", class: "rate" },
+        { key: "score", name: "EXスコア", title: "Ex/Max", class: "score" },
+        {
+          key: "score_date",
+          name: "スコア更新日",
+          title: "Date(score)",
+          class: "date"
+        },
+        {
+          key: "score_before",
+          name: "更新前スコア",
+          title: "Ex(old)",
+          class: "score"
+        },
+        { key: "score_update", name: "スコア更新", title: "ScoreDiff", class:"update"},
+        { key: "bp", name: "ミスカウント", title: "BP", class: "bp" },
+        {
+          key: "bp_date",
+          name: "ミスカウント更新日",
+          title: "Date(BP)",
+          class: "date"
+        },
+        {
+          key: "bp_before",
+          name: "更新前ミスカウント",
+          title: "BP(old)",
+          class: "bp"
+        },
+        {
+            key:"bp_update",
+            name: "ミスカウント更新",
+            title: "BpDiff",
+            class: "update"
+        },
+        { key: "combo", name: "最高コンボ", title: "Combo", class: "combo" },
+        { key: "play", name: "プレイ回数", title: "Play", class: "play" },
+        { key: "date", name: "更新日", title: "Date", class: "date" },
+        { key: "clear_diff_rival", name: "ライバルとのクリア差", title: "ClearVS", class:"clear_vs"},
+        { key: "score_diff_rival", name: "ライバルとのスコア差", title: "ScoreVS", class:"score_vs"},
+        { key: "bp_diff_rival", name: "ライバルとのBP差", title: "BPVS", class:"bp_vs"},
+        { key: "rival", name: "ライバルの更新日", title: "RivalDate", class:"date"},
+      ]
 });

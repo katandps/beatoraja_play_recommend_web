@@ -4,7 +4,7 @@ import Api from "../../api"
 import { debug } from "loglevel"
 import SongFilter from "../../models/songFilter"
 import { useStore } from "vuex"
-import { computed, onMounted, ref } from "vue"
+import { computed, onMounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { DateFormatter } from "../../models/date_formatter"
 import SongDetail from "../../models/song_detail.ts"
@@ -93,23 +93,17 @@ const table_score = computed(() => {
   let table_score = {}
   Object.entries(selected_table.value.levels).forEach(([level_label, hashes]) =>
     hashes.forEach((hash) => {
+      let score = new SongDetail()
+      score.init_score(scores.value.get_score(hash))
+      score.init_song(songs.value.get_score(hash), hash)
+      if (exists_rival_score.value) {
+        score.init_rival_score(rival_score.value.get_score(hash))
+      }
+      score.set_level(level_label)
       if (!table_score[level_label]) {
         table_score[level_label] = {}
       }
-      if (!table_score[level_label][hash]) {
-        table_score[level_label][hash] = new SongDetail()
-      }
-      table_score[level_label][hash].init_score(scores.value.get_score(hash))
-      table_score[level_label][hash].init_song(
-        songs.value.get_score(hash),
-        hash
-      )
-      if (exists_rival_score.value) {
-        table_score[level_label][hash].init_rival_score(
-          rival_score.value.get_score(hash)
-        )
-      }
-      table_score[level_label][hash].set_level(level_label)
+      table_score[level_label][hash] = score
     })
   )
 
@@ -135,14 +129,6 @@ const sorted_song_list = computed(() => {
     })
     .slice(0, filter.value.max_length || songs.length)
 })
-// const recent_song_list = computed(() =>
-//   filtered_score.value
-//     .slice()
-//     .sort((a, b) =>
-//       a.updated_at === b.updated_at ? 0 : a.updated_at < b.updated_at ? 1 : -1
-//     )
-//     .slice(0, filter.value.max_length || filtered_score.value.length)
-// )
 
 // --- methods ---
 const init_table = (t) => {
@@ -160,6 +146,9 @@ const setRival = (rival_id) => {
       rival_score.value = s
       loaded.value.rival_id = rival_id
     })
+  } else {
+    rival_score.value = null
+    loaded.value.rival_id = 0
   }
 }
 
@@ -216,13 +205,9 @@ const setRivalId = async (input_rival_id, d) => {
   await router.push({ query })
   setRival(input_rival_id)
 }
-</script>
 
-<style scoped>
-#score-table {
-  padding-top: 20px;
-}
-</style>
+watch(filter, (cur) => store.commit("setFilter", cur))
+</script>
 
 <template>
   <section id="score-table">
@@ -280,7 +265,11 @@ const setRivalId = async (input_rival_id, d) => {
 
         <hr />
         <template v-if="mode === 'detail'">
-          <TheDetailVue :sorted_song_list="sorted_song_list" :date="date_str" />
+          <TheDetailVue
+            :sorted_song_list="sorted_song_list"
+            :date="date_str"
+            :filter="filter"
+          />
         </template>
         <template v-if="mode === 'lamp'">
           <LampGraphVue
@@ -316,7 +305,6 @@ const setRivalId = async (input_rival_id, d) => {
       v-if="is_initialized"
       ref="tables_modal"
     />
-
     <ModalUserSelect
       ref="rival_modal"
       :user_id="rival_id"
@@ -328,6 +316,9 @@ const setRivalId = async (input_rival_id, d) => {
 </template>
 
 <style scoped>
+#score-table {
+  padding-top: 20px;
+}
 .row {
   margin-left: 0;
   margin-right: 0;
