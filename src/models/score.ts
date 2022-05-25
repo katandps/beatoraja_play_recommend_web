@@ -1,25 +1,23 @@
 export default class Score {
-    /**
-     * @private
-     */
-    constructor() {
-        this.max_combo = 0;
+    
+    max_combo: number = 0
 
-        this.clear_type = 0
-        this.clear_type_before = 0
-        this.clear_updated_at = "1970-01-01T09:00:00+09:00"
+    clear_type: number = 0
+    clear_type_before:number = 0
+    clear_updated_at: string = "1970-01-01T09:00:00+09:00"
 
-        this.score = 0
-        this.score_before = 0
-        this.score_updated_at = "1970-01-01T09:00:00+09:00"
+    score: number = 0
+    score_before : number = 0
+    score_updated_at: string = "1970-01-01T09:00:00+09:00"
 
-        this.min_bp = -1
-        this.min_bp_before = -1
-        this.min_bp_updated_at = "1970-01-01T09:00:00+09:00"
+    min_bp: number = -1
+    min_bp_before: number = -1
+    min_bp_updated_at : string = "1970-01-01T09:00:00+09:00"
 
-        this.updated_at = "1970-01-01T09:00:00+09:00"
-        this.play_count = 0
-    }
+    updated_at: string = "1970-01-01T09:00:00+09:00"
+    play_count: number = 0
+
+    constructor() {}
 
     /**
      * @public
@@ -32,7 +30,7 @@ export default class Score {
      *   play_count: number
      * }} score
      */
-    set_score(score) {
+    set_score(score: any) {
         this.max_combo = score.max_combo
         if (!(!score || !score.clear_type)) {
             this.clear_type = score.clear_type.current

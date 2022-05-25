@@ -1,33 +1,37 @@
+<script setup lang="ts">
+import { ref } from "vue"
+import ModalBaseVue, { IModalBase } from "./ModalBase.vue"
+export interface IGraphModal {
+  showModal: (title: string, text: string[]) => void
+}
+
+// --- ref ---
+const modal_base = ref<IModalBase>()
+
+// --- data ---
+const title = ref("")
+const text = ref<string[]>([])
+
+// --- methods ---
+const showModal = (ti: string, tx: string[]) => {
+  title.value = ti
+  text.value = tx
+  modal_base.value?.showModal()
+}
+
+// --- expose ---
+defineExpose({ showModal })
+</script>
+
 <template>
-  <modal-base id="graph-modal" ref="modal_base">
+  <ModalBaseVue id="graph-modal" ref="modal_base">
     <template v-slot:header>
-      <h2>{{title}}</h2>
+      <h2>{{ title }}</h2>
     </template>
     <template v-slot:body>
       <ul>
-        <li v-for="(text, index) in text" :key="index">{{ text }}</li>
+        <li v-for="(tx, index) in text" :key="index">{{ tx }}</li>
       </ul>
     </template>
-  </modal-base>
+  </ModalBaseVue>
 </template>
-
-<script>
-import ModalBase from "./ModalBase"
-export default {
-  name: "GraphModal",
-  components: {ModalBase},
-  data: () => ({
-    text: "",
-    title: ""
-  }),
-  methods: {
-    show_modal(title, text) {
-      this.text = text
-      this.title = title
-      this.$refs.modal_base.show_modal()
-    },
-  },
-}
-</script>
-
-<style scoped></style>

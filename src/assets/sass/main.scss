@@ -1,5 +1,4 @@
 @import "~bootstrap/scss/bootstrap";
-@import "~bootstrap-vue/src";
 
 $theme-colors: (
         "Failed": #b06464,
@@ -41,11 +40,11 @@ $theme-colors: (
     background-color: $color !important;
   }
   a#{'.bg-#{$value}'},
-  button#{'.bg-#{$value}'} {
-    @include hover-focus() {
-      background-color: darken($color, 10%) !important;
-    }
-  }
+  // button#{'.bg-#{$value}'} {
+  //   @include hover-focus() {
+  //     background-color: darken($color, 10%) !important;
+  //   }
+  // }
   .table-line-#{$value} {
     &,
     div {

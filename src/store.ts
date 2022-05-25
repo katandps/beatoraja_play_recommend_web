@@ -1,11 +1,8 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import {createStore} from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import SongFilter from "./models/songFilter"
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
+export const store = createStore({
     plugins: [createPersistedState({
         key: 'vue-gauth',
         paths: ['userInfo', 'accessToken', 'filter'],
@@ -14,7 +11,7 @@ export default new Vuex.Store({
     state: {
         userInfo: null,
         accessToken: null,
-        filter: new SongFilter(),
+        filter: new SongFilter(null),
     },
     mutations: {
         setUserInfo(state, userInfo) {
@@ -50,8 +47,8 @@ export default new Vuex.Store({
         filter(state) {
             return state.filter
         },
-        column_is_active: (state) => (column_name) => {
-            return state.filter.columns[column_name]
+        column_is_active: (state: any) => (column_name: string) => {
+            return state.filter.columns_detail[column_name]
         }
     }
 })

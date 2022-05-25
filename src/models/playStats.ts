@@ -1,13 +1,14 @@
 import {DateFormatter} from "@/models/date_formatter";
 
 export default class PlayStats {
+    logs: PlayStat[]
     /**
      * @param {{log: [{play_count: number, clear_count: number, play_time: number, date: Date, total_judge: {}}]}} json
      */
-    constructor(json) {
+    constructor(json: any) {
         this.logs = []
         if (json.log) {
-              json.log.reverse().forEach(t => this.logs.push(
+              json.log.reverse().forEach((t:any) => this.logs.push(
                 new PlayStat(
                     t.play_count,
                     t.clear_count,
@@ -30,7 +31,13 @@ export default class PlayStats {
 
 
 export class PlayStat {
-    constructor(play_count, clear_count, play_time, date, total_judge) {
+    play_count: number
+    clear_count: number
+    play_time: number
+    date: string
+    total_judge: TotalJudge
+
+    constructor(play_count: number, clear_count:number, play_time:number, date:string, total_judge: any) {
         this.play_count = play_count
         this.clear_count = clear_count
         this.play_time = play_time
@@ -53,7 +60,20 @@ export class PlayStat {
 }
 
 export class TotalJudge {
-    constructor(total_judge) {
+    early_pgreat: number
+    late_pgreat: number
+    early_great: number
+    late_great: number
+    early_good: number
+    late_good:number
+    early_bad:number
+    late_bad: number
+    early_poor: number 
+    late_poor: number
+    early_miss: number
+    late_miss: number
+
+    constructor(total_judge: any) {
         this.early_pgreat = total_judge.early_pgreat
         this.late_pgreat = total_judge.late_pgreat
         this.early_great = total_judge.early_great
