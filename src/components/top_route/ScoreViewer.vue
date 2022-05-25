@@ -88,6 +88,11 @@ const filtered_score = computed(() => {
   for (const table of tables.value.tables) {
     for (const active_level of table.checks) {
       const hashes = table.levels[active_level]
+      if (!hashes) {
+        continue
+      }
+      debug(hashes)
+
       for (const hash of hashes) {
         if (used[hash]) {
           continue

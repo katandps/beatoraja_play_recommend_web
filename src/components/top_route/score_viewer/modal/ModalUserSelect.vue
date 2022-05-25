@@ -44,7 +44,6 @@ const accessToken = computed(() => store.getters.accessToken)
 
 // --- methods ---
 const showModal = () => {
-  console.log(modal_base.value)
   modal_base.value?.showModal()
 }
 const closeModal = () => modal_base.value?.closeModal()

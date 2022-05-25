@@ -69,7 +69,6 @@ export class DifficultyTable {
   }
 
   setChecks(checks: string[]) {
-    console.log(this, checks)
     this.checks = checks
   }
 }
