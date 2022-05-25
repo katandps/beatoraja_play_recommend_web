@@ -21,10 +21,10 @@ export default class Columns {
       play: true,
       date:  true,
     
-      clear_update: true,
-      rank_update:  true,
-      score_update:  true,
-      bp_update: true,
+      clear_update: false,
+      rank_update:  false,
+      score_update:  false,
+      bp_update: false,
     
       clear_diff_rival: false,
       score_diff_rival:  false,

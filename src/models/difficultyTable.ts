@@ -31,6 +31,14 @@ export default class Tables {
     return -1
   }
 
+  level_list(): string[] {
+    let ret: string[] = [];
+    for (const table of this.tables) {
+      ret = ret.concat(table.level_list)
+    }
+    return ret    
+  }
+
   /**
    * @param table_name
    * @returns {DifficultyTable|null}
@@ -58,5 +66,10 @@ export class DifficultyTable {
     this.level_list = level_list
 
     this.checks = []
+  }
+
+  setChecks(checks: string[]) {
+    console.log(this, checks)
+    this.checks = checks
   }
 }

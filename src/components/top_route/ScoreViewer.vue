@@ -46,8 +46,6 @@ const props = defineProps<Props>()
 
 // --- data ---
 const tables = ref(new Tables([]))
-const selected_table = ref()
-const selected_level = ref("")
 const songs = ref()
 const scores = ref()
 const rival_score = ref()
@@ -60,20 +58,13 @@ const loaded = ref({ user_id: 0, rival_id: 0, date: "" })
 const accessToken = computed<string>(() => store.getters.accessToken)
 const filter = computed(() => store.getters.filter)
 
-const level_list = computed(() =>
-  selected_table.value ? selected_table.value.level_list : []
-)
+const level_list = computed(() => tables.value.level_list())
 const exists_tables = computed(() => !!tables.value)
 const exists_scores = computed(() => !!scores.value)
 const exists_songs = computed(() => !!songs.value)
-const exists_table_selected = computed(() => !!selected_table.value)
 const exists_rival_score = computed(() => !!rival_score.value)
 const is_initialized = computed(
-  () =>
-    exists_tables.value &&
-    exists_songs.value &&
-    exists_scores.value &&
-    exists_table_selected.value
+  () => exists_tables.value && exists_songs.value && exists_scores.value
 )
 const date_str = computed(() => DateFormatter.format(date.value))
 const rival_date_str = computed(() => DateFormatter.format(rival_date.value))
@@ -132,9 +123,10 @@ const sorted_song_list = computed(() => {
 // --- methods ---
 const init_table = (t: Tables) => {
   tables.value = t
-  debug(tables, tables.value.first())
-  selected_table.value = tables.value.first()
-  selected_level.value = selected_table.value.level_list[0]
+  const first = tables.value.first()
+  if (first) {
+    first.checks = first?.level_list
+  }
 }
 
 const setRival = (rival_id: number) => {
@@ -151,6 +143,10 @@ const setRival = (rival_id: number) => {
     rival_score.value = null
     loaded.value.rival_id = 0
   }
+}
+const setLevel = (levels: string[], index: number) => {
+  debug(levels, index)
+  return (tables.value.tables[index].checks = levels)
 }
 
 const fetchDetail = (user_id: number) => {
@@ -279,6 +275,7 @@ watch(filter, (cur) => store.commit("setFilter", cur))
     <ModalUserSelect ref="user_modal" :user_id="user_id" @setUser="setUserId" />
     <ModalForSelectTable
       :tables="tables"
+      @setLevel="setLevel"
       v-if="is_initialized"
       ref="tables_modal"
     />

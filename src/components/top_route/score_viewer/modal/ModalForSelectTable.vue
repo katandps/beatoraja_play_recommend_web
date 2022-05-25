@@ -2,7 +2,7 @@
 import ModalBaseVue, { IModalBase } from "./ModalBase.vue"
 import Tables from "../../../../models/difficultyTable"
 import { ref } from "vue"
-
+import LevelSelectVue from "./LevelSelect.vue"
 export interface IModalForSelectTable {
   showModal: () => void
 }
@@ -18,10 +18,14 @@ defineProps<Props>()
 
 // --- emits ---
 
+const emits = defineEmits(["setLevel"])
+
 // --- data ---
 
 // --- methods ---
 const showModal = () => modal_base.value?.showModal()
+const setLevel = (level: string[], index: number) =>
+  emits("setLevel", level, index)
 
 // --- expose ---
 defineExpose({ showModal })
@@ -34,17 +38,8 @@ defineExpose({ showModal })
     </template>
     <template v-slot:body>
       <div>
-        <div v-for="table in tables.tables" :key="table.name">
-          <h3>{{ table.name }}</h3>
-          <div class="btn" v-for="level in table.level_list" :key="level">
-            <input
-              type="checkbox"
-              :id="level"
-              v-model="table.checks"
-              :value="level"
-            />
-            <label :for="level">{{ level }}</label>
-          </div>
+        <div v-for="(table, index) in tables.tables" :key="table.name">
+          <LevelSelectVue :table="table" :index="index" @setLevel="setLevel" />
         </div>
       </div>
     </template>
