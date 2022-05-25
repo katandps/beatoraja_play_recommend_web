@@ -1,119 +1,103 @@
+<script setup lang="ts">
+import config from "../../../const"
+import SongDetail from "../../../models/song_detail"
+import { computed, ref } from "vue"
+import Tables from "@/models/difficultyTable"
+import GraphModalVue, { IGraphModal } from "./modal/GraphModal.vue"
+
+interface Props {
+  filtered_score: SongDetail[]
+  tables: Tables
+}
+const props = defineProps<Props>()
+
+// --- refs ---
+const modal = ref<IGraphModal>()
+// --- computed ---
+const rank_list = computed(() =>
+  active_tables.value.map((table) =>
+    table.level_list.map((l) =>
+      config.RANK_TYPE.map((r) =>
+        props.filtered_score
+          .filter((s) => s.clear_rank === r && s.level === l)
+          .sort(SongDetail.cmp_title)
+      )
+    )
+  )
+)
+
+const active_tables = computed(() =>
+  props.tables.tables.filter((t) => t.checks.length > 0)
+)
+// --- methods ---
+const showModal = (title: string, text: string[]) =>
+  modal.value?.showModal(title, text)
+
+const list = (table_index: number, level_index: number, rank_index: number) =>
+  rank_list.value[table_index][level_index][rank_index]
+    .sort(SongDetail.cmp_title)
+    .map((s) => s.title)
+</script>
+
 <template>
   <div id="rank-graph">
-    <TableSelector :model="model" @setTable="set_table" v-if="model.tables_is_set()"/>
-    <label class="col-sm-3 btn btn-secondary" @click="show_filter_modal">表示曲設定</label>
-    <hr>
     凡例
-    <table style="width:100%">
+    <table style="width: 100%">
       <tr>
-        <td class="progress" style="width:100%;height:1.8em">
-          <div v-for="rank in config().RANK_TYPE" :key="rank"
-               :class="'progress-bar bg-' + rank"
-               role="progressbar"
-               style="color:#000"
-               :style="'width: ' + 100.0/config().RANK_TYPE.length + '%'"
-          >{{ rank }}
-          </div>
-        </td>
-      </tr>
-    </table>
-    <hr>
-    <table style="width:100%">
-      <tr v-for="(level, level_index) in level_list" :key="level_index">
-        <td style="width:30px">{{ level }}</td>
-        <td class="progress" style="width:100%;height:1.8em">
+        <td class="progress" style="width: 100%; height: 1.8em">
           <div
-              v-for="(rank, rank_index) in config().RANK_TYPE" :key="rank"
-              :class="'progress-bar bg-' + rank"
-              role="progressbar"
-              :style="'width: ' + rank_list[level_index][rank_index].length * 100 + '%;color:#000'"
-              v-on:click="show_modal(
-                  level + ' ' +  rank,
-                  list(level_index, rank_index)
-              )"
+            v-for="rank in config.RANK_TYPE"
+            :key="rank"
+            :class="'progress-bar bg-' + rank"
+            role="progressbar"
+            style="color: #000"
+            :style="'width: ' + 100.0 / config.RANK_TYPE.length + '%'"
           >
-            {{ rank_list[level_index][rank_index].length }}
+            {{ rank }}
           </div>
         </td>
       </tr>
     </table>
-    <graph-modal id="song-list-modal" ref="modal"/>
-    <filter-modal id="filter-modal" ref="filter_modal"/>
+    <hr />
+    <template v-if="active_tables.length > 0">
+      <div v-for="(table, table_index) in active_tables" :key="table_index">
+        <h2>{{ table.name }}</h2>
+        <table style="width: 100%">
+          <tr
+            v-for="(level, level_index) in table.level_list"
+            :key="level_index"
+          >
+            <td style="width: 30px">{{ level }}</td>
+            <td class="progress" style="width: 100%; height: 1.8em">
+              <div
+                v-for="(rank, rank_index) in config.RANK_TYPE"
+                :key="rank"
+                :class="'progress-bar bg-' + rank"
+                role="progressbar"
+                :style="
+                  'width: ' +
+                  rank_list[table_index][level_index][rank_index].length * 100 +
+                  '%;color:#000'
+                "
+                v-on:click="
+                  showModal(
+                    level + ' ' + rank,
+                    list(table_index, level_index, rank_index)
+                  )
+                "
+              >
+                {{ rank_list[table_index][level_index][rank_index].length }}
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </template>
+    <template v-else> 表示する難易度が設定されていません </template>
+
+    <GraphModalVue id="song-list-modal" ref="modal" />
   </div>
 </template>
-
-<script>
-import config from "../../../const.js"
-import Model from "../../../models/model"
-import log from "loglevel"
-import SongDetail from "../../../models/song_detail"
-import TableSelector from "./selector/TableSelector"
-import GraphModal from "./modal/GraphModal"
-import FilterModal from "./modal/FilterModal"
-import SongFilter from "../../../models/songFilter"
-
-export default {
-  name: "RankGraph",
-  components: {
-    TableSelector, GraphModal, FilterModal
-  },
-  props: {
-    model: {
-      type: Model,
-      required: true,
-    },
-  },
-  data: () => ({
-    modal_title: "",
-    modal_text: "",
-    filter: new SongFilter()
-  }),
-  methods: {
-    config() {
-      return config;
-    },
-    /**
-     * @param {string} title
-     * @param {string[]} text
-     */
-    show_modal(title, text) {
-      log.debug("open clicked")
-      this.$refs.modal.show_modal(title, text)
-    },
-    list(level_index, rank_index) {
-      return this.rank_list[level_index][rank_index].sort(SongDetail.cmp_title).map(s => s.title)
-    },
-    /**
-     * @param {string} table
-     */
-    set_table(table) {
-      this.model = this.model.set_table(table)
-    },
-    show_filter_modal() {
-      this.$refs.filter_modal.show_modal()
-    },
-  },
-  computed: {
-    /**
-     * @returns {SongDetail[][][]} SongDetail[level][rank][index]
-     */
-    rank_list() {
-      if (!this.model.is_initialized()) {
-        return []
-      }
-      let songs = this.model.filtered_score(this.$store.state.filter)
-      return this.level_list.map(
-          l => config.RANK_TYPE.map(
-              r => songs.filter(s => s.clear_rank === r && s.level === l).sort(SongDetail.cmp_title)
-          )
-      )
-    },
-    level_list() {
-      return this.model.level_list()
-    }
-  }
-}
-</script>
 
 <style scoped>
 .progress-bar {

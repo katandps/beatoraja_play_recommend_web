@@ -144,8 +144,8 @@ export default {
     /**
      * @param {SongDetail} song
      */
-    show_modal(song, date) {
-      this.$refs.modal_base.show_modal()
+    showModal(song, date) {
+      this.$refs.modal_base.showModal()
       this.song = song
       this.date = date
     },    

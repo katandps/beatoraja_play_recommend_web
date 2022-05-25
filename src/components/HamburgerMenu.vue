@@ -1,13 +1,28 @@
 <template>
   <nav id="page-header">
     <!--ハンバーガーメニューのボタン-->
-    <div class="hamburger_btn" v-on:click='active_btn=!active_btn'>
-      <span class="line line_01"
-            :class="(is_login ? 'line-login ' : 'line-logout ') + (active_btn ? 'btn_line01' : '')"/>
-      <span class="line line_02"
-            :class="(is_login ? 'line-login ' : 'line-logout ') + (active_btn ? 'btn_line02' : '')"/>
-      <span class="line line_03"
-            :class="(is_login ? 'line-login ' : 'line-logout ') + (active_btn ? 'btn_line03' : '')"/>
+    <div class="hamburger_btn" v-on:click="active_btn = !active_btn">
+      <span
+        class="line line_01"
+        :class="
+          (is_login ? 'line-login ' : 'line-logout ') +
+          (active_btn ? 'btn_line01' : '')
+        "
+      />
+      <span
+        class="line line_02"
+        :class="
+          (is_login ? 'line-login ' : 'line-logout ') +
+          (active_btn ? 'btn_line02' : '')
+        "
+      />
+      <span
+        class="line line_03"
+        :class="
+          (is_login ? 'line-login ' : 'line-logout ') +
+          (active_btn ? 'btn_line03' : '')
+        "
+      />
     </div>
     <!--サイドバー-->
     <transition name="menu">
@@ -15,53 +30,65 @@
         <ul>
           <li>
             <router-link class="text-dark px-2" to="/">
-              <font-awesome-icon :icon="['fas', 'home']"/>
+              <font-awesome-icon :icon="['fas', 'home']" />
               ホーム
             </router-link>
           </li>
           <li>
-            <router-link class="text-dark px-2" :to="{path: '/view', query: Object.assign({}, $route.query, {user_id: user_id})}">
-              <font-awesome-icon :icon="['fas', 'cubes']"/>
+            <router-link
+              class="text-dark px-2"
+              :to="{
+                path: '/view',
+                query: Object.assign({}, $route.query, { user_id: user_id })
+              }"
+            >
+              <font-awesome-icon :icon="['fas', 'cubes']" />
               スコア閲覧
-            </router-link>
-          </li>
-          <li>
-            <router-link class="text-dark px-2" to="/users">
-              <font-awesome-icon :icon="['fas','users']"/>
-              ユーザーリスト
             </router-link>
           </li>
         </ul>
         <ul v-if="is_login">
           <li>
             <router-link class="text-dark px-2" to="/mypage">
-              <font-awesome-icon :icon="['fas', 'pencil-alt']"/>
+              <font-awesome-icon :icon="['fas', 'pencil-alt']" />
               マイページ
             </router-link>
           </li>
           <li>
-            <router-link class="text-dark px-2" :to="'/stats?user_id='+user_id">
-              <font-awesome-icon :icon="['fas', 'wrench']"/>
+            <router-link
+              class="text-dark px-2"
+              :to="'/stats?user_id=' + user_id"
+            >
+              <font-awesome-icon :icon="['fas', 'wrench']" />
               プレイ履歴
             </router-link>
           </li>
           <li>
-            <router-link class="text-dark px-2" :to="'/table?user_id='+user_id">
-              <font-awesome-icon :icon="['fas', 'thumbs-up']"/>
+            <router-link
+              class="text-dark px-2"
+              :to="'/table?user_id=' + user_id"
+            >
+              <font-awesome-icon :icon="['fas', 'thumbs-up']" />
               おすすめ譜面表
             </router-link>
           </li>
-          <li><a class="text-dark px-3" href="javascript:void(0);"
-                 @click.prevent="handleSignOut">
-            <font-awesome-icon :icon="['fas', 'sign-out-alt']"/>
-            ログアウト
-          </a></li>
+          <li>
+            <a
+              class="text-dark px-3"
+              href="javascript:void(0);"
+              @click.prevent="handleSignOut"
+            >
+              <font-awesome-icon :icon="['fas', 'sign-out-alt']" />
+              ログアウト
+            </a>
+          </li>
         </ul>
         <ul v-if="!is_login">
-          <li><a class="text-dark px-3" :href="handleSignInUrl()">
-            <font-awesome-icon :icon="['fas', 'sign-in-alt']"/>
-            登録/ログイン
-          </a>
+          <li>
+            <a class="text-dark px-3" :href="handleSignInUrl()">
+              <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
+              登録/ログイン
+            </a>
           </li>
         </ul>
       </div>
@@ -75,27 +102,31 @@ export default {
   props: {
     is_login: {
       type: Boolean,
-      required: true,
-    },
+      required: true
+    }
   },
   data: () => ({
     active_btn: false
   }),
   methods: {
     handleSignInUrl() {
-      let client_id = process.env.VUE_APP_CLIENT_ID;
-      let redirect_url = process.env.VUE_APP_HOST + "/oauth";
-      return "https://accounts.google.com/o/oauth2/auth?" +
-          "include_granted_scopes=true" +
-          "&redirect_uri=" + redirect_url +
-          "&scope=openid%20email%20profile" +
-          "&response_type=code" +
-          "&approval_prompt=force" +
-          "&access_type=offline" +
-          "&client_id=" + client_id;
+      let client_id = process.env.VUE_APP_CLIENT_ID
+      let redirect_url = process.env.VUE_APP_HOST + "/oauth"
+      return (
+        "https://accounts.google.com/o/oauth2/auth?" +
+        "include_granted_scopes=true" +
+        "&redirect_uri=" +
+        redirect_url +
+        "&scope=openid%20email%20profile" +
+        "&response_type=code" +
+        "&approval_prompt=force" +
+        "&access_type=offline" +
+        "&client_id=" +
+        client_id
+      )
     },
     async handleSignOut() {
-      this.$emit("handleSignOut");
+      this.$emit("handleSignOut")
     }
   },
   computed: {
@@ -103,13 +134,13 @@ export default {
       if (!this.$store.getters.userInfo) {
         return 1
       }
-      return this.$store.getters.userInfo.user_id;
+      return this.$store.getters.userInfo.user_id
     }
   },
   watch: {
-    '$route': function (to, from) {
+    $route: function (to, from) {
       if (to.path !== from.path) {
-        this.active_btn = false;
+        this.active_btn = false
       }
     }
   }
@@ -145,7 +176,6 @@ export default {
   background: #008000;
 }
 
-
 .hamburger_btn .line_01 {
   top: 16px;
   transition: 0.4s ease;
@@ -160,7 +190,6 @@ export default {
   top: 34px;
   transition: 0.4s ease;
 }
-
 
 .btn_line01 {
   transform: translateY(9px) rotate(-45deg);
@@ -178,15 +207,18 @@ export default {
 }
 
 /*サイドバー*/
-.menu-enter-active, .menu-leave-active {
+.menu-enter-active,
+.menu-leave-active {
   transition: opacity 0.4s;
 }
 
-.menu-enter, .menu-leave-to {
+.menu-enter,
+.menu-leave-to {
   opacity: 0;
 }
 
-.menu-leave, .menu-enter-to {
+.menu-leave,
+.menu-enter-to {
   opacity: 1;
 }
 
@@ -197,7 +229,7 @@ export default {
 }
 
 .menu {
-  background-color: rgba(180, 210, 255, 0.90);
+  background-color: rgba(180, 210, 255, 0.9);
   z-index: 30;
   padding: 2rem 1rem;
   position: fixed;
@@ -218,5 +250,4 @@ export default {
   margin: 1rem;
   padding: 0;
 }
-
 </style>

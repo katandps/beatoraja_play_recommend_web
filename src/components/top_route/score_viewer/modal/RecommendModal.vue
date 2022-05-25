@@ -1,26 +1,42 @@
 <template>
   <modal-base id="recommend-modal" ref="modal_base">
     <template v-slot:header>
-       <h2>おすすめ設定</h2>
+      <h2>おすすめ設定</h2>
     </template>
     <template v-slot:body>
       <div class="filter">
         <h3>更新狙い</h3>
-        <button class="btn btn-success" @click="filter.for_score()">スコア更新狙い</button>
-        <button class="btn btn-success" @click="filter.for_bp()">BP更新狙い</button>
+        <button class="btn btn-success" @click="filter.for_score()">
+          スコア更新狙い
+        </button>
+        <button class="btn btn-success" @click="filter.for_bp()">
+          BP更新狙い
+        </button>
 
         <h3>スコアランク狙い</h3>
-        <button class="btn btn-success" @click="filter.for_aaa()">AAA狙い</button>
+        <button class="btn btn-success" @click="filter.for_aaa()">
+          AAA狙い
+        </button>
         <button class="btn btn-success" @click="filter.for_aa()">AA狙い</button>
 
         <h3>クリアランプ狙い</h3>
-        <button class="btn btn-success" @click="filter.for_easy()">Easy狙い</button>
-        <button class="btn btn-success" @click="filter.for_hard()">Hard狙い</button>
-        <button class="btn btn-success" @click="filter.for_ex_hard()">EXH狙い</button>
-        <button class="btn btn-success" @click="filter.for_full_combo()">FC狙い</button>
+        <button class="btn btn-success" @click="filter.for_easy()">
+          Easy狙い
+        </button>
+        <button class="btn btn-success" @click="filter.for_hard()">
+          Hard狙い
+        </button>
+        <button class="btn btn-success" @click="filter.for_ex_hard()">
+          EXH狙い
+        </button>
+        <button class="btn btn-success" @click="filter.for_full_combo()">
+          FC狙い
+        </button>
 
         <h3>ランダムセレクト</h3>
-        <button class="btn btn-primary" @click="filter.for_random()">ランダムセレクト</button>
+        <button class="btn btn-primary" @click="filter.for_random()">
+          ランダムセレクト
+        </button>
       </div>
     </template>
   </modal-base>
@@ -31,11 +47,11 @@ import ModalBase from "./ModalBase"
 
 export default {
   name: "RecommendModal",
-  components: {ModalBase},
+  components: { ModalBase },
   methods: {
-    show_modal() {
-      this.$refs.modal_base.show_modal()
-    },
+    showModal() {
+      this.$refs.modal_base.showModal()
+    }
   },
   computed: {
     filter() {
@@ -48,6 +64,6 @@ export default {
 <style scoped>
 .filter button {
   margin: 5px;
-  display: inline
+  display: inline;
 }
 </style>

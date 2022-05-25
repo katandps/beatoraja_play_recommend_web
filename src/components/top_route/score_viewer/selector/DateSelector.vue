@@ -1,53 +1,47 @@
+<script setup>
+import { computed } from "vue"
+
+const props = defineProps({
+  date: { type: Date }
+})
+const emits = defineEmits(["setDate"])
+
+// --- computed
+const picked = computed({
+  get: () => props.date,
+  set(value) {
+    emits("setDate", value)
+  }
+})
+
+// --- methods
+const resetDate = () => {
+  picked.value.set(new Date(new Date().setHours(0, 0, 0, 0)))
+}
+</script>
+
 <template>
   <div id="date-selector">
-    <div class="form-group">
-      <div class="input-group" role="group">
-        <div class="input-group-prepend">
-          <div class="btn btn-info text-nowrap" v-tooltip="'指定した日付の当時の状態を再現します 右のボタンで今日に戻ります'">
-            日付
-            <font-awesome-icon :icon="['fas', 'question-circle']"/>
-          </div>
-        </div>
-        <datepicker id="picker"
-                    input-class="form-control"
-                    name="date"
-                    v-model="date"
-                    :language="ja" :format="datePickerFormat"/>
-        <div class="input-group-append">
-          <div @click="reset_date" class="btn btn-danger text-nowrap">
-            <font-awesome-icon :icon="['fas', 'undo']"/>
-          </div>
-        </div>
-      </div>
+    <div class="form-group align-items-center row">
+      <DatePicker
+        v-model="picked"
+        class="col-sm-10"
+        format="yyyy-MM-dd"
+        :enableTimePicker="false"
+      />
+      <label @click="resetDate" class="btn btn-danger col-sm-2">
+        <font-awesome-icon :icon="['fas', 'undo']" />
+      </label>
     </div>
   </div>
 </template>
 
 <script>
-import {ja} from "vuejs-datepicker/dist/locale";
-import Datepicker from "vuejs-datepicker"
-
-export default {
-  name: "DateSelector",
-  components: {Datepicker},
-  data: () => ({
-    ja: ja,
-    datePickerFormat: 'yyyy-MM-dd',
-    date: new Date(new Date().setHours(0, 0, 0, 0)),
-  }),
-  methods: {
-    reset_date() {
-      this.date = new Date(new Date().setHours(0, 0, 0, 0));
-    },
-  },
-  watch: {
-    date: {
-      handler() {
-        this.$emit('setDate', this.date);
-      }
-    }
-  }
-}
+export default {}
 </script>
 
-<style scoped></style>
+<style scoped>
+.v3dp__datepicker {
+  display: none;
+}
+</style>
