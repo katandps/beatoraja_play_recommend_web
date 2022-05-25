@@ -2,49 +2,82 @@
   <div id="data-uploader">
     <h2 id="uploader-title" class="uploader-title">各種データアップロード</h2>
     <div>
-      score.db と scorelog.db をアップロードするとスコア情報が更新されます。<br/>
+      score.db と scorelog.db をアップロードするとスコア情報が更新されます。<br />
       ファイルは<em>beatoraja/player/player*</em>にあります。
       <form>
         <label for="play_data" class="btn btn-primary">
-          <font-awesome-icon :icon="['fas', 'plus']"/>
+          <font-awesome-icon :icon="['fas', 'plus']" />
           Choose file
-          <input id="play_data" type="file" @change="onPlayDataUploaded" accept=".db" multiple required>
+          <input
+            id="play_data"
+            type="file"
+            @change="onPlayDataUploaded"
+            accept=".db"
+            multiple
+            required
+          />
         </label>
-        <div class="btn" :class="score_db ? 'btn-outline-success' : 'btn-outline-danger'">score.db</div>
-        <div class="btn" :class="score_log_db ? 'btn-outline-success' : 'btn-outline-danger'">scorelog.db</div>
+        <div
+          class="btn"
+          :class="score_db ? 'btn-outline-success' : 'btn-outline-danger'"
+        >
+          score.db
+        </div>
+        <div
+          class="btn"
+          :class="score_log_db ? 'btn-outline-success' : 'btn-outline-danger'"
+        >
+          scorelog.db
+        </div>
         <button
-            type="submit"
-            class="btn"
-            :class="ready_upload_play_data ? 'btn-info' : 'btn-outline-info'"
-            :disabled="!ready_upload_play_data"
-            @click="uploadPlayData"
+          type="submit"
+          class="btn"
+          :class="ready_upload_play_data ? 'btn-info' : 'btn-outline-info'"
+          :disabled="!ready_upload_play_data"
+          @click="uploadPlayData"
         >
           Submit
         </button>
         <router-link
           v-if="is_play_data_uploaded"
           class="btn"
-          :to="{path: '/view/recent', query: Object.assign({}, $route.query, {user_id: user_id})}"
+          :to="{
+            path: '/view/recent',
+            query: Object.assign({}, $route.query, { user_id: user_id })
+          }"
         >
           結果を見る
         </router-link>
       </form>
     </div>
-    <hr>
+    <hr />
     <div>
       表示されない曲がある場合は、songdata.dbをアップロードしてください。
       <form>
         <label for="song_data" class="btn btn-primary">
-          <font-awesome-icon :icon="['fas', 'plus']"/>
+          <font-awesome-icon :icon="['fas', 'plus']" />
           Choose file
-          <input id="song_data" type="file" @change="onSongDataUploaded" accept=".db" multiple required>
+          <input
+            id="song_data"
+            type="file"
+            @change="onSongDataUploaded"
+            accept=".db"
+            multiple
+            required
+          />
         </label>
-        <div class="btn" :class="song_data_db ? 'btn-outline-success' : 'btn-outline-danger'">songdata.db</div>
-        <button type="submit"
-                class="btn"
-                :class="ready_upload_song_data ? 'btn-info' : 'btn-outline-info'"
-                :disabled="!ready_upload_song_data"
-                @click="uploadSongData"
+        <div
+          class="btn"
+          :class="song_data_db ? 'btn-outline-success' : 'btn-outline-danger'"
+        >
+          songdata.db
+        </div>
+        <button
+          type="submit"
+          class="btn"
+          :class="ready_upload_song_data ? 'btn-info' : 'btn-outline-info'"
+          :disabled="!ready_upload_song_data"
+          @click="uploadSongData"
         >
           Submit
         </button>
@@ -64,36 +97,44 @@ export default {
     score_log_db: null,
     song_data_db: null,
     is_play_data_uploaded: false,
-    song_data_message: "",
+    song_data_message: ""
   }),
   methods: {
     onPlayDataUploaded(e) {
-      e.target.files.forEach(file => {
+      console.log(e.target.files)
+      for (const file of e.target.files) {
         if (file.name === "score.db") {
           this.score_db = file
         }
         if (file.name === "scorelog.db") {
           this.score_log_db = file
         }
-      })
+      }
       this.is_play_data_uploaded = false
     },
     onSongDataUploaded(e) {
-      e.target.files.forEach(file => {
+      for (const file of e.target.files) {
         if (file.name === "songdata.db") {
           this.song_data_db = file
         }
-      })
+      }
       this.song_data_message = ""
     },
     async uploadPlayData() {
-      await Api.upload_play_data(this.$store.getters.accessToken, this.score_db, this.score_log_db)
+      await Api.upload_play_data(
+        this.$store.getters.accessToken,
+        this.score_db,
+        this.score_log_db
+      )
       this.score_db = null
       this.score_log_db = null
       this.is_play_data_uploaded = true
     },
     async uploadSongData() {
-      await Api.upload_song_data(this.$store.getters.accessToken, this.song_data_db)
+      await Api.upload_song_data(
+        this.$store.getters.accessToken,
+        this.song_data_db
+      )
       this.song_data_db = null
       this.song_data_message = "OK"
     }

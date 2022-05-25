@@ -20,7 +20,7 @@ const lamp_list = computed(() =>
     table.level_list.map((l) =>
       config.LAMP_INDEX.map((_lamp, index) =>
         props.filtered_score
-          .filter((s) => s.clear_type === index && s.level === l)
+          .filter((s: SongDetail) => s.clear_type === index && s.level === l)
           .sort(SongDetail.cmp_title)
       )
     )
