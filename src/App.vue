@@ -33,7 +33,7 @@ onMounted(async () => {
   if (cookies.get("session-token")) {
     store.commit("setAccessToken", cookies.get("session-token"))
   }
-  const account = await Api.get_account(accessToken)
+  const account = await Api.get_account(accessToken.value)
   debug(account)
   is_login.value = !account.error
   if (!account.error) store.commit("setUserInfo", account)
@@ -41,7 +41,7 @@ onMounted(async () => {
 
 watch(route, async (cur, prev) => {
   if (is_login.value && cur.path !== prev.path) {
-    const account = await Api.get_account(accessToken)
+    const account = await Api.get_account(accessToken.value)
     debug(account)
     if (account.error) await handleSignOut()
   }

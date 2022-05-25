@@ -7,7 +7,7 @@ import SongRankingVue from "./components/top_route/SongRanking.vue"
 import TheHomeVue from "./components/top_route/TheHome.vue"
 
 const routes = [
-  { path: "/", component: () => TheHomeVue },
+  { path: "/", component: async () => TheHomeVue },
   {
     path: "/view",
     component: ScoreViewerVue,
