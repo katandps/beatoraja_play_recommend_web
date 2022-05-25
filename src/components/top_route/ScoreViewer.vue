@@ -54,14 +54,12 @@ const rival_score = ref()
 const date = ref(new Date(new Date().setHours(0, 0, 0, 0)))
 const rival_date = ref(new Date(new Date().setHours(0, 0, 0, 0)))
 const message = ref("")
-const loaded = ref({ user_id: null, rival_id: null, date: "" })
+const loaded = ref({ user_id: 0, rival_id: 0, date: "" })
 
 // --- computed ---
 const accessToken = computed<string>(() => store.getters.accessToken)
 const filter = computed(() => store.getters.filter)
-const table_list = computed(() =>
-  tables.value ? tables.value.name_list() : []
-)
+
 const level_list = computed(() =>
   selected_table.value ? selected_table.value.level_list : []
 )
@@ -77,7 +75,6 @@ const is_initialized = computed(
     exists_scores.value &&
     exists_table_selected.value
 )
-const visible_all_level = computed(() => filter.value.visible_all_levels)
 const date_str = computed(() => DateFormatter.format(date.value))
 const rival_date_str = computed(() => DateFormatter.format(rival_date.value))
 
@@ -90,67 +87,66 @@ const twitter_link = computed(() =>
       scores.value.user_id
     : ""
 )
-const table_score = computed(() => {
-  if (!is_initialized.value) {
-    return {}
-  }
-  debug(selected_table.value.levels)
-  let table_score = {}
-  Object.entries(selected_table.value.levels).forEach(([level_label, hashes]) =>
-    hashes.forEach((hash: string) => {
-      let score = new SongDetail()
-      score.init_score(scores.value.get_score(hash))
-      score.init_song(songs.value.get_score(hash), hash)
-      if (exists_rival_score.value) {
-        score.init_rival_score(rival_score.value.get_score(hash))
-      }
-      score.set_level(level_label)
-      if (!table_score[level_label]) {
-        table_score[level_label] = {}
-      }
-      table_score[level_label][hash] = score
-    })
-  )
 
-  debug(table_score)
-  return table_score
+const filtered_score = computed(() => {
+  if (!is_initialized.value) {
+    return []
+  }
+  let ret = []
+  let used: { [key: string]: boolean } = {}
+  for (const table of tables.value.tables) {
+    for (const active_level of table.checks) {
+      const hashes = table.levels[active_level]
+      for (const hash of hashes) {
+        if (used[hash]) {
+          continue
+        }
+        used[hash] = true
+        let score = new SongDetail()
+        score.set_level(active_level)
+        score.init_score(scores.value.get_score(hash))
+        score.init_song(songs.value.get_score(hash), hash)
+        if (exists_rival_score.value) {
+          score.init_rival_score(rival_score.value.get_score(hash))
+        }
+        if (filter.value.apply(score)) {
+          ret.push(score)
+        }
+      }
+    }
+  }
+  return ret
 })
 
-const filtered_score = computed(() =>
-  Object.values(table_score.value)
-    .map((scores) => Object.values(scores).filter((s) => filter.value.apply(s)))
-    .flat()
-)
 const sorted_song_list = computed(() => {
   let songs = filtered_score.value
-  if (!filter.value.visible_all_levels) {
-    songs = songs.filter((s) => s.level === selected_level.value)
-  }
   return songs
     .sort((a, b) => {
-      let valA = a.sort_key(filter.value.sort_key, level_list)
-      let valB = b.sort_key(filter.value.sort_key, level_list)
+      let valA = a.sort_key(filter.value.sort_key, level_list.value)
+      let valB = b.sort_key(filter.value.sort_key, level_list.value)
       return valA === valB ? 0 : (valA < valB) ^ filter.value.sort_desc ? -1 : 1
     })
     .slice(0, filter.value.max_length || songs.length)
 })
 
 // --- methods ---
-const init_table = (t) => {
+const init_table = (t: Tables) => {
   tables.value = t
   debug(tables, tables.value.first())
   selected_table.value = tables.value.first()
   selected_level.value = selected_table.value.level_list[0]
 }
 
-const setRival = (rival_id) => {
+const setRival = (rival_id: number) => {
   debug(loaded.value, rival_id)
   if (rival_id > 0 && loaded.value.rival_id !== rival_id) {
-    Api.fetch_score(rival_date_str.value, rival_id, accessToken).then((s) => {
-      rival_score.value = null
-      rival_score.value = s
-      loaded.value.rival_id = rival_id
-    })
+    Api.fetch_score(rival_date_str.value, rival_id, accessToken.value).then(
+      (s) => {
+        rival_score.value = null
+        rival_score.value = s
+        loaded.value.rival_id = rival_id
+      }
+    )
   } else {
     rival_score.value = null
     loaded.value.rival_id = 0
@@ -178,17 +174,6 @@ const fetchDetail = (user_id: number) => {
   }
 }
 
-const setTable = (table_name: string) => {
-  selected_table.value = tables.value
-    ? tables.value.get_table(table_name)
-    : selected_table.value
-  if (exists_table_selected.value) {
-    selected_level.value = selected_table.value.level_list[0]
-  }
-}
-const setLevel = (level: string) => (selected_level.value = level)
-const setVisibleAllLevel = (flag: boolean) =>
-  (filter.value.visible_all_levels = flag)
 const showTablesModal = () => tables_modal.value?.showModal()
 const showUserModal = () => user_modal.value?.showModal()
 const setUserId = async (input_user_id: number, d: Date) => {
@@ -202,10 +187,10 @@ const setUserId = async (input_user_id: number, d: Date) => {
 }
 const showFilterModal = () => filter_modal.value?.showModal()
 const showRivalModal = () => rival_modal.value?.showModal()
-const setRivalId = async (input_rival_id: string, d: Date) => {
+const setRivalId = async (input_rival_id: number, d: Date) => {
   rival_modal.value?.closeModal()
   let query = Object.assign({}, route.query)
-  query.rival_id = input_rival_id
+  query.rival_id = "" + input_rival_id
   rival_date.value = d
   debug(query)
   await router.push({ query })
@@ -278,17 +263,11 @@ watch(filter, (cur) => store.commit("setFilter", cur))
           />
         </template>
         <template v-if="mode === 'lamp'">
-          <LampGraphVue
-            :filtered_score="filtered_score"
-            :level_list="level_list"
-          />
+          <LampGraphVue :filtered_score="filtered_score" :tables="tables" />
         </template>
 
         <template v-if="mode === 'rank'">
-          <RankGraphVue
-            :filtered_score="filtered_score"
-            :level_list="level_list"
-          />
+          <RankGraphVue :filtered_score="filtered_score" :tables="tables" />
         </template>
 
         <template v-if="mode === 'stat'">
@@ -299,15 +278,7 @@ watch(filter, (cur) => store.commit("setFilter", cur))
     <p v-else>{{ message }}</p>
     <ModalUserSelect ref="user_modal" :user_id="user_id" @setUser="setUserId" />
     <ModalForSelectTable
-      :can_level_select="true"
-      :table_list="table_list"
-      :level_list="level_list"
-      :selected_table="selected_table"
-      :selected_level="selected_level"
-      :visible_all_level="visible_all_level"
-      @setTable="setTable"
-      @setLevel="setLevel"
-      @setVisibleAllLevelsFlag="setVisibleAllLevel"
+      :tables="tables"
       v-if="is_initialized"
       ref="tables_modal"
     />

@@ -1,5 +1,3 @@
-import SongDetail from "./song_detail"
-
 export default class Tables {
   tables: DifficultyTable[]
 
@@ -46,6 +44,7 @@ export class DifficultyTable {
   name: string
   levels: {[level: string]: string[]}
   level_list: string[]
+  checks: string[]
 
   constructor(table_name: string, levels: {[level: string]: string[]}, level_list: string[]) {
     this.name = table_name
@@ -57,5 +56,7 @@ export class DifficultyTable {
      * @type string[]
      */
     this.level_list = level_list
+
+    this.checks = []
   }
 }

@@ -1,33 +1,40 @@
-<script setup>
+<script setup lang="ts">
 import config from "../../../const"
-import GraphModal from "./modal/GraphModal"
 import SongDetail from "../../../models/song_detail"
 import { computed, ref } from "vue"
+import Tables from "@/models/difficultyTable"
+import GraphModalVue, { IGraphModal } from "./modal/GraphModal.vue"
 
-const props = defineProps({
-  filtered_score: { required: true },
-  level_list: { required: true }
-})
+interface Props {
+  filtered_score: SongDetail[]
+  tables: Tables
+}
+const props = defineProps<Props>()
 
 // --- refs ---
-const modal = ref(null)
-
+const modal = ref<IGraphModal>()
 // --- computed ---
 const rank_list = computed(() =>
-  props.level_list.map((l) =>
-    config.RANK_TYPE.map((r) =>
-      props.filtered_score
-        .filter((s) => s.clear_rank === r && s.level === l)
-        .sort(SongDetail.cmp_title)
+  active_tables.value.map((table) =>
+    table.level_list.map((l) =>
+      config.RANK_TYPE.map((r) =>
+        props.filtered_score
+          .filter((s) => s.clear_rank === r && s.level === l)
+          .sort(SongDetail.cmp_title)
+      )
     )
   )
 )
 
+const active_tables = computed(() =>
+  props.tables.tables.filter((t) => t.checks.length > 0)
+)
 // --- methods ---
-const showModal = (title, text) => modal.value.showModal(title, text)
+const showModal = (title: string, text: string[]) =>
+  modal.value?.showModal(title, text)
 
-const list = (level_index, rank_index) =>
-  rank_list[level_index][rank_index]
+const list = (table_index: number, level_index: number, rank_index: number) =>
+  rank_list.value[table_index][level_index][rank_index]
     .sort(SongDetail.cmp_title)
     .map((s) => s.title)
 </script>
@@ -52,30 +59,43 @@ const list = (level_index, rank_index) =>
       </tr>
     </table>
     <hr />
-    <table style="width: 100%">
-      <tr v-for="(level, level_index) in level_list" :key="level_index">
-        <td style="width: 30px">{{ level }}</td>
-        <td class="progress" style="width: 100%; height: 1.8em">
-          <div
-            v-for="(rank, rank_index) in config.RANK_TYPE"
-            :key="rank"
-            :class="'progress-bar bg-' + rank"
-            role="progressbar"
-            :style="
-              'width: ' +
-              rank_list[level_index][rank_index].length * 100 +
-              '%;color:#000'
-            "
-            v-on:click="
-              showModal(level + ' ' + rank, list(level_index, rank_index))
-            "
+    <template v-if="active_tables.length > 0">
+      <div v-for="(table, table_index) in active_tables" :key="table_index">
+        <h2>{{ table.name }}</h2>
+        <table style="width: 100%">
+          <tr
+            v-for="(level, level_index) in table.level_list"
+            :key="level_index"
           >
-            {{ rank_list[level_index][rank_index].length }}
-          </div>
-        </td>
-      </tr>
-    </table>
-    <graph-modal id="song-list-modal" ref="modal" />
+            <td style="width: 30px">{{ level }}</td>
+            <td class="progress" style="width: 100%; height: 1.8em">
+              <div
+                v-for="(rank, rank_index) in config.RANK_TYPE"
+                :key="rank"
+                :class="'progress-bar bg-' + rank"
+                role="progressbar"
+                :style="
+                  'width: ' +
+                  rank_list[table_index][level_index][rank_index].length * 100 +
+                  '%;color:#000'
+                "
+                v-on:click="
+                  showModal(
+                    level + ' ' + rank,
+                    list(table_index, level_index, rank_index)
+                  )
+                "
+              >
+                {{ rank_list[table_index][level_index][rank_index].length }}
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </template>
+    <template v-else> 表示する難易度が設定されていません </template>
+
+    <GraphModalVue id="song-list-modal" ref="modal" />
   </div>
 </template>
 
