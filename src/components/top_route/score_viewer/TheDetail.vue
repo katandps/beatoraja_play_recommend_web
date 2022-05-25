@@ -49,7 +49,7 @@ const show_song_modal = (song) => song_modal.value.showModal(song, props.date)
       <div class="score-table detail">
         <RowColGroup :columns="columns" />
         <RowHeader :columns="columns" />
-        <div class="tbody" name="flip-list">
+        <transition-group tag="div" class="tbody" name="flip-list">
           <RowSong
             v-for="song in sorted_song_list"
             :key="song.md5"
@@ -57,7 +57,7 @@ const show_song_modal = (song) => song_modal.value.showModal(song, props.date)
             :columns="columns"
             @showModal="show_song_modal"
           />
-        </div>
+        </transition-group>
       </div>
       <song-modal ref="song_modal" />
       <ColumnModal :columns="columns" ref="column_modal" />
