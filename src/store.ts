@@ -23,9 +23,6 @@ export const store = createStore({
         setFilter(state ,filter) {
             state.filter = filter
         },
-        setVisibleAllLevelsFlag(state, flag) {
-            state.filter.visible_all_levels = flag
-        },
         setSort(state, column_name) {
             state.filter.set_sort(column_name)
         },

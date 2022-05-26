@@ -42,7 +42,7 @@
           v-if="is_play_data_uploaded"
           class="btn"
           :to="{
-            path: '/view/recent',
+            path: '/view/',
             query: Object.assign({}, $route.query, { user_id: user_id })
           }"
         >

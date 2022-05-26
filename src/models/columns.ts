@@ -1,3 +1,33 @@
+interface IColumns {
+  clear?:  boolean,
+  clear_date?:  boolean,
+  clear_before?:  boolean,
+  level?:  boolean,
+  title?: boolean,
+  rate?:  boolean,
+  score_rank?: boolean,
+  detail_rank?: boolean,
+  score?:  boolean,
+  score_date?: boolean,
+  score_before?:  boolean,
+  bp?: boolean,
+  bp_date?:  boolean,
+  bp_before?:  boolean,
+  combo?:  boolean,
+  play?: boolean,
+  date?:  boolean,
+
+  clear_update?: boolean,
+  rank_update?:  boolean,
+  score_update?:  boolean,
+  bp_update?: boolean,
+
+  clear_diff_rival?: boolean,
+  score_diff_rival?:  boolean,
+  bp_diff_rival?:  boolean,
+  rival_date?:  boolean
+}
+
 export default class Columns {
   columns: {[key: string]: boolean}
 
@@ -33,7 +63,7 @@ export default class Columns {
     }
   }
 
-  constructor(columns: Object) {
+  constructor(columns: IColumns) {
     this.columns = Columns.columns_default()
     Object.assign(this.columns, columns)
   }
@@ -55,6 +85,22 @@ export default class Columns {
     this.columns = Columns.columns_default()
     this.columns.bp_date = true
     this.columns.bp_before = true
+  }
+
+  for_recent() {
+    this.columns.clear_update = true
+    this.columns.score = false
+    this.columns.score_date = false
+    this.columns.score_update = true
+    this.columns.score_rank = false
+    this.columns.rank_update = true
+    this.columns.bp = false
+    this.columns.bp_date = false
+    this.columns.bp_update = true
+  }
+
+  for_rival() {
+
   }
 
   /**

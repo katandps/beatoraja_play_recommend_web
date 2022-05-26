@@ -1,10 +1,30 @@
+<script setup lang="ts">
+import SongFilter from "@/models/songFilter"
+import { computed, ref } from "vue"
+import { useStore } from "vuex"
+import ModalBaseVue, { IModalBase } from "./ModalBase.vue"
+
+const store = useStore()
+
+const modal_base = ref<IModalBase>()
+
+// --- computed ---
+const filter = computed<SongFilter>(() => store.getters.filter)
+
+// --- methods ---
+const showModal = () => modal_base.value?.showModal()
+
+// --- expose ---
+defineExpose({ showModal })
+</script>
 <template>
-  <modal-base id="recommend-modal" ref="modal_base">
+  <ModalBaseVue id="recommend-modal" ref="modal_base">
     <template v-slot:header>
       <h2>おすすめ設定</h2>
     </template>
     <template v-slot:body>
       <div class="filter">
+        <h2>目標から選ぶ</h2>
         <h3>更新狙い</h3>
         <button class="btn btn-success" @click="filter.for_score()">
           スコア更新狙い
@@ -39,27 +59,8 @@
         </button>
       </div>
     </template>
-  </modal-base>
+  </ModalBaseVue>
 </template>
-
-<script>
-import ModalBase from "./ModalBase"
-
-export default {
-  name: "RecommendModal",
-  components: { ModalBase },
-  methods: {
-    showModal() {
-      this.$refs.modal_base.showModal()
-    }
-  },
-  computed: {
-    filter() {
-      return this.$store.getters.filter
-    }
-  }
-}
-</script>
 
 <style scoped>
 .filter button {

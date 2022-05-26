@@ -36,10 +36,10 @@ defineExpose({ showModal })
               :key="lamp"
               class="form-control col-sm-3 text-nowrap"
             >
-              <label :for="lamp" style="font-size: 0.9rem">
+              <label :for="'' + lamp" style="font-size: 0.9rem">
                 <input
                   type="checkbox"
-                  :id="lamp"
+                  :id="'' + lamp"
                   :value="lamp"
                   v-model="filter.visible_lamp.lamps[lamp]"
                 />
