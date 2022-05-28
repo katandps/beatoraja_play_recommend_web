@@ -1,5 +1,5 @@
 <script setup>
-import SongDetail from "../../../../models/song_detail"
+import SongDetail, { score_format } from "../../../../models/song_detail"
 import DataCell from "./DataCell"
 import config from "../../../../const"
 import { computed } from "vue"
@@ -86,9 +86,7 @@ const rival_date = computed(() => dayFormat(props.song.rival_updated_at))
 
 // updates
 const score_diff = computed(() => props.song.score - props.song.score_before)
-const percent_diff = computed(() =>
-  props.song.score_rate_format(score_diff.value)
-)
+const percent_diff = computed(() => score_format(props.song.total_notes, score_diff.value))
 const rank_is_update = computed(
   () =>
     rank_before.value !== current_rank.value &&
@@ -154,7 +152,7 @@ const dayFormat = (date) => {
     </DataCell>
 
     <DataCell class="rate" :columns="columns" name="rate" :class="clear_rank_bg_class">
-      {{ song.score_rate_format(song.score) }}
+      {{ score_format(song.total_notes, song.score) }}
     </DataCell>
     <DataCell class="score" :columns="columns" name="score">
       {{ `${song.score}/${song.total_notes * 2}` }}
@@ -166,9 +164,9 @@ const dayFormat = (date) => {
       <span v-if="percentile">
         <span v-if="score_is_update">
           <span class="update_strong">+{{ percent_diff }}</span>
-          ({{ song.score_rate_format(song.score) }})%
+          ({{ score_format(song.total_notes, song.score) }})%
         </span>
-        <span v-else>{{ song.score_rate_format(song.score) }}%</span>
+        <span v-else>{{ song.score_format(song.total_notes, song.score) }}%</span>
       </span>
       <span v-else>
         <span v-if="score_is_update">

@@ -195,17 +195,6 @@ export default class SongDetail {
     return Object.assign(new SongDetail(), config.SONG_FORMAT[0][0].songs)
   }
 
-
-  score_rate_format(score: number) {
-    if (this.total_notes === 0) {
-      return "00.00"
-    }
-    if (score === this.total_notes * 2) {
-      return "100.0"
-    }
-    return ((score / this.total_notes) * 50).toFixed(2)
-  }
-
   score_rate() {
     if (this.total_notes === 0) {
       return 0.0
@@ -307,9 +296,9 @@ export default class SongDetail {
       case "notes":
         return this.total_notes
       case "rate":
-        return this.score_rate_format(this.score)
+        return score_format(this.total_notes, this.score)
       case "rival_rate":
-        return this.score_rate_format(this.rival_score)
+        return score_format(this.total_notes, this.rival_score)
       case "score_rank":
         return SongDetail.make_clear_rank(this.total_notes, this.score)
       case "next_rank":
@@ -410,4 +399,14 @@ export default class SongDetail {
           : this.rival_updated_at.split("T")[0]
     }
   }
+}
+
+export const score_format = (total_notes: number, score: number): string => {
+  if (total_notes === 0) {
+    return "00.00"
+  }
+  if (score === total_notes * 2) {
+    return "100.0"
+  }
+  return ((score / total_notes) * 50).toFixed(2)
 }

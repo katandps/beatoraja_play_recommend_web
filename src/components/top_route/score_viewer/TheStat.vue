@@ -71,11 +71,7 @@ const rate_average = computed(() => {
   <div id="stat">
     <h3>クリアランプ分布</h3>
     <div class="row">
-      <div
-        class="col-sm-3"
-        v-for="(type, index) in config.LAMP_INDEX"
-        :key="type"
-      >
+      <div class="col-sm-3" v-for="(type, index) in config.LAMP_INDEX" :key="type">
         <div class="card">
           <div class="card-header">{{ type }}</div>
           <div class="card-body">{{ lamp_stat[index].length }}</div>
@@ -91,11 +87,7 @@ const rate_average = computed(() => {
     <hr />
     <h3>スコアランク分布</h3>
     <div class="row">
-      <div
-        class="col-sm-2"
-        v-for="(type, index) in config.RANK_TYPE"
-        :key="type"
-      >
+      <div class="col-sm-2" v-for="(type, index) in config.RANK_TYPE" :key="type">
         <div class="card">
           <div class="card-header">{{ type }}</div>
           <div class="card-body">{{ rank_stat[index].length }}</div>

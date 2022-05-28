@@ -129,6 +129,12 @@ export default class SongFilter {
     this.columns.for_recent()
   }
 
+  for_rival() {
+    this.sort_key = "score_diff_rival"
+    this.sort_desc = true
+    this.columns.for_rival()
+  }
+
   /**
    * @public
    */

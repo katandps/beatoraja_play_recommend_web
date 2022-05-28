@@ -47,6 +47,9 @@ const show_song_modal = (song) => song_modal.value.showModal(song, props.date)
       <label class="col-sm-2 btn btn-success" @click="filter.for_recent()">
         直近の更新
       </label>
+      <label class="col-sm-2 btn btn-success" @click="filter.for_rival()">
+        ライバル比較
+      </label>
     </div>
     <hr />
     <div class="table-wrapper">
