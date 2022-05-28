@@ -54,13 +54,8 @@ const show_song_modal = (song) => song_modal.value.showModal(song, props.date)
         <RowColGroup :columns="columns" />
         <RowHeader :columns="columns" />
         <div class="tbody">
-          <RowSong
-            v-for="song in sorted_song_list"
-            :key="song.md5"
-            :song="song"
-            :columns="columns"
-            @showModal="show_song_modal"
-          />
+          <RowSong v-for="song in sorted_song_list" :key="song.md5" :song="song" :columns="columns"
+            @showModal="show_song_modal" />
         </div>
       </div>
       <song-modal ref="song_modal" />

@@ -73,9 +73,9 @@ const user_name = computed(() => (exists_scores.value ? scores.value.name : ""))
 const twitter_link = computed(() =>
   exists_scores.value
     ? "https://twitter.com/intent/tweet?url=" +
-      window.location.host +
-      "/%23/view?user_id=" +
-      scores.value.user_id
+    window.location.host +
+    "/%23/view?user_id=" +
+    scores.value.user_id
     : ""
 )
 
@@ -117,11 +117,15 @@ const filtered_score = computed(() => {
 const sorted_song_list = computed(() => {
   let songs = filtered_score.value
   return songs
-    .sort((a, b) => {
-      let valA = a.sort_key(filter.value.sort_key, level_list.value)
-      let valB = b.sort_key(filter.value.sort_key, level_list.value)
-      return valA === valB ? 0 : (valA < valB) ^ filter.value.sort_desc ? -1 : 1
-    })
+    .sort((a, b) =>
+      SongDetail.cmp(
+        a,
+        b,
+        filter.value.sort_key,
+        filter.value.sort_desc,
+        level_list.value
+      )
+    )
     .slice(0, filter.value.max_length || songs.length)
 })
 
@@ -257,11 +261,7 @@ watch(filter, (cur) => store.commit("setFilter", cur))
 
         <hr />
         <template v-if="mode === 'detail'">
-          <TheDetailVue
-            :sorted_song_list="sorted_song_list"
-            :date="date_str"
-            :filter="filter"
-          />
+          <TheDetailVue :sorted_song_list="sorted_song_list" :date="date_str" :filter="filter" />
         </template>
         <template v-if="mode === 'lamp'">
           <LampGraphVue :filtered_score="filtered_score" :tables="tables" />
@@ -278,18 +278,8 @@ watch(filter, (cur) => store.commit("setFilter", cur))
     </div>
     <p v-else>{{ message }}</p>
     <ModalUserSelect ref="user_modal" :user_id="user_id" @setUser="setUserId" />
-    <ModalForSelectTable
-      :tables="tables"
-      @setLevel="setLevel"
-      v-if="is_initialized"
-      ref="tables_modal"
-    />
-    <ModalUserSelect
-      ref="rival_modal"
-      :user_id="rival_id"
-      @setUser="setRivalId"
-      :rival_mode="true"
-    />
+    <ModalForSelectTable :tables="tables" @setLevel="setLevel" v-if="is_initialized" ref="tables_modal" />
+    <ModalUserSelect ref="rival_modal" :user_id="rival_id" @setUser="setRivalId" :rival_mode="true" />
     <FilterModal ref="filter_modal" />
   </section>
 </template>
@@ -298,6 +288,7 @@ watch(filter, (cur) => store.commit("setFilter", cur))
 #score-table {
   padding-top: 20px;
 }
+
 .row {
   margin-left: 0;
   margin-right: 0;

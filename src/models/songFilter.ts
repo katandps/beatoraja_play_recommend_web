@@ -11,7 +11,7 @@ export default class SongFilter {
   visible_lamp: VisibleLamp = new VisibleLamp({})
   visible_rank: VisibleRank = new VisibleRank({})
   day_until: number = 0
-  day_since: number = 365*100
+  day_since: number = 365 * 100
   max_length: number = 100
 
   constructor(filter: any) {
@@ -118,14 +118,14 @@ export default class SongFilter {
   }
 
   default() {
-    Object.assign(this,new SongFilter(null))
+    Object.assign(this, new SongFilter(null))
   }
 
   for_recent() {
     this.sort_key = "date"
     this.sort_desc = true
     // this.day_since=7
-    this.day_until=0
+    this.day_until = 0
     this.columns.for_recent()
   }
 
@@ -245,7 +245,7 @@ interface IVisibleLamp {
 }
 
 class VisibleLamp {
-  lamps: boolean[] = [false, false, false, false,false,false,false,false,false,false]
+  lamps: boolean[] = [false, false, false, false, false, false, false, false, false, false]
   constructor(lamp: IVisibleLamp) {
     for (let i = 0; i < config.LAMP_TYPE.length; i += 1) {
       this.lamps[i] = true
@@ -290,20 +290,20 @@ class VisibleLamp {
 }
 
 interface IVisibleRank {
-  ranks?: {[k: string]: boolean}
+  ranks?: { [k: string]: boolean }
 }
 
 class VisibleRank {
-  ranks: {[k: string]: boolean} = {
+  ranks: { [k: string]: boolean } = {
     Max: true,
     AAA: true,
     AA: true,
     A: true,
-    B:true,
-    C:true,
-    D:true,
-    E:true,
-    F:true,
+    B: true,
+    C: true,
+    D: true,
+    E: true,
+    F: true,
   }
 
   constructor(rank: IVisibleRank) {

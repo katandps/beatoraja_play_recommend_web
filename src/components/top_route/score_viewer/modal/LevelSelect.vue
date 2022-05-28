@@ -40,12 +40,7 @@ const check_accessor = computed({
     </slot>
     <slot name="list">
       <div class="btn" v-for="item in table.level_list" :key="item">
-        <input
-          type="checkbox"
-          :id="index + '_' + item"
-          v-model="check_accessor"
-          :value="item"
-        />
+        <input type="checkbox" :id="index + '_' + item" v-model="check_accessor" :value="item" />
         <label :for="index + '_' + item">{{ item }}</label>
       </div>
     </slot>

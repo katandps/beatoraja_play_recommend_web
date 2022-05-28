@@ -8,44 +8,22 @@
         <label for="play_data" class="btn btn-primary">
           <font-awesome-icon :icon="['fas', 'plus']" />
           Choose file
-          <input
-            id="play_data"
-            type="file"
-            @change="onPlayDataUploaded"
-            accept=".db"
-            multiple
-            required
-          />
+          <input id="play_data" type="file" @change="onPlayDataUploaded" accept=".db" multiple required />
         </label>
-        <div
-          class="btn"
-          :class="score_db ? 'btn-outline-success' : 'btn-outline-danger'"
-        >
+        <div class="btn" :class="score_db ? 'btn-outline-success' : 'btn-outline-danger'">
           score.db
         </div>
-        <div
-          class="btn"
-          :class="score_log_db ? 'btn-outline-success' : 'btn-outline-danger'"
-        >
+        <div class="btn" :class="score_log_db ? 'btn-outline-success' : 'btn-outline-danger'">
           scorelog.db
         </div>
-        <button
-          type="submit"
-          class="btn"
-          :class="ready_upload_play_data ? 'btn-info' : 'btn-outline-info'"
-          :disabled="!ready_upload_play_data"
-          @click="uploadPlayData"
-        >
+        <button type="submit" class="btn" :class="ready_upload_play_data ? 'btn-info' : 'btn-outline-info'"
+          :disabled="!ready_upload_play_data" @click="uploadPlayData">
           Submit
         </button>
-        <router-link
-          v-if="is_play_data_uploaded"
-          class="btn"
-          :to="{
-            path: '/view/',
-            query: Object.assign({}, $route.query, { user_id: user_id })
-          }"
-        >
+        <router-link v-if="is_play_data_uploaded" class="btn" :to="{
+          path: '/view/',
+          query: Object.assign({}, $route.query, { user_id: user_id })
+        }">
           結果を見る
         </router-link>
       </form>
@@ -57,28 +35,13 @@
         <label for="song_data" class="btn btn-primary">
           <font-awesome-icon :icon="['fas', 'plus']" />
           Choose file
-          <input
-            id="song_data"
-            type="file"
-            @change="onSongDataUploaded"
-            accept=".db"
-            multiple
-            required
-          />
+          <input id="song_data" type="file" @change="onSongDataUploaded" accept=".db" multiple required />
         </label>
-        <div
-          class="btn"
-          :class="song_data_db ? 'btn-outline-success' : 'btn-outline-danger'"
-        >
+        <div class="btn" :class="song_data_db ? 'btn-outline-success' : 'btn-outline-danger'">
           songdata.db
         </div>
-        <button
-          type="submit"
-          class="btn"
-          :class="ready_upload_song_data ? 'btn-info' : 'btn-outline-info'"
-          :disabled="!ready_upload_song_data"
-          @click="uploadSongData"
-        >
+        <button type="submit" class="btn" :class="ready_upload_song_data ? 'btn-info' : 'btn-outline-info'"
+          :disabled="!ready_upload_song_data" @click="uploadSongData">
           Submit
         </button>
         <div class="btn">{{ song_data_message }}</div>
