@@ -100,7 +100,7 @@ export default Object.freeze({
         { key: "clear_before", name: "更新前クリア", title: " ", class: "clear" },
         { key: "level", name: "難易度", title: "Lv", class: "level" },
         { key: "title", name: "曲名", title: "Title", class: "title" },
-        { key: "clear_update", name: "クリア更新", title: " ", class: "clear_update"},
+        { key: "clear_update", name: "クリア更新", title: "ClearDiff", class: "clear_update"},
         { key: "score_rank", name: "スコアランク", title: "Rank", class: "rank" },
         { key: "detail_rank", name: "細分化ランク", title: "DRank", class: "rank" },
         { key: "rank_update", name: "ランク更新", title: "RankDiff", class: "update"},

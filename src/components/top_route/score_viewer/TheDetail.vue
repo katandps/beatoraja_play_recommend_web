@@ -34,21 +34,19 @@ const show_song_modal = (song) => song_modal.value.showModal(song, props.date)
 <template>
   <div id="detail">
     <div class="form-group row align-items-center">
-      <display-songs-limiter class="col-sm-3" />
-      <div class="col-sm-9">
-        <label class="col-sm-3 btn btn-primary" @click="show_recommend_modal">
-          おまかせ設定
-        </label>
-        <label class="col-sm-3 btn btn-success" @click="show_column_modal">
-          表示列設定
-        </label>
-        <label class="col-sm-3 btn btn-success" @click="filter.default()">
-          デフォルト表示
-        </label>
-        <label class="col-sm-3 btn btn-success" @click="filter.for_recent()">
-          直近の更新表示
-        </label>
-      </div>
+      <display-songs-limiter class="col-sm-4" />
+      <label class="col-sm-2 btn btn-primary" @click="show_recommend_modal">
+        プリセット
+      </label>
+      <label class="col-sm-2 btn btn-success" @click="show_column_modal">
+        列設定
+      </label>
+      <label class="col-sm-2 btn btn-success" @click="filter.default()">
+        デフォルト
+      </label>
+      <label class="col-sm-2 btn btn-success" @click="filter.for_recent()">
+        直近の更新
+      </label>
     </div>
     <hr />
     <div class="table-wrapper">

@@ -33,13 +33,10 @@ const all_checked = computed({
     return true
   },
   set: () => {
-    if (all_checked.value) {
-      props.tables.tables.forEach((_, i) => setLevel([], i))
-    } else {
-      props.tables.tables.forEach((t, i) => {
-        setLevel(t.level_list, i)
-      })
-    }
+    const checked = all_checked.value
+    props.tables.tables.forEach((t, i) =>
+      setLevel(checked ? [] : t.level_list, i)
+    )
   }
 })
 

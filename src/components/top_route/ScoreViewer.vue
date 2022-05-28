@@ -204,16 +204,16 @@ watch(filter, (cur) => store.commit("setFilter", cur))
 <template>
   <section id="score-table">
     <div class="row">
-      <div class="col-sm-3 btn btn-info" @click="showUserModal">
-        表示プレイヤー選択
+      <div class="col-sm-3 btn btn-secondary" @click="showUserModal">
+        プレイヤー選択
       </div>
       <div class="col-sm-3 btn btn-secondary" @click="showFilterModal">
         表示曲設定
       </div>
-      <div class="col-sm-3 btn btn-info" @click="showTablesModal">
-        難易度表設定
+      <div class="col-sm-3 btn btn-secondary" @click="showTablesModal">
+        難易度選択
       </div>
-      <div class="col-sm-3 btn btn-info" @click="showRivalModal">
+      <div class="col-sm-3 btn btn-secondary" @click="showRivalModal">
         ライバル選択
       </div>
     </div>

@@ -17,13 +17,8 @@ const emits = defineEmits(["setLevel"])
 // --- computed ---
 const all_checked = computed({
   get: () => props.table.level_list.length === props.table.checks.length,
-  set: () => {
-    if (props.table.level_list.length === props.table.checks.length) {
-      check_accessor.value = []
-    } else {
-      check_accessor.value = props.table.level_list
-    }
-  }
+  set: (): string[] =>
+    (check_accessor.value = all_checked.value ? [] : props.table.level_list)
 })
 
 const check_accessor = computed({
