@@ -30,19 +30,10 @@ defineExpose({ showModal })
       <div id="song_filter">
         <div class="filter">
           <h5>クリアタイプ</h5>
-          <div class="form-group row align-items-center">
-            <div
-              v-for="lamp in config.LAMP_GRAPH_LIST"
-              :key="lamp"
-              class="form-control col-sm-3 text-nowrap"
-            >
-              <label :for="'' + lamp" style="font-size: 0.9rem">
-                <input
-                  type="checkbox"
-                  :id="'' + lamp"
-                  :value="lamp"
-                  v-model="filter.visible_lamp.lamps[lamp]"
-                />
+          <div>
+            <div v-for="lamp in config.LAMP_GRAPH_LIST" :key="lamp" class="btn">
+              <input type="checkbox" :id="'' + lamp" :value="lamp" v-model="filter.visible_lamp.lamps[lamp]" />
+              <label :for="'' + lamp">
                 {{ config.LAMP_INDEX[lamp] }}
               </label>
             </div>
@@ -50,16 +41,10 @@ defineExpose({ showModal })
           <button class="btn btn-danger" @click="filter.visible_reverse()">
             表示反転
           </button>
-          <button
-            class="btn btn-success"
-            @click="filter.visible_all_lamp_type()"
-          >
+          <button class="btn btn-success" @click="filter.visible_all_lamp_type()">
             全表示
           </button>
-          <button
-            class="btn btn-success"
-            @click="filter.visible_not_full_combo()"
-          >
+          <button class="btn btn-success" @click="filter.visible_not_full_combo()">
             未FC
           </button>
           <button class="btn btn-success" @click="filter.visible_not_ex_hard()">
@@ -75,19 +60,10 @@ defineExpose({ showModal })
 
         <div class="filter">
           <h5>スコアランク</h5>
-          <div class="form-group row align-items-center">
-            <div
-              v-for="rank in config.RANK_TYPE"
-              :key="rank"
-              class="form-control col-sm-3 text-nowrap"
-            >
+          <div>
+            <div v-for="rank in config.RANK_TYPE" :key="rank" class="btn">
               <label :for="rank" style="font-size: 0.9rem">
-                <input
-                  type="checkbox"
-                  :id="rank"
-                  :value="rank"
-                  v-model="filter.visible_rank.ranks[rank]"
-                />
+                <input type="checkbox" :id="rank" :value="rank" v-model="filter.visible_rank.ranks[rank]" />
                 {{ rank }}
               </label>
             </div>
@@ -99,22 +75,13 @@ defineExpose({ showModal })
           <button class="btn btn-success" @click="filter.filter_all_term()">
             全期間
           </button>
-          <button
-            class="btn btn-success"
-            @click="filter.filter_older_half_year()"
-          >
+          <button class="btn btn-success" @click="filter.filter_older_half_year()">
             半年以上更新なし
           </button>
-          <button
-            class="btn btn-success"
-            @click="filter.filter_older_one_year()"
-          >
+          <button class="btn btn-success" @click="filter.filter_older_one_year()">
             1年以上更新なし
           </button>
-          <button
-            class="btn btn-success"
-            @click="filter.filter_older_two_year()"
-          >
+          <button class="btn btn-success" @click="filter.filter_older_two_year()">
             2年以上更新なし
           </button>
         </div>
