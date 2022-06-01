@@ -23,25 +23,10 @@ const resetDate = () => {
 <template>
   <div id="date-selector">
     <div class="form-group align-items-center row">
-      <DatePicker
-        v-model="picked"
-        class="col-sm-10"
-        format="yyyy-MM-dd"
-        :enableTimePicker="false"
-      />
+      <DatePicker v-model="picked" class="col-sm-10" format="yyyy-MM-dd" :enableTimePicker="false" />
       <label @click="resetDate" class="btn btn-danger col-sm-2">
         <font-awesome-icon :icon="['fas', 'undo']" />
       </label>
     </div>
   </div>
 </template>
-
-<script>
-export default {}
-</script>
-
-<style scoped>
-.v3dp__datepicker {
-  display: none;
-}
-</style>

@@ -3,6 +3,7 @@ import ModalBaseVue, { IModalBase } from "./ModalBase.vue"
 import config from "../../../../const"
 import { computed, ref } from "vue"
 import { useStore } from "vuex"
+import SongFilter from "@/models/songFilter"
 export interface IFilterModal {
   showModal: () => void
 }
@@ -13,7 +14,7 @@ const store = useStore()
 const modal_base = ref<IModalBase>()
 
 // --- computed ---
-const filter = computed(() => store.getters.filter)
+const filter = computed<SongFilter>(() => store.getters.filter)
 
 // --- methods ---
 const showModal = () => modal_base.value?.showModal()
@@ -33,9 +34,7 @@ defineExpose({ showModal })
           <div>
             <div v-for="lamp in config.LAMP_GRAPH_LIST" :key="lamp" class="btn">
               <input type="checkbox" :id="'' + lamp" :value="lamp" v-model="filter.visible_lamp.lamps[lamp]" />
-              <label :for="'' + lamp">
-                {{ config.LAMP_INDEX[lamp] }}
-              </label>
+              <label :for="'' + lamp">{{ config.LAMP_INDEX[lamp] }}</label>
             </div>
           </div>
           <button class="btn btn-danger" @click="filter.visible_reverse()">
@@ -57,18 +56,18 @@ defineExpose({ showModal })
             未EASY
           </button>
         </div>
+        <hr />
 
         <div class="filter">
           <h5>スコアランク</h5>
           <div>
             <div v-for="rank in config.RANK_TYPE" :key="rank" class="btn">
-              <label :for="rank" style="font-size: 0.9rem">
-                <input type="checkbox" :id="rank" :value="rank" v-model="filter.visible_rank.ranks[rank]" />
-                {{ rank }}
-              </label>
+              <input type="checkbox" :id="rank" :value="rank" v-model="filter.visible_rank.ranks[rank]" />
+              <label :for="rank">{{ rank }}</label>
             </div>
           </div>
         </div>
+        <hr />
 
         <div class="filter">
           <h5>更新日時</h5>
@@ -84,6 +83,26 @@ defineExpose({ showModal })
           <button class="btn btn-success" @click="filter.filter_older_two_year()">
             2年以上更新なし
           </button>
+        </div>
+        <hr />
+        <div class="filter">
+          <h5>ライバルのクリアタイプ</h5>
+          <div>
+            <div v-for="lamp in config.LAMP_GRAPH_LIST" :key="lamp" class="btn">
+              <input type="checkbox" :id="'rival' + lamp" :value="lamp" v-model="filter.rival_lamp.lamps[lamp]" />
+              <label :for="'rival' + lamp">{{ config.LAMP_INDEX[lamp] }}</label>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="filter">
+          <h5>ライバルのスコアランク</h5>
+          <div>
+            <div v-for="rank in config.RANK_TYPE" :key="rank" class="btn">
+              <input type="checkbox" :id="'rival' + rank" :value="rank" v-model="filter.rival_rank.ranks[rank]" />
+              <label :for="'rival' + rank">{{ rank }}</label>
+            </div>
+          </div>
         </div>
       </div>
     </template>

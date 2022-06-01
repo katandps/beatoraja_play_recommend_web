@@ -10,6 +10,8 @@ export default class SongFilter {
   columns: Columns = new Columns({})
   visible_lamp: VisibleLamp = new VisibleLamp({})
   visible_rank: VisibleRank = new VisibleRank({})
+  rival_lamp: VisibleLamp = new VisibleLamp({})
+  rival_rank: VisibleRank = new VisibleRank({})
   day_until: number = 0
   day_since: number = 365 * 100
   max_length: number = 100
@@ -22,6 +24,8 @@ export default class SongFilter {
       this.columns = new Columns(filter.columns)
       this.visible_lamp = new VisibleLamp(filter.visible_lamp)
       this.visible_rank = new VisibleRank(filter.visible_rank)
+      this.rival_lamp = new VisibleLamp(filter.rival_lamp)
+      this.rival_rank = new VisibleRank(filter.rival_rank)
       this.day_until = filter.day_until
       this.max_length = filter.max_length
     }
@@ -41,18 +45,8 @@ export default class SongFilter {
     this.columns = columns
   }
 
-  /**
-   * ヘッダーに使えるクラス名を得る
-   * @public
-   * @param {string} key
-   * @return {"sort_active" | "sort_inactive"}
-   */
-  sort_key_is_active(key: string) {
-    if (this.sort_key === key) {
-      return "sort_active"
-    } else {
-      return "sort_inactive"
-    }
+  sort_key_is_active(key: string): boolean {
+    return this.sort_key === key
   }
 
   visible_reverse() {
@@ -104,6 +98,8 @@ export default class SongFilter {
     return (
       this.visible_lamp.lamps[song.clear_type] &&
       this.visible_rank.ranks[song.clear_rank] &&
+      this.rival_lamp.lamps[song.rival_clear_type] &&
+      this.rival_rank.ranks[song.rival_clear_rank] &&
       this.viewable_date(song.updated_at.split("T")[0])
     )
   }

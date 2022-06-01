@@ -21,7 +21,7 @@ const set_sort = () => store.commit("setSort", props.name)
 </script>
 
 <template>
-  <div class="th" v-show="is_active" :class="is_sorted" @click="set_sort">
+  <div class="th" v-show="is_active" :class="is_sorted ? 'sort_active' : 'sort_inactive'" @click="set_sort">
     <slot />
   </div>
 </template>
