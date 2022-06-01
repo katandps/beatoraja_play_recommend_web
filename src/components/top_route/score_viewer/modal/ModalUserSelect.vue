@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import ModalBase, { IModalBase } from "./ModalBase.vue"
-import DateSelector from "../selector/DateSelector.vue"
 
 import { ref, onMounted, computed } from "vue"
 import Api from "../../../../api"
@@ -50,8 +49,9 @@ const closeModal = () => modal_base.value?.closeModal()
 const setUser = (user_id: number) => {
   emits("setUser", user_id, date.value)
 }
-const set_date = (d: Date) => (date.value = d)
-
+const resetDate = () => {
+  date.value = new Date(new Date().setHours(0, 0, 0, 0))
+}
 // --- expose ---
 defineExpose({ showModal, closeModal })
 </script>
@@ -64,19 +64,19 @@ defineExpose({ showModal, closeModal })
     <template v-slot:body>
       <h3>日付の選択</h3>
       指定した当時のプレイ状況を再現します。<br />LR2からインポートしたデータや、プレイ回数などは再現されません。
-      <DateSelector :date="date" @setDate="set_date" />
+      <div class="align-items-center row">
+        <DatePicker v-model="date" class="col-sm-10" format="yyyy-MM-dd" :enableTimePicker="false" />
+        <label @click="resetDate" class="btn btn-danger col-sm-2">
+          <font-awesome-icon :icon="['fas', 'undo']" />
+        </label>
+      </div>
       <hr />
       <h3>プレイヤーの選択</h3>
       プロフィールを公開しているプレイヤーのみ表示されます。<br />
       非表示の方はログインすることで自分のデータが閲覧できます。
 
       <div class="row">
-        <div
-          class="btn btn-outline-secondary col-sm-4"
-          v-for="obj in users"
-          :key="obj.id"
-          @click="setUser(obj.id)"
-        >
+        <div class="btn btn-outline-secondary col-sm-4" v-for="obj in users" :key="obj.id" @click="setUser(obj.id)">
           {{ obj.name }}
         </div>
       </div>
