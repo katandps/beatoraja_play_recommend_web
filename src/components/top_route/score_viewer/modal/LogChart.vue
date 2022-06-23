@@ -51,21 +51,20 @@ const tab = ref('score')
 
 <template>
   <div id="logchart">
-    <div class="form-group row">
-      <div class="col-sm-12">
-        <div class="btn btn-outline-secondary col-sm-4 text-nowrap" @click="tab = 'score'">
-          スコア遷移表示
-        </div>
-        <div class="btn btn-outline-secondary col-sm-4 text-nowrap" @click="tab = 'bp'">
-          ミスカウント遷移表示
-        </div>
-        <div class="btn btn-outline-secondary col-sm-4 text-nowrap" @click="tab = 'combo'">
-          最大コンボ数遷移表示
-        </div>
-      </div>
-    </div>
+    <ul class="nav nav-tabs">
+      <li class="nav-link" :class="tab == 'score' ? 'active' : ''" @click="tab = 'score'">
+        スコア遷移表示
+      </li>
+      <li class="nav-link" :class="tab == 'bp' ? 'active' : ''" @click="tab = 'bp'">
+        ミスカウント遷移表示
+      </li>
+      <li class="nav-link" :class="tab == 'combo' ? 'active' : ''" @click="tab = 'combo'">
+        最大コンボ数遷移表示
+      </li>
+    </ul>
+
     <div v-if="tab == 'score'">
-      <h4>スコア遷移</h4>
+      <h4>スコア</h4>
       <Chart :data="logs" :margin="margin" :direction="direction" :axis="scoreAxis">
         <template #layers>
           <Grid strokeDashArray="2,2" />
@@ -77,7 +76,7 @@ const tab = ref('score')
       </Chart>
     </div>
     <div v-if="tab == 'bp'">
-      <h4>ミスカウント遷移</h4>
+      <h4>ミスカウント</h4>
       <Chart :data="logs" :margin="margin" :direction="direction" :axis="bpAxis">
         <template #layers>
           <Grid strokeDashArray="2,2" />
@@ -89,7 +88,7 @@ const tab = ref('score')
       </Chart>
     </div>
     <div v-if="tab == 'combo'">
-      <h4>最大コンボ数遷移</h4>
+      <h4>最大コンボ</h4>
       <Chart :data="logs" :margin="margin" :direction="direction" :axis="comboAxis">
         <template #layers>
           <Grid strokeDashArray="2,2" />
