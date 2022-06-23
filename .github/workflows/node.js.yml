@@ -20,11 +20,18 @@ jobs:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
-      id: setup_node_id
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - if: ${{ steps.setup_node_id.outputs.cache-hit != 'true' }}
+    - uses: actions/cache@v3
+      id: node_modules_cache_id
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+    - run: echo '${{ toJSON(steps.node_modules_cache_id.outputs) }}'
+    - if: ${{ steps.node_modules_cache_id.outputs.cache-hit != 'true' }}
       run: npm install
     - run: npm run build
     - uses: peaceiris/actions-gh-pages@v3
