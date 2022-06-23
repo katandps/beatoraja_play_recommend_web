@@ -4,6 +4,10 @@ import { ref, computed, watch } from "vue"
 import config from "../../../../const"
 import Columns from "@/models/columns"
 
+export interface IColumnModal {
+  showModal: () => void
+}
+
 // --- ref ---
 const modal_base = ref<IModalBase>()
 
@@ -38,17 +42,8 @@ defineExpose({ showModal })
     </template>
     <template v-slot:body>
       <div id="detail-columns" class="form-group row align-items-center">
-        <div
-          v-for="obj in column_list"
-          :key="obj.key"
-          class="btn col-sm-3 text-nowrap"
-        >
-          <input
-            type="checkbox"
-            :id="obj.key"
-            v-model="columns"
-            :value="obj.key"
-          />
+        <div v-for="obj in column_list" :key="obj.key" class="btn col-sm-3 text-nowrap">
+          <input type="checkbox" :id="obj.key" v-model="columns" :value="obj.key" />
 
           <label :for="obj.key">
             {{ obj.name }}

@@ -33,10 +33,15 @@ onMounted(async () => {
   if (cookies.get("session-token")) {
     store.commit("setAccessToken", cookies.get("session-token"))
   }
+  if (!accessToken.value) { return }
   const account = await Api.get_account(accessToken.value)
   debug(account)
   is_login.value = !account.error
-  if (!account.error) store.commit("setUserInfo", account)
+  if (account.error) {
+    store.commit("setAccessToken", null)
+  } else {
+    store.commit("setUserInfo", account)
+  }
 })
 
 watch(route, async (cur, prev) => {

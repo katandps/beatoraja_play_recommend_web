@@ -354,26 +354,7 @@ export default class SongDetail {
         return this.updated_at.split("T")[0] === "1970-01-01"
           ? "---"
           : this.updated_at.split("T")[0]
-      case "viewer":
-        return (
-          '<a href="http://www.ribbit.xyz/bms/score/view?md5=' +
-          this.md5 +
-          '" target="_blank">Viewer</a>'
-        )
-      case "minir":
-        return (
-          '<a href="https://www.gaftalk.com/minir/#/viewer/song/' +
-          this.sha256 +
-          "/" +
-          this.mode +
-          '" target="_blank">MinIR</a>'
-        )
-      case "mocha":
-        return (
-          '<a href="https://mocha-repository.info/song.php?sha256=' +
-          this.sha256 +
-          '" target="_blank">Mocha</a>'
-        )
+
       case "clear_diff_rival":
         return this.clear_type === this.rival_clear_type
           ? '<span class="draw">draw</span>'
@@ -409,4 +390,12 @@ export const score_format = (total_notes: number, score: number): string => {
     return "100.0"
   }
   return ((score / total_notes) * 50).toFixed(2)
+}
+
+export interface Log {
+  clear_type: string
+  max_combo: number
+  min_bp: number
+  score: number
+  updated_at: string
 }

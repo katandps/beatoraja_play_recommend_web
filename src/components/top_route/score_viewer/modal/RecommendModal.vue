@@ -4,6 +4,10 @@ import { computed, ref } from "vue"
 import { useStore } from "vuex"
 import ModalBaseVue, { IModalBase } from "./ModalBase.vue"
 
+export interface IRecommendModal {
+  showModal: () => void
+}
+
 const store = useStore()
 
 const modal_base = ref<IModalBase>()

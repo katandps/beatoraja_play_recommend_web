@@ -1,16 +1,17 @@
-<script setup>
+<script setup lang="ts">
 import SongDetail, { score_format } from "../../../../models/song_detail"
-import DataCell from "./DataCell"
+import DataCell from "./DataCell.vue"
 import config from "../../../../const"
 import { computed } from "vue"
 import Columns from "../../../../models/columns"
 
 // --- props ---
-const props = defineProps({
-  song: { type: SongDetail, require: true },
-  percentile: { type: Boolean },
-  columns: { type: Columns, require: true }
-})
+interface Props {
+  song: SongDetail
+  percentile: boolean
+  columns: Columns
+}
+const props = defineProps<Props>()
 
 // --- emits ---
 const emits = defineEmits(["showModal"])
@@ -103,7 +104,7 @@ const rank_before = computed(() =>
 
 // --- method ---
 const showModal = () => emits("showModal", props.song)
-const dayFormat = (date) => {
+const dayFormat = (date: string) => {
   let day = date.split("T")[0]
   return day === "1970-01-01" ? "-" : day
 }
@@ -166,7 +167,7 @@ const dayFormat = (date) => {
           <span class="update_strong">+{{ percent_diff }}</span>
           ({{ score_format(song.total_notes, song.score) }})%
         </span>
-        <span v-else>{{ song.score_format(song.total_notes, song.score) }}%</span>
+        <span v-else>{{ score_format(song.total_notes, song.score) }}%</span>
       </span>
       <span v-else>
         <span v-if="score_is_update">

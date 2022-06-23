@@ -1,4 +1,4 @@
-import {createStore} from 'vuex'
+import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import SongFilter from "./models/songFilter"
 
@@ -12,6 +12,7 @@ export const store = createStore({
         userInfo: null,
         accessToken: null,
         filter: new SongFilter(null),
+        userId: 1,
     },
     mutations: {
         setUserInfo(state, userInfo) {
@@ -20,7 +21,7 @@ export const store = createStore({
         setAccessToken(state, token) {
             state.accessToken = token
         },
-        setFilter(state ,filter) {
+        setFilter(state, filter) {
             state.filter = filter
         },
         setSort(state, column_name) {
@@ -30,7 +31,10 @@ export const store = createStore({
             state.filter.set_columns(columns)
         },
         setLength(state, length) {
-            state.filter.max_length = length
+            state.filter.max_length = length || 1
+        },
+        setScoreUserId(state, userId) {
+            state.userId = userId
         }
     },
     actions: {},
@@ -46,6 +50,9 @@ export const store = createStore({
         },
         column_is_active: (state: any) => (column_name: string) => {
             return state.filter.columns_detail[column_name]
+        },
+        user_id(state): number {
+            return state.userId
         }
     }
 })

@@ -1,34 +1,45 @@
-<script setup>
-import DisplaySongsLimiter from "./selector/DisplaySongsLimiter"
-import ColumnModal from "./modal/ColumnModal"
-import RecommendModal from "./modal/RecommendModal"
-import SongModal from "./modal/SongModal"
-import RowSong from "./cell/RowSong"
+<script setup lang="ts">
+import DisplaySongsLimiter from "./selector/DisplaySongsLimiter.vue"
+import ColumnModal, { IColumnModal } from "./modal/ColumnModal.vue"
+import RecommendModal, { IRecommendModal } from "./modal/RecommendModal.vue"
+import SongModal, { ISongModal } from "./modal/SongModal.vue"
+import RowSong from "./cell/RowSong.vue"
 import { ref } from "vue"
 import RowHeader from "./cell/RowHeader.vue"
 import RowColGroup from "./cell/RowColGroup.vue"
 import { computed } from "@vue/reactivity"
 import SongFilter from "@/models/songFilter"
+import SongDetail, { Log } from "@/models/song_detail"
+import Api from "@/api"
+import { useStore } from "vuex"
+
+const store = useStore()
 
 // --- refs ---
-const recommend_modal = ref(null)
-const song_modal = ref(null)
-const column_modal = ref(null)
+const recommend_modal = ref<IRecommendModal>()
+const song_modal = ref<ISongModal>()
+const column_modal = ref<IColumnModal>()
 
 // --- props ---
-const props = defineProps({
-  sorted_song_list: { type: Array, require: true },
-  date: { type: String, require: true },
-  filter: { type: SongFilter, require: true }
-})
+interface Props {
+  sorted_song_list: SongDetail[]
+  date: string
+  filter: SongFilter,
+}
+const props = defineProps<Props>()
 
 // --- computed ---
-const columns = computed(() => props.filter.columns)
+const columns = computed(() => props.filter?.columns)
+const user_id = computed<number>(() => store.getters.user_id)
+const accessToken = computed<string>(() => store.getters.accessToken)
 
 // --- methods ---
-const show_recommend_modal = () => recommend_modal.value.showModal()
-const show_column_modal = () => column_modal.value.showModal()
-const show_song_modal = (song) => song_modal.value.showModal(song, props.date)
+const show_recommend_modal = () => recommend_modal.value?.showModal()
+const show_column_modal = () => column_modal.value?.showModal()
+const show_song_modal = async (song: SongDetail) => {
+  let score = await Api.fetch_score_log(user_id.value, song.sha256, accessToken.value)
+  song_modal.value?.showModal(song, props.date, score.log as Log[])
+}
 </script>
 
 <template>
@@ -41,13 +52,13 @@ const show_song_modal = (song) => song_modal.value.showModal(song, props.date)
       <label class="col-sm-2 btn btn-success" @click="show_column_modal">
         列設定
       </label>
-      <label class="col-sm-2 btn btn-success" @click="filter.default()">
+      <label class="col-sm-2 btn btn-success" @click="filter?.default()">
         デフォルト
       </label>
-      <label class="col-sm-2 btn btn-success" @click="filter.for_recent()">
+      <label class="col-sm-2 btn btn-success" @click="filter?.for_recent()">
         直近の更新
       </label>
-      <label class="col-sm-2 btn btn-success" @click="filter.for_rival()">
+      <label class="col-sm-2 btn btn-success" @click="filter?.for_rival()">
         ライバル比較
       </label>
     </div>
@@ -57,7 +68,7 @@ const show_song_modal = (song) => song_modal.value.showModal(song, props.date)
         <RowColGroup :columns="columns" />
         <RowHeader :columns="columns" />
         <div class="tbody">
-          <RowSong v-for="song in sorted_song_list" :key="song.md5" :song="song" :columns="columns"
+          <RowSong v-for="song in sorted_song_list" :key="song.md5" :song="song" :columns="columns" :percentile="false"
             @showModal="show_song_modal" />
         </div>
       </div>

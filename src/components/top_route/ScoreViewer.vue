@@ -19,9 +19,11 @@ import LampGraphVue from "./score_viewer/LampGraph.vue"
 import RankGraphVue from "./score_viewer/RankGraph.vue"
 import TheDetailVue from "./score_viewer/TheDetail.vue"
 import TheStatVue from "./score_viewer/TheStat.vue"
+
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
+
 onMounted(() => {
   store.commit("setFilter", new SongFilter(filter.value))
   Api.fetch_tables(accessToken.value).then((t) => init_table(t))
