@@ -1,11 +1,12 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue"
 import config from "../../../const"
 import SongDetail from "../../../models/song_detail"
 
-const props = defineProps({
-  filtered_score: { require: true }
-})
+interface Props {
+  filtered_score: SongDetail[]
+}
+const props = defineProps<Props>()
 
 // --- computed ---
 const lamp_stat = computed(() =>

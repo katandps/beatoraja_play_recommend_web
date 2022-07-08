@@ -1,3 +1,73 @@
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import { useStore } from "vuex";
+import Api from "../../../api"
+
+const store = useStore()
+
+const score_db = ref()
+const score_log_db = ref()
+const song_data_db = ref()
+const is_play_data_uploaded = ref()
+const song_data_message = ref()
+
+// --- computed ---
+const ready_upload_play_data = computed(() =>
+  !(!score_db.value || !score_log_db.value)
+)
+const ready_upload_song_data = computed(() => {
+  return !!song_data_db.value
+})
+const user_id = computed(() => {
+  if (!store.getters.userInfo) {
+    return 1
+  }
+  return store.getters.userInfo.user_id
+})
+
+// --- methods ---
+const onPlayDataUploaded = (e: any) => {
+  console.log(e.target?.files)
+  for (const file of e.target.files) {
+    if (file.name === "score.db") {
+      score_db.value = file
+    }
+    if (file.name === "scorelog.db") {
+      score_log_db.value = file
+    }
+  }
+  is_play_data_uploaded.value = false
+}
+const onSongDataUploaded = (e: any) => {
+  for (const file of e.target.files) {
+    if (file.name === "songdata.db") {
+      song_data_db.value = file
+    }
+  }
+  song_data_message.value = ""
+}
+const
+  uploadPlayData = async () => {
+    await Api.upload_play_data(
+      store.getters.accessToken,
+      score_db.value,
+      score_log_db.value
+    )
+    score_db.value = null
+    score_log_db.value = null
+    is_play_data_uploaded.value = true
+  }
+const
+  uploadSongData = async () => {
+    await Api.upload_song_data(
+      store.getters.accessToken,
+      song_data_db.value
+    )
+    song_data_db.value = null
+    song_data_message.value = "OK"
+  }
+</script>
+
 <template>
   <div id="data-uploader">
     <h2 id="uploader-title" class="uploader-title">各種データアップロード</h2>
@@ -49,75 +119,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import Api from "../../../api"
-
-export default {
-  name: "DataUploader",
-  data: () => ({
-    score_db: null,
-    score_log_db: null,
-    song_data_db: null,
-    is_play_data_uploaded: false,
-    song_data_message: ""
-  }),
-  methods: {
-    onPlayDataUploaded(e) {
-      console.log(e.target.files)
-      for (const file of e.target.files) {
-        if (file.name === "score.db") {
-          this.score_db = file
-        }
-        if (file.name === "scorelog.db") {
-          this.score_log_db = file
-        }
-      }
-      this.is_play_data_uploaded = false
-    },
-    onSongDataUploaded(e) {
-      for (const file of e.target.files) {
-        if (file.name === "songdata.db") {
-          this.song_data_db = file
-        }
-      }
-      this.song_data_message = ""
-    },
-    async uploadPlayData() {
-      await Api.upload_play_data(
-        this.$store.getters.accessToken,
-        this.score_db,
-        this.score_log_db
-      )
-      this.score_db = null
-      this.score_log_db = null
-      this.is_play_data_uploaded = true
-    },
-    async uploadSongData() {
-      await Api.upload_song_data(
-        this.$store.getters.accessToken,
-        this.song_data_db
-      )
-      this.song_data_db = null
-      this.song_data_message = "OK"
-    }
-  },
-  computed: {
-    ready_upload_play_data() {
-      return !(!this.score_db || !this.score_log_db)
-    },
-    ready_upload_song_data() {
-      return !!this.song_data_db
-    },
-    user_id() {
-      if (!this.$store.getters.userInfo) {
-        return 1
-      }
-      return this.$store.getters.userInfo.user_id
-    }
-  }
-}
-</script>
 
 <style scoped>
 #data-uploader {

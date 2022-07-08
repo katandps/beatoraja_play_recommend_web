@@ -39,13 +39,7 @@ export default class Api {
         return await fetch(url, init).then(obj.handler).catch(obj.error)
     }
 
-    /**
-     * @public
-     * @param {number} user_id
-     * @param {number} table_index
-     * @return string
-     */
-    static get_table_header_url(user_id: string, table_index: string) {
+    static get_table_header_url(user_id: number, table_index: string): string {
         const obj = new Api()
         return obj.host + "/recommend_table/" + user_id + "/" + table_index + "/table.html"
     }

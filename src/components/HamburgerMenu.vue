@@ -1,28 +1,59 @@
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+
+const store = useStore()
+const router = useRouter()
+
+interface Props {
+  is_login: boolean
+}
+defineProps<Props>()
+const emits = defineEmits(["handleSignOut"])
+
+const active_btn = ref(false)
+
+const handleSignInUrl = () => {
+  let client_id = process.env.VUE_APP_CLIENT_ID
+  let redirect_url = process.env.VUE_APP_HOST + "/oauth"
+  return (
+    "https://accounts.google.com/o/oauth2/auth?" +
+    "include_granted_scopes=true" +
+    "&redirect_uri=" +
+    redirect_url +
+    "&scope=openid%20email%20profile" +
+    "&response_type=code" +
+    "&approval_prompt=force" +
+    "&access_type=offline" +
+    "&client_id=" +
+    client_id
+  )
+}
+const handleSignOut =
+  async () => {
+    emits("handleSignOut")
+  }
+const user_id = computed(() => store.getters.userInfo.user_id || 1)
+router.afterEach(() => active_btn.value = false)
+</script>
+
 <template>
   <nav id="page-header">
     <!--ハンバーガーメニューのボタン-->
     <div class="hamburger_btn" v-on:click="active_btn = !active_btn">
-      <span
-        class="line line_01"
-        :class="
-          (is_login ? 'line-login ' : 'line-logout ') +
-          (active_btn ? 'btn_line01' : '')
-        "
-      />
-      <span
-        class="line line_02"
-        :class="
-          (is_login ? 'line-login ' : 'line-logout ') +
-          (active_btn ? 'btn_line02' : '')
-        "
-      />
-      <span
-        class="line line_03"
-        :class="
-          (is_login ? 'line-login ' : 'line-logout ') +
-          (active_btn ? 'btn_line03' : '')
-        "
-      />
+      <span class="line line_01" :class="
+        (is_login ? 'line-login ' : 'line-logout ') +
+        (active_btn ? 'btn_line01' : '')
+      " />
+      <span class="line line_02" :class="
+        (is_login ? 'line-login ' : 'line-logout ') +
+        (active_btn ? 'btn_line02' : '')
+      " />
+      <span class="line line_03" :class="
+        (is_login ? 'line-login ' : 'line-logout ') +
+        (active_btn ? 'btn_line03' : '')
+      " />
     </div>
     <!--サイドバー-->
     <transition name="menu">
@@ -35,13 +66,10 @@
             </router-link>
           </li>
           <li>
-            <router-link
-              class="text-dark px-2"
-              :to="{
-                path: '/view',
-                query: Object.assign({}, $route.query, { user_id: user_id })
-              }"
-            >
+            <router-link class="text-dark px-2" :to="{
+              path: '/view',
+              query: Object.assign({}, $route.query, { user_id: user_id })
+            }">
               <font-awesome-icon :icon="['fas', 'cubes']" />
               スコア閲覧
             </router-link>
@@ -55,29 +83,19 @@
             </router-link>
           </li>
           <li>
-            <router-link
-              class="text-dark px-2"
-              :to="'/stats?user_id=' + user_id"
-            >
+            <router-link class="text-dark px-2" :to="'/stats?user_id=' + user_id">
               <font-awesome-icon :icon="['fas', 'wrench']" />
               プレイ履歴
             </router-link>
           </li>
           <li>
-            <router-link
-              class="text-dark px-2"
-              :to="'/table?user_id=' + user_id"
-            >
+            <router-link class="text-dark px-2" :to="'/table?user_id=' + user_id">
               <font-awesome-icon :icon="['fas', 'thumbs-up']" />
               おすすめ譜面表
             </router-link>
           </li>
           <li>
-            <a
-              class="text-dark px-3"
-              href="javascript:void(0);"
-              @click.prevent="handleSignOut"
-            >
+            <a class="text-dark px-3" href="javascript:void(0);" @click.prevent="handleSignOut">
               <font-awesome-icon :icon="['fas', 'sign-out-alt']" />
               ログアウト
             </a>
@@ -96,61 +114,11 @@
   </nav>
 </template>
 
-<script>
-export default {
-  name: "HamburgerMenu",
-  props: {
-    is_login: {
-      type: Boolean,
-      required: true
-    }
-  },
-  data: () => ({
-    active_btn: false
-  }),
-  methods: {
-    handleSignInUrl() {
-      let client_id = process.env.VUE_APP_CLIENT_ID
-      let redirect_url = process.env.VUE_APP_HOST + "/oauth"
-      return (
-        "https://accounts.google.com/o/oauth2/auth?" +
-        "include_granted_scopes=true" +
-        "&redirect_uri=" +
-        redirect_url +
-        "&scope=openid%20email%20profile" +
-        "&response_type=code" +
-        "&approval_prompt=force" +
-        "&access_type=offline" +
-        "&client_id=" +
-        client_id
-      )
-    },
-    async handleSignOut() {
-      this.$emit("handleSignOut")
-    }
-  },
-  computed: {
-    user_id() {
-      if (!this.$store.getters.userInfo) {
-        return 1
-      }
-      return this.$store.getters.userInfo.user_id
-    }
-  },
-  watch: {
-    $route: function (to, from) {
-      if (to.path !== from.path) {
-        this.active_btn = false
-      }
-    }
-  }
-}
-</script>
-
 <style scoped>
 /*ボタン*/
 .hamburger_btn {
-  position: fixed; /*常に最上部に表示したいので固定*/
+  position: fixed;
+  /*常に最上部に表示したいので固定*/
   top: 0;
   right: 0;
   width: 70px;

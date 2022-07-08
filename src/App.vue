@@ -1,15 +1,14 @@
-<script setup>
-import HamburgerMenu from "./components/HamburgerMenu"
+<script setup lang="ts">
+import HamburgerMenu from "./components/HamburgerMenu.vue"
 import Api from "./api"
 import { debug } from "loglevel"
 import { useCookies } from "vue3-cookies"
 import { useStore } from "vuex"
 import { computed, onMounted, ref, watch } from "vue"
-import { useRoute, useRouter } from "vue-router"
+import { useRoute } from "vue-router"
 
 const { cookies } = useCookies()
 const store = useStore()
-const router = useRouter()
 const route = useRoute()
 
 // --- data ---
@@ -24,9 +23,6 @@ const handleSignOut = async () => {
   store.commit("setAccessToken", null)
   store.commit("setUserInfo", null)
   is_login.value = false
-  if (router.currentRoute.path !== "/") {
-    await router.push("/")
-  }
 }
 
 onMounted(async () => {

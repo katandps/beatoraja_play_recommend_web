@@ -1,3 +1,42 @@
+<script setup lang="ts">
+import { computed } from "vue"
+import { useStore } from "vuex";
+import ReleaseNote from "./home/ReleaseNote.vue"
+
+const store = useStore()
+
+interface Props {
+  is_login: boolean
+}
+defineProps<Props>()
+const emits = defineEmits(["handleSignOut"])
+
+// --- computed ---
+const user_id = computed(() => store.getters.userInfo.user_id || 1)
+
+// --- methods ---
+const handleSignInUrl = () => {
+  let client_id = process.env.VUE_APP_CLIENT_ID
+  let redirect_url = process.env.VUE_APP_HOST + "/oauth"
+  return (
+    "https://accounts.google.com/o/oauth2/auth?" +
+    "include_granted_scopes=true" +
+    "&redirect_uri=" +
+    redirect_url +
+    "&scope=openid%20email%20profile" +
+    "&response_type=code" +
+    "&approval_prompt=force" +
+    "&access_type=offline" +
+    "&client_id=" +
+    client_id
+  )
+}
+
+const handleSignOut = async () => {
+  emits("handleSignOut")
+}
+</script>
+
 <template>
   <section id="home" class="container">
     <div class="jumbotron">
@@ -21,13 +60,10 @@
       </div>
       <div class="col-lg-3 panel">
         <h4>
-          <router-link
-            class="text-dark px-2"
-            :to="{
-              path: '/view',
-              query: Object.assign({}, $route.query, { user_id: user_id })
-            }"
-          >
+          <router-link class="text-dark px-2" :to="{
+            path: '/view',
+            query: Object.assign({}, $route.query, { user_id: user_id })
+          }">
             <font-awesome-icon :icon="['fas', 'cubes']" />
             スコア閲覧
           </router-link>
@@ -63,11 +99,7 @@
       </div>
       <div class="col-lg-3 panel" v-if="is_login">
         <h4>
-          <a
-            class="text-dark px-3"
-            href="javascript:void(0);"
-            @click.prevent="handleSignOut"
-          >
+          <a class="text-dark px-3" href="javascript:void(0);" @click.prevent="handleSignOut">
             <font-awesome-icon :icon="['fas', 'sign-out-alt']" />
             ログアウト
           </a>
@@ -97,56 +129,6 @@
     </div>
   </section>
 </template>
-
-<script>
-import ReleaseNote from "./home/ReleaseNote"
-
-export default {
-  components: { ReleaseNote },
-  props: {
-    is_login: {
-      type: Boolean,
-      required: true
-    }
-  },
-  methods: {
-    handleSignInUrl() {
-      let client_id = process.env.VUE_APP_CLIENT_ID
-      let redirect_url = process.env.VUE_APP_HOST + "/oauth"
-      return (
-        "https://accounts.google.com/o/oauth2/auth?" +
-        "include_granted_scopes=true" +
-        "&redirect_uri=" +
-        redirect_url +
-        "&scope=openid%20email%20profile" +
-        "&response_type=code" +
-        "&approval_prompt=force" +
-        "&access_type=offline" +
-        "&client_id=" +
-        client_id
-      )
-    },
-    async handleSignOut() {
-      this.$emit("handleSignOut")
-    }
-  },
-  computed: {
-    user_id() {
-      if (!this.$store.getters.userInfo) {
-        return 1
-      }
-      return this.$store.getters.userInfo.user_id
-    }
-  },
-  watch: {
-    $route: function (to, from) {
-      if (to.path !== from.path) {
-        this.active_btn = false
-      }
-    }
-  }
-}
-</script>
 
 <style scoped>
 #home {

@@ -1,3 +1,63 @@
+<script setup lang="ts">
+import Api from "../../../api"
+import * as log from "loglevel"
+import { computed, ref } from "vue";
+import { useStore } from "vuex";
+
+const store = useStore()
+
+const name = ref(store.getters.userInfo.name)
+const message = ref("")
+const visibility = ref(store.getters.userInfo.visibility)
+const lock = ref(false)
+
+// --- computed ---
+const disabled = computed(() => {
+  return (
+    lock.value ||
+    name.value === "" ||
+    !store.getters.userInfo ||
+    store.getters.userInfo.name === name.value
+  )
+})
+const token = computed(() => store.getters.accessToken)
+
+// --- methods ---
+const change_name = async () => {
+  if (disabled.value) {
+    return
+  }
+  lock.value = true
+  await Api.change_user_name(token.value, name.value)
+    .then((res) => {
+      log.debug(res)
+      store.commit("setUserInfo", res)
+      message.value = "" + name.value + "に更新しました。"
+      lock.value = false
+    })
+    .catch(() => {
+      message.value = "更新に失敗しました。"
+    })
+}
+const change_visibility = async () => {
+  if (visibility.value === store.getters.userInfo.visibility) {
+    return
+  }
+  const to = visibility.value
+  await Api.change_visibility(token.value, to)
+    .then((res) => {
+      log.debug(res)
+      store.commit("setUserInfo", res)
+      message.value = to
+        ? "プロフィールを表示状態にしました。"
+        : "プロフィールを非表示状態にしました。"
+    })
+    .catch(() => {
+      message.value = "更新に失敗しました。"
+    })
+}
+</script>
+
 <template>
   <div id="profile-edit">
     <h2>プロフィール</h2>
@@ -7,12 +67,8 @@
       </div>
       <input id="name-input" class="form-control" v-model="name" />
       <div class="input-group-append">
-        <label
-          class="btn btn-success text-nowrap"
-          @click="change_name"
-          :class="disabled ? 'disabled' : ''"
-          :disabled="disabled"
-        >
+        <label class="btn btn-success text-nowrap" @click="change_name" :class="disabled ? 'disabled' : ''"
+          :disabled="disabled">
           変更を反映
         </label>
       </div>
@@ -25,12 +81,7 @@
           <font-awesome-icon :icon="['fas', 'wrench']" />
         </label>
       </div>
-      <input
-        id="visibility-input"
-        class="form-control"
-        type="checkbox"
-        v-model="visibility"
-      />
+      <input id="visibility-input" class="form-control" type="checkbox" v-model="visibility" />
       <div class="input-group-append">
         <label class="btn btn-success text-nowrap" @click="change_visibility">
           変更を反映
@@ -41,71 +92,6 @@
     {{ message }}
   </div>
 </template>
-
-<script>
-import Api from "../../../api"
-import * as log from "loglevel"
-
-export default {
-  name: "ProfileEdit",
-  data: () => ({
-    name: "",
-    message: "",
-    visibility: false,
-    lock: false
-  }),
-  mounted() {
-    log.debug(this.$store.getters.userInfo)
-    this.name = this.$store.getters.userInfo.name
-    this.visibility = this.$store.getters.userInfo.visibility
-  },
-  methods: {
-    async change_name() {
-      if (this.disabled) {
-        return
-      }
-      this.lock = true
-      await Api.change_user_name(this.$store.getters.accessToken, this.name)
-        .then((res) => {
-          log.debug(res)
-          this.$store.commit("setUserInfo", res)
-          this.message = "" + this.name + "に更新しました。"
-          this.lock = false
-        })
-        .catch(() => {
-          this.message = "更新に失敗しました。"
-        })
-    },
-    async change_visibility() {
-      if (this.visibility === this.$store.getters.userInfo.visibility) {
-        return
-      }
-      const to = this.visibility
-      await Api.change_visibility(this.$store.getters.accessToken, to)
-        .then((res) => {
-          log.debug(res)
-          this.$store.commit("setUserInfo", res)
-          this.message = to
-            ? "プロフィールを表示状態にしました。"
-            : "プロフィールを非表示状態にしました。"
-        })
-        .catch(() => {
-          this.message = "更新に失敗しました。"
-        })
-    }
-  },
-  computed: {
-    disabled() {
-      return (
-        this.lock ||
-        this.name === "" ||
-        !this.$store.getters.userInfo ||
-        this.$store.getters.userInfo.name === this.name
-      )
-    }
-  }
-}
-</script>
 
 <style scoped>
 #profile-edit {
