@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import ModalBaseVue, { IModalBase } from "./ModalBase.vue"
-import Tables from "../../../../models/difficultyTable"
+import Tables, { CheckedTables } from "../../../../models/difficultyTable"
 import { computed, ref } from "vue"
 import LevelSelectVue from "./LevelSelect.vue"
+import { debug } from "loglevel"
 export interface IModalForSelectTable {
   showModal: () => void
 }
@@ -13,30 +14,25 @@ const modal_base = ref<IModalBase>()
 // --- props ---
 interface Props {
   tables: Tables
+  checks: CheckedTables
 }
 const props = defineProps<Props>()
 
 // --- emits ---
 
-const emits = defineEmits(["setLevel", "allTables"])
+const emits = defineEmits(["setLevel"])
 
 // --- data ---
 
 // --- computed ---
 const all_checked = computed({
-  get: () => {
-    for (const table of props.tables.tables) {
-      if (table.checks.length !== table.level_list.length) {
-        return false
-      }
-    }
-    return true
-  },
+  get: () => CheckedTables.all_checked(props.checks, props.tables),
   set: () => {
     const checked = all_checked.value
     props.tables.tables.forEach((t, i) =>
       setLevel(checked ? [] : t.level_list, i)
     )
+    debug(all_checked.value)
   }
 })
 
@@ -61,7 +57,7 @@ defineExpose({ showModal })
       </h3>
       <hr />
       <div v-for="(table, index) in tables.tables" :key="table.name">
-        <LevelSelectVue :table="table" :index="index" @setLevel="setLevel" />
+        <LevelSelectVue :table="table" :checks="CheckedTables.get(checks, index)" :index="index" @setLevel="setLevel" />
       </div>
     </template>
   </ModalBaseVue>

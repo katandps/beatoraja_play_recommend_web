@@ -2,12 +2,13 @@
 import config from "../../../const"
 import SongDetail from "../../../models/song_detail"
 import { computed, ref } from "vue"
-import Tables from "@/models/difficultyTable"
+import Tables, { CheckedTables } from "@/models/difficultyTable"
 import GraphModalVue, { IGraphModal } from "./modal/GraphModal.vue"
 
 interface Props {
   filtered_score: SongDetail[]
   tables: Tables
+  checks: CheckedTables
 }
 const props = defineProps<Props>()
 
@@ -27,8 +28,8 @@ const rank_list = computed(() =>
 )
 
 const active_tables = computed(() =>
-  props.tables.tables.filter((t) => t.checks.length > 0)
-)
+  props.tables.tables.filter((t, i) => CheckedTables.table_is_active(props.checks, i)
+  ))
 // --- methods ---
 const showModal = (title: string, text: string[]) =>
   modal.value?.showModal(title, text)
@@ -45,14 +46,8 @@ const list = (table_index: number, level_index: number, rank_index: number) =>
     <table style="width: 100%">
       <tr>
         <td class="progress" style="width: 100%; height: 1.8em">
-          <div
-            v-for="rank in config.RANK_TYPE"
-            :key="rank"
-            :class="'progress-bar bg-' + rank"
-            role="progressbar"
-            style="color: #000"
-            :style="'width: ' + 100.0 / config.RANK_TYPE.length + '%'"
-          >
+          <div v-for="rank in config.RANK_TYPE" :key="rank" :class="'progress-bar bg-' + rank" role="progressbar"
+            style="color: #000" :style="'width: ' + 100.0 / config.RANK_TYPE.length + '%'">
             {{ rank }}
           </div>
         </td>
@@ -63,29 +58,20 @@ const list = (table_index: number, level_index: number, rank_index: number) =>
       <div v-for="(table, table_index) in active_tables" :key="table_index">
         <h2>{{ table.name }}</h2>
         <table style="width: 100%">
-          <tr
-            v-for="(level, level_index) in table.level_list"
-            :key="level_index"
-          >
+          <tr v-for="(level, level_index) in table.level_list" :key="level_index">
             <td style="width: 30px">{{ level }}</td>
             <td class="progress" style="width: 100%; height: 1.8em">
-              <div
-                v-for="(rank, rank_index) in config.RANK_TYPE"
-                :key="rank"
-                :class="'progress-bar bg-' + rank"
-                role="progressbar"
-                :style="
+              <div v-for="(rank, rank_index) in config.RANK_TYPE" :key="rank" :class="'progress-bar bg-' + rank"
+                role="progressbar" :style="
                   'width: ' +
                   rank_list[table_index][level_index][rank_index].length * 100 +
                   '%;color:#000'
-                "
-                v-on:click="
-                  showModal(
-                    level + ' ' + rank,
-                    list(table_index, level_index, rank_index)
-                  )
-                "
-              >
+                " v-on:click="
+  showModal(
+    level + ' ' + rank,
+    list(table_index, level_index, rank_index)
+  )
+">
                 {{ rank_list[table_index][level_index][rank_index].length }}
               </div>
             </td>

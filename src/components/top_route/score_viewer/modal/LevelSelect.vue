@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { DifficultyTable } from "@/models/difficultyTable"
+import { CheckedLevels, DifficultyTable } from "@/models/difficultyTable"
 import { debug } from "loglevel"
 import { computed } from "vue"
 
 // --- props ---
 interface Props {
   table: DifficultyTable
+  checks: CheckedLevels
   index: number
 }
 const props = defineProps<Props>()
@@ -16,13 +17,13 @@ const emits = defineEmits(["setLevel"])
 
 // --- computed ---
 const all_checked = computed({
-  get: () => props.table.level_list.length === props.table.checks.length,
+  get: () => CheckedLevels.all_checked(props.checks, props.table),
   set: (): string[] =>
     (check_accessor.value = all_checked.value ? [] : props.table.level_list)
 })
 
 const check_accessor = computed({
-  get: () => props.table.checks,
+  get: () => props.checks.checks,
   set: (item) => {
     debug(item, props.index)
     emits("setLevel", item, props.index)

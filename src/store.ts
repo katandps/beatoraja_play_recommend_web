@@ -1,17 +1,20 @@
+import { debug } from 'loglevel'
 import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
+import { CheckedTables } from './models/difficultyTable'
 import SongFilter from "./models/songFilter"
 
 export const store = createStore({
     plugins: [createPersistedState({
         key: 'vue-gauth',
-        paths: ['userInfo', 'accessToken', 'filter'],
+        paths: ['userInfo', 'accessToken', 'filter', 'checked_tables'],
         storage: window.localStorage
     })],
     state: {
         userInfo: null,
         accessToken: null,
         filter: new SongFilter(null),
+        checked_tables: new CheckedTables(),
         userId: 1,
     },
     mutations: {
@@ -35,6 +38,10 @@ export const store = createStore({
         },
         setScoreUserId(state, userId) {
             state.userId = userId
+        },
+        setCheckedTables(state, checks) {
+            debug(checks)
+            state.checked_tables = checks
         }
     },
     actions: {},
@@ -53,6 +60,9 @@ export const store = createStore({
         },
         user_id(state): number {
             return state.userId
+        },
+        checked_tables(state): CheckedTables {
+            return state.checked_tables
         }
     }
 })

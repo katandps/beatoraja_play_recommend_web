@@ -3,11 +3,12 @@ import config from "../../../const"
 import SongDetail from "../../../models/song_detail"
 import GraphModalVue, { IGraphModal } from "./modal/GraphModal.vue"
 import { ref, computed } from "vue"
-import Tables from "@/models/difficultyTable"
+import Tables, { CheckedTables } from "@/models/difficultyTable"
 
 interface Props {
   filtered_score: SongDetail[]
   tables: Tables
+  checks: CheckedTables
 }
 const props = defineProps<Props>()
 
@@ -27,8 +28,8 @@ const lamp_list = computed(() =>
   )
 )
 const active_tables = computed(() =>
-  props.tables.tables.filter((t) => t.checks.length > 0)
-)
+  props.tables.tables.filter((t, i) => CheckedTables.table_is_active(props.checks, i)
+  ))
 
 // --- methods ---
 const showModal = (title: string, text: string[]) =>
@@ -47,14 +48,8 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
     <table style="width: 100%">
       <tr>
         <td class="progress" style="width: 100%; height: 1.8em">
-          <div
-            v-for="clear_type in config.LAMP_TYPE"
-            :key="clear_type"
-            :class="'progress-bar bg-' + clear_type"
-            role="progressbar"
-            style="color: #000000"
-            :style="'width: ' + 100.0 / config.LAMP_TYPE.length + '%'"
-          >
+          <div v-for="clear_type in config.LAMP_TYPE" :key="clear_type" :class="'progress-bar bg-' + clear_type"
+            role="progressbar" style="color: #000000" :style="'width: ' + 100.0 / config.LAMP_TYPE.length + '%'">
             {{ clear_type }}
           </div>
         </td>
@@ -65,30 +60,20 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
       <div v-for="(table, table_index) in active_tables" :key="table_index">
         <h2>{{ table.name }}</h2>
         <table style="width: 100%">
-          <tr
-            v-for="(level, level_index) in table.level_list"
-            :key="level_index"
-            style="width: 100%"
-          >
+          <tr v-for="(level, level_index) in table.level_list" :key="level_index" style="width: 100%">
             <td style="width: 30px">{{ level }}</td>
             <td class="progress" style="width: 100%; height: 1.8em">
-              <div
-                v-for="lamp_index in config.LAMP_GRAPH_LIST"
-                :key="config.LAMP_INDEX[lamp_index]"
-                :class="'progress-bar bg-' + config.LAMP_INDEX[lamp_index]"
-                role="progressbar"
-                :style="
+              <div v-for="lamp_index in config.LAMP_GRAPH_LIST" :key="config.LAMP_INDEX[lamp_index]"
+                :class="'progress-bar bg-' + config.LAMP_INDEX[lamp_index]" role="progressbar" :style="
                   'width: ' +
                   lamp_list[table_index][level_index][lamp_index].length * 100 +
                   '%;color:#000'
-                "
-                v-on:click="
-                  showModal(
-                    level + ' ' + config.LAMP_INDEX[lamp_index],
-                    list(table_index, level_index, lamp_index)
-                  )
-                "
-              >
+                " v-on:click="
+  showModal(
+    level + ' ' + config.LAMP_INDEX[lamp_index],
+    list(table_index, level_index, lamp_index)
+  )
+">
                 {{ lamp_list[table_index][level_index][lamp_index].length }}
               </div>
             </td>

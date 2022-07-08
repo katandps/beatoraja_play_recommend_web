@@ -21,8 +21,8 @@ const accessToken = computed(() => store.getters.accessToken)
 // --- methods ---
 const handleSignOut = async () => {
   await Api.logout(store.getters.accessToken)
-  await store.commit("setAccessToken", null)
-  await store.commit("setUserInfo", null)
+  store.commit("setAccessToken", null)
+  store.commit("setUserInfo", null)
   is_login.value = false
   if (router.currentRoute.path !== "/") {
     await router.push("/")

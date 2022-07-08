@@ -36,7 +36,7 @@ export default class Tables {
     for (const table of this.tables) {
       ret = ret.concat(table.level_list)
     }
-    return ret    
+    return ret
   }
 
   /**
@@ -50,25 +50,55 @@ export default class Tables {
 
 export class DifficultyTable {
   name: string
-  levels: {[level: string]: string[]}
+  levels: { [level: string]: string[] }
   level_list: string[]
-  checks: string[]
 
-  constructor(table_name: string, levels: {[level: string]: string[]}, level_list: string[]) {
+  constructor(table_name: string, levels: { [level: string]: string[] }, level_list: string[]) {
     this.name = table_name
-    /**
-     * @type {Object.<string, string[]>} level_label: hash[]
-     */
     this.levels = levels
-    /**
-     * @type string[]
-     */
     this.level_list = level_list
+  }
+}
 
-    this.checks = []
+export class CheckedTables {
+  tables: { [index: number]: CheckedLevels } = {}
+  static all_checked(checks: CheckedTables, tables: Tables): boolean {
+    for (let index = 0; index < tables.tables.length; index++) {
+      const table = tables.tables[index]
+      const levels = CheckedTables.get(checks, index)
+      if (!CheckedLevels.all_checked(levels, table)) {
+        return false;
+      }
+    }
+    return true
   }
 
-  setChecks(checks: string[]) {
-    this.checks = checks
+  static table_is_active(checks: CheckedTables, table_index: number): boolean {
+    if (!checks.tables[table_index]) { return false }
+    return checks.tables[table_index].checks.length > 0
+  }
+
+  static is_checked(checks: CheckedTables, table_index: number, level: string): boolean {
+    if (!checks.tables[table_index]) { return false }
+    return CheckedLevels.is_checked(checks.tables[table_index], level)
+  }
+
+  static get(checks: CheckedTables, index: number): CheckedLevels {
+    if (!checks.tables[index]) {
+      checks.tables[index] = new CheckedLevels()
+    }
+    return checks.tables[index]
+  }
+}
+
+export class CheckedLevels {
+  checks: string[] = []
+
+  static all_checked(checks: CheckedLevels, table: DifficultyTable): boolean {
+    return table.level_list.length === checks.checks.length
+  }
+
+  static is_checked(checks: CheckedLevels, level: string): boolean {
+    return checks.checks.indexOf(level) >= 0
   }
 }
