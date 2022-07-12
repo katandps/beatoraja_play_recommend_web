@@ -19,6 +19,7 @@
     "core-js": "^3.22.5",
     "floating-vue": "^2.0.0-beta.16",
     "loglevel": "^1.8.0",
+    "pinia": "^2.0.15",
     "vue": "^3.2.33",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.13",
