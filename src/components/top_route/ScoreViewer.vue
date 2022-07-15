@@ -2,9 +2,7 @@
 import Tables, { CheckedTables } from "../../models/difficultyTable"
 import Api from "../../api"
 import { debug } from "loglevel"
-import SongFilter from "../../models/songFilter"
-import { useStore } from "vuex"
-import { computed, onMounted, ref, watch } from "vue"
+import { computed, onMounted, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { DateFormatter } from "../../models/date_formatter"
 import SongDetail from "../../models/song_detail"
@@ -19,15 +17,17 @@ import LampGraphVue from "./score_viewer/LampGraph.vue"
 import RankGraphVue from "./score_viewer/RankGraph.vue"
 import TheDetailVue from "./score_viewer/TheDetail.vue"
 import TheStatVue from "./score_viewer/TheStat.vue"
+import { useFilterStore } from "@/store/filter"
+import { useLoginStore } from "@/store/session"
 
-const store = useStore()
+const sessionStore = useLoginStore()
+const filterStore = useFilterStore()
 const route = useRoute()
 const router = useRouter()
 
 onMounted(() => {
-  store.commit("setFilter", new SongFilter(filter.value))
-  Api.fetch_tables(accessToken.value).then((t) => (tables.value = t))
-  Api.fetch_songs(accessToken.value).then((s) => (songs.value = s))
+  Api.fetch_tables(sessionStore.accessToken).then((t) => (tables.value = t))
+  Api.fetch_songs(sessionStore.accessToken).then((s) => (songs.value = s))
   fetchDetail(props.user_id)
   setRival(props.rival_id)
 })
@@ -57,10 +57,6 @@ const message = ref("")
 const loaded = ref({ user_id: 0, rival_id: 0, date: "" })
 
 // --- computed ---
-const accessToken = computed<string>(() => store.getters.accessToken)
-const checked_tables = computed<CheckedTables>(() => store.getters.checked_tables)
-const filter = computed(() => store.getters.filter)
-
 const level_list = computed(() => tables.value.level_list())
 const exists_tables = computed(() => !!tables.value)
 const exists_scores = computed(() => !!scores.value)
@@ -91,7 +87,7 @@ const filtered_score = computed(() => {
   for (let table_index = 0; table_index < tables.value.tables.length; table_index += 1) {
     const table = tables.value.tables[table_index]
     for (const level in table.levels) {
-      if (!CheckedTables.is_checked(checked_tables.value, table_index, level)) {
+      if (!CheckedTables.is_checked(filterStore.checked_tables, table_index, level)) {
         continue;
       }
       const hashes = table.levels[level]
@@ -112,7 +108,7 @@ const filtered_score = computed(() => {
         if (exists_rival_score.value) {
           score.init_rival_score(rival_score.value.get_score(hash))
         }
-        if (filter.value.apply(score)) {
+        if (filterStore.filter.apply(score)) {
           ret.push(score)
         }
       }
@@ -128,19 +124,19 @@ const sorted_song_list = computed(() => {
       SongDetail.cmp(
         a,
         b,
-        filter.value.sort_key,
-        filter.value.sort_desc,
+        filterStore.filter.sort_key,
+        filterStore.filter.sort_desc,
         level_list.value
       )
     )
-    .slice(0, filter.value.max_length || songs.length)
+    .slice(0, filterStore.filter.max_length || songs.length)
 })
 
 // --- methods ---
 const setRival = (rival_id: number) => {
   debug(loaded.value, rival_id)
   if (rival_id > 0 && loaded.value.rival_id !== rival_id) {
-    Api.fetch_score(rival_date_str.value, rival_id, accessToken.value).then(
+    Api.fetch_score(rival_date_str.value, rival_id, sessionStore.accessToken).then(
       (s) => {
         rival_score.value = null
         rival_score.value = s
@@ -153,9 +149,7 @@ const setRival = (rival_id: number) => {
   }
 }
 const setLevel = (levels: string[], index: number) => {
-  debug("commit", levels, index)
-  checked_tables.value.tables[index].checks = levels
-  store.commit('setCheckedTables', checked_tables.value)
+  filterStore.checked_tables.tables[index].checks = levels
 }
 
 const fetchDetail = (user_id: number) => {
@@ -170,7 +164,7 @@ const fetchDetail = (user_id: number) => {
   ) {
     debug("fetch!")
     message.value = "読込中..."
-    Api.fetch_score(date_str.value, user_id, accessToken.value).then((s) => {
+    Api.fetch_score(date_str.value, user_id, sessionStore.accessToken).then((s) => {
       scores.value = s
       message.value = exists_scores.value ? "" : "読み込み失敗"
       loaded.value.user_id = user_id
@@ -202,7 +196,7 @@ const setRivalId = async (input_rival_id: number, d: Date) => {
   setRival(input_rival_id)
 }
 
-watch(filter, (cur) => store.commit("setFilter", cur))
+// watch(filter, (cur) => store.commit("setFilter", cur))
 </script>
 
 <template>
@@ -261,14 +255,14 @@ watch(filter, (cur) => store.commit("setFilter", cur))
 
         <hr />
         <template v-if="mode === 'detail'">
-          <TheDetailVue :sorted_song_list="sorted_song_list" :date="date_str" :filter="filter" />
+          <TheDetailVue :sorted_song_list="sorted_song_list" :date="date_str" :filter="filterStore.filter" />
         </template>
         <template v-if="mode === 'lamp'">
-          <LampGraphVue :filtered_score="filtered_score" :tables="tables" :checks="checked_tables" />
+          <LampGraphVue :filtered_score="filtered_score" :tables="tables" :checks="filterStore.checked_tables" />
         </template>
 
         <template v-if="mode === 'rank'">
-          <RankGraphVue :filtered_score="filtered_score" :tables="tables" :checks="checked_tables" />
+          <RankGraphVue :filtered_score="filtered_score" :tables="tables" :checks="filterStore.checked_tables" />
         </template>
 
         <template v-if="mode === 'stat'">
@@ -278,7 +272,7 @@ watch(filter, (cur) => store.commit("setFilter", cur))
     </div>
     <p v-else>{{ message }}</p>
     <ModalUserSelect ref="user_modal" :user_id="user_id" @setUser="setUserId" />
-    <ModalForSelectTable ref="tables_modal" :tables="tables" :checks="checked_tables" @setLevel="setLevel"
+    <ModalForSelectTable ref="tables_modal" :tables="tables" :checks="filterStore.checked_tables" @setLevel="setLevel"
       v-if="exists_tables" />
     <ModalUserSelect ref="rival_modal" :user_id="rival_id" @setUser="setRivalId" :rival_mode="true" />
     <FilterModal ref="filter_modal" />

@@ -11,9 +11,9 @@ import { computed } from "@vue/reactivity"
 import SongFilter from "@/models/songFilter"
 import SongDetail, { Log } from "@/models/song_detail"
 import Api from "@/api"
-import { useStore } from "vuex"
+import { useLoginStore } from "@/store/session"
 
-const store = useStore()
+const loginStore = useLoginStore()
 
 // --- refs ---
 const recommend_modal = ref<IRecommendModal>()
@@ -30,8 +30,8 @@ const props = defineProps<Props>()
 
 // --- computed ---
 const columns = computed(() => props.filter?.columns)
-const user_id = computed<number>(() => store.getters.user_id)
-const accessToken = computed<string>(() => store.getters.accessToken)
+const user_id = computed(() => loginStore.userInfo ? loginStore.userInfo.user_id : 1)
+const accessToken = computed(() => loginStore.accessToken)
 
 // --- methods ---
 const show_recommend_modal = () => recommend_modal.value?.showModal()

@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useStore } from 'vuex';
+import { useFilterStore } from '@/store/filter'
+import { computed } from 'vue'
 
-
-const store = useStore()
+const store = useFilterStore()
 
 // --- computed ---
 const length = computed({
-  get() { return store.getters.filter.max_length },
-  set(value: number) { store.commit("setLength", value) }
+  get() { return store.filter.max_length },
+  set(value: number) { store.setLength(value) }
 })
 
 </script>

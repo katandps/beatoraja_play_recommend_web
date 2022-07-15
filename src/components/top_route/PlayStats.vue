@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
-import { useStore } from "vuex"
+import { useLoginStore } from '@/store/session'
+import { ref } from "vue"
 import Api from "../../api"
 import PlayStats from "../../models/playStats"
 
-const store = useStore()
+const store = useLoginStore()
 
 interface Props {
   user_id: number
@@ -15,9 +15,7 @@ const props = defineProps<Props>()
 const history = ref(PlayStats.default())
 
 // --- computed ---
-const accessToken = computed(() => store.getters.accessToken)
-
-Api.fetch_play_stats(accessToken.value, props.user_id).then(
+Api.fetch_play_stats(store.accessToken, props.user_id).then(
   (h) => (history.value = h)
 )
 </script>

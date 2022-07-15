@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Api from "../../api";
-import { computed, onMounted, ref } from "vue";
-import { useStore } from "vuex";
+import Api from "../../api"
+import { computed, onMounted, ref } from "vue"
+import { useLoginStore } from '@/store/session'
 
-const store = useStore()
+const store = useLoginStore()
 
 interface Props {
   user_id: number
@@ -14,7 +14,7 @@ const tables = ref()
 const selected = ref()
 
 onMounted(() => {
-  Api.fetch_tables(store.getters.accessToken).then(
+  Api.fetch_tables(store.accessToken).then(
     t => {
       tables.value = t
       selected.value = t.first()?.name

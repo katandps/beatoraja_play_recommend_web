@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useStore } from "vuex";
+import { useLoginStore } from "@/store/session"
+import { computed, ref } from "vue"
 import Api from "../../../api"
 
-const store = useStore()
+const loginStore = useLoginStore()
 
 const score_db = ref()
 const score_log_db = ref()
@@ -19,10 +19,10 @@ const ready_upload_song_data = computed(() => {
   return !!song_data_db.value
 })
 const user_id = computed(() => {
-  if (!store.getters.userInfo) {
+  if (!loginStore.userInfo) {
     return 1
   }
-  return store.getters.userInfo.user_id
+  return loginStore.userInfo.user_id
 })
 
 // --- methods ---
@@ -49,7 +49,7 @@ const onSongDataUploaded = (e: any) => {
 const
   uploadPlayData = async () => {
     await Api.upload_play_data(
-      store.getters.accessToken,
+      loginStore.accessToken,
       score_db.value,
       score_log_db.value
     )
@@ -60,7 +60,7 @@ const
 const
   uploadSongData = async () => {
     await Api.upload_song_data(
-      store.getters.accessToken,
+      loginStore.accessToken,
       song_data_db.value
     )
     song_data_db.value = null

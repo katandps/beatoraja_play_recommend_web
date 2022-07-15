@@ -20,14 +20,13 @@
     "floating-vue": "^2.0.0-beta.16",
     "loglevel": "^1.8.0",
     "pinia": "^2.0.15",
+    "pinia-plugin-persist": "^1.0.0",
     "vue": "^3.2.33",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.13",
     "vue-upload-component": "^2.8.22",
     "vue3-charts": "^1.1.31",
-    "vue3-cookies": "^1.0.6",
-    "vuex": "^4.0.2",
-    "vuex-persistedstate": "^4.1.0"
+    "vue3-cookies": "^1.0.6"
   },
   "devDependencies": {
     "@babel/core": "^7.17.10",

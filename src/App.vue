@@ -3,46 +3,44 @@ import HamburgerMenu from "./components/HamburgerMenu.vue"
 import Api from "./api"
 import { debug } from "loglevel"
 import { useCookies } from "vue3-cookies"
-import { useStore } from "vuex"
-import { computed, onMounted, ref, watch } from "vue"
+import { onMounted, ref, watch } from "vue"
 import { useRoute } from "vue-router"
+import { useLoginStore } from "@/store/session"
 
 const { cookies } = useCookies()
-const store = useStore()
+const loginStore = useLoginStore()
 const route = useRoute()
 
 // --- data ---
 const is_login = ref(false)
 
-// --- computed ---
-const accessToken = computed(() => store.getters.accessToken)
 
 // --- methods ---
 const handleSignOut = async () => {
-  await Api.logout(store.getters.accessToken)
-  store.commit("setAccessToken", null)
-  store.commit("setUserInfo", null)
+  await Api.logout(loginStore.accessToken)
+  loginStore.accessToken = null
+  loginStore.userInfo = null
   is_login.value = false
 }
 
 onMounted(async () => {
   if (cookies.get("session-token")) {
-    store.commit("setAccessToken", cookies.get("session-token"))
+    loginStore.accessToken = cookies.get('session-token')
   }
-  if (!accessToken.value) { return }
-  const account = await Api.get_account(accessToken.value)
+  if (!loginStore.accessToken) { return }
+  const account = await Api.get_account(loginStore.accessToken)
   debug(account)
   is_login.value = !account.error
   if (account.error) {
-    store.commit("setAccessToken", null)
+    loginStore.accessToken = null
   } else {
-    store.commit("setUserInfo", account)
+    loginStore.userInfo = account
   }
 })
 
 watch(route, async (cur, prev) => {
   if (is_login.value && cur.path !== prev.path) {
-    const account = await Api.get_account(accessToken.value)
+    const account = await Api.get_account(loginStore.accessToken)
     debug(account)
     if (account.error) await handleSignOut()
   }

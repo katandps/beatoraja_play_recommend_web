@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+import { useLoginStore } from '@/store/session'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-const store = useStore()
+const store = useLoginStore()
 const router = useRouter()
 
 interface Props {
@@ -34,7 +34,7 @@ const handleSignOut =
   async () => {
     emits("handleSignOut")
   }
-const user_id = computed(() => store.getters.userInfo.user_id || 1)
+const user_id = computed(() => store.userInfo?.user_id || 1)
 router.afterEach(() => active_btn.value = false)
 </script>
 
