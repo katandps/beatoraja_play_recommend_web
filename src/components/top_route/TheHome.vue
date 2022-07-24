@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { useLoginStore } from '@/store/session'
 import { computed } from "vue"
-import { useStore } from "vuex";
 import ReleaseNote from "./home/ReleaseNote.vue"
 
-const store = useStore()
+const store = useLoginStore()
 
 interface Props {
   is_login: boolean
@@ -12,7 +12,7 @@ defineProps<Props>()
 const emits = defineEmits(["handleSignOut"])
 
 // --- computed ---
-const user_id = computed(() => store.getters.userInfo.user_id || 1)
+const user_id = computed(() => store.userInfo ? store.userInfo.user_id : 1)
 
 // --- methods ---
 const handleSignInUrl = () => {

@@ -15,7 +15,8 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
-      "webpack-env"
+      "webpack-env",
+      "pinia-plugin-persist"
     ],
     "paths": {
       "@/*": [
@@ -38,5 +39,5 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
 }

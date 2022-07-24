@@ -2,19 +2,18 @@
 import ModalBaseVue, { IModalBase } from "./ModalBase.vue"
 import config from "../../../../const"
 import { computed, ref } from "vue"
-import { useStore } from "vuex"
-import SongFilter from "@/models/songFilter"
+import { useFilterStore } from "@/store/filter"
 export interface IFilterModal {
   showModal: () => void
 }
 
-const store = useStore()
+const filterStore = useFilterStore()
 
 // --- ref ---
 const modal_base = ref<IModalBase>()
 
 // --- computed ---
-const filter = computed<SongFilter>(() => store.getters.filter)
+const filter = computed(() => filterStore.filter)
 
 // --- methods ---
 const showModal = () => modal_base.value?.showModal()

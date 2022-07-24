@@ -3,14 +3,14 @@ import ModalBase, { IModalBase } from "./ModalBase.vue"
 
 import { ref, onMounted, computed } from "vue"
 import Api from "../../../../api"
-import { useStore } from "vuex"
+import { useLoginStore } from "@/store/session"
 
 export interface IModalUserSelect {
   showModal: () => void
   closeModal: () => void
 }
 
-const store = useStore()
+const store = useLoginStore()
 
 defineProps({
   user_id: { type: Number, require: false },
@@ -39,7 +39,7 @@ const users = ref<User[]>([])
 const date = ref(new Date(new Date().setHours(0, 0, 0, 0)))
 
 // --- computed ---
-const accessToken = computed(() => store.getters.accessToken)
+const accessToken = computed(() => store.accessToken)
 
 // --- methods ---
 const showModal = () => {

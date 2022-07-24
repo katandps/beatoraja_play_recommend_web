@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { useFilterStore } from "@/store/filter";
 import { computed } from "vue"
-import { useStore } from "vuex"
 import Columns from "../../../../models/columns"
 
-const store = useStore()
+const store = useFilterStore()
 
 // --- props ---
 interface Props {
@@ -13,12 +13,12 @@ interface Props {
 const props = defineProps<Props>()
 
 // --- computed ---
-const filter = computed(() => store.getters.filter)
+const filter = computed(() => store.filter)
 const is_active = computed(() => props.columns?.column_is_active(props.name))
 const is_sorted = computed(() => filter.value.sort_key_is_active(props.name))
 
 // --- method ---
-const set_sort = () => store.commit("setSort", props.name)
+const set_sort = () => store.setSort(props.name)
 </script>
 
 <template>

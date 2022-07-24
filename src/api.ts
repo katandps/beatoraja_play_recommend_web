@@ -3,6 +3,7 @@ import * as log from "loglevel"
 import Songs from "./models/songs"
 import Tables from "./models/difficultyTable"
 import PlayStats from "./models/playStats"
+import { UserInfo } from "@/store/session"
 
 export default class Api {
     host: string = process.env.VUE_APP_HOST
@@ -135,12 +136,7 @@ export default class Api {
         await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
-    /**
-     * @param {string} token
-     * @param {string} name
-     * @returns {Promise<Response|{error: *}>}
-     */
-    static async change_user_name(token: string | null, name: string) {
+    static async change_user_name(token: string, name: string): Promise<UserInfo> {
         const obj = new Api()
         const uri = obj.host + "/user/name"
         const body = JSON.stringify({ 'changed_name': name })
@@ -156,12 +152,7 @@ export default class Api {
         return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
-    /**
-     * @param {string} token
-     * @param {boolean} visibility
-     * @returns {Promise<Response|{error: *}>}
-     */
-    static async change_visibility(token: string | null, visibility: boolean) {
+    static async change_visibility(token: string, visibility: boolean): Promise<UserInfo> {
         const obj = new Api()
         const uri = obj.host + "/user/visibility"
         const body = JSON.stringify({ 'visibility': visibility ? "true" : "false" })

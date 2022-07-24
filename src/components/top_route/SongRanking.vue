@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { useLoginStore } from "@/store/session";
 import { onBeforeMount, ref } from "vue";
-import { useStore } from "vuex";
 import Api from "../../api"
 import config from "../../const"
 
-const store = useStore()
+const store = useLoginStore()
 
 interface Props {
   sha256: string
@@ -15,7 +15,7 @@ const props = defineProps<Props>()
 const ranking = ref()
 
 onBeforeMount(() =>
-  Api.fetch_ranking(store.getters.accessToken, props.sha256, props.date).then(
+  Api.fetch_ranking(store.accessToken, props.sha256, props.date).then(
     r => ranking.value = r.song.sha256 === "" ? null : r
   )
 )

@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import SongFilter from "@/models/songFilter"
+import { useFilterStore } from "@/store/filter"
 import { computed, ref } from "vue"
-import { useStore } from "vuex"
 import ModalBaseVue, { IModalBase } from "./ModalBase.vue"
 
 export interface IRecommendModal {
   showModal: () => void
 }
 
-const store = useStore()
+const store = useFilterStore()
 
 const modal_base = ref<IModalBase>()
 
 // --- computed ---
-const filter = computed<SongFilter>(() => store.getters.filter)
+const filter = computed<SongFilter>(() => store.filter)
 
 // --- methods ---
 const showModal = () => modal_base.value?.showModal()
