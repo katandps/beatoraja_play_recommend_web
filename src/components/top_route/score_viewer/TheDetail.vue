@@ -22,6 +22,7 @@ const column_modal = ref<IColumnModal>()
 
 // --- props ---
 interface Props {
+  user_id: number
   sorted_song_list: SongDetail[]
   date: string
   filter: SongFilter,
@@ -30,14 +31,13 @@ const props = defineProps<Props>()
 
 // --- computed ---
 const columns = computed(() => props.filter?.columns)
-const user_id = computed(() => loginStore.userInfo ? loginStore.userInfo.user_id : 1)
 const accessToken = computed(() => loginStore.accessToken)
 
 // --- methods ---
 const show_recommend_modal = () => recommend_modal.value?.showModal()
 const show_column_modal = () => column_modal.value?.showModal()
 const show_song_modal = async (song: SongDetail) => {
-  let score = await Api.fetch_score_log(user_id.value, song.sha256, accessToken.value)
+  let score = await Api.fetch_score_log(props.user_id, song.sha256, accessToken.value)
   song_modal.value?.showModal(song, props.date, score.log as Log[])
 }
 </script>

@@ -255,7 +255,8 @@ const setRivalId = async (input_rival_id: number, d: Date) => {
 
         <hr />
         <template v-if="mode === 'detail'">
-          <TheDetailVue :sorted_song_list="sorted_song_list" :date="date_str" :filter="filterStore.filter" />
+          <TheDetailVue :sorted_song_list="sorted_song_list" :user_id="user_id" :date="date_str"
+            :filter="filterStore.filter" />
         </template>
         <template v-if="mode === 'lamp'">
           <LampGraphVue :filtered_score="filtered_score" :tables="tables" :checks="filterStore.checked_tables" />
