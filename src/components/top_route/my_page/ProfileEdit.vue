@@ -39,7 +39,14 @@ const change_visibility = async () => {
       </div>
       <input id="visibility-input" class="btn-check" type="checkbox" v-model="store.userInfo.visibility"
         autocomplete="off" />
-      <label class="btn btn-outline-primary form-control" for="visibility-input">表示する</label>
+      <label class="btn btn-outline-primary form-control" for="visibility-input">
+        <template v-if="store.userInfo.visibility">
+          表示
+        </template>
+        <template v-else>
+          非表示
+        </template>
+      </label>
       <div class="input-group-append">
         <label class="btn btn-success text-nowrap" @click="change_visibility">
           変更を反映
