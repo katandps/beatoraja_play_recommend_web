@@ -78,6 +78,8 @@ const twitter_link = computed(() =>
     : ""
 )
 
+const level_is_empty = computed(() => CheckedTables.is_empty(filterStore.checked_tables, tables.value));
+
 const filtered_score = computed(() => {
   if (!is_initialized.value) {
     return []
@@ -208,7 +210,10 @@ const setRivalId = async (input_rival_id: number, d: Date) => {
       <div class="col-sm-3 btn btn-secondary" @click="showFilterModal">
         表示曲設定
       </div>
-      <div class="col-sm-3 btn btn-secondary" @click="showTablesModal">
+      <div v-if="level_is_empty" class="col-sm-3 btn btn-danger" @click="showTablesModal">
+        難易度選択(未)
+      </div>
+      <div v-else class="col-sm-3 btn btn-secondary" @click="showTablesModal">
         難易度選択
       </div>
       <div class="col-sm-3 btn btn-secondary" @click="showRivalModal">

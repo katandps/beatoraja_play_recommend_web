@@ -67,7 +67,17 @@ export class CheckedTables {
       const table = tables.tables[index]
       const levels = CheckedTables.get(checks, index)
       if (!CheckedLevels.all_checked(levels, table)) {
-        return false;
+        return false
+      }
+    }
+    return true
+  }
+
+  static is_empty(checks: CheckedTables, tables: Tables): boolean {
+    for (let index = 0; index < tables.tables.length; index++) {
+      const levels = CheckedTables.get(checks, index)
+      if (!CheckedLevels.is_empty(levels)) {
+        return false
       }
     }
     return true
@@ -100,5 +110,9 @@ export class CheckedLevels {
 
   static is_checked(checks: CheckedLevels, level: string): boolean {
     return checks.checks.indexOf(level) >= 0
+  }
+
+  static is_empty(checks: CheckedLevels): boolean {
+    return checks.checks.length === 0
   }
 }
