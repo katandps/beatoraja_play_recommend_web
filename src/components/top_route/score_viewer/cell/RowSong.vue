@@ -143,7 +143,7 @@ const dayFormat = (date: string) => {
       {{ current_rank }}
     </DataCell>
     <DataCell class="rank" :columns="columns" name="detail_rank" v-tooltip=""> {{ current_detail_rank }} </DataCell>
-    <DataCell class="update" :columns="columns" name="rank_update">
+    <DataCell class="update" :columns="columns" name="rank_update" v-tooltip="next_rank + '-' + score_for_next_rank">
       <span v-if="rank_is_update">
         {{ rank_before }}
         <font-awesome-icon :icon="['fas', 'long-arrow-alt-right']" style="margin-right: 0.2em" />
