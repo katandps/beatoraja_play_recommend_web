@@ -92,14 +92,17 @@ export default class SongFilter {
   /**
    * @public
    * @param {SongDetail} song
+   * @param {boolean} rival_is_active
    * @return boolean
    */
-  apply(song: SongDetail) {
+  apply(song: SongDetail, rival_is_active: boolean) {
     return (
       this.visible_lamp.lamps[song.clear_type] &&
       this.visible_rank.ranks[song.clear_rank] &&
-      this.rival_lamp.lamps[song.rival_clear_type] &&
-      this.rival_rank.ranks[song.rival_clear_rank] &&
+      (
+        !rival_is_active ||
+        (this.rival_lamp.lamps[song.rival_clear_type] && this.rival_rank.ranks[song.rival_clear_rank])
+      ) &&
       this.viewable_date(song.updated_at.split("T")[0])
     )
   }

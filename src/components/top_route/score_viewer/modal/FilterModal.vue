@@ -12,8 +12,15 @@ const filterStore = useFilterStore()
 // --- ref ---
 const modal_base = ref<IModalBase>()
 
+// --- props ---
+interface Props {
+  rival_mode: Boolean
+}
+const props = defineProps<Props>()
+
 // --- computed ---
 const filter = computed(() => filterStore.filter)
+const rival_mode = computed(() => props.rival_mode)
 
 // --- methods ---
 const showModal = () => modal_base.value?.showModal()
@@ -84,7 +91,7 @@ defineExpose({ showModal })
           </button>
         </div>
         <hr />
-        <div class="filter">
+        <div class="filter" v-if="rival_mode">
           <h5>ライバルのクリアタイプ</h5>
           <div>
             <div v-for="lamp in config.LAMP_GRAPH_LIST" :key="lamp" class="btn">
@@ -94,7 +101,7 @@ defineExpose({ showModal })
           </div>
         </div>
         <hr />
-        <div class="filter">
+        <div class="filter" v-if="rival_mode">
           <h5>ライバルのスコアランク</h5>
           <div>
             <div v-for="rank in config.RANK_TYPE" :key="rank" class="btn">

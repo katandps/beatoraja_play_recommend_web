@@ -108,9 +108,9 @@ const filtered_score = computed(() => {
         score.init_score(scores.value.get_score(hash))
         score.init_song(songs.value.get_score(hash), hash)
         if (exists_rival_score.value) {
-          score.init_rival_score(rival_score.value.get_score(hash))
+          score.init_rival_score(rival_score.value?.get_score(hash))
         }
-        if (filterStore.filter.apply(score)) {
+        if (filterStore.filter.apply(score, exists_rival_score.value)) {
           ret.push(score)
         }
       }
@@ -281,7 +281,7 @@ const setRivalId = async (input_rival_id: number, d: Date) => {
     <ModalForSelectTable ref="tables_modal" :tables="tables" :checks="filterStore.checked_tables" @setLevel="setLevel"
       v-if="exists_tables" />
     <ModalUserSelect ref="rival_modal" :user_id="rival_id" @setUser="setRivalId" :rival_mode="true" />
-    <FilterModal ref="filter_modal" />
+    <FilterModal ref="filter_modal" :rival_mode="exists_rival_score" />
   </section>
 </template>
 
