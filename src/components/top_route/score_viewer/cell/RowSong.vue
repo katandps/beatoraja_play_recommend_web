@@ -142,7 +142,8 @@ const dayFormat = (date: string) => {
     <DataCell class="rank" :columns="columns" name="score_rank" v-tooltip="next_rank + '-' + score_for_next_rank">
       {{ current_rank }}
     </DataCell>
-    <DataCell class="rank" :columns="columns" name="detail_rank" v-tooltip=""> {{ current_detail_rank }} </DataCell>
+    <DataCell class="rank" :columns="columns" name="detail_rank" v-tooltip="next_rank + '-' + score_for_next_rank"> {{
+      current_detail_rank }} </DataCell>
     <DataCell class="update" :columns="columns" name="rank_update" v-tooltip="next_rank + '-' + score_for_next_rank">
       <span v-if="rank_is_update">
         {{ rank_before }}
@@ -154,6 +155,11 @@ const dayFormat = (date: string) => {
 
     <DataCell class="rate" :columns="columns" name="rate" :class="clear_rank_bg_class">
       {{ score_format(song.total_notes, song.score) }}
+    </DataCell>
+    <DataCell class="rate" :columns="columns" name="accuracy">
+      <!-- 失点率の逆数 -->
+      {{ song.score === song.total_notes * 2 ? "MAX" : (song.total_notes / (song.total_notes * 2 - song.score)).toFixed(2)
+      }}
     </DataCell>
     <DataCell class="score" :columns="columns" name="score">
       {{ `${song.score}/${song.total_notes * 2}` }}

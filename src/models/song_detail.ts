@@ -238,6 +238,8 @@ export default class SongDetail {
         return this.score_rate()
       case "detail_rank":
         return this.score_rate()
+      case "accuracy":
+        return this.score_rate()
       case "score":
         return this.score
       case "bp":

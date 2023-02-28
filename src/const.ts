@@ -105,6 +105,7 @@ export default Object.freeze({
         { key: "detail_rank", name: "細分化ランク", title: "DRank", class: "rank" },
         { key: "rank_update", name: "ランク更新", title: "RankDiff", class: "update" },
         { key: "rate", name: "スコア%", title: "Rate", class: "rate" },
+        { key: "accuracy", name: "正確さ", title: "Accuracy", class: "accuracy" },
         { key: "score", name: "EXスコア", title: "Ex/Max", class: "score" },
         {
             key: "score_date",
