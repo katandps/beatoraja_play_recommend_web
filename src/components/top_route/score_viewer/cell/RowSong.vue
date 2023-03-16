@@ -72,6 +72,7 @@ const score_vs = computed(() =>
 const score_vs_class = computed(() =>
   score_vs.value === 0 ? "draw" : score_vs.value < 0 ? "lose" : "win"
 )
+
 const bp_vs = computed(() =>
   props.song.min_bp === -1 ||
     props.song.min_bp === 2147483647 ||
@@ -80,9 +81,20 @@ const bp_vs = computed(() =>
     ? "-"
     : props.song.min_bp - props.song.rival_min_bp
 )
-const bp_vs_class = computed(() =>
-  bp_vs.value === 0 ? "draw" : bp_vs.value < 0 ? "win" : "lose"
-)
+const bp_vs_class = computed(() => {
+  if (props.song.min_bp === props.song.rival_min_bp) {
+    return "draw"
+  }
+  if (props.song.min_bp === -1 ||
+    props.song.min_bp === 2147483647) {
+    return "lose"
+  }
+  if (props.song.rival_min_bp === -1 ||
+    props.song.rival_min_bp === 2147483647) {
+    return "win"
+  }
+  return props.song.min_bp > props.song.rival_min_bp ? "lose" : "win"
+})
 const rival_date = computed(() => dayFormat(props.song.rival_updated_at))
 
 // updates
