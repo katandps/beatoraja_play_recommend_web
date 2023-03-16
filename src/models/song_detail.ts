@@ -202,6 +202,33 @@ export default class SongDetail {
     return (this.score / this.total_notes) * 50
   }
 
+  bp_is_win(): string {
+    if (this.min_bp === this.rival_min_bp) {
+      return "draw"
+    }
+    if (this.min_bp === -1 ||
+      this.min_bp === 2147483647) {
+      return "lose"
+    }
+    if (this.rival_min_bp === -1 ||
+      this.rival_min_bp === 2147483647) {
+      return "win"
+    }
+    return this.min_bp > this.rival_min_bp ? "lose" : "win"
+  }
+
+  bp_diff(): string {
+    if (this.min_bp === -1 ||
+      this.min_bp === 2147483647) {
+      return "-"
+    }
+    if (this.rival_min_bp === -1 ||
+      this.rival_min_bp === 2147483647) {
+      return "-"
+    }
+    return Math.abs(this.min_bp - this.rival_min_bp).toString()
+  }
+
   set_level(level: string) {
     this.level = level
   }

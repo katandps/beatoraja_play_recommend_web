@@ -67,34 +67,14 @@ const clear_vs = computed(() =>
 const score_vs = computed(() =>
   props.song.score === 0 || props.song.rival_score === 0
     ? "-"
-    : props.song.score - props.song.rival_score
+    : Math.abs(props.song.score - props.song.rival_score)
 )
 const score_vs_class = computed(() =>
-  score_vs.value === 0 ? "draw" : score_vs.value < 0 ? "lose" : "win"
+  score_vs.value === 0 ? "draw" : props.song.score - props.song.rival_score < 0 ? "lose" : "win"
 )
 
-const bp_vs = computed(() =>
-  props.song.min_bp === -1 ||
-    props.song.min_bp === 2147483647 ||
-    props.song.rival_min_bp === -1 ||
-    props.song.rival_min_bp === 2147483647
-    ? "-"
-    : props.song.min_bp - props.song.rival_min_bp
-)
-const bp_vs_class = computed(() => {
-  if (props.song.min_bp === props.song.rival_min_bp) {
-    return "draw"
-  }
-  if (props.song.min_bp === -1 ||
-    props.song.min_bp === 2147483647) {
-    return "lose"
-  }
-  if (props.song.rival_min_bp === -1 ||
-    props.song.rival_min_bp === 2147483647) {
-    return "win"
-  }
-  return props.song.min_bp > props.song.rival_min_bp ? "lose" : "win"
-})
+const bp_vs = computed(() => props.song.bp_diff())
+const bp_vs_class = computed(() => props.song.bp_is_win())
 const rival_date = computed(() => dayFormat(props.song.rival_updated_at))
 
 // updates

@@ -12,6 +12,7 @@ export default class SongFilter {
   visible_rank: VisibleRank = new VisibleRank({})
   rival_lamp: VisibleLamp = new VisibleLamp({})
   rival_rank: VisibleRank = new VisibleRank({})
+  rival_vs: VisibleVS = new VisibleVS({})
   day_until: number = 0
   day_since: number = 365 * 100
   max_length: number = 100
@@ -101,7 +102,9 @@ export default class SongFilter {
       this.visible_rank.ranks[song.clear_rank] &&
       (
         !rival_is_active ||
-        (this.rival_lamp.lamps[song.rival_clear_type] && this.rival_rank.ranks[song.rival_clear_rank])
+        (this.rival_lamp.lamps[song.rival_clear_type]
+          && this.rival_rank.ranks[song.rival_clear_rank]
+          && this.rival_vs.apply(song))
       ) &&
       this.viewable_date(song.updated_at.split("T")[0])
     )
@@ -337,5 +340,69 @@ class VisibleRank {
   to_not_aa() {
     this.to_not_aaa()
     this.ranks.AA = false
+  }
+}
+
+interface IVisibleVS {
+  types?: { [k: string]: boolean }
+}
+
+class VisibleVS {
+  types: { [k: string]: boolean } = {
+    scoreWin: true,
+    scoreDraw: true,
+    scoreLose: true,
+    bpWin: true,
+    bpDraw: true,
+    bpLose: true,
+    clearWin: true,
+    clearDraw: true,
+    clearLose: true
+  }
+
+
+  constructor(vs: IVisibleVS) {
+    this.types.scoreWin = true
+    this.types.scoreDraw = true
+    this.types.scoreLose = true
+    this.types.bpWin = true
+    this.types.bpDraw = true
+    this.types.bpLose = true
+    this.types.clearWin = true
+    this.types.clearDraw = true
+    this.types.clearLose = true
+    Object.assign(this, vs)
+  }
+
+  apply(song: SongDetail): boolean {
+    if (!this.types.scoreWin && song.score > song.rival_score) {
+      return false
+    }
+    if (!this.types.scoreDraw && song.score == song.rival_score) {
+      return false
+    }
+    if (!this.types.scoreLose && song.score < song.rival_score) {
+      return false
+    }
+    const bp_win = song.bp_is_win()
+    if (!this.types.bpWin && bp_win == "win") {
+      return false
+    }
+    if (!this.types.bpDraw && bp_win == "draw") {
+      return false
+    }
+    if (!this.types.bpLose && bp_win == "lose") {
+      return false
+    }
+    if (!this.types.clearWin && song.clear_type > song.rival_clear_type) {
+      return false
+    }
+    if (!this.types.clearDraw && song.clear_type == song.rival_clear_type) {
+      return false
+    }
+    if (!this.types.clearLose && song.clear_type < song.rival_clear_type) {
+      return false
+    }
+    return true
   }
 }

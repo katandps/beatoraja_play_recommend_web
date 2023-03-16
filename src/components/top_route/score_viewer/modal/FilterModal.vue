@@ -91,21 +91,75 @@ defineExpose({ showModal })
           </button>
         </div>
         <hr />
-        <div class="filter" v-if="rival_mode">
-          <h5>ライバルのクリアタイプ</h5>
+        <div class="filter">
+          <h5>ライバル勝敗{{ !rival_mode ? "(ライバル未設定)" : "" }}</h5>
+          <div>
+            <div class="btn">
+              <input type="checkbox" id="rival_score_win" v-model="filter.rival_vs.types.scoreWin"
+                :disabled="!rival_mode" />
+              <label for="rival_score_win">スコア勝利</label>
+            </div>
+            <div class="btn">
+              <input type="checkbox" id="rival_score_draw" v-model="filter.rival_vs.types.scoreDraw"
+                :disabled="!rival_mode" />
+              <label for="rival_score_draw">スコア引き分け</label>
+            </div>
+            <div class="btn">
+              <input type="checkbox" id="rival_score_lose" v-model="filter.rival_vs.types.scoreLose"
+                :disabled="!rival_mode" />
+              <label for="rival_score_lose">スコア敗北</label>
+            </div>
+          </div>
+          <div>
+            <div class="btn">
+              <input type="checkbox" id="rival_bp_win" v-model="filter.rival_vs.types.bpWin" :disabled="!rival_mode" />
+              <label for="rival_bp_win">ミスカウント勝利</label>
+            </div>
+            <div class="btn">
+              <input type="checkbox" id="rival_bp_draw" v-model="filter.rival_vs.types.bpDraw" :disabled="!rival_mode" />
+              <label for="rival_bp_draw">ミスカウント引き分け</label>
+            </div>
+            <div class="btn">
+              <input type="checkbox" id="rival_bp_lose" v-model="filter.rival_vs.types.bpLose" :disabled="!rival_mode" />
+              <label for="rival_bp_lose">ミスカウント敗北</label>
+            </div>
+          </div>
+          <div>
+            <div class="btn">
+              <input type="checkbox" id="rival_clear_win" v-model="filter.rival_vs.types.clearWin"
+                :disabled="!rival_mode" />
+              <label for="rival_clear_win">クリア勝利</label>
+            </div>
+            <div class="btn">
+              <input type="checkbox" id="rival_clear_draw" v-model="filter.rival_vs.types.clearDraw"
+                :disabled="!rival_mode" />
+              <label for="rival_clear_draw">クリア引き分け</label>
+            </div>
+            <div class="btn">
+              <input type="checkbox" id="rival_clear_lose" v-model="filter.rival_vs.types.clearLose"
+                :disabled="!rival_mode" />
+              <label for="rival_clear_lose">クリア敗北</label>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="filter">
+          <h5>ライバルのクリアタイプ{{ !rival_mode ? "(ライバル未設定)" : "" }}</h5>
           <div>
             <div v-for="lamp in config.LAMP_GRAPH_LIST" :key="lamp" class="btn">
-              <input type="checkbox" :id="'rival' + lamp" :value="lamp" v-model="filter.rival_lamp.lamps[lamp]" />
+              <input type="checkbox" :id="'rival' + lamp" :value="lamp" v-model="filter.rival_lamp.lamps[lamp]"
+                :disabled="!rival_mode" />
               <label :for="'rival' + lamp">{{ config.LAMP_INDEX[lamp] }}</label>
             </div>
           </div>
         </div>
         <hr />
-        <div class="filter" v-if="rival_mode">
-          <h5>ライバルのスコアランク</h5>
+        <div class="filter">
+          <h5>ライバルのスコアランク{{ !rival_mode ? "(ライバル未設定)" : "" }}</h5>
           <div>
             <div v-for="rank in config.RANK_TYPE" :key="rank" class="btn">
-              <input type="checkbox" :id="'rival' + rank" :value="rank" v-model="filter.rival_rank.ranks[rank]" />
+              <input type="checkbox" :id="'rival' + rank" :value="rank" v-model="filter.rival_rank.ranks[rank]"
+                :disabled="!rival_mode" />
               <label :for="'rival' + rank">{{ rank }}</label>
             </div>
           </div>
