@@ -202,10 +202,10 @@ const dayFormat = (date: string) => {
     <DataCell class="clear_vs" :columns="columns" name="clear_diff_rival" :class="clear_rival_bg_class">
       <span :class="clear_vs">{{ clear_vs }}</span>
     </DataCell>
-    <DataCell class="score_vs" :columns="columns" name="score_diff_rival">
+    <DataCell class="score_vs" :columns="columns" name="score_diff_rival" v-tooltip="'rival: ' + song.rival_score">
       <span :class="score_vs_class">{{ score_vs }}</span>
     </DataCell>
-    <DataCell class="bp_vs" :columns="columns" name="bp_diff_rival">
+    <DataCell class="bp_vs" :columns="columns" name="bp_diff_rival" v-tooltip="'rival: ' + song.rival_min_bp">
       <span :class="bp_vs_class">{{ bp_vs }}</span>
     </DataCell>
     <DataCell name="rival_date" class="date" :columns="columns">
