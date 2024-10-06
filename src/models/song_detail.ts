@@ -281,10 +281,14 @@ export default class SongDetail {
         return this.score_before
       case "score_date":
         return this.score_updated_at
+      case "score_update":
+        return this.score
       case "bp_date":
         return this.min_bp_updated_at
       case "bp_before":
         return this.min_bp_before
+      case "bp_update":
+        return this.min_bp
       case "clear_date":
         return this.clear_updated_at
       case "clear_before":
