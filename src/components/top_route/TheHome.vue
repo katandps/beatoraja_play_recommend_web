@@ -120,6 +120,10 @@ const handleSignOut = async () => {
     <div class="message">
       <h2>お知らせ</h2>
       <p>
+        Discordサーバーができました。
+        <a href="https://discord.com/invite/Bx9YMgswDc" target="_blank">こちら</a>からどうぞ
+      </p>
+      <p>
         <font-awesome-icon :icon="['fas', 'wrench']" />
         がついている項目については製作中/不安定機能です。正常な動作が行えないか、動作が制限されています。
       </p>
