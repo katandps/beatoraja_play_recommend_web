@@ -5,7 +5,7 @@ import RecommendTableVue from "./components/top_route/RecommendTable.vue"
 import ScoreViewerVue from "./components/top_route/ScoreViewer.vue"
 import SongRankingVue from "./components/top_route/SongRanking.vue"
 import TheHomeVue from "./components/top_route/TheHome.vue"
-import PlayCalendar from "./components/top_route/my_page/PlayCalendar.vue"
+import PlayCalendar from "./components/top_route/PlayCalendar.vue"
 
 const routes = [
   { path: "/", component: async () => TheHomeVue },
