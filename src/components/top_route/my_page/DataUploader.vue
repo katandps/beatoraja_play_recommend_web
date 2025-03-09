@@ -26,46 +26,86 @@ const user_id = computed(() => {
 })
 
 // --- methods ---
-const onPlayDataUploaded = (e: any) => {
-  console.log(e.target?.files)
-  for (const file of e.target.files) {
-    if (file.name === "score.db") {
-      score_db.value = file
+const onPlayDataUploaded = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  const files = input.files
+  if (files && files.length > 0) {
+    console.log(files)
+    for (const file of files) {
+      if (file.name === "score.db") {
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          const arrayBuffer = e.target?.result
+          if (arrayBuffer) {
+            const uint8Array = new Uint8Array(arrayBuffer as ArrayBuffer);
+            score_db.value = uint8Array
+          }
+        };
+        reader.onerror = (e: ProgressEvent<FileReader>) => {
+          console.error('error with read file', e);
+        };
+        reader.readAsArrayBuffer(file);
+      }
+      if (file.name === "scorelog.db") {
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          const arrayBuffer = e.target?.result
+          if (arrayBuffer) {
+            const uint8Array = new Uint8Array(arrayBuffer as ArrayBuffer);
+            score_log_db.value = uint8Array
+          }
+        };
+        reader.onerror = (e: ProgressEvent<FileReader>) => {
+          console.error('error with read file', e);
+        };
+        reader.readAsArrayBuffer(file);
+      }
     }
-    if (file.name === "scorelog.db") {
-      score_log_db.value = file
-    }
+    is_play_data_uploaded.value = false
   }
-  is_play_data_uploaded.value = false
 }
-const onSongDataUploaded = (e: any) => {
-  for (const file of e.target.files) {
-    if (file.name === "songdata.db") {
-      song_data_db.value = file
+const onSongDataUploaded = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  const files = input.files
+  if (files && files.length > 0) {
+    for (const file of files) {
+      if (file.name === "songdata.db") {
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          const arrayBuffer = e.target?.result
+          if (arrayBuffer) {
+            const uint8Array = new Uint8Array(arrayBuffer as ArrayBuffer);
+            song_data_db.value = uint8Array
+            song_data_message.value = ""
+          }
+        };
+        reader.onerror = (e: ProgressEvent<FileReader>) => {
+          console.error('error with read file', e);
+        };
+        reader.readAsArrayBuffer(file);
+      }
     }
   }
-  song_data_message.value = ""
 }
-const
-  uploadPlayData = async () => {
-    await Api.upload_play_data(
-      loginStore.accessToken,
-      score_db.value,
-      score_log_db.value
-    )
-    score_db.value = null
-    score_log_db.value = null
-    is_play_data_uploaded.value = true
-  }
-const
-  uploadSongData = async () => {
-    await Api.upload_song_data(
-      loginStore.accessToken,
-      song_data_db.value
-    )
-    song_data_db.value = null
-    song_data_message.value = "OK"
-  }
+const uploadPlayData = async () => {
+  await Api.upload_play_data(
+    loginStore.accessToken,
+    score_db.value,
+    score_log_db.value
+  )
+  score_db.value = null
+  score_log_db.value = null
+  is_play_data_uploaded.value = true
+}
+const uploadSongData = async () => {
+  await Api.upload_song_data(
+    loginStore.accessToken,
+    song_data_db.value
+  )
+  song_data_db.value = null
+  song_data_message.value = "OK"
+}
+
 </script>
 
 <template>
