@@ -25,7 +25,7 @@ const showModal = (s: SongDetail, d: string, l: Log[]) => {
 }
 
 // --- computed ---
-const viewer_url = computed(() => "http://www.ribbit.xyz/bms/score/view?md5=" + song.value?.md5)
+const viewer_url = computed(() => "https://bms-score-viewer.pages.dev/view?md5=" + song.value?.md5)
 const mocha_url = computed(() => "https://mocha-repository.info/song.php?sha256=" + song.value?.sha256)
 const minir_url = computed(() => "https://www.gaftalk.com/minir/#/viewer/song/" + song.value?.sha256 + "/" + song.value?.mode)
 const lr2ir_url = computed(() => "http://www.dream-pro.info/~lavalse/LR2IR/search.cgi?mode=ranking&bmsmd5=" + song.value?.md5)
@@ -124,5 +124,3 @@ defineExpose({ showModal })
     </template>
   </modal-base>
 </template>
-
-
