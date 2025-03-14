@@ -48,14 +48,14 @@ export default class Api {
 
     /**
      *
-     * @param {string} date
+     * @param {Date} date
      * @param {number} user_id
      * @param {string} token
      * @returns {Promise<null|{user_id: number, user_name: string, score: {}}>}
      */
-    static async fetch_score(date: string, user_id: number, token: string | null) {
+    static async fetch_score(date: Date, user_id: number, token: string | null) {
         const obj = new Api()
-        const url = obj.host + "/detail/?date=" + date + "&user_id=" + user_id
+        const url = obj.host + "/detail/?date=" + date.toISOString() + "&user_id=" + user_id
         const headers: any = { 'session-token': token }
         const init = { headers }
         try {
@@ -92,9 +92,9 @@ export default class Api {
         return await fetch(url, init).then(obj.handler).catch(obj.error)
     }
 
-    static async fetch_ranking(token: string | null, sha256: string, date: string) {
+    static async fetch_ranking(token: string | null, sha256: string, date: Date) {
         const obj = new Api()
-        const uri = obj.host + "/ranking/?sha256=" + sha256 + "&date=" + date
+        const uri = obj.host + "/ranking/?sha256=" + sha256 + "&date=" + date.toISOString()
         const headers: any = { 'session-token': token }
         const init = { headers }
         return await fetch(uri, init).then(obj.handler).catch(obj.error)

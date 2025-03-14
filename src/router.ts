@@ -41,7 +41,7 @@ const routes = [
   {
     path: "/song",
     component: SongRankingVue,
-    props: (route: any) => ({ sha256: route.query.sha256, date: route.query.date })
+    props: (route: any) => ({ sha256: route.query.sha256 })
   },
   {
     path: "/calendar",

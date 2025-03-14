@@ -66,7 +66,6 @@ const is_initialized = computed(
   () => exists_tables.value && exists_songs.value && exists_scores.value
 )
 const date_str = computed(() => DateFormatter.format(date.value))
-const rival_date_str = computed(() => DateFormatter.format(rival_date.value))
 
 const user_name = computed(() => (exists_scores.value ? scores.value.name : ""))
 const twitter_link = computed(() =>
@@ -138,7 +137,7 @@ const sorted_song_list = computed(() => {
 const setRival = (rival_id: number) => {
   debug(loaded.value, rival_id)
   if (rival_id > 0 && loaded.value.rival_id !== rival_id) {
-    Api.fetch_score(rival_date_str.value, rival_id, sessionStore.accessToken).then(
+    Api.fetch_score(rival_date.value, rival_id, sessionStore.accessToken).then(
       (s) => {
         rival_score.value = null
         rival_score.value = s
@@ -166,7 +165,7 @@ const fetchDetail = (user_id: number) => {
   ) {
     debug("fetch!")
     message.value = "読込中..."
-    Api.fetch_score(date_str.value, user_id, sessionStore.accessToken).then((s) => {
+    Api.fetch_score(date.value, user_id, sessionStore.accessToken).then((s) => {
       scores.value = s
       message.value = exists_scores.value ? "" : "読み込み失敗"
       loaded.value.user_id = user_id
