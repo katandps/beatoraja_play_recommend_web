@@ -174,7 +174,7 @@ export default class Api {
     static async change_visibility(token: string, visibility: boolean): Promise<UserInfo> {
         const obj = new Api()
         const uri = obj.host + "/user/visibility"
-        const body = JSON.stringify({ 'visibility': visibility ? "true" : "false" })
+        const body = JSON.stringify({ 'visibility': visibility ? true : false })
         const headers: any = {
             'session-token': token,
             'content-type': 'application/json'
