@@ -36,7 +36,7 @@ const title = computed(() => props.song.title)
 
 const bp = computed(() => (props.song.min_bp === -1 ? "-" : props.song.min_bp))
 
-const update_day = computed(() => props.song.updated_at.split("T")[0])
+const update_day = computed(() => props.song.get("date"))
 const clear_update_day = computed(
   () => props.song.clear_updated_at.split("T")[0]
 )
@@ -150,7 +150,8 @@ const dayFormat = (date: string) => {
     </DataCell>
     <DataCell class="rate" :columns="columns" name="accuracy">
       <!-- 失点率の逆数 -->
-      {{ song.score === song.total_notes * 2 ? "MAX" : (song.total_notes / (song.total_notes * 2 - song.score)).toFixed(2)
+      {{ song.score === song.total_notes * 2 ? "MAX" : (song.total_notes / (song.total_notes * 2 -
+        song.score)).toFixed(2)
       }}
     </DataCell>
     <DataCell class="score" :columns="columns" name="score">
