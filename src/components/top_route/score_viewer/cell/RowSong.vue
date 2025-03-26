@@ -37,13 +37,9 @@ const title = computed(() => props.song.title)
 const bp = computed(() => (props.song.min_bp === -1 ? "-" : props.song.min_bp))
 
 const update_day = computed(() => props.song.get("date"))
-const clear_update_day = computed(
-  () => props.song.clear_updated_at.split("T")[0]
-)
-const score_update_day = computed(
-  () => props.song.score_updated_at.split("T")[0]
-)
-const bp_update_day = computed(() => props.song.min_bp_updated_at.split("T")[0])
+const clear_update_day = computed(() => props.song.get("clear_date"))
+const score_update_day = computed(() => props.song.get("score_date"))
+const bp_update_day = computed(() => props.song.get("bp_date"))
 const play_count = computed(() =>
   props.song.play_count <= 0 ? "-" : props.song.play_count
 )
@@ -75,7 +71,7 @@ const score_vs_class = computed(() =>
 
 const bp_vs = computed(() => props.song.bp_diff())
 const bp_vs_class = computed(() => props.song.bp_is_win())
-const rival_date = computed(() => dayFormat(props.song.rival_updated_at))
+const rival_date = computed(() => props.song.get("rival_date"))
 
 // updates
 const score_diff = computed(() => props.song.score - props.song.score_before)
@@ -96,10 +92,7 @@ const rank_before = computed(() =>
 
 // --- method ---
 const showModal = () => emits("showModal", props.song)
-const dayFormat = (date: string) => {
-  let day = date.split("T")[0]
-  return day === "1970-01-01" ? "-" : day
-}
+
 </script>
 
 <template>

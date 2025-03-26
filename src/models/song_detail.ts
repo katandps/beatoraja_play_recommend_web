@@ -358,7 +358,9 @@ export default class SongDetail {
       case "score_before":
         return this.score_before
       case "score_date":
-        return this.score_updated_at.split("T")[0]
+        return this.score_updated_at.split("T")[0] === "1970-01-01"
+          ? "---"
+          : this.score_updated_at.split("T")[0]
       case "bp":
         return this.min_bp === -1 ? "---" : this.min_bp
       case "rival_bp":
@@ -366,13 +368,17 @@ export default class SongDetail {
       case "bp_before":
         return this.min_bp_before === -1 ? "---" : this.min_bp_before
       case "bp_date":
-        return this.min_bp_updated_at.split("T")[0]
+        return this.min_bp_updated_at.split("T")[0] === "1970-01-01"
+          ? "---"
+          : this.min_bp_updated_at.split("T")[0]
       case "clear_before":
         return ""
       case "clear_type_before":
         return config.LAMP_INDEX[this.clear_type_before]
       case "clear_date":
-        return this.clear_updated_at.split("T")[0]
+        return this.clear_updated_at.split("T")[0] === "1970-01-01"
+          ? "---"
+          : this.clear_updated_at.split("T")[0]
       case "combo":
         return this.max_combo
       case "rival_combo":
