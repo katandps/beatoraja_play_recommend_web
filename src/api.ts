@@ -226,6 +226,19 @@ export default class Api {
         return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
+    static async reset_score(token: string | null) {
+        const obj = new Api()
+        const uri = obj.host + "/reset"
+        const headers: any = {
+            'session-token': token,
+        }
+        const init = {
+            headers,
+            method: 'POST',
+        }
+        return await fetch(uri, init).then(obj.handler).catch(obj.error)
+    }
+
     async handler(response: any) {
         log.debug(response)
         if (response.status === 401) {

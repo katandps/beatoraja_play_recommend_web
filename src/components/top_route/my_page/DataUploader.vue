@@ -157,6 +157,7 @@ const uploadSongData = async () => {
         <div class="btn">{{ song_data_message }}</div>
       </form>
     </div>
+    <br />
   </div>
 </template>
 
