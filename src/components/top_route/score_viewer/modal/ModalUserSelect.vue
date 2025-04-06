@@ -36,7 +36,7 @@ const modal_base = ref<IModalBase>()
 
 // --- data ---
 const users = ref<User[]>([])
-const date = ref(new Date(new Date().setHours(9, 0, 0, 0)))
+const date = ref(new Date())
 
 // --- computed ---
 const accessToken = computed(() => store.accessToken)
@@ -50,7 +50,7 @@ const setUser = (user_id: number) => {
   emits("setUser", user_id, date.value)
 }
 const resetDate = () => {
-  date.value = new Date(new Date().setHours(9, 0, 0, 0))
+  date.value = new Date()
 }
 // --- expose ---
 defineExpose({ showModal, closeModal })
