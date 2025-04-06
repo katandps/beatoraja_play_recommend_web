@@ -55,11 +55,12 @@ export default class Api {
      */
     static async fetch_score(date: Date, user_id: number, token: string | null) {
         const obj = new Api()
-        const timezoneOffset = date.getTimezoneOffset()
+        const localDate = new Date(date.toISOString())
+        const timezoneOffset = localDate.getTimezoneOffset()
         // タイムゾーンの影響を小さくする
-        date.setMinutes(date.getMinutes() - timezoneOffset)
-        log.debug(date)
-        const url = obj.host + "/detail/?date=" + date.toISOString() + "&user_id=" + user_id
+        localDate.setMinutes(localDate.getMinutes() - timezoneOffset)
+        log.debug(localDate)
+        const url = obj.host + "/detail/?date=" + localDate.toISOString() + "&user_id=" + user_id
         const headers: any = { 'session-token': token }
         const init = { headers }
         try {
