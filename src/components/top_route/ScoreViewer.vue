@@ -51,8 +51,8 @@ const tables = ref(new Tables([]))
 const songs = ref()
 const scores = ref()
 const rival_score = ref()
-const date = ref(new Date(new Date().setHours(9, 0, 0, 0)))
-const rival_date = ref(new Date(new Date().setHours(9, 0, 0, 0)))
+const date = ref(new Date())
+const rival_date = ref(new Date())
 const message = ref("")
 const loaded = ref({ user_id: 0, rival_id: 0, date: "" })
 
@@ -95,7 +95,6 @@ const filtered_score = computed(() => {
       if (!hashes) {
         continue
       }
-      debug(hashes)
 
       for (const hash of hashes) {
         if (used[hash]) {

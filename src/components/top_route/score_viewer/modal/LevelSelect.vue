@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { CheckedLevels, DifficultyTable } from "@/models/difficultyTable"
-import { debug } from "loglevel"
 import { computed } from "vue"
 
 // --- props ---
@@ -25,7 +24,6 @@ const all_checked = computed({
 const check_accessor = computed({
   get: () => props.checks.checks,
   set: (item) => {
-    debug(item, props.index)
     emits("setLevel", item, props.index)
   }
 })

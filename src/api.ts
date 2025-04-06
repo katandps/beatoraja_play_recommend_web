@@ -55,6 +55,10 @@ export default class Api {
      */
     static async fetch_score(date: Date, user_id: number, token: string | null) {
         const obj = new Api()
+        const timezoneOffset = date.getTimezoneOffset()
+        // タイムゾーンの影響を小さくする
+        date.setMinutes(date.getMinutes() - timezoneOffset)
+        log.debug(date)
         const url = obj.host + "/detail/?date=" + date.toISOString() + "&user_id=" + user_id
         const headers: any = { 'session-token': token }
         const init = { headers }
@@ -67,8 +71,6 @@ export default class Api {
                 log.debug(json)
                 return null
             }
-            log.debug(json)
-
             return new Scores(json.score, json.user_name, json.user_id)
         } catch (e) {
             log.error(e)

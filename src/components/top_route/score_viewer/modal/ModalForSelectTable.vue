@@ -3,7 +3,6 @@ import ModalBaseVue, { IModalBase } from "./ModalBase.vue"
 import Tables, { CheckedTables } from "../../../../models/difficultyTable"
 import { computed, ref } from "vue"
 import LevelSelectVue from "./LevelSelect.vue"
-import { debug } from "loglevel"
 export interface IModalForSelectTable {
   showModal: () => void
 }
@@ -32,7 +31,6 @@ const all_checked = computed({
     props.tables.tables.forEach((t, i) =>
       setLevel(checked ? [] : t.level_list, i)
     )
-    debug(all_checked.value)
   }
 })
 
