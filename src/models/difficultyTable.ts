@@ -1,13 +1,17 @@
 export default class Tables {
   tables: DifficultyTable[]
 
+  static default(): Tables {
+    return new Tables(JSON.parse("[]"))
+  }
+
   constructor(json: any) {
     /**
      * @type {DifficultyTable[]}
      */
     this.tables = []
     json.forEach((t: any) =>
-      this.tables.push(new DifficultyTable(t.name, t.levels, t.level_list))
+      this.tables.push(new DifficultyTable(t.name, t.id, t.levels, t.level_list))
     )
   }
 
@@ -22,10 +26,10 @@ export default class Tables {
     return this.tables.length === 0 ? null : this.tables[0]
   }
 
-  table_index(table_name: string): number {
+  get_id_by_name(table_name: string): number {
     for (let i = 0; i < this.tables.length; i++) {
       if (this.tables[i].name === table_name) {
-        return i
+        return this.tables[i].id
       }
     }
     return -1
@@ -38,23 +42,17 @@ export default class Tables {
     }
     return ret
   }
-
-  /**
-   * @param table_name
-   * @returns {DifficultyTable|null}
-   */
-  get_table(table_name: string) {
-    return this.tables[this.table_index(table_name)] || null
-  }
 }
 
 export class DifficultyTable {
   name: string
+  id: number
   levels: { [level: string]: string[] }
   level_list: string[]
 
-  constructor(table_name: string, levels: { [level: string]: string[] }, level_list: string[]) {
+  constructor(table_name: string, id: number, levels: { [level: string]: string[] }, level_list: string[]) {
     this.name = table_name
+    this.id = id
     this.levels = levels
     this.level_list = level_list
   }

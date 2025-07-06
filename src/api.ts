@@ -41,9 +41,25 @@ export default class Api {
         return await fetch(url, init).then(obj.handler).catch(obj.error)
     }
 
-    static get_table_header_url(user_id: number, table_index: string): string {
+    static get_table_header_url(user_id: number, selected_id: number): string {
         const obj = new Api()
-        return obj.host + "/recommend_table/" + user_id + "/" + table_index + "/table.html"
+        return obj.host + "/recommend_table/" + user_id + "/" + selected_id + "/table.html"
+    }
+
+    static async get_table_header(user_id: number, selected_id: number) {
+        const obj = new Api()
+        const url = obj.host + "/recommend_table/" + user_id + "/" + selected_id + "/header.json"
+        const headers: any = { 'access-control-request-headers': 'session-token,content-type' }
+        const init = { headers }
+        return await fetch(url, init).then(obj.handler).catch(obj.error)
+    }
+
+    static async get_table(user_id: number, selected_id: number) {
+        const obj = new Api()
+        const url = obj.host + "/recommend_table/" + user_id + "/" + selected_id + "/score.json"
+        const headers: any = { 'access-control-request-headers': 'session-token,content-type' }
+        const init = { headers }
+        return await fetch(url, init).then(obj.handler).catch(obj.error)
     }
 
     /**
