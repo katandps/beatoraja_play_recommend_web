@@ -89,7 +89,7 @@ const onChangeSelectedTable = () => {
         <table class="table">
           <thead>
             <tr>
-              <th>level</th>
+              <th>Level</th>
               <th>Title</th>
               <th>Artist</th>
               <!-- <th>md5</th> -->
