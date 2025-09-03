@@ -14,7 +14,7 @@ const margin = ref({
   left: 0,
   top: 20,
   right: 20,
-  bottom: 0
+  bottom: 20
 })
 const scoreAxis = ref({
   primary: {
@@ -44,7 +44,16 @@ const tooltipConfig = ref({
   score: { label: 'Score', color: '#0000ff' },
   min_bp: { label: 'BP', color: '#ff0000' },
   max_combo: { label: 'Combo', color: '#00ff00' },
-  updated_at: { label: 'Date', }
+  updated_at: {
+    label: 'Date',
+    format: (value: string) => new Date(value).toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
 })
 const tab = ref('score')
 </script>
