@@ -1,112 +1,259 @@
 <script setup lang="ts">
-import { Chart, Grid, Line, Tooltip } from "vue3-charts"
-import SongDetail, { Log } from "@/models/song_detail"
-import { ref } from "vue";
+import { ref, computed, onBeforeUnmount } from 'vue'
+import { Line } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js'
+import SongDetail, { Log } from '@/models/song_detail'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+)
 
 interface Props {
-  logs: Log[],
+  logs: Log[]
   song: SongDetail
 }
 const props = defineProps<Props>()
 
-const direction = ref("horizontal")
-const margin = ref({
-  left: 0,
-  top: 20,
-  right: 20,
-  bottom: 20
-})
-const scoreAxis = ref({
-  primary: {
-    format: () => "",
+const activeTab = ref('score')
+
+// Chart.jsインスタンスの参照を保持
+const chartRefs = ref<{ [key: string]: any }>({})
+
+const formatDateLabel = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('ja-JP', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+}
+
+const formatTooltipDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('ja-JP', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
+const clearTypeNames = [
+  'No Play', 'Failed', 'Assist Clear', 'Light Clear',
+  'Easy Clear', 'Normal Clear', 'Hard Clear',
+  'EX Hard Clear', 'Full Combo'
+]
+
+const scoreData = computed(() => ({
+  labels: props.logs.map(log => formatDateLabel(log.updated_at)),
+  datasets: [{
+    label: 'スコア',
+    data: props.logs.map(log => log.score),
+    borderColor: '#0066ff',
+    backgroundColor: 'rgba(0, 102, 255, 0.1)',
+    tension: 0,
+    pointRadius: 4,
+    pointHoverRadius: 6
+  }]
+}))
+
+const bpData = computed(() => ({
+  labels: props.logs.map(log => formatDateLabel(log.updated_at)),
+  datasets: [{
+    label: 'ミス数',
+    data: props.logs.map(log => log.min_bp === -1 ? null : log.min_bp),
+    borderColor: '#ff3333',
+    backgroundColor: 'rgba(255, 51, 51, 0.1)',
+    tension: 0,
+    pointRadius: 4,
+    pointHoverRadius: 6,
+    spanGaps: true
+  }]
+}))
+
+const comboData = computed(() => ({
+  labels: props.logs.map(log => formatDateLabel(log.updated_at)),
+  datasets: [{
+    label: '最大コンボ',
+    data: props.logs.map(log => log.max_combo),
+    borderColor: '#00cc44',
+    backgroundColor: 'rgba(0, 204, 68, 0.1)',
+    tension: 0,
+    pointRadius: 4,
+    pointHoverRadius: 6
+  }]
+}))
+
+const createChartOptions = (yAxisTitle: string, maxValue?: number) => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  layout: {
+    padding: {
+      bottom: 50
+    }
   },
-  secondary: {
-    domain: [0, props.song.total_notes * 2],
-    ticks: 20,
+  interaction: {
+    intersect: false,
+    mode: 'index' as const
+  },
+  plugins: {
+    legend: {
+      display: false
+    },
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      titleColor: 'white',
+      bodyColor: 'white',
+      borderColor: '#48CAE4',
+      borderWidth: 1,
+      callbacks: {
+        title: (tooltipItems: any[]) => {
+          const index = tooltipItems[0].dataIndex
+          return formatTooltipDate(props.logs[index].updated_at)
+        },
+        afterBody: (tooltipItems: any[]) => {
+          const index = tooltipItems[0].dataIndex
+          const log = props.logs[index]
+          return [
+            `クリア: ${clearTypeNames[log.clear_type] || '不明'}`,
+            `スコア: ${log.score.toLocaleString()}`,
+            `ミス: ${log.min_bp === -1 ? '未記録' : log.min_bp}`,
+            `コンボ: ${log.max_combo.toLocaleString()}`
+          ]
+        }
+      }
+    }
+  },
+  scales: {
+    x: {
+      title: {
+        display: true,
+        text: '更新日',
+        color: '#666'
+      },
+      grid: {
+        color: 'rgba(0, 0, 0, 0.1)'
+      }
+    },
+    y: {
+      title: {
+        display: true,
+        text: yAxisTitle,
+        color: '#666'
+      },
+      grid: {
+        color: 'rgba(0, 0, 0, 0.1)'
+      },
+      min: 0,
+      ...(maxValue && { max: maxValue }),
+      ticks: {
+        callback: (value: any) => {
+          if (yAxisTitle === 'ミス数' && value === -1) return 'N/A'
+          return Number(value).toLocaleString()
+        }
+      }
+    }
   }
 })
-const bpAxis = ref({
-  primary: {
-    format: () => "",
-  },
-  secondary: { ticks: 20 }
+
+const scoreOptions = computed(() =>
+  createChartOptions('スコア', props.song.total_notes * 2)
+)
+
+const bpOptions = computed(() =>
+  createChartOptions('ミス数')
+)
+
+const comboOptions = computed(() =>
+  createChartOptions('最大コンボ', props.song.total_notes)
+)
+
+// コンポーネント破棄時にChart.jsインスタンスをクリーンアップ
+onBeforeUnmount(() => {
+  Object.values(chartRefs.value).forEach(chart => {
+    if (chart && typeof chart.destroy === 'function') {
+      chart.destroy()
+    }
+  })
 })
-const comboAxis = ref({
-  primary: {
-    format: () => ""
-  },
-  secondary: {
-    domain: [0, props.song.total_notes]
-  }
-})
-const tooltipConfig = ref({
-  clear_type: { label: 'Clear' },
-  score: { label: 'Score', color: '#0000ff' },
-  min_bp: { label: 'BP', color: '#ff0000' },
-  max_combo: { label: 'Combo', color: '#00ff00' },
-  updated_at: {
-    label: 'Date',
-    format: (value: string) => new Date(value).toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
-})
-const tab = ref('score')
 </script>
 
 <template>
   <div id="logchart">
-    <ul class="nav nav-tabs">
-      <li class="nav-link" :class="tab == 'score' ? 'active' : ''" @click="tab = 'score'">
-        スコア遷移表示
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item">
+        <button class="nav-link" :class="{ active: activeTab === 'score' }" @click="activeTab = 'score'">
+          スコア更新グラフ
+        </button>
       </li>
-      <li class="nav-link" :class="tab == 'bp' ? 'active' : ''" @click="tab = 'bp'">
-        ミスカウント遷移表示
+      <li class="nav-item">
+        <button class="nav-link" :class="{ active: activeTab === 'bp' }" @click="activeTab = 'bp'">
+          ミスカウント更新グラフ
+        </button>
       </li>
-      <li class="nav-link" :class="tab == 'combo' ? 'active' : ''" @click="tab = 'combo'">
-        最大コンボ数遷移表示
+      <li class="nav-item">
+        <button class="nav-link" :class="{ active: activeTab === 'combo' }" @click="activeTab = 'combo'">
+          最大コンボ数更新グラフ
+        </button>
       </li>
     </ul>
 
-    <div v-if="tab == 'score'">
-      <h4>スコア</h4>
-      <Chart :data="logs" :margin="margin" :direction="direction" :axis="scoreAxis">
-        <template #layers>
-          <Grid strokeDashArray="2,2" />
-          <Line :dataKeys="['updated_at', 'score']" :lineStyle="{ stroke: 'blue' }" />
-        </template>
-        <template #widgets>
-          <Tooltip borderColor="#48CAE4" :config="tooltipConfig" />
-        </template>
-      </Chart>
-    </div>
-    <div v-if="tab == 'bp'">
-      <h4>ミスカウント</h4>
-      <Chart :data="logs" :margin="margin" :direction="direction" :axis="bpAxis">
-        <template #layers>
-          <Grid strokeDashArray="2,2" />
-          <Line :dataKeys="['updated_at', 'min_bp']" :lineStyle="{ stroke: 'red' }" />
-        </template>
-        <template #widgets>
-          <Tooltip borderColor="#48CAE4" :config="tooltipConfig" />
-        </template>
-      </Chart>
-    </div>
-    <div v-if="tab == 'combo'">
-      <h4>最大コンボ</h4>
-      <Chart :data="logs" :margin="margin" :direction="direction" :axis="comboAxis">
-        <template #layers>
-          <Grid strokeDashArray="2,2" />
-          <Line :dataKeys="['updated_at', 'max_combo']" :lineStyle="{ stroke: 'green' }" />
-        </template>
-        <template #widgets>
-          <Tooltip borderColor="#48CAE4" :config="tooltipConfig" />
-        </template>
-      </Chart>
+    <div class="chart-container">
+      <div v-show="activeTab === 'score'" class="chart-wrapper">
+        <h4 class="text-center mb-3">スコア</h4>
+        <Line :key="'score-' + props.logs.length" :data="scoreData" :options="scoreOptions" ref="scoreChart" />
+      </div>
+
+      <div v-show="activeTab === 'bp'" class="chart-wrapper">
+        <h4 class="text-center mb-3">ミスカウント</h4>
+        <Line :key="'bp-' + props.logs.length" :data="bpData" :options="bpOptions" ref="bpChart" />
+      </div>
+
+      <div v-show="activeTab === 'combo'" class="chart-wrapper">
+        <h4 class="text-center mb-3">最大コンボ</h4>
+        <Line :key="'combo-' + props.logs.length" :data="comboData" :options="comboOptions" ref="comboChart" />
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.chart-container {
+  position: relative;
+  height: 400px;
+}
+
+.chart-wrapper {
+  height: 100%;
+  width: 100%;
+}
+
+.nav-tabs .nav-link {
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-bottom: none;
+}
+
+.nav-tabs .nav-link.active {
+  background-color: #fff;
+  border-color: #dee2e6 #dee2e6 #fff;
+}
+
+.nav-tabs .nav-link:hover {
+  border-color: #e9ecef #e9ecef #dee2e6;
+}
+</style>
