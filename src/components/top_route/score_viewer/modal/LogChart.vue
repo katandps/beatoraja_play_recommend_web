@@ -43,7 +43,7 @@ const tooltipConfig = ref({
   clear_type: { label: 'Clear' },
   score: { label: 'Score', color: '#0000ff' },
   min_bp: { label: 'BP', color: '#ff0000' },
-  max_combo: { lable: 'Combo', color: '#00ff00' },
+  max_combo: { label: 'Combo', color: '#00ff00' },
   updated_at: { label: 'Date', }
 })
 const tab = ref('score')
