@@ -52,12 +52,6 @@ const formatTooltipDate = (dateString: string) => {
   })
 }
 
-const clearTypeNames = [
-  'No Play', 'Failed', 'Assist Clear', 'Light Clear',
-  'Easy Clear', 'Normal Clear', 'Hard Clear',
-  'EX Hard Clear', 'Full Combo'
-]
-
 const scoreData = computed(() => ({
   labels: props.logs.map(log => formatDateLabel(log.updated_at)),
   datasets: [{
@@ -129,7 +123,7 @@ const createChartOptions = (yAxisTitle: string, maxValue?: number) => ({
           const index = tooltipItems[0].dataIndex
           const log = props.logs[index]
           return [
-            `クリア: ${clearTypeNames[log.clear_type] || '不明'}`,
+            `クリア: ${log.clear_type}`,
             `スコア: ${log.score.toLocaleString()}`,
             `ミス: ${log.min_bp === -1 ? '未記録' : log.min_bp}`,
             `コンボ: ${log.max_combo.toLocaleString()}`

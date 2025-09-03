@@ -432,7 +432,7 @@ export const score_format = (total_notes: number, score: number): string => {
 }
 
 export interface Log {
-  clear_type: string
+  clear_type: number
   max_combo: number
   min_bp: number
   score: number
