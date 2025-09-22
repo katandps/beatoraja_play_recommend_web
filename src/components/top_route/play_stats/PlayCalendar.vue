@@ -8,6 +8,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const currentDate = ref(new Date())
+const selectedDay = ref<any>(null) // 選択された日のデータ
 
 // 現在表示している年月
 const currentYear = computed(() => currentDate.value.getFullYear())
@@ -135,16 +136,34 @@ const getTooltipText = (day: any) => {
 プレイ時間: ${formatTime(total.play_time)}`
 }
 
+// 日付をクリックしたときの処理
+const selectDay = (day: any) => {
+    selectedDay.value = day
+}
+
+// 選択された日の詳細表示用の日付フォーマット
+const formatSelectedDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('ja-JP', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'long'
+    })
+}
+
 // 月を変更
 const changeMonth = (delta: number) => {
     const newDate = new Date(currentDate.value)
     newDate.setMonth(newDate.getMonth() + delta)
     currentDate.value = newDate
+    selectedDay.value = null // 月が変わったら選択をリセット
 }
 
 // 今月に戻る
 const goToCurrentMonth = () => {
     currentDate.value = new Date()
+    selectedDay.value = null
 }
 </script>
 
@@ -175,8 +194,10 @@ const goToCurrentMonth = () => {
                 <div v-for="(week, weekIndex) in calendarDays" :key="weekIndex" class="week">
                     <div v-for="(day, dayIndex) in week" :key="dayIndex" class="day" :class="{
                         'other-month': !day.isCurrentMonth,
-                        'has-play': day.playData && day.playData.daily.play_count > 0
-                    }" :style="{ backgroundColor: getIntensityColor(day.playData) }" :title="getTooltipText(day)">
+                        'has-play': day.playData && day.playData.daily.play_count > 0,
+                        'selected': selectedDay && selectedDay.dateString === day.dateString
+                    }" :style="{ backgroundColor: getIntensityColor(day.playData) }" :title="getTooltipText(day)"
+                        @click="selectDay(day)">
                         <span class="day-number">{{ day.date.getDate() }}</span>
                         <div v-if="day.playData && day.playData.daily.play_count > 0" class="play-indicator">
                             {{ day.playData.daily.play_count }}
@@ -210,6 +231,67 @@ const goToCurrentMonth = () => {
                     <div class="legend-color" style="background-color: #198127;"></div>
                     <span>60+</span>
                 </div>
+            </div>
+        </div>
+
+        <!-- 選択された日の詳細表示 -->
+        <div v-if="selectedDay" class="selected-day-details">
+            <div class="details-header">
+                <h4>{{ formatSelectedDate(selectedDay.dateString) }}</h4>
+                <button @click="selectedDay = null" class="close-button">×</button>
+            </div>
+
+            <div v-if="selectedDay.playData" class="details-content">
+                <div class="stats-section">
+                    <h5>当日の実績</h5>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">プレイ数</span>
+                            <span class="stat-value">{{ selectedDay.playData.daily.play_count }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">クリア数</span>
+                            <span class="stat-value">{{ selectedDay.playData.daily.clear_count }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">ノーツ数</span>
+                            <span class="stat-value">{{ selectedDay.playData.daily.notes_count.toLocaleString()
+                            }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">プレイ時間</span>
+                            <span class="stat-value">{{ formatTime(selectedDay.playData.daily.play_time) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-section">
+                    <h5>累計実績</h5>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">プレイ数</span>
+                            <span class="stat-value">{{ selectedDay.playData.total.play_count.toLocaleString() }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">クリア数</span>
+                            <span class="stat-value">{{ selectedDay.playData.total.clear_count.toLocaleString()
+                            }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">ノーツ数</span>
+                            <span class="stat-value">{{ selectedDay.playData.total.notes_count.toLocaleString()
+                            }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">プレイ時間</span>
+                            <span class="stat-value">{{ formatTime(selectedDay.playData.total.play_time) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-else class="no-play-message">
+                <p>この日はプレイしていません</p>
             </div>
         </div>
     </div>
@@ -311,6 +393,11 @@ const goToCurrentMonth = () => {
     z-index: 1;
 }
 
+.day.selected {
+    border: 3px solid #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
 .day.other-month {
     opacity: 0.3;
 }
@@ -327,6 +414,85 @@ const goToCurrentMonth = () => {
     font-size: 10px;
     font-weight: bold;
     color: #333;
+}
+
+.selected-day-details {
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f8f9fa;
+}
+
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.details-header h4 {
+    margin: 0;
+    color: #333;
+}
+
+.close-button {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.close-button:hover {
+    background: #c82333;
+}
+
+.details-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.stats-section h5 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+.stats-grid {
+    display: grid;
+    gap: 10px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 4px;
+    border-left: 4px solid #007bff;
+}
+
+.stat-label {
+    font-weight: 500;
+    color: #6c757d;
+}
+
+.stat-value {
+    font-weight: bold;
+    color: #495057;
+}
+
+.no-play-message {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
 }
 
 .legend {
@@ -357,5 +523,12 @@ const goToCurrentMonth = () => {
 
 .legend-label {
     font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .details-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
 }
 </style>
