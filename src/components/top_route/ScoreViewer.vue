@@ -136,7 +136,7 @@ const sorted_song_list = computed(() => {
 const setRival = (rival_id: number) => {
   debug(loaded.value, rival_id)
   if (rival_id > 0 && loaded.value.rival_id !== rival_id) {
-    Api.fetch_score(rival_date.value, new Date(0), rival_id, sessionStore.accessToken).then(
+    Api.fetch_score(new Date(0), rival_date.value, rival_id, sessionStore.accessToken).then(
       (s) => {
         rival_score.value = null
         rival_score.value = s
