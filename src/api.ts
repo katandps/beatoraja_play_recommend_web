@@ -72,14 +72,7 @@ export default class Api {
      */
     static async fetch_score(since: Date, until: Date, user_id: number, token: string | null) {
         const obj = new Api()
-        const localSinceDate = new Date(since.toISOString())
-        const localUntilDate = new Date(until.toISOString())
-        const timezoneOffset = localSinceDate.getTimezoneOffset()
-        // タイムゾーンの影響を小さくする
-        localSinceDate.setMinutes(localSinceDate.getMinutes() - timezoneOffset)
-        localUntilDate.setMinutes(localUntilDate.getMinutes() - timezoneOffset)
-        log.debug(localSinceDate)
-        const url = obj.host + "/detail/?since=" + localSinceDate.toISOString() + "&until=" + localUntilDate.toISOString() + "&user_id=" + user_id
+        const url = obj.host + "/detail/?since=" + since.toISOString() + "&until=" + until.toISOString() + "&user_id=" + user_id
         const headers: any = { 'session-token': token }
         const init = { headers }
         try {
