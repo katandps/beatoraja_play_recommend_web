@@ -64,19 +64,22 @@ export default class Api {
 
     /**
      *
-     * @param {Date} date
+     * @param {Date} since
+     * @param {Date} until
      * @param {number} user_id
      * @param {string} token
      * @returns {Promise<null|{user_id: number, user_name: string, score: {}}>}
      */
-    static async fetch_score(date: Date, user_id: number, token: string | null) {
+    static async fetch_score(since: Date, until: Date, user_id: number, token: string | null) {
         const obj = new Api()
-        const localDate = new Date(date.toISOString())
-        const timezoneOffset = localDate.getTimezoneOffset()
+        const localSinceDate = new Date(since.toISOString())
+        const localUntilDate = new Date(until.toISOString())
+        const timezoneOffset = localSinceDate.getTimezoneOffset()
         // タイムゾーンの影響を小さくする
-        localDate.setMinutes(localDate.getMinutes() - timezoneOffset)
-        log.debug(localDate)
-        const url = obj.host + "/detail/?date=" + localDate.toISOString() + "&user_id=" + user_id
+        localSinceDate.setMinutes(localSinceDate.getMinutes() - timezoneOffset)
+        localUntilDate.setMinutes(localUntilDate.getMinutes() - timezoneOffset)
+        log.debug(localSinceDate)
+        const url = obj.host + "/detail/?since=" + localSinceDate.toISOString() + "&until=" + localUntilDate.toISOString() + "&user_id=" + user_id
         const headers: any = { 'session-token': token }
         const init = { headers }
         try {
@@ -105,7 +108,7 @@ export default class Api {
 
     static async fetch_my_score(hash: string, token: string | null) {
         const obj = new Api()
-        const url = obj.host + "/score/?sha256=" + hash
+        const url = obj.host + "/score/my?sha256=" + hash
         const headers: any = { 'session-token': token }
         const init = { headers }
         return await fetch(url, init).then(obj.handler).catch(obj.error)
@@ -113,7 +116,7 @@ export default class Api {
 
     static async fetch_ranking(token: string | null, sha256: string, date: Date) {
         const obj = new Api()
-        const uri = obj.host + "/ranking/?sha256=" + sha256 + "&date=" + date.toISOString()
+        const uri = obj.host + "/ranking/?sha256=" + sha256 + "&until=" + date.toISOString()
         const headers: any = { 'session-token': token }
         const init = { headers }
         return await fetch(uri, init).then(obj.handler).catch(obj.error)
@@ -148,9 +151,9 @@ export default class Api {
      * @param {number} user_id
      * @returns {Promise<Object>}
      */
-    static async fetch_play_stats(token: string | null, user_id: number) {
+    static async fetch_play_stats(token: string | null) {
         const obj = new Api()
-        const uri = obj.host + "/stats/" + user_id
+        const uri = obj.host + "/stats/my"
         const headers: any = { 'session-token': token }
         const init = { headers }
         return new PlayStats(await fetch(uri, init).then(obj.handler).catch(obj.error))

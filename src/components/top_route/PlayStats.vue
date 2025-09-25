@@ -7,16 +7,12 @@ import PlayCalendar from './play_stats/PlayCalendar.vue'
 
 const store = useLoginStore()
 
-interface Props {
-  user_id: number
-}
-const props = defineProps<Props>()
 
 // --- data ---
 const history = ref(PlayStats.default())
 
 // --- computed ---
-Api.fetch_play_stats(store.accessToken, props.user_id).then(
+Api.fetch_play_stats(store.accessToken).then(
   (h) => (history.value = h)
 )
 

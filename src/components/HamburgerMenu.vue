@@ -42,18 +42,15 @@ router.afterEach(() => active_btn.value = false)
   <nav id="page-header">
     <!--ハンバーガーメニューのボタン-->
     <div class="hamburger_btn" v-on:click="active_btn = !active_btn">
-      <span class="line line_01" :class="
-        (is_login ? 'line-login ' : 'line-logout ') +
+      <span class="line line_01" :class="(is_login ? 'line-login ' : 'line-logout ') +
         (active_btn ? 'btn_line01' : '')
-      " />
-      <span class="line line_02" :class="
-        (is_login ? 'line-login ' : 'line-logout ') +
+        " />
+      <span class="line line_02" :class="(is_login ? 'line-login ' : 'line-logout ') +
         (active_btn ? 'btn_line02' : '')
-      " />
-      <span class="line line_03" :class="
-        (is_login ? 'line-login ' : 'line-logout ') +
+        " />
+      <span class="line line_03" :class="(is_login ? 'line-login ' : 'line-logout ') +
         (active_btn ? 'btn_line03' : '')
-      " />
+        " />
     </div>
     <!--サイドバー-->
     <transition name="menu">
@@ -83,7 +80,7 @@ router.afterEach(() => active_btn.value = false)
             </router-link>
           </li>
           <li>
-            <router-link class="text-dark px-2" :to="'/stats?user_id=' + user_id">
+            <router-link class="text-dark px-2" to="/stats">
               <font-awesome-icon :icon="['fas', 'wrench']" />
               プレイ履歴
             </router-link>

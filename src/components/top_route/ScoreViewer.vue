@@ -136,7 +136,7 @@ const sorted_song_list = computed(() => {
 const setRival = (rival_id: number) => {
   debug(loaded.value, rival_id)
   if (rival_id > 0 && loaded.value.rival_id !== rival_id) {
-    Api.fetch_score(rival_date.value, rival_id, sessionStore.accessToken).then(
+    Api.fetch_score(rival_date.value, new Date(0), rival_id, sessionStore.accessToken).then(
       (s) => {
         rival_score.value = null
         rival_score.value = s
@@ -164,7 +164,7 @@ const fetchDetail = (user_id: number) => {
   ) {
     debug("fetch!")
     message.value = "読込中..."
-    Api.fetch_score(date.value, user_id, sessionStore.accessToken).then((s) => {
+    Api.fetch_score(new Date(0), date.value, user_id, sessionStore.accessToken).then((s) => {
       scores.value = s
       message.value = exists_scores.value ? "" : "読み込み失敗"
       loaded.value.user_id = user_id

@@ -1,7 +1,7 @@
 import Score from "./score";
 
 export default class Scores {
-    scores: {[key: string]: Score} = {};
+    scores: { [key: string]: Score } = {};
     name: string
     user_id: number
     /**
@@ -20,5 +20,9 @@ export default class Scores {
 
     get_score(md5: string): Score {
         return this.scores[md5] ? this.scores[md5] : new Score()
+    }
+
+    score_exists(md5: string): boolean {
+        return !!this.scores[md5]
     }
 }

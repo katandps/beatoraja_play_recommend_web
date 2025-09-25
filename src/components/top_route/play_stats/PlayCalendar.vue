@@ -1,14 +1,100 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import PlayStats from '../../../models/playStats'
+import Api from '@/api';
+import { useLoginStore } from "@/store/session"
+import SongModal, { ISongModal } from "@/components/top_route/score_viewer/modal/SongModal.vue"
+import Columns from '@/models/columns';
+import SongDetail, { Log } from '@/models/song_detail';
+import Tables, { CheckedTables } from '@/models/difficultyTable';
+import RowSong from "../score_viewer/cell/RowSong.vue"
+import RowHeader from "../score_viewer/cell/RowHeader.vue"
+import RowColGroup from "../score_viewer/cell/RowColGroup.vue"
+import { useFilterStore } from '@/store/filter';
+
+const sessionStore = useLoginStore()
+const filterStore = useFilterStore()
+
+const columns = computed(() => {
+    const columns = new Columns({})
+    columns.for_recent()
+    columns.columns.date = false
+    return columns
+})
+const song_modal = ref<ISongModal>()
+const level_list = computed(() => tables.value.level_list())
+const exists_tables = computed(() => !!tables.value)
+const exists_scores = computed(() => !!scores.value)
+const exists_songs = computed(() => !!songs.value)
+const is_initialized = computed(
+    () => exists_tables.value && exists_songs.value && exists_scores.value
+)
+const filtered_score = computed(() => {
+    if (!is_initialized.value) {
+        return []
+    }
+    let ret = []
+    let used: { [key: string]: boolean } = {}
+    for (let table_index = 0; table_index < tables.value.tables.length; table_index += 1) {
+        const table = tables.value.tables[table_index]
+        for (const level in table.levels) {
+            if (!CheckedTables.is_checked(filterStore.checked_tables, table_index, level)) {
+                continue;
+            }
+            const hashes = table.levels[level]
+            if (!hashes) {
+                continue
+            }
+
+            for (const hash of hashes) {
+                if (used[hash]) {
+                    continue
+                }
+                used[hash] = true
+                if (!scores.value?.score_exists(hash)) {
+                    continue
+                }
+                let score = new SongDetail()
+                score.set_level(level)
+                score.init_score(scores.value.get_score(hash))
+                score.init_song(songs.value.get_score(hash), hash)
+
+                ret.push(score)
+            }
+        }
+    }
+    return ret
+})
 
 interface Props {
     history: PlayStats
 }
 const props = defineProps<Props>()
-
+const scores = ref()
 const currentDate = ref(new Date())
 const selectedDay = ref<any>(null) // 選択された日のデータ
+
+onMounted(() => {
+    Api.fetch_tables(sessionStore.accessToken).then((t) => (tables.value = t))
+    Api.fetch_songs(sessionStore.accessToken).then((s) => (songs.value = s))
+})
+const tables = ref(new Tables([]))
+const songs = ref()
+
+const sorted_song_list = computed(() => {
+    let songs = filtered_score.value
+    return songs
+        .sort((a, b) =>
+            SongDetail.cmp(
+                a,
+                b,
+                filterStore.filter.sort_key,
+                filterStore.filter.sort_desc,
+                level_list.value
+            )
+        )
+        .slice(0, filterStore.filter.max_length || songs.length)
+})
 
 // 現在表示している年月
 const currentYear = computed(() => currentDate.value.getFullYear())
@@ -55,13 +141,14 @@ const statsData = computed(() => {
 })
 
 // その月の1日と最終日を取得
-const firstDayOfMonth = computed(() => new Date(currentYear.value, currentMonth.value, 1))
+const firstDayOfMonth = computed(() => Date.UTC(currentYear.value, currentMonth.value, 1,))
 
 // 月の最初の週の開始日（日曜日）
 const startDate = computed(() => {
     const firstDay = new Date(firstDayOfMonth.value)
     const dayOfWeek = firstDay.getDay()
     firstDay.setDate(firstDay.getDate() - dayOfWeek)
+    console.log(firstDay)
     return firstDay
 })
 
@@ -139,6 +226,11 @@ const getTooltipText = (day: any) => {
 // 日付をクリックしたときの処理
 const selectDay = (day: any) => {
     selectedDay.value = day
+    // minus 1 day
+    const oneDayAfter: Date = new Date(selectedDay.value.date)
+    oneDayAfter.setTime(oneDayAfter.getTime() + 86400000);
+
+    Api.fetch_score(selectedDay.value.date, oneDayAfter, 1, sessionStore.accessToken).then((s) => (scores.value = s))
 }
 
 // 選択された日の詳細表示用の日付フォーマット
@@ -165,6 +257,13 @@ const goToCurrentMonth = () => {
     currentDate.value = new Date()
     selectedDay.value = null
 }
+
+// --- method ---
+const show_song_modal = async (song: SongDetail) => {
+    let score = await Api.fetch_my_score(song.sha256, sessionStore.accessToken)
+    song_modal.value?.showModal(song, selectedDay.value, score.log as Log[])
+}
+
 </script>
 
 <template>
@@ -241,58 +340,75 @@ const goToCurrentMonth = () => {
                 <button @click="selectedDay = null" class="close-button">×</button>
             </div>
 
-            <div v-if="selectedDay.playData" class="details-content">
-                <div class="stats-section">
-                    <h5>当日の実績</h5>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <span class="stat-label">プレイ数</span>
-                            <span class="stat-value">{{ selectedDay.playData.daily.play_count }}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">クリア数</span>
-                            <span class="stat-value">{{ selectedDay.playData.daily.clear_count }}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">ノーツ数</span>
-                            <span class="stat-value">{{ selectedDay.playData.daily.notes_count.toLocaleString()
-                            }}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">プレイ時間</span>
-                            <span class="stat-value">{{ formatTime(selectedDay.playData.daily.play_time) }}</span>
+            <div v-if="selectedDay.playData">
+                <div class="details-content">
+                    <div class="stats-section">
+                        <h5>当日の実績</h5>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">プレイ数</span>
+                                <span class="stat-value">{{ selectedDay.playData.daily.play_count }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">クリア数</span>
+                                <span class="stat-value">{{ selectedDay.playData.daily.clear_count }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">ノーツ数</span>
+                                <span class="stat-value">{{ selectedDay.playData.daily.notes_count.toLocaleString()
+                                }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">プレイ時間</span>
+                                <span class="stat-value">{{ formatTime(selectedDay.playData.daily.play_time) }}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="stats-section">
-                    <h5>累計実績</h5>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <span class="stat-label">プレイ数</span>
-                            <span class="stat-value">{{ selectedDay.playData.total.play_count.toLocaleString() }}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">クリア数</span>
-                            <span class="stat-value">{{ selectedDay.playData.total.clear_count.toLocaleString()
-                            }}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">ノーツ数</span>
-                            <span class="stat-value">{{ selectedDay.playData.total.notes_count.toLocaleString()
-                            }}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">プレイ時間</span>
-                            <span class="stat-value">{{ formatTime(selectedDay.playData.total.play_time) }}</span>
+                    <div class="stats-section">
+                        <h5>累計実績</h5>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">プレイ数</span>
+                                <span class="stat-value">{{ selectedDay.playData.total.play_count.toLocaleString()
+                                }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">クリア数</span>
+                                <span class="stat-value">{{ selectedDay.playData.total.clear_count.toLocaleString()
+                                }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">ノーツ数</span>
+                                <span class="stat-value">{{ selectedDay.playData.total.notes_count.toLocaleString()
+                                }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">プレイ時間</span>
+                                <span class="stat-value">{{ formatTime(selectedDay.playData.total.play_time) }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+
 
             <div v-else class="no-play-message">
                 <p>この日はプレイしていません</p>
             </div>
+        </div>
+
+        <div class="table-wrapper" v-if="selectedDay && scores && selectedDay.playData">
+            <div class="score-table detail">
+                <RowColGroup :columns="columns" />
+                <RowHeader :columns="columns" />
+                <div class="tbody">
+                    <RowSong v-for="song in sorted_song_list" :key="song.md5" :song="song" :columns="columns"
+                        :percentile="false" @showModal="show_song_modal" />
+                </div>
+            </div>
+            <song-modal ref="song_modal" />
         </div>
     </div>
 </template>
