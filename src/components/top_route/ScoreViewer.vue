@@ -51,7 +51,12 @@ const tables = ref(new Tables([]))
 const songs = ref()
 const scores = ref()
 const rival_score = ref()
-const date = ref(new Date())
+const date = ref((() => {
+  let d = new Date()
+  d.setDate(d.getDate() + 1)
+  d.setHours(0, 0, 0, 0)
+  return d
+})())
 const rival_date = ref(new Date())
 const message = ref("")
 const loaded = ref({ user_id: 0, rival_id: 0, date: "" })
@@ -179,7 +184,11 @@ const setUserId = async (input_user_id: number, d: Date) => {
   user_modal.value?.closeModal()
   let query = Object.assign({}, route.query)
   query.user_id = "" + input_user_id
+
+  d.setDate(d.getDate() + 1)
+  d.setHours(0, 0, 0, 0)
   date.value = d
+
   debug(query)
   await router.push({ query })
   fetchDetail(input_user_id)
@@ -190,7 +199,12 @@ const setRivalId = async (input_rival_id: number, d: Date) => {
   rival_modal.value?.closeModal()
   let query = Object.assign({}, route.query)
   query.rival_id = "" + input_rival_id
+
+
+  d.setDate(d.getDate() + 1)
+  d.setHours(0, 0, 0, 0)
   rival_date.value = d
+
   debug(query)
   await router.push({ query })
   setRival(input_rival_id)
