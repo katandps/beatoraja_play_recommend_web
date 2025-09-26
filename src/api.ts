@@ -4,7 +4,6 @@ import Songs from "./models/songs"
 import Tables from "./models/difficultyTable"
 import PlayStats from "./models/playStats"
 import { UserInfo } from "@/store/session"
-import Calendar from "@/models/calendar"
 
 export default class Api {
     host: string = process.env.VUE_APP_HOST
@@ -150,16 +149,6 @@ export default class Api {
         const headers: any = { 'session-token': token }
         const init = { headers }
         return new PlayStats(await fetch(uri, init).then(obj.handler).catch(obj.error))
-    }
-
-    static async fetch_calendar_dates(token: string | null) {
-        log.debug(token)
-        // const obj = new Api()
-        // const uri = obj.host + "/calendar/dates"
-        // const headers: any = { 'session-token': token }
-        // const init = { headers }
-        // await fetch(uri, init).then(obj.handler).catch(obj.error)
-        return new Calendar()
     }
 
     static async logout(token: string | null) {
