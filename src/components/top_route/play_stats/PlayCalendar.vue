@@ -148,7 +148,6 @@ const startDate = computed(() => {
     const firstDay = new Date(firstDayOfMonth.value)
     const dayOfWeek = firstDay.getDay()
     firstDay.setDate(firstDay.getDate() - dayOfWeek)
-    console.log(firstDay)
     return firstDay
 })
 

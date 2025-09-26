@@ -51,8 +51,8 @@ onBeforeMount(() =>
               <div class="th">{{ score[1].max_combo }}</div>
               <div class="th">{{ score[1].clear_type ? config.LAMP_TYPE[10 - score[1].clear_type.current] :
                 config.LAMP_TYPE[10]
-              }}</div>
-              <div class="th">{{ score[1].updated_at.split('T')[0] }}</div>
+                }}</div>
+              <div class="th">{{ score[1].updated_at.toISOString() }}</div>
             </div>
           </div>
         </div>

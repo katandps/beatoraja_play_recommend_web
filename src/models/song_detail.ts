@@ -15,12 +15,12 @@ export default class SongDetail {
   score: number
   rival_score: number
   score_before: number
-  score_updated_at: string
+  score_updated_at: Date
 
   min_bp: number
   min_bp_before: number
   rival_min_bp: number
-  min_bp_updated_at: string
+  min_bp_updated_at: Date
 
   play_count: number
   max_combo: number
@@ -30,12 +30,12 @@ export default class SongDetail {
   clear_type: number
   rival_clear_type: number
   clear_type_before: number
-  clear_updated_at: string
+  clear_updated_at: Date
 
   level: string = ""
 
-  updated_at: string = ""
-  rival_updated_at: string
+  updated_at: Date
+  rival_updated_at: Date
 
   mode: number
 
@@ -45,18 +45,18 @@ export default class SongDetail {
 
     this.clear_type = score.clear_type
     this.clear_type_before = score.clear_type_before
-    this.clear_updated_at = score.clear_updated_at
+    this.clear_updated_at = new Date(score.clear_updated_at)
 
     this.score = score.score
     this.score_before = score.score_before
-    this.score_updated_at = score.score_updated_at
+    this.score_updated_at = new Date(score.score_updated_at)
 
     this.min_bp = score.min_bp
     this.min_bp_before = score.min_bp_before
-    this.min_bp_updated_at = score.min_bp_updated_at
+    this.min_bp_updated_at = new Date(score.min_bp_updated_at)
 
     this.clear_rank = SongDetail.make_clear_rank(this.total_notes, this.score)
-    this.updated_at = score.updated_at
+    this.updated_at = new Date(score.updated_at)
     this.play_count = score.play_count
     this.mode = 0
 
@@ -68,7 +68,7 @@ export default class SongDetail {
       this.total_notes,
       this.rival_score
     )
-    this.rival_updated_at = score.updated_at
+    this.rival_updated_at = new Date(score.updated_at)
   }
 
   init_song(song: Song, hash: string) {
@@ -89,18 +89,18 @@ export default class SongDetail {
 
     this.clear_type = score.clear_type
     this.clear_type_before = score.clear_type_before
-    this.clear_updated_at = score.clear_updated_at
+    this.clear_updated_at = new Date(score.clear_updated_at)
 
     this.score = score.score
     this.score_before = score.score_before
-    this.score_updated_at = score.score_updated_at
+    this.score_updated_at = new Date(score.score_updated_at)
 
     this.min_bp = score.min_bp
     this.min_bp_before = score.min_bp_before
-    this.min_bp_updated_at = score.min_bp_updated_at
+    this.min_bp_updated_at = new Date(score.min_bp_updated_at)
 
     this.clear_rank = SongDetail.make_clear_rank(this.total_notes, this.score)
-    this.updated_at = score.updated_at
+    this.updated_at = new Date(score.updated_at)
     this.play_count = score.play_count
   }
 
@@ -113,7 +113,7 @@ export default class SongDetail {
       this.total_notes,
       this.rival_score
     )
-    this.rival_updated_at = score.updated_at
+    this.rival_updated_at = new Date(score.updated_at)
   }
 
   static make_clear_rank(total_notes: number, ex_score: number) {
@@ -358,9 +358,9 @@ export default class SongDetail {
       case "score_before":
         return this.score_before
       case "score_date":
-        return this.score_updated_at.split("T")[0] === "1970-01-01"
+        return this.score_updated_at.getFullYear() < 2000
           ? "---"
-          : this.score_updated_at.split("T")[0]
+          : this.score_updated_at.toLocaleDateString('sv-SE')
       case "bp":
         return this.min_bp === -1 ? "---" : this.min_bp
       case "rival_bp":
@@ -368,17 +368,17 @@ export default class SongDetail {
       case "bp_before":
         return this.min_bp_before === -1 ? "---" : this.min_bp_before
       case "bp_date":
-        return this.min_bp_updated_at.split("T")[0] === "1970-01-01"
+        return this.min_bp_updated_at.getFullYear() < 2000
           ? "---"
-          : this.min_bp_updated_at.split("T")[0]
+          : this.min_bp_updated_at.toLocaleDateString('sv-SE')
       case "clear_before":
         return ""
       case "clear_type_before":
         return config.LAMP_INDEX[this.clear_type_before]
       case "clear_date":
-        return this.clear_updated_at.split("T")[0] === "1970-01-01"
+        return this.clear_updated_at.getFullYear() < 2000
           ? "---"
-          : this.clear_updated_at.split("T")[0]
+          : this.clear_updated_at.toLocaleDateString('sv-SE')
       case "combo":
         return this.max_combo
       case "rival_combo":
@@ -390,9 +390,9 @@ export default class SongDetail {
       case "play":
         return this.play_count === -1 ? "---" : this.play_count
       case "date":
-        return this.updated_at.split("T")[0] === "1970-01-01"
+        return this.updated_at.getFullYear() < 2000
           ? "---"
-          : this.updated_at.split("T")[0]
+          : this.updated_at.toLocaleDateString('sv-SE')
 
       case "clear_diff_rival":
         return this.clear_type === this.rival_clear_type
@@ -414,9 +414,9 @@ export default class SongDetail {
           return "<span class=" + span_class + ">" + diff + "</span>"
         }
       case "rival_date":
-        return this.rival_updated_at.split("T")[0] === "1970-01-01"
+        return this.rival_updated_at.getFullYear() < 2000
           ? "---"
-          : this.rival_updated_at.split("T")[0]
+          : this.rival_updated_at.toLocaleDateString('sv-SE')
     }
   }
 }

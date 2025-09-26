@@ -106,7 +106,7 @@ export default class SongFilter {
           && this.rival_rank.ranks[song.rival_clear_rank]
           && this.rival_vs.apply(song))
       ) &&
-      this.viewable_date(song.updated_at.split("T")[0])
+      this.viewable_date(song.updated_at.toLocaleDateString('sv-SE'))
     )
   }
 
