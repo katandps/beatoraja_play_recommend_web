@@ -228,8 +228,13 @@ const selectDay = (day: any) => {
     // minus 1 day
     const oneDayAfter: Date = new Date(selectedDay.value.date)
     oneDayAfter.setTime(oneDayAfter.getTime() + 86400000);
+    const since = new Date(selectedDay.value.date)
+    const until = new Date(oneDayAfter)
+    const timeZoneOffset = since.getTimezoneOffset()
+    since.setMinutes(since.getMinutes() + timeZoneOffset)
+    until.setMinutes(until.getMinutes() + timeZoneOffset)
 
-    Api.fetch_score(selectedDay.value.date, oneDayAfter, 1, sessionStore.accessToken).then((s) => (scores.value = s))
+    Api.fetch_score(since, until, 1, sessionStore.accessToken).then((s) => (scores.value = s))
 }
 
 // 選択された日の詳細表示用の日付フォーマット
