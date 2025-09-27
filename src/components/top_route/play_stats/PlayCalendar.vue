@@ -18,7 +18,7 @@ const filterStore = useFilterStore()
 const columns = computed(() => {
     const columns = new Columns({})
     columns.for_recent()
-    columns.columns.date = false
+    columns.columns.play_count = false
     return columns
 })
 const song_modal = ref<ISongModal>()
@@ -360,7 +360,7 @@ const show_song_modal = async (song: SongDetail) => {
                             <div class="stat-item">
                                 <span class="stat-label">ノーツ数</span>
                                 <span class="stat-value">{{ selectedDay.playData.daily.notes_count.toLocaleString()
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">プレイ時間</span>
@@ -375,17 +375,17 @@ const show_song_modal = async (song: SongDetail) => {
                             <div class="stat-item">
                                 <span class="stat-label">プレイ数</span>
                                 <span class="stat-value">{{ selectedDay.playData.total.play_count.toLocaleString()
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">クリア数</span>
                                 <span class="stat-value">{{ selectedDay.playData.total.clear_count.toLocaleString()
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">ノーツ数</span>
                                 <span class="stat-value">{{ selectedDay.playData.total.notes_count.toLocaleString()
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">プレイ時間</span>
