@@ -106,9 +106,9 @@ export default class Api {
         return await fetch(url, init).then(obj.handler).catch(obj.error)
     }
 
-    static async fetch_ranking(token: string | null, sha256: string, date: Date) {
+    static async fetch_ranking(token: string | null, sha256: string) {
         const obj = new Api()
-        const uri = obj.host + "/ranking/?sha256=" + sha256 + "&until=" + date.toISOString()
+        const uri = obj.host + "/ranking/?sha256=" + sha256
         const headers: any = { 'session-token': token }
         const init = { headers }
         return await fetch(uri, init).then(obj.handler).catch(obj.error)

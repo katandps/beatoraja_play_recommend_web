@@ -14,7 +14,7 @@ const props = defineProps<Props>()
 const ranking = ref()
 
 onBeforeMount(() =>
-  Api.fetch_ranking(store.accessToken, props.sha256, new Date()).then(
+  Api.fetch_ranking(store.accessToken, props.sha256).then(
     r => ranking.value = r.song.sha256 === "" ? null : r
   )
 )
@@ -52,7 +52,7 @@ onBeforeMount(() =>
               <div class="th">{{ score[1].clear_type ? config.LAMP_TYPE[10 - score[1].clear_type.current] :
                 config.LAMP_TYPE[10]
                 }}</div>
-              <div class="th">{{ score[1].updated_at.toISOString() }}</div>
+              <div class="th">{{ score[1].updated_at.split('T')[0] }}</div>
             </div>
           </div>
         </div>
