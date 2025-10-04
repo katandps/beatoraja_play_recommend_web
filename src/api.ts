@@ -191,10 +191,11 @@ export default class Api {
         return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
-    static async upload_play_data(token: string | null, score: Uint8Array, scorelog: Uint8Array) {
+    static async upload_play_data(token: string | null, score: ArrayBuffer, scorelog: ArrayBuffer) {
         const obj = new Api()
         const uri = obj.host + "/upload/play_data"
         const formData = new FormData()
+
         const scoreBlob = new Blob([score], { type: 'application/octet-stream' })
         const scorelogBlob = new Blob([scorelog], { type: 'application/octet-stream' })
         formData.append("score", scoreBlob)
@@ -211,7 +212,7 @@ export default class Api {
         return await fetch(uri, init).then(obj.handler).catch(obj.error)
     }
 
-    static async upload_song_data(token: string | null, arrayBuffer: Uint8Array) {
+    static async upload_song_data(token: string | null, arrayBuffer: ArrayBuffer) {
         const obj = new Api()
         const uri = obj.host + "/upload/song_data"
         const formData = new FormData()

@@ -36,9 +36,8 @@ const onPlayDataUploaded = (event: Event) => {
         const reader = new FileReader();
         reader.onload = (e: ProgressEvent<FileReader>) => {
           const arrayBuffer = e.target?.result
-          if (arrayBuffer) {
-            const uint8Array = new Uint8Array(arrayBuffer as ArrayBuffer);
-            score_db.value = uint8Array
+          if (arrayBuffer instanceof ArrayBuffer) {
+            score_db.value = arrayBuffer
           }
         };
         reader.onerror = (e: ProgressEvent<FileReader>) => {
@@ -50,9 +49,8 @@ const onPlayDataUploaded = (event: Event) => {
         const reader = new FileReader();
         reader.onload = (e: ProgressEvent<FileReader>) => {
           const arrayBuffer = e.target?.result
-          if (arrayBuffer) {
-            const uint8Array = new Uint8Array(arrayBuffer as ArrayBuffer);
-            score_log_db.value = uint8Array
+          if (arrayBuffer instanceof ArrayBuffer) {
+            score_log_db.value = arrayBuffer
           }
         };
         reader.onerror = (e: ProgressEvent<FileReader>) => {
@@ -73,9 +71,8 @@ const onSongDataUploaded = (event: Event) => {
         const reader = new FileReader();
         reader.onload = (e: ProgressEvent<FileReader>) => {
           const arrayBuffer = e.target?.result
-          if (arrayBuffer) {
-            const uint8Array = new Uint8Array(arrayBuffer as ArrayBuffer);
-            song_data_db.value = uint8Array
+          if (arrayBuffer instanceof ArrayBuffer) {
+            song_data_db.value = arrayBuffer
             song_data_message.value = ""
           }
         };
