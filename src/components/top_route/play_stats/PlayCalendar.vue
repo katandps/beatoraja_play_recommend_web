@@ -234,7 +234,9 @@ const selectDay = (day: any) => {
     since.setMinutes(since.getMinutes() + timeZoneOffset)
     until.setMinutes(until.getMinutes() + timeZoneOffset)
 
-    Api.fetch_score(since, until, 1, sessionStore.accessToken).then((s) => (scores.value = s))
+    if (sessionStore.userInfo) {
+        Api.fetch_score(since, until, sessionStore.userInfo.user_id, sessionStore.accessToken).then((s) => (scores.value = s))
+    }
 }
 
 // 選択された日の詳細表示用の日付フォーマット
