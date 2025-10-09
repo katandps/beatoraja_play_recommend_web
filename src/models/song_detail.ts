@@ -116,14 +116,16 @@ export default class SongDetail {
     this.rival_updated_at = new Date(score.updated_at)
   }
 
+  static make_clear_rank_index(total_notes: number, ex_score: number) {
+    const max = total_notes * 2
+    return config.RANK_RATE_BY_9.findIndex((v) => ~~((v * max + 8) / 9) <= ex_score)
+  }
+
   static make_clear_rank(total_notes: number, ex_score: number) {
     if (!total_notes) {
       return config.RANK_TYPE.slice(-1)[0]
     }
-    const max = total_notes * 2
-    return config.RANK_TYPE[
-      config.RANK_RATE_BY_9.findIndex((v) => ~~((v * max + 8) / 9) <= ex_score)
-    ]
+    return config.RANK_TYPE[this.make_clear_rank_index(total_notes, ex_score)]
   }
 
   static make_next_rank(total_notes: number, ex_score: number) {
@@ -257,12 +259,20 @@ export default class SongDetail {
         return level_list.indexOf(this.level)
       case "clear":
         return this.clear_type
+      case "clear_update":
+        if (this.get("clear_date") === this.get("date")) {
+          return this.clear_type * 10 + (this.clear_type_before - this.clear_type)
+        } else return this.clear_type
       case "title":
         return this.title.toLowerCase()
       case "rate":
         return this.score_rate()
       case "score_rank":
         return this.score_rate()
+      case "rank_update":
+        if (this.get("score_date") === this.get("date") && SongDetail.make_clear_rank(this.total_notes, this.score) !== SongDetail.make_clear_rank(this.total_notes, this.score_before)) {
+          return (10 - SongDetail.make_clear_rank_index(this.total_notes, this.score)) * 10 + (SongDetail.make_clear_rank_index(this.total_notes, this.score_before) - SongDetail.make_clear_rank_index(this.total_notes, this.score))
+        } else return this.score_rate() / 100.0
       case "detail_rank":
         return this.score_rate()
       case "accuracy":
