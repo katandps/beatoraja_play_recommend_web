@@ -1,6 +1,6 @@
 .table-wrapper {
     display: block;
-    width: 100%;
+    min-width: 100%;
     height: 80vh;
     overflow: scroll;
     -webkit-overflow-scrolling: touch;
@@ -73,7 +73,6 @@
 .score-table .title {
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 360px;
 }
 
 .score-table .date {

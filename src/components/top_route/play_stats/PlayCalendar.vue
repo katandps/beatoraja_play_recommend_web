@@ -11,6 +11,7 @@ import RowSong from "../score_viewer/cell/RowSong.vue"
 import RowHeader from "../score_viewer/cell/RowHeader.vue"
 import RowColGroup from "../score_viewer/cell/RowColGroup.vue"
 import { useFilterStore } from '@/store/filter';
+import html2canvas from 'html2canvas'
 
 const sessionStore = useLoginStore()
 const filterStore = useFilterStore()
@@ -18,7 +19,7 @@ const filterStore = useFilterStore()
 const columns = computed(() => {
     const columns = new Columns({})
     columns.for_recent()
-    columns.columns.play_count = false
+    columns.columns.play = false
     return columns
 })
 const song_modal = ref<ISongModal>()
@@ -270,10 +271,34 @@ const show_song_modal = async (song: SongDetail) => {
     song_modal.value?.showModal(song, selectedDay.value, score.log as Log[])
 }
 
+// 画像ダウンロード機能
+const downloadAsImage = async () => {
+    const element = document.getElementById('stats-download-area')
+    if (!element) return
+
+    try {
+        const canvas = await html2canvas(element, {
+            backgroundColor: '#ffffff',
+            scale: 2, // 高解像度
+            useCORS: true,
+            logging: false
+        })
+
+        const link = document.createElement('a')
+        link.download = `beatoraja-stats-${selectedDay.value?.dateString || 'unknown'}.png`
+        link.href = canvas.toDataURL('image/png')
+        link.click()
+    } catch (error) {
+        console.error('画像のダウンロードに失敗しました:', error)
+        alert('画像のダウンロードに失敗しました')
+    }
+}
+
 </script>
 
 <template>
     <div class="calendar-container">
+        <!-- カレンダー部分は変更なし -->
         <div class="calendar-header">
             <button @click="changeMonth(-1)" class="nav-button">‹</button>
             <h3 class="month-title">{{ currentYear }}年 {{ monthNames[currentMonth] }}</h3>
@@ -343,85 +368,99 @@ const show_song_modal = async (song: SongDetail) => {
         <div v-if="selectedDay" class="selected-day-details">
             <div class="details-header">
                 <h4>{{ formatSelectedDate(selectedDay.dateString) }}</h4>
-                <button @click="selectedDay = null" class="close-button">×</button>
+                <div class="header-buttons">
+                    <button @click="downloadAsImage" class="download-button" title="画像としてダウンロード">
+                        📷 ダウンロード
+                    </button>
+                    <button @click="selectedDay = null" class="close-button">×</button>
+                </div>
             </div>
 
-            <div v-if="selectedDay.playData">
-                <div class="details-content">
-                    <div class="stats-section">
-                        <h5>当日の実績</h5>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <span class="stat-label">プレイ数</span>
-                                <span class="stat-value">{{ selectedDay.playData.daily.play_count }}</span>
+            <!-- ダウンロード対象エリア（統計情報とスコア表を含める） -->
+            <div id="stats-download-area" class="download-area">
+                <div class="download-header">
+                    <h3>{{ formatSelectedDate(selectedDay.dateString) }} - プレイ統計</h3>
+                </div>
+
+                <div v-if="selectedDay.playData">
+                    <!-- 統計情報 -->
+                    <div class="details-content">
+                        <div class="stats-section">
+                            <h5>当日の実績</h5>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-label">プレイ数</span>
+                                    <span class="stat-value">{{ selectedDay.playData.daily.play_count }}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">クリア数</span>
+                                    <span class="stat-value">{{ selectedDay.playData.daily.clear_count }}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">ノーツ数</span>
+                                    <span class="stat-value">{{ selectedDay.playData.daily.notes_count.toLocaleString()
+                                        }}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">プレイ時間</span>
+                                    <span class="stat-value">{{ formatTime(selectedDay.playData.daily.play_time)
+                                        }}</span>
+                                </div>
                             </div>
-                            <div class="stat-item">
-                                <span class="stat-label">クリア数</span>
-                                <span class="stat-value">{{ selectedDay.playData.daily.clear_count }}</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">ノーツ数</span>
-                                <span class="stat-value">{{ selectedDay.playData.daily.notes_count.toLocaleString()
-                                    }}</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">プレイ時間</span>
-                                <span class="stat-value">{{ formatTime(selectedDay.playData.daily.play_time) }}</span>
+                        </div>
+
+                        <div class="stats-section">
+                            <h5>累計実績</h5>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-label">プレイ数</span>
+                                    <span class="stat-value">{{ selectedDay.playData.total.play_count.toLocaleString()
+                                        }}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">クリア数</span>
+                                    <span class="stat-value">{{ selectedDay.playData.total.clear_count.toLocaleString()
+                                        }}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">ノーツ数</span>
+                                    <span class="stat-value">{{ selectedDay.playData.total.notes_count.toLocaleString()
+                                        }}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">プレイ時間</span>
+                                    <span class="stat-value">{{ formatTime(selectedDay.playData.total.play_time)
+                                        }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="stats-section">
-                        <h5>累計実績</h5>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <span class="stat-label">プレイ数</span>
-                                <span class="stat-value">{{ selectedDay.playData.total.play_count.toLocaleString()
-                                    }}</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">クリア数</span>
-                                <span class="stat-value">{{ selectedDay.playData.total.clear_count.toLocaleString()
-                                    }}</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">ノーツ数</span>
-                                <span class="stat-value">{{ selectedDay.playData.total.notes_count.toLocaleString()
-                                    }}</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">プレイ時間</span>
-                                <span class="stat-value">{{ formatTime(selectedDay.playData.total.play_time) }}</span>
-                            </div>
+                </div>
+
+                <div v-else class="no-play-message">
+                    <p>この日はプレイしていません</p>
+                </div>
+
+                <div class="table-wrapper" v-if="selectedDay && scores && selectedDay.playData">
+                    <div class="score-table detail">
+                        <RowColGroup :columns="columns" />
+                        <RowHeader :columns="columns" />
+                        <div class="tbody">
+                            <RowSong v-for="song in sorted_song_list" :key="song.md5" :song="song" :columns="columns"
+                                :percentile="false" @showModal="show_song_modal" />
                         </div>
                     </div>
+                    <song-modal ref="song_modal" />
                 </div>
             </div>
-
-
-
-            <div v-else class="no-play-message">
-                <p>この日はプレイしていません</p>
-            </div>
-        </div>
-
-        <div class="table-wrapper" v-if="selectedDay && scores && selectedDay.playData">
-            <div class="score-table detail">
-                <RowColGroup :columns="columns" />
-                <RowHeader :columns="columns" />
-                <div class="tbody">
-                    <RowSong v-for="song in sorted_song_list" :key="song.md5" :song="song" :columns="columns"
-                        :percentile="false" @showModal="show_song_modal" />
-                </div>
-            </div>
-            <song-modal ref="song_modal" />
         </div>
     </div>
 </template>
 
 <style scoped>
 .calendar-container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -647,10 +686,262 @@ const show_song_modal = async (song: SongDetail) => {
     font-weight: bold;
 }
 
-@media (max-width: 768px) {
+.header-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.download-button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.download-button:hover {
+    background: #218838;
+}
+
+.download-area {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.download-header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 3px solid #007bff;
+    padding-bottom: 15px;
+}
+
+.download-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 24px;
+}
+
+.download-scores {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #e9ecef;
+}
+
+.download-scores h5 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 18px;
+}
+
+.simple-score-list {
+    display: grid;
+    gap: 8px;
+}
+
+.simple-score-item {
+    display: grid;
+    grid-template-columns: 30px 1fr auto auto;
+    gap: 15px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    align-items: center;
+}
+
+.score-rank {
+    font-weight: bold;
+    color: #6c757d;
+    text-align: right;
+}
+
+.score-title {
+    font-weight: 500;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.score-clear {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    background: #e9ecef;
+    color: #495057;
+}
+
+.score-value {
+    font-weight: bold;
+    color: #007bff;
+    text-align: right;
+    min-width: 80px;
+}
+
+.download-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+    text-align: center;
+}
+
+.download-footer p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.table-wrapper {
+    margin-top: 30px;
+}
+
+.table-wrapper h5 {
+    margin-bottom: 15px;
+    color: #495057;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+/* ダウンロード範囲内のテーブル用スタイル */
+.download-table-wrapper {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #e9ecef;
+}
+
+.download-table-wrapper h5 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 18px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+.download-score-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.download-score-table th,
+.download-score-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.download-score-table th {
+    background: #f8f9fa;
+    font-weight: bold;
+    color: #495057;
+    border-bottom: 2px solid #007bff;
+    font-size: 14px;
+}
+
+.download-score-table td {
+    font-size: 12px;
+    color: #333;
+}
+
+.download-score-table tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.download-score-table tr:hover {
+    background: #e9ecef;
+}
+
+.song-title {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.song-level {
+    text-align: center;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.song-score,
+.song-combo {
+    text-align: right;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.song-rank {
+    text-align: center;
+    font-weight: bold;
+}
+
+.song-clear {
+    text-align: center;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: #e9ecef;
+    color: #495057;
+}
+
+.song-bp {
+    text-align: center;
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* レスポンシブ対応（ダウンロード時は無効化） */
+@media screen and (max-width: 768px) {
     .details-content {
         grid-template-columns: 1fr;
         gap: 20px;
     }
+
+    .header-buttons {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+/* 印刷・ダウンロード用スタイル */
+@media print {
+    .download-area {
+        box-shadow: none;
+        border: none;
+        page-break-inside: avoid;
+    }
+
+    .download-score-table {
+        page-break-inside: auto;
+    }
+
+    .download-score-table tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+}
+
+/* ダウンロード画像用の調整 */
+.download-area .download-score-table {
+    font-size: 11px;
+}
+
+.download-area .download-score-table th,
+.download-area .download-score-table td {
+    padding: 6px 8px;
 }
 </style>
