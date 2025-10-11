@@ -6,7 +6,7 @@ import { useLoginStore } from "@/store/session"
 import SongModal, { ISongModal } from "@/components/top_route/score_viewer/modal/SongModal.vue"
 import Columns from '@/models/columns';
 import SongDetail, { Log } from '@/models/song_detail';
-import Tables, { CheckedTables } from '@/models/difficultyTable';
+import Tables from '@/models/difficultyTable';
 import RowSong from "../score_viewer/cell/RowSong.vue"
 import RowHeader from "../score_viewer/cell/RowHeader.vue"
 import RowColGroup from "../score_viewer/cell/RowColGroup.vue"
@@ -39,9 +39,7 @@ const filtered_score = computed(() => {
     for (let table_index = 0; table_index < tables.value.tables.length; table_index += 1) {
         const table = tables.value.tables[table_index]
         for (const level in table.levels) {
-            if (!CheckedTables.is_checked(filterStore.checked_tables, table_index, level)) {
-                continue;
-            }
+            // all difficulties are viewable 
             const hashes = table.levels[level]
             if (!hashes) {
                 continue
@@ -399,12 +397,12 @@ const downloadAsImage = async () => {
                                 <div class="stat-item">
                                     <span class="stat-label">ノーツ数</span>
                                     <span class="stat-value">{{ selectedDay.playData.daily.notes_count.toLocaleString()
-                                        }}</span>
+                                    }}</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-label">プレイ時間</span>
                                     <span class="stat-value">{{ formatTime(selectedDay.playData.daily.play_time)
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                         </div>
@@ -415,22 +413,22 @@ const downloadAsImage = async () => {
                                 <div class="stat-item">
                                     <span class="stat-label">プレイ数</span>
                                     <span class="stat-value">{{ selectedDay.playData.total.play_count.toLocaleString()
-                                        }}</span>
+                                    }}</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-label">クリア数</span>
                                     <span class="stat-value">{{ selectedDay.playData.total.clear_count.toLocaleString()
-                                        }}</span>
+                                    }}</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-label">ノーツ数</span>
                                     <span class="stat-value">{{ selectedDay.playData.total.notes_count.toLocaleString()
-                                        }}</span>
+                                    }}</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-label">プレイ時間</span>
                                     <span class="stat-value">{{ formatTime(selectedDay.playData.total.play_time)
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                         </div>
