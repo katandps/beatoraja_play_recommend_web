@@ -292,13 +292,17 @@ export default class SongDetail {
       case "score_date":
         return this.score_updated_at
       case "score_update":
+        if (this.get("score_date") === this.get("date")) return this.score * 10000
         return this.score
       case "bp_date":
         return this.min_bp_updated_at
       case "bp_before":
         return this.min_bp_before
       case "bp_update":
-        return this.min_bp
+        if (this.get("bp_date") === this.get("date")) {
+          if (this.min_bp === -1) return 0
+          else return this.min_bp * 10000
+        } else return this.min_bp
       case "clear_date":
         return this.clear_updated_at
       case "clear_before":
