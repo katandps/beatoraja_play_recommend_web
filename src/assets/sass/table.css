@@ -1,6 +1,8 @@
 .table-wrapper {
     display: block;
     min-width: 100%;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
 }
 
 .score-table {
