@@ -279,7 +279,12 @@ const downloadAsImage = async () => {
             backgroundColor: '#ffffff',
             scale: 2, // 高解像度
             useCORS: true,
-            logging: false
+            logging: false,
+            width: 1000, // 固定幅を指定 (px)
+            windowWidth: 1160, // レンダリング時の仮想ウィンドウ幅
+            ignoreElements: (element) => {
+                return element.classList.contains('download-ignore')
+            }
         })
 
         const link = document.createElement('a')
@@ -363,10 +368,10 @@ const downloadAsImage = async () => {
         </div>
 
         <!-- 選択された日の詳細表示 -->
-        <div v-if="selectedDay" class="selected-day-details">
+        <div v-if="selectedDay" id="stats-download-area" class="download-area selected-day-details">
             <div class="details-header">
                 <h4>{{ formatSelectedDate(selectedDay.dateString) }}</h4>
-                <div class="header-buttons">
+                <div class="header-buttons download-ignore">
                     <button @click="downloadAsImage" class="download-button" title="画像としてダウンロード">
                         📷 ダウンロード
                     </button>
@@ -374,85 +379,78 @@ const downloadAsImage = async () => {
                 </div>
             </div>
 
-            <!-- ダウンロード対象エリア（統計情報とスコア表を含める） -->
-            <div id="stats-download-area" class="download-area">
-                <div class="download-header">
-                    <h3>{{ formatSelectedDate(selectedDay.dateString) }} - プレイ統計</h3>
-                </div>
-
-                <div v-if="selectedDay.playData">
-                    <!-- 統計情報 -->
-                    <div class="details-content">
-                        <div class="stats-section">
-                            <h5>当日の実績</h5>
-                            <div class="stats-grid">
-                                <div class="stat-item">
-                                    <span class="stat-label">プレイ数</span>
-                                    <span class="stat-value">{{ selectedDay.playData.daily.play_count }}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">クリア数</span>
-                                    <span class="stat-value">{{ selectedDay.playData.daily.clear_count }}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">ノーツ数</span>
-                                    <span class="stat-value">{{ selectedDay.playData.daily.notes_count.toLocaleString()
-                                    }}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">プレイ時間</span>
-                                    <span class="stat-value">{{ formatTime(selectedDay.playData.daily.play_time)
-                                    }}</span>
-                                </div>
+            <div v-if="selectedDay.playData">
+                <!-- 統計情報 -->
+                <div class="details-content">
+                    <div class="stats-section">
+                        <h5>当日の実績</h5>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">プレイ数</span>
+                                <span class="stat-value">{{ selectedDay.playData.daily.play_count }}</span>
                             </div>
-                        </div>
-
-                        <div class="stats-section">
-                            <h5>累計実績</h5>
-                            <div class="stats-grid">
-                                <div class="stat-item">
-                                    <span class="stat-label">プレイ数</span>
-                                    <span class="stat-value">{{ selectedDay.playData.total.play_count.toLocaleString()
+                            <div class="stat-item">
+                                <span class="stat-label">クリア数</span>
+                                <span class="stat-value">{{ selectedDay.playData.daily.clear_count }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">ノーツ数</span>
+                                <span class="stat-value">{{ selectedDay.playData.daily.notes_count.toLocaleString()
                                     }}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">クリア数</span>
-                                    <span class="stat-value">{{ selectedDay.playData.total.clear_count.toLocaleString()
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">プレイ時間</span>
+                                <span class="stat-value">{{ formatTime(selectedDay.playData.daily.play_time)
                                     }}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">ノーツ数</span>
-                                    <span class="stat-value">{{ selectedDay.playData.total.notes_count.toLocaleString()
-                                    }}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">プレイ時間</span>
-                                    <span class="stat-value">{{ formatTime(selectedDay.playData.total.play_time)
-                                    }}</span>
-                                </div>
                             </div>
                         </div>
                     </div>
 
-                </div>
-
-                <div v-else class="no-play-message">
-                    <p>この日はプレイしていません</p>
-                </div>
-
-                <div class="table-wrapper" v-if="selectedDay && scores && selectedDay.playData">
-                    <div class="score-table detail">
-                        <RowColGroup :columns="columns" />
-                        <RowHeader :columns="columns" />
-                        <div class="tbody">
-                            <RowSong v-for="song in sorted_song_list" :key="song.md5" :song="song" :columns="columns"
-                                :percentile="false" @showModal="show_song_modal" />
+                    <div class="stats-section">
+                        <h5>累計実績</h5>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">プレイ数</span>
+                                <span class="stat-value">{{ selectedDay.playData.total.play_count.toLocaleString()
+                                    }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">クリア数</span>
+                                <span class="stat-value">{{ selectedDay.playData.total.clear_count.toLocaleString()
+                                    }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">ノーツ数</span>
+                                <span class="stat-value">{{ selectedDay.playData.total.notes_count.toLocaleString()
+                                    }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">プレイ時間</span>
+                                <span class="stat-value">{{ formatTime(selectedDay.playData.total.play_time)
+                                    }}</span>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div v-else class="no-play-message">
+                <p>この日はプレイしていません</p>
+            </div>
+
+            <div class="table-wrapper" v-if="selectedDay && scores && selectedDay.playData">
+                <div class="score-table detail">
+                    <RowColGroup :columns="columns" />
+                    <RowHeader :columns="columns" />
+                    <div class="tbody">
+                        <RowSong v-for="song in sorted_song_list" :key="song.md5" :song="song" :columns="columns"
+                            :percentile="false" @showModal="show_song_modal" />
                     </div>
                 </div>
             </div>
-            <song-modal ref="song_modal" />
         </div>
+        <song-modal ref="song_modal" />
     </div>
 </template>
 
@@ -714,19 +712,6 @@ const downloadAsImage = async () => {
     margin: 10px 0;
 }
 
-.download-header {
-    text-align: center;
-    margin-bottom: 30px;
-    border-bottom: 3px solid #007bff;
-    padding-bottom: 15px;
-}
-
-.download-header h3 {
-    margin: 0;
-    color: #333;
-    font-size: 24px;
-}
-
 .download-scores {
     margin-top: 30px;
     padding-top: 20px;
@@ -913,33 +898,5 @@ const downloadAsImage = async () => {
         flex-direction: column;
         gap: 5px;
     }
-}
-
-/* 印刷・ダウンロード用スタイル */
-@media print {
-    .download-area {
-        box-shadow: none;
-        border: none;
-        page-break-inside: avoid;
-    }
-
-    .download-score-table {
-        page-break-inside: auto;
-    }
-
-    .download-score-table tr {
-        page-break-inside: avoid;
-        page-break-after: auto;
-    }
-}
-
-/* ダウンロード画像用の調整 */
-.download-area .download-score-table {
-    font-size: 11px;
-}
-
-.download-area .download-score-table th,
-.download-area .download-score-table td {
-    padding: 6px 8px;
 }
 </style>
