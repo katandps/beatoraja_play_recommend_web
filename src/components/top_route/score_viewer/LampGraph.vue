@@ -4,7 +4,9 @@ import SongDetail from "../../../models/song_detail"
 import GraphModalVue, { IGraphModal } from "./modal/GraphModal.vue"
 import { ref, computed } from "vue"
 import Tables, { CheckedTables } from "@/models/difficultyTable"
+import { useFilterStore } from "@/store/filter"
 
+const filterStore = useFilterStore()
 interface Props {
   filtered_score: SongDetail[]
   tables: Tables
@@ -50,7 +52,11 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
         <td class="progress" style="width: 100%; height: 1.8em">
           <div v-for="clear_type in config.LAMP_TYPE" :key="clear_type" :class="'progress-bar bg-' + clear_type"
             role="progressbar" style="color: #000000" :style="'width: ' + 100.0 / config.LAMP_TYPE.length + '%'">
-            {{ clear_type }}
+            <span>{{ clear_type }}
+              <font-awesome-icon :icon="['fas', 'circle-exclamation']"
+                v-if="!filterStore.filter.visible_lamp.visible(clear_type)" v-tooltip="'非表示中です'" />
+            </span>
+
           </div>
         </td>
       </tr>
@@ -64,16 +70,15 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
             <td style="width: 30px">{{ level }}</td>
             <td class="progress" style="width: 100%; height: 1.8em">
               <div v-for="lamp_index in config.LAMP_GRAPH_LIST" :key="config.LAMP_INDEX[lamp_index]"
-                :class="'progress-bar bg-' + config.LAMP_INDEX[lamp_index]" role="progressbar" :style="
-                  'width: ' +
+                :class="'progress-bar bg-' + config.LAMP_INDEX[lamp_index]" role="progressbar" :style="'width: ' +
                   lamp_list[table_index][level_index][lamp_index].length * 100 +
                   '%;color:#000'
-                " v-on:click="
-  showModal(
-    level + ' ' + config.LAMP_INDEX[lamp_index],
-    list(table_index, level_index, lamp_index)
-  )
-">
+                  " v-on:click="
+                    showModal(
+                      level + ' ' + config.LAMP_INDEX[lamp_index],
+                      list(table_index, level_index, lamp_index)
+                    )
+                    ">
                 {{ lamp_list[table_index][level_index][lamp_index].length }}
               </div>
             </td>

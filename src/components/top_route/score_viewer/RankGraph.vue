@@ -4,6 +4,9 @@ import SongDetail from "../../../models/song_detail"
 import { computed, ref } from "vue"
 import Tables, { CheckedTables } from "@/models/difficultyTable"
 import GraphModalVue, { IGraphModal } from "./modal/GraphModal.vue"
+import { useFilterStore } from "@/store/filter"
+
+const filterStore = useFilterStore()
 
 interface Props {
   filtered_score: SongDetail[]
@@ -48,7 +51,10 @@ const list = (table_index: number, level_index: number, rank_index: number) =>
         <td class="progress" style="width: 100%; height: 1.8em">
           <div v-for="rank in config.RANK_TYPE" :key="rank" :class="'progress-bar bg-' + rank" role="progressbar"
             style="color: #000" :style="'width: ' + 100.0 / config.RANK_TYPE.length + '%'">
-            {{ rank }}
+            <span>{{ rank }}
+              <font-awesome-icon :icon="['fas', 'circle-exclamation']"
+                v-if="!filterStore.filter.visible_rank.ranks[rank]" v-tooltip="'非表示中です'" />
+            </span>
           </div>
         </td>
       </tr>
@@ -62,16 +68,15 @@ const list = (table_index: number, level_index: number, rank_index: number) =>
             <td style="width: 30px">{{ level }}</td>
             <td class="progress" style="width: 100%; height: 1.8em">
               <div v-for="(rank, rank_index) in config.RANK_TYPE" :key="rank" :class="'progress-bar bg-' + rank"
-                role="progressbar" :style="
-                  'width: ' +
+                role="progressbar" :style="'width: ' +
                   rank_list[table_index][level_index][rank_index].length * 100 +
                   '%;color:#000'
-                " v-on:click="
-  showModal(
-    level + ' ' + rank,
-    list(table_index, level_index, rank_index)
-  )
-">
+                  " v-on:click="
+                    showModal(
+                      level + ' ' + rank,
+                      list(table_index, level_index, rank_index)
+                    )
+                    ">
                 {{ rank_list[table_index][level_index][rank_index].length }}
               </div>
             </td>

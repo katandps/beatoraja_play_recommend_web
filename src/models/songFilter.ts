@@ -267,6 +267,11 @@ class VisibleLamp {
     }
   }
 
+  visible(lamp: string) {
+    const i = config.LAMP_INDEX.indexOf(lamp)
+    return this.lamps[i]
+  }
+
   to_all() {
     for (let i = 0; i < config.LAMP_TYPE.length; i += 1) {
       this.lamps[i] = true

@@ -35,7 +35,8 @@ import {
   faPlus,
   faLongArrowAltRight,
   faSquare,
-  faXmark
+  faXmark,
+  faCircleExclamation
 } from "@fortawesome/free-solid-svg-icons"
 library.add(
   faHome,
@@ -57,7 +58,8 @@ library.add(
   faPlus,
   faLongArrowAltRight,
   faSquare,
-  faXmark
+  faXmark,
+  faCircleExclamation
 )
 import { faTwitterSquare } from "@fortawesome/free-brands-svg-icons"
 library.add(faTwitterSquare)
