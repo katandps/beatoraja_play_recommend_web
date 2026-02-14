@@ -83,7 +83,7 @@ export class CheckedTables {
 
   static table_is_active(checks: CheckedTables, table_index: number): boolean {
     if (!checks.tables[table_index]) { return false }
-    return checks.tables[table_index].checks.length > 0
+    return !CheckedLevels.is_empty(checks.tables[table_index])
   }
 
   static is_checked(checks: CheckedTables, table_index: number, level: string): boolean {
@@ -100,7 +100,7 @@ export class CheckedTables {
 }
 
 export class CheckedLevels {
-  checks: string[] = []
+  private checks: string[] = []
 
   static all_checked(checks: CheckedLevels, table: DifficultyTable): boolean {
     return table.level_list.length === checks.checks.length
