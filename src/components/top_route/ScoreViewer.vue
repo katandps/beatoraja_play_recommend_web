@@ -244,33 +244,6 @@ const setRivalId = async (input_rival_id: number, d: Date) => {
         <h3 v-if="exists_rival_score">ライバル表示: {{ rival_score.name }}</h3>
       </div>
       <div>
-        <div class="form-group row">
-          <div class="col-sm-12">
-            <router-link :to="{ path: '/view/lamp', query: route.query }">
-              <div class="btn btn-outline-secondary col-sm-3 text-nowrap">
-                クリアランプ
-              </div>
-            </router-link>
-            <router-link :to="{ path: '/view/rank', query: route.query }">
-              <div class="btn btn-outline-secondary col-sm-3 text-nowrap">
-                スコアランク
-              </div>
-            </router-link>
-            <router-link :to="{ path: '/view/stat', query: route.query }">
-              <div class="btn btn-outline-secondary col-sm-3 text-nowrap">
-                統計
-                <font-awesome-icon :icon="['fas', 'wrench']" />
-              </div>
-            </router-link>
-            <router-link :to="{ path: '/view/', query: route.query }">
-              <div class="btn btn-outline-secondary col-sm-3 text-nowrap">
-                リスト表示
-              </div>
-            </router-link>
-          </div>
-        </div>
-
-        <hr />
         <template v-if="mode === 'detail'">
           <TheDetailVue :sorted_song_list="sorted_song_list" :user_id="user_id" :date="date_str"
             :filter="filterStore.filter" />

@@ -62,13 +62,42 @@ router.afterEach(() => active_btn.value = false)
               ホーム
             </router-link>
           </li>
+        </ul>
+        <ul>
           <li>
             <router-link class="text-dark px-2" :to="{
               path: '/view',
               query: Object.assign({}, $route.query, { user_id: user_id })
             }">
               <font-awesome-icon :icon="['fas', 'cubes']" />
-              スコア閲覧
+              スコアデータ閲覧
+            </router-link>
+          </li>
+          <li>
+            <router-link class="text-dark px-2" :to="{
+              path: '/view/lamp',
+              query: Object.assign({}, $route.query, { user_id: user_id })
+            }">
+              <font-awesome-icon :icon="['fas', 'lightbulb']" />
+              クリアランプ表
+            </router-link>
+          </li>
+          <li>
+            <router-link class="text-dark px-2" :to="{
+              path: '/view/rank',
+              query: Object.assign({}, $route.query, { user_id: user_id })
+            }">
+              <font-awesome-icon :icon="['fas', 'chart-bar']" />
+              スコアランク表
+            </router-link>
+          </li>
+          <li>
+            <router-link class="text-dark px-2" :to="{
+              path: '/view/stat',
+              query: Object.assign({}, $route.query, { user_id: user_id })
+            }">
+              <font-awesome-icon :icon="['fas', 'wrench']" />
+              統計
             </router-link>
           </li>
         </ul>

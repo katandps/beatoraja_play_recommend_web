@@ -65,10 +65,46 @@ const handleSignOut = async () => {
             query: Object.assign({}, $route.query, { user_id: user_id })
           }">
             <font-awesome-icon :icon="['fas', 'cubes']" />
-            スコア閲覧
+            スコアデータ閲覧
           </router-link>
         </h4>
         ユーザIDを指定して<br />スコアを閲覧できます。
+      </div>
+      <div class="col-lg-3 panel">
+        <h4>
+          <router-link class="text-dark px-2" :to="{
+            path: '/view/lamp',
+            query: Object.assign({}, $route.query, { user_id: user_id })
+          }">
+            <font-awesome-icon :icon="['fas', 'lightbulb']" />
+            クリアランプ表
+          </router-link>
+        </h4>
+        クリアランプ状況の一覧を<br />グラフで確認できます。
+      </div>
+      <div class="col-lg-3 panel">
+        <h4>
+          <router-link class="text-dark px-2" :to="{
+            path: '/view/rank',
+            query: Object.assign({}, $route.query, { user_id: user_id })
+          }">
+            <font-awesome-icon :icon="['fas', 'chart-bar']" />
+            スコアランク表
+          </router-link>
+        </h4>
+        スコアランク状況の一覧を<br />グラフで確認できます。
+      </div>
+      <div class="col-lg-3 panel">
+        <h4>
+          <router-link class="text-dark px-2" :to="{
+            path: '/view/stat',
+            query: Object.assign({}, $route.query, { user_id: user_id })
+          }">
+            <font-awesome-icon :icon="['fas', 'wrench']" />
+            統計
+          </router-link>
+        </h4>
+        統計をまとめて<br />確認できます。
       </div>
       <div class="col-lg-3 panel" v-if="is_login">
         <h4>
