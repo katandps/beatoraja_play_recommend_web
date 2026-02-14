@@ -1,5 +1,5 @@
 import Columns from '@/models/columns'
-import { CheckedTables } from '@/models/difficultyTable'
+import { ActivatedTables } from '@/models/difficultyTable'
 import SongFilter from '@/models/songFilter'
 import { defineStore } from 'pinia'
 
@@ -14,7 +14,7 @@ export const useFilterStore = defineStore(
         },
         state: () => ({
             filter: new SongFilter(null),
-            checked_tables: new CheckedTables()
+            checked_tables: new ActivatedTables()
         }),
         actions: {
             setSort(column_name: string) {
@@ -26,7 +26,7 @@ export const useFilterStore = defineStore(
             setLength(length: number) {
                 this.filter.max_length = length || 1
             },
-            setCheckedTables(checks: CheckedTables) {
+            setCheckedTables(checks: ActivatedTables) {
                 this.checked_tables = checks
             }
         }

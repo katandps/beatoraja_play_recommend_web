@@ -1,46 +1,31 @@
 <script setup lang="ts">
-import { CheckedLevels, DifficultyTable } from "@/models/difficultyTable"
-import { computed } from "vue"
+import { ActivatedLevels, DifficultyTable } from "@/models/difficultyTable"
 
 // --- props ---
 interface Props {
   table: DifficultyTable
-  checks: CheckedLevels
-  index: number
+  checks: ActivatedLevels
 }
 const props = defineProps<Props>()
 
-const emits = defineEmits(["setLevel"])
-
-// --- data ---
-
-// --- computed ---
-const all_checked = computed({
-  get: () => CheckedLevels.all_checked(props.checks, props.table),
-  set: (): string[] =>
-    (check_accessor.value = all_checked.value ? [] : props.table.level_list)
-})
-
-const check_accessor = computed({
-  get: () => props.checks.checks,
-  set: (item) => {
-    emits("setLevel", item, props.index)
-  }
-})
 </script>
 
 <template>
   <div>
     <slot name="header">
       <h3>
-        <input type="checkbox" :id="'all_' + index" v-model="all_checked" />
-        <label :for="'all_' + index">{{ table.name }}</label>
+        <input type="checkbox" :id="'all_' + table.id" :checked="ActivatedLevels.is_all_active(props.checks)"
+          @change="ActivatedLevels.check_all(props.checks, props.table)" />
+        <label :for="'all_' + table.id">{{ table.name }}</label>
       </h3>
     </slot>
     <slot name="list">
-      <div class="btn" v-for="item in table.level_list" :key="item">
-        <input type="checkbox" :id="index + '_' + item" v-model="check_accessor" :value="item" />
-        <label :for="index + '_' + item">{{ item }}</label>
+      <div class="btn" v-for="level_label in table.level_list" :key="level_label">
+        <input type="checkbox" :id="table.id + '_' + level_label"
+          :checked="ActivatedLevels.is_active(props.checks, level_label)"
+          @change="ActivatedLevels.change_active(props.checks, level_label)" />
+        <label :for="table.id + '_' + level_label">{{ level_label }}</label>
+
       </div>
     </slot>
   </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Tables, { CheckedTables } from "../../models/difficultyTable"
+import Tables, { ActivatedTables } from "../../models/difficultyTable"
 import Api from "../../api"
 import { debug } from "loglevel"
 import { computed, onMounted, ref } from "vue"
@@ -82,7 +82,7 @@ const twitter_link = computed(() =>
     : ""
 )
 
-const level_is_empty = computed(() => CheckedTables.is_empty(filterStore.checked_tables, tables.value));
+const level_is_empty = computed(() => !ActivatedTables.contains_active(filterStore.checked_tables, tables.value));
 
 const filtered_score = computed(() => {
   if (!is_initialized.value) {
@@ -93,7 +93,7 @@ const filtered_score = computed(() => {
   for (let table_index = 0; table_index < tables.value.tables.length; table_index += 1) {
     const table = tables.value.tables[table_index]
     for (const level in table.levels) {
-      if (!CheckedTables.is_checked(filterStore.checked_tables, table_index, level)) {
+      if (!ActivatedTables.is_active(filterStore.checked_tables, table, level)) {
         continue;
       }
       const hashes = table.levels[level]
@@ -152,9 +152,6 @@ const setRival = (rival_id: number) => {
     rival_score.value = null
     loaded.value.rival_id = 0
   }
-}
-const setLevel = (levels: string[], index: number) => {
-  filterStore.checked_tables.tables[index].checks = levels
 }
 
 const fetchDetail = (user_id: number) => {
@@ -263,7 +260,7 @@ const setRivalId = async (input_rival_id: number, d: Date) => {
     </div>
     <p v-else>{{ message }}</p>
     <ModalUserSelect ref="user_modal" :user_id="user_id" @setUser="setUserId" />
-    <ModalForSelectTable ref="tables_modal" :tables="tables" :checks="filterStore.checked_tables" @setLevel="setLevel"
+    <ModalForSelectTable ref="tables_modal" :tables="tables" :checks="filterStore.checked_tables"
       v-if="exists_tables" />
     <ModalUserSelect ref="rival_modal" :user_id="rival_id" @setUser="setRivalId" :rival_mode="true" />
     <FilterModal ref="filter_modal" :rival_mode="exists_rival_score" />

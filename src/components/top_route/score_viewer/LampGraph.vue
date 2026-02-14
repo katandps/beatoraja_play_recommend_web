@@ -3,14 +3,14 @@ import config from "../../../const"
 import SongDetail from "../../../models/song_detail"
 import GraphModalVue, { IGraphModal } from "./modal/GraphModal.vue"
 import { ref, computed } from "vue"
-import Tables, { CheckedTables } from "@/models/difficultyTable"
+import Tables, { ActivatedTables } from "@/models/difficultyTable"
 import { useFilterStore } from "@/store/filter"
 
 const filterStore = useFilterStore()
 interface Props {
   filtered_score: SongDetail[]
   tables: Tables
-  checks: CheckedTables
+  checks: ActivatedTables
 }
 const props = defineProps<Props>()
 
@@ -29,9 +29,7 @@ const lamp_list = computed(() =>
     )
   )
 )
-const active_tables = computed(() =>
-  props.tables.tables.filter((t, i) => CheckedTables.table_is_active(props.checks, i)
-  ))
+const active_tables = computed(() => ActivatedTables.filter_active_tables(props.checks, props.tables))
 
 // --- methods ---
 const showModal = (title: string, text: string[]) =>

@@ -58,59 +58,115 @@ export class DifficultyTable {
   }
 }
 
-export class CheckedTables {
-  tables: { [index: number]: CheckedLevels } = {}
-  static all_checked(checks: CheckedTables, tables: Tables): boolean {
+export class ActivatedTables {
+  inactive: { [index: number]: ActivatedLevels } = {}
+
+  static initialize(activated: ActivatedTables): void {
+    for (const key in activated.inactive) {
+      ActivatedLevels.initialize(activated.inactive[key])
+    }
+  }
+
+  static check_all(activated: ActivatedTables, tables: Tables): void {
+    if (!ActivatedTables.is_all_active(activated, tables)) {
+      ActivatedTables.initialize(activated)
+    } else {
+      for (let index = 0; index < tables.tables.length; index++) {
+        const levels = ActivatedTables.get(activated, tables.tables[index])
+        ActivatedLevels.check_all(levels, tables.tables[index])
+      }
+    }
+  }
+
+  static is_all_active(activated: ActivatedTables, tables: Tables): boolean {
     for (let index = 0; index < tables.tables.length; index++) {
-      const table = tables.tables[index]
-      const levels = CheckedTables.get(checks, index)
-      if (!CheckedLevels.all_checked(levels, table)) {
+      const levels = ActivatedTables.get(activated, tables.tables[index])
+      if (!ActivatedLevels.is_all_active(levels)) {
         return false
       }
     }
     return true
   }
 
-  static is_empty(checks: CheckedTables, tables: Tables): boolean {
+  static contains_active(activated: ActivatedTables, tables: Tables): boolean {
     for (let index = 0; index < tables.tables.length; index++) {
-      const levels = CheckedTables.get(checks, index)
-      if (!CheckedLevels.is_empty(levels)) {
-        return false
+      const levels = ActivatedTables.get(activated, tables.tables[index])
+      if (ActivatedLevels.contains_active(levels, tables.tables[index])) {
+        return true
       }
     }
-    return true
+    return false
   }
 
-  static table_is_active(checks: CheckedTables, table_index: number): boolean {
-    if (!checks.tables[table_index]) { return false }
-    return !CheckedLevels.is_empty(checks.tables[table_index])
+  static table_is_active(activated: ActivatedTables, table: DifficultyTable): boolean {
+    return ActivatedLevels.contains_active(ActivatedTables.get(activated, table), table)
   }
 
-  static is_checked(checks: CheckedTables, table_index: number, level: string): boolean {
-    if (!checks.tables[table_index]) { return false }
-    return CheckedLevels.is_checked(checks.tables[table_index], level)
+  static is_active(activated: ActivatedTables, table: DifficultyTable, level: string): boolean {
+    return ActivatedLevels.is_active(ActivatedTables.get(activated, table), level)
   }
 
-  static get(checks: CheckedTables, index: number): CheckedLevels {
-    if (!checks.tables[index]) {
-      checks.tables[index] = new CheckedLevels()
+  static get(activated: ActivatedTables, table: DifficultyTable): ActivatedLevels {
+    if (!activated.inactive[table.id]) {
+      activated.inactive[table.id] = new ActivatedLevels()
     }
-    return checks.tables[index]
+    return activated.inactive[table.id]
+  }
+
+  static filter_active_tables(checks: ActivatedTables, tables: Tables): DifficultyTable[] {
+    return tables.tables.filter(t => ActivatedTables.table_is_active(checks, t))
   }
 }
 
-export class CheckedLevels {
-  private checks: string[] = []
+export class ActivatedLevels {
+  private inactive: string[] = [] // unchecked level names
 
-  static all_checked(checks: CheckedLevels, table: DifficultyTable): boolean {
-    return table.level_list.length === checks.checks.length
+  static initialize(activated: ActivatedLevels): void {
+    activated.inactive = []
   }
 
-  static is_checked(checks: CheckedLevels, level: string): boolean {
-    return checks.checks.indexOf(level) >= 0
+  static checked_levels(checks: ActivatedLevels, table: DifficultyTable): string[] {
+    const ret: string[] = []
+    for (const level of table.level_list) {
+      if (!ActivatedLevels.is_active(checks, level)) {
+        ret.push(level)
+      }
+    }
+    return ret
   }
 
-  static is_empty(checks: CheckedLevels): boolean {
-    return checks.checks.length === 0
+  static is_all_active(checks: ActivatedLevels): boolean {
+    return checks.inactive.length === 0
+  }
+
+  static is_active(checks: ActivatedLevels, level: string): boolean {
+    return checks.inactive.indexOf(level) === -1
+  }
+
+  static change_active(checks: ActivatedLevels, level: string): void {
+    if (ActivatedLevels.is_active(checks, level)) {
+      ActivatedLevels.check(checks, level)
+    } else {
+      const index = checks.inactive.indexOf(level)
+      if (index !== -1) {
+        checks.inactive.splice(index, 1)
+      }
+    }
+  }
+
+  static contains_active(checks: ActivatedLevels, table: DifficultyTable): boolean {
+    return checks.inactive.length < table.level_list.length
+  }
+
+  static check_all(checks: ActivatedLevels, table: DifficultyTable): void {
+    if (ActivatedLevels.is_all_active(checks)) {
+      table.level_list.forEach(level => ActivatedLevels.check(checks, level))
+    } else {
+      ActivatedLevels.initialize(checks)
+    }
+  }
+
+  static check(checks: ActivatedLevels, level: string): void {
+    checks.inactive.push(level)
   }
 }
