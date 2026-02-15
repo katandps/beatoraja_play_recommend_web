@@ -14,7 +14,9 @@ app.use(pinia)
 /**
  * FontAwesomeの登録
  */
-import { library, dom } from "@fortawesome/fontawesome-svg-core"
+import { config, library, dom } from "@fortawesome/fontawesome-svg-core"
+import "@fortawesome/fontawesome-svg-core/styles.css"
+config.autoAddCss = false
 import {
   faHome,
   faCubes,
@@ -38,7 +40,8 @@ import {
   faXmark,
   faCircleExclamation,
   faLightbulb,
-  faChartBar
+  faChartBar,
+  faTable
 } from "@fortawesome/free-solid-svg-icons"
 library.add(
   faHome,
@@ -63,7 +66,8 @@ library.add(
   faXmark,
   faCircleExclamation,
   faLightbulb,
-  faChartBar
+  faChartBar,
+  faTable
 )
 import { faTwitterSquare } from "@fortawesome/free-brands-svg-icons"
 library.add(faTwitterSquare)

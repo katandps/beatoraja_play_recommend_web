@@ -121,6 +121,12 @@ router.afterEach(() => active_btn.value = false)
             </router-link>
           </li>
           <li>
+            <router-link class="text-dark px-2" to="/table-user">
+              <font-awesome-icon :icon="['fas', 'table']" />
+              難易度表データ
+            </router-link>
+          </li>
+          <li>
             <a class="text-dark px-3" href="javascript:void(0);" @click.prevent="handleSignOut">
               <font-awesome-icon :icon="['fas', 'sign-out-alt']" />
               ログアウト
