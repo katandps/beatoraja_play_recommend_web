@@ -174,6 +174,7 @@ const summaryCards = computed(() => {
   const cleared = tableSongs.value.filter((s) => s.clear_type !== 0)
   const scoreEffortRaw = cleared.reduce((sum, s) => sum + clampRate(s.score_rate()), 0)
   const scoreEffort = formatEffort(scoreEffortRaw)
+  const scoreEffortMax = Math.round(total * 100).toLocaleString()
   const clearEffortValue = (() => {
     if (total === 0) {
       return 0
@@ -183,16 +184,25 @@ const summaryCards = computed(() => {
       return 0
     }
     const totalScore = valid.reduce((sum, s) => {
-      const base = Math.max(0, (s.total_notes - s.min_bp * 2.5) / s.total_notes)
-      return sum + 100 * (base ** 3)
+      const base = Math.max(0, (s.total_notes - s.min_bp * 3) / s.total_notes)
+      return sum + 100 * (base ** 2)
     }, 0)
     return Math.max(0, totalScore)
   })()
   const clearEffort = formatEffort(clearEffortValue)
+  const clearEffortMax = Math.round(total * 100).toLocaleString()
   return [
     { label: "総譜面数", value: total.toLocaleString() },
-    { label: "スコア頑張り度", value: scoreEffort },
-    { label: "クリア頑張り度", value: clearEffort }
+    {
+      label: "スコア頑張り度",
+      value: scoreEffort,
+      tooltip: `満点 ${scoreEffortMax} | 計算式: スコアレートの合計`
+    },
+    {
+      label: "クリア頑張り度",
+      value: clearEffort,
+      tooltip: `満点 ${clearEffortMax} | 計算式: 100*((ノート数-ミス数*3)/ノート数)^2、0未満は0`
+    }
   ]
 })
 
@@ -224,8 +234,8 @@ const clearEffortByLevel = computed(() => {
     if (s.clear_type === 0 || s.total_notes <= 0 || s.min_bp < 0) {
       return
     }
-    const base = Math.max(0, (s.total_notes - s.min_bp * 2.5) / s.total_notes)
-    const value = 100 * (base ** 3)
+    const base = Math.max(0, (s.total_notes - s.min_bp * 3) / s.total_notes)
+    const value = 100 * (base ** 2)
     map[s.level] = (map[s.level] || 0) + value
   })
   return map
@@ -654,7 +664,8 @@ watch([searchText, lampFilter, selectedTableId], () => {
     </div>
 
     <section class="summary-grid">
-      <div v-for="card in summaryCards" :key="card.label" class="summary-card">
+      <div v-for="card in summaryCards" :key="card.label" class="summary-card"
+        v-tooltip="card.tooltip ? { content: card.tooltip, delay: { show: 0, hide: 0 } } : undefined">
         <div class="summary-label">{{ card.label }}</div>
         <div class="summary-value">{{ card.value }}</div>
       </div>
