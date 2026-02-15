@@ -179,7 +179,7 @@ const summaryCards = computed(() => {
       return 0
     }
     const totalScore = valid.reduce((sum, s) => {
-      const base = Math.max(0, (s.total_notes - s.min_bp * 5) / s.total_notes)
+      const base = Math.max(0, (s.total_notes - s.min_bp * 2.5) / s.total_notes)
       return sum + 100 * (base ** 3)
     }, 0)
     return Math.max(0, totalScore)
@@ -203,15 +203,37 @@ const scoreEffortByLevel = computed(() => {
   return map
 })
 
+const scoreEffortCountByLevel = computed(() => {
+  const map: { [key: string]: number } = {}
+  tableSongs.value.forEach((s) => {
+    if (s.clear_type === 0) {
+      return
+    }
+    map[s.level] = (map[s.level] || 0) + 1
+  })
+  return map
+})
+
 const clearEffortByLevel = computed(() => {
   const map: { [key: string]: number } = {}
   tableSongs.value.forEach((s) => {
     if (s.clear_type === 0 || s.total_notes <= 0 || s.min_bp < 0) {
       return
     }
-    const base = Math.max(0, (s.total_notes - s.min_bp * 5) / s.total_notes)
+    const base = Math.max(0, (s.total_notes - s.min_bp * 2.5) / s.total_notes)
     const value = 100 * (base ** 3)
     map[s.level] = (map[s.level] || 0) + value
+  })
+  return map
+})
+
+const clearEffortCountByLevel = computed(() => {
+  const map: { [key: string]: number } = {}
+  tableSongs.value.forEach((s) => {
+    if (s.clear_type === 0 || s.total_notes <= 0 || s.min_bp < 0) {
+      return
+    }
+    map[s.level] = (map[s.level] || 0) + 1
   })
   return map
 })
@@ -647,7 +669,7 @@ watch([searchText, lampFilter, selectedTableId], () => {
           <div v-for="row in lampCountsByLevel" :key="row.level" class="lamp-level-row">
             <div class="lamp-level-name"
               v-tooltip="{
-                content: `クリア頑張り度 ${formatEffort(clearEffortByLevel[row.level] || 0)}`,
+                content: `クリア頑張り度 合計 ${formatEffort(clearEffortByLevel[row.level] || 0)} / 平均 ${formatEffort((clearEffortByLevel[row.level] || 0) / Math.max(1, clearEffortCountByLevel[row.level] || 0))}`,
                 delay: { show: 0, hide: 0 }
               }">
               {{ row.level }}
@@ -679,7 +701,7 @@ watch([searchText, lampFilter, selectedTableId], () => {
           <div v-for="row in scoreRateBinsByLevel" :key="row.level" class="rate-row">
             <div class="rate-name"
               v-tooltip="{
-                content: `スコア頑張り度 ${formatEffort(scoreEffortByLevel[row.level] || 0)}`,
+                content: `スコア頑張り度 合計 ${formatEffort(scoreEffortByLevel[row.level] || 0)} / 平均 ${formatEffort((scoreEffortByLevel[row.level] || 0) / Math.max(1, scoreEffortCountByLevel[row.level] || 0))}`,
                 delay: { show: 0, hide: 0 }
               }">
               {{ row.level }}
