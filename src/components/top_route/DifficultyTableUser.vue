@@ -972,6 +972,22 @@ watch([searchText, lampFilter, selectedTableId], () => {
   height: 100%;
 }
 
+.lamp-segment.bg-ExHard {
+  background: linear-gradient(135deg, #ffe3a1 0%, #fff3c9 45%, #ffd27a 100%) !important;
+}
+
+.lamp-segment.bg-FullCombo {
+  background: linear-gradient(135deg, #9ff0f0 0%, #c9fbff 45%, #78dbe6 100%) !important;
+}
+
+.lamp-segment.bg-Perfect {
+  background: linear-gradient(135deg, #d0d0ff 0%, #ece9ff 45%, #b0b0ff 100%) !important;
+}
+
+.lamp-segment.bg-Max {
+  background: linear-gradient(135deg, #f0f0ff 0%, #d8dcff 45%, #bfc6ff 100%) !important;
+}
+
 .rate-row {
   display: grid;
   gap: 10px;
