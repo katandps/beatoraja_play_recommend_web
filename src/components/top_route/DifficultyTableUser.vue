@@ -172,6 +172,7 @@ const filteredSongs = computed(() => {
 const summaryCards = computed(() => {
   const total = tableSongs.value.length
   const cleared = tableSongs.value.filter((s) => s.clear_type !== 0)
+  const playedCount = cleared.length
   const scoreEffortRaw = cleared.reduce((sum, s) => sum + clampRate(s.score_rate()), 0)
   const scoreEffort = formatEffort(scoreEffortRaw)
   const scoreEffortMax = Math.round(total * 100).toLocaleString()
@@ -192,7 +193,7 @@ const summaryCards = computed(() => {
   const clearEffort = formatEffort(clearEffortValue)
   const clearEffortMax = Math.round(total * 100).toLocaleString()
   return [
-    { label: "総譜面数", value: total.toLocaleString() },
+    { label: "プレイ済み譜面数", value: `${playedCount.toLocaleString()}/${total.toLocaleString()}` },
     {
       label: "スコア頑張り度",
       value: scoreEffort,
@@ -644,15 +645,18 @@ watch([searchText, lampFilter, selectedTableId], () => {
         </div>
       </div>
       <div class="hero-actions">
-        <button class="btn btn-outline-dark btn-sm" :disabled="isLoading">
+        <button class="btn btn-outline-dark btn-sm" :disabled="isLoading"
+          v-tooltip="{ content: '未実装', delay: { show: 0, hide: 0 } }">
           <font-awesome-icon :icon="['fas', 'circle-exclamation']" />
           画像エクスポート
         </button>
-        <button class="btn btn-outline-dark btn-sm" :disabled="isLoading">
+        <button class="btn btn-outline-dark btn-sm" :disabled="isLoading"
+          v-tooltip="{ content: '未実装', delay: { show: 0, hide: 0 } }">
           <font-awesome-icon :icon="['fas', 'circle-exclamation']" />
           CSV
         </button>
-        <button class="btn btn-outline-dark btn-sm" :disabled="isLoading">
+        <button class="btn btn-outline-dark btn-sm" :disabled="isLoading"
+          v-tooltip="{ content: '未実装', delay: { show: 0, hide: 0 } }">
           <font-awesome-icon :icon="['fas', 'circle-exclamation']" />
           共有リンク
         </button>
