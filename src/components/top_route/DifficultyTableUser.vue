@@ -52,6 +52,14 @@ const userName = computed(() => scores.value?.name || "")
 
 const hardIndex = config.LAMP_INDEX.indexOf("Hard")
 const failedIndex = config.LAMP_INDEX.indexOf("Failed")
+const lampIndexDisplay = computed(() => [...config.LAMP_INDEX].reverse())
+const lampIndexMap = computed(() => {
+  const map: { [key: string]: number } = {}
+  config.LAMP_INDEX.forEach((lamp, index) => {
+    map[lamp] = index
+  })
+  return map
+})
 
 const isValidDate = (d: Date) => d && d.getFullYear() > 2000
 
@@ -118,7 +126,7 @@ const summaryCards = computed(() => {
     (s) => s.score > s.score_before && s.score_updated_at >= updateSince.value
   ).length
   return [
-    { label: "総曲数", value: total.toLocaleString() },
+    { label: "総譜面数", value: total.toLocaleString() },
     { label: "ランプ達成率", value: `${rate}%` },
     { label: "平均スコア", value: scoreAvg },
     { label: "ベスト更新", value: updateCount.toLocaleString() }
@@ -175,17 +183,26 @@ const goToNext = () => {
   currentPage.value = Math.min(totalPages.value, currentPage.value + 1)
 }
 
-const lampCounts = computed(() => {
-  const counts = config.LAMP_INDEX.map(() => 0)
+const lampCountsByLevel = computed(() => {
+  const baseLevels = selectedTable.value?.level_list || []
+  const map = new Map<string, number[]>()
+  baseLevels.forEach((level) => map.set(level, config.LAMP_INDEX.map(() => 0)))
   tableSongs.value.forEach((s) => {
-    if (counts[s.clear_type] !== undefined) {
-      counts[s.clear_type] += 1
+    if (!map.has(s.level)) {
+      map.set(s.level, config.LAMP_INDEX.map(() => 0))
     }
+    const counts = map.get(s.level)
+    if (!counts || counts[s.clear_type] === undefined) {
+      return
+    }
+    counts[s.clear_type] += 1
   })
-  return counts
+  return Array.from(map.entries()).map(([level, counts]) => ({
+    level,
+    counts,
+    total: Math.max(counts.reduce((sum, v) => sum + v, 0), 1)
+  }))
 })
-
-const lampTotal = computed(() => Math.max(tableSongs.value.length, 1))
 
 const scoreRateStatsByLevel = computed(() => {
   const baseLevels = selectedTable.value?.level_list || []
@@ -372,13 +389,22 @@ watch([searchText, lampFilter, selectedTableId], () => {
     <section class="panel-grid">
       <div class="panel-box">
         <h3>ランプ分布</h3>
-        <div class="lamp-distribution">
-          <div v-for="(lamp, index) in config.LAMP_INDEX" :key="lamp" class="lamp-row">
-            <div class="lamp-name">{{ lamp }}</div>
-            <div class="lamp-bar">
-              <div class="lamp-fill" :style="{ width: ((lampCounts[index] / lampTotal) * 100) + '%' }"></div>
+        <div class="lamp-legend">
+          <span v-for="lamp in lampIndexDisplay" :key="lamp" class="legend-item">
+            <span class="legend-dot" :class="`bg-${lamp}`"></span>
+            {{ lamp }}
+          </span>
+        </div>
+        <div class="lamp-level-list">
+          <div v-for="row in lampCountsByLevel" :key="row.level" class="lamp-level-row">
+            <div class="lamp-level-name">{{ row.level }}</div>
+            <div class="lamp-stack" role="img" :aria-label="`ランプ分布 ${row.level}`">
+              <div v-for="lamp in lampIndexDisplay" :key="lamp" class="lamp-segment"
+                :class="`bg-${lamp}`"
+                :style="{ width: ((row.counts[lampIndexMap[lamp]] / row.total) * 100) + '%' }"
+                :title="`${lamp}: ${row.counts[lampIndexMap[lamp]]}`">
+              </div>
             </div>
-            <div class="lamp-count">{{ lampCounts[index] }}</div>
           </div>
         </div>
       </div>
@@ -394,7 +420,6 @@ watch([searchText, lampFilter, selectedTableId], () => {
           <div class="rate-header">
             <span>Level</span>
             <span>平均/中央値/上位10%/上位90%</span>
-            <span>n</span>
           </div>
           <div v-for="row in scoreRateStatsByLevel" :key="row.level" class="rate-row">
             <div class="rate-name">{{ row.level }}</div>
@@ -406,7 +431,6 @@ watch([searchText, lampFilter, selectedTableId], () => {
               <span class="rate-marker p90" :style="{ left: row.p90.toFixed(1) + '%' }"></span>
               <span class="rate-marker p10" :style="{ left: row.p10.toFixed(1) + '%' }"></span>
             </div>
-            <div class="rate-value">{{ row.count }}</div>
           </div>
         </div>
         <div v-else class="empty-state">スコアレートの対象データがありません</div>
@@ -684,16 +708,66 @@ watch([searchText, lampFilter, selectedTableId], () => {
 .rate-summary {
   display: grid;
   gap: 10px;
-  margin-top: 12px;
+  margin-top: 8px;
+}
+
+.lamp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 8px 0;
+}
+
+.lamp-level-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.lamp-level-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 10px;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.lamp-level-name {
+  font-weight: 600;
+  color: #3a3a44;
+  font-size: 0.85rem;
+}
+
+.lamp-stack {
+  display: flex;
+  height: 16px;
+  border-radius: 0;
+  overflow: hidden;
+  margin-top: 0;
+  background: #eee6de;
+  border: 1px solid #e7dfd7;
+}
+
+.lamp-segment {
+  height: 100%;
 }
 
 .lamp-row,
 .rate-row {
   display: grid;
-  grid-template-columns: 80px 1fr 40px;
   gap: 10px;
   align-items: center;
   font-size: 0.9rem;
+}
+
+.lamp-row {
+  grid-template-columns: 80px 1fr 40px;
+}
+
+.rate-row {
+  grid-template-columns: 80px 1fr;
 }
 
 .lamp-name,
@@ -704,7 +778,7 @@ watch([searchText, lampFilter, selectedTableId], () => {
 
 .lamp-bar,
 .rate-bar {
-  height: 10px;
+  height: 16px;
   border-radius: 999px;
   background: #eee6de;
   overflow: hidden;
@@ -757,9 +831,9 @@ watch([searchText, lampFilter, selectedTableId], () => {
 
 .rate-header {
   display: grid;
-  grid-template-columns: 80px 1fr 40px;
+  grid-template-columns: 80px 1fr;
   gap: 10px;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--muted);
@@ -767,15 +841,15 @@ watch([searchText, lampFilter, selectedTableId], () => {
 
 .rate-bar.multi {
   position: relative;
-  height: 12px;
+  height: 16px;
   overflow: visible;
 }
 
 .rate-marker {
   position: absolute;
-  top: -4px;
+  top: -6px;
   width: 2px;
-  height: 20px;
+  height: 28px;
   z-index: 2;
   background: #2b2b36;
 }
@@ -797,9 +871,9 @@ watch([searchText, lampFilter, selectedTableId], () => {
   gap: 12px;
   align-items: center;
   flex-wrap: wrap;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--muted);
-  margin-top: 6px;
+  margin: 8px 0;
 }
 
 .legend-item {
