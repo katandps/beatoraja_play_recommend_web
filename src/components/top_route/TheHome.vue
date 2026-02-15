@@ -135,6 +135,15 @@ const handleSignOut = async () => {
       </div>
       <div class="col-lg-3 panel" v-if="is_login">
         <h4>
+          <router-link class="text-dark px-2" to="/table-user">
+            <font-awesome-icon :icon="['fas', 'table']" />
+            難易度表データ
+          </router-link>
+        </h4>
+        難易度表1つ分の<br />ユーザーデータを表示します。
+      </div>
+      <div class="col-lg-3 panel" v-if="is_login">
+        <h4>
           <a class="text-dark px-3" href="javascript:void(0);" @click.prevent="handleSignOut">
             <font-awesome-icon :icon="['fas', 'sign-out-alt']" />
             ログアウト

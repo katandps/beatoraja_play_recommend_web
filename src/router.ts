@@ -5,6 +5,7 @@ import RecommendTableVue from "./components/top_route/RecommendTable.vue"
 import ScoreViewerVue from "./components/top_route/ScoreViewer.vue"
 import SongRankingVue from "./components/top_route/SongRanking.vue"
 import TheHomeVue from "./components/top_route/TheHome.vue"
+import DifficultyTableUserVue from "./components/top_route/DifficultyTableUser.vue"
 
 const routes = [
   { path: "/", component: async () => TheHomeVue },
@@ -35,6 +36,10 @@ const routes = [
     path: "/table",
     component: RecommendTableVue,
     props: (route: any) => ({ user_id: parseInt(route.query.user_id) })
+  },
+  {
+    path: "/table-user",
+    component: DifficultyTableUserVue,
   },
   {
     path: "/song",
