@@ -62,6 +62,43 @@ const lampIndexMap = computed(() => {
 })
 
 const isValidDate = (d: Date) => d && d.getFullYear() > 2000
+const normalRanksHighToLow = config.RANK_TYPE.filter((rank) => rank !== "Max")
+const normalRanksLowToHigh = [...normalRanksHighToLow].reverse()
+const binsPerRank = 10
+const totalBins = normalRanksLowToHigh.length * binsPerRank + 1
+const maxBinIndex = totalBins - 1
+const normalRateSteps = config.RANK_RATE_BY_9.slice(1)
+const stepAlphas = [0.3, 0.45, 0.6, 0.8, 1]
+const quantile = (sorted: number[], q: number) => {
+  if (sorted.length === 0) {
+    return 0
+  }
+  if (sorted.length === 1) {
+    return sorted[0]
+  }
+  const pos = (sorted.length - 1) * q
+  const base = Math.floor(pos)
+  const rest = pos - base
+  const next = sorted[Math.min(sorted.length - 1, base + 1)]
+  return sorted[base] + (next - sorted[base]) * rest
+}
+const normalBoundsHighToLow = normalRateSteps.map((v, index) => {
+  const lower = (v / 9) * 100
+  const upper = index === 0 ? 100 : (normalRateSteps[index - 1] / 9) * 100
+  return { lower, upper }
+})
+const normalBoundsLowToHigh = [...normalBoundsHighToLow].reverse()
+const clampRate = (rate: number) => Math.max(0, Math.min(100, rate))
+const normalWidthPercent = ((totalBins - 1) / totalBins) * 100
+const rankBoundaryLabels = computed(() => {
+  const count = normalRanksLowToHigh.length
+  const labels = normalRanksLowToHigh.map((rank, index) => ({
+    label: rank,
+    left: `${(normalWidthPercent * (index / count)).toFixed(3)}%`
+  }))
+  labels.push({ label: "Max", left: "100%" })
+  return labels
+})
 
 const tableSongs = computed(() => {
   if (!scores.value || !songs.value || !selectedTable.value) {
@@ -204,37 +241,136 @@ const lampCountsByLevel = computed(() => {
   }))
 })
 
-const scoreRateStatsByLevel = computed(() => {
+const scoreRateBinsByLevel = computed(() => {
   const baseLevels = selectedTable.value?.level_list || []
   const map = new Map<string, number[]>()
-  baseLevels.forEach((level) => map.set(level, []))
+  baseLevels.forEach((level) => map.set(level, Array.from({ length: totalBins }, () => 0)))
   tableSongs.value.forEach((s) => {
     if (s.clear_type === 0 || s.total_notes === 0) {
       return
     }
     if (!map.has(s.level)) {
-      map.set(s.level, [])
+      map.set(s.level, Array.from({ length: totalBins }, () => 0))
     }
-    map.get(s.level)?.push(s.score_rate())
+    const bins = map.get(s.level)
+    if (!bins) {
+      return
+    }
+    const bounded = clampRate(s.score_rate())
+    if (bounded >= 100) {
+      bins[maxBinIndex] += 1
+      return
+    }
+    const rankIndexHighToLow = Math.max(
+      0,
+      normalBoundsHighToLow.findIndex((b) => bounded >= b.lower)
+    )
+    const bounds = normalBoundsHighToLow[rankIndexHighToLow]
+    const span = Math.max(bounds.upper - bounds.lower, 0)
+    const within = span === 0 ? 0 : bounded - bounds.lower
+    const binInRank = span === 0
+      ? 0
+      : Math.min(binsPerRank - 1, Math.floor((within / span) * binsPerRank))
+    const rankIndexLowToHigh = normalRanksLowToHigh.length - 1 - rankIndexHighToLow
+    const index = rankIndexLowToHigh * binsPerRank + binInRank
+    bins[index] += 1
   })
-  const percentile = (values: number[], p: number) => {
-    if (values.length === 0) {
-      return 0
+  return Array.from(map.entries()).map(([level, bins]) => {
+    const nonZeroCounts = bins.filter((count) => count > 0)
+    const sortedCounts = [...nonZeroCounts].sort((a, b) => a - b)
+    const thresholds = [0.2, 0.4, 0.6, 0.8].map((q) => quantile(sortedCounts, q))
+    const alphaForCount = (count: number) => {
+      if (count <= 0) {
+        return 0
+      }
+      let step = thresholds.findIndex((t) => count <= t)
+      if (step === -1) {
+        step = thresholds.length
+      }
+      return stepAlphas[step]
     }
-    const sorted = [...values].sort((a, b) => a - b)
-    const index = Math.floor((sorted.length - 1) * p)
-    return sorted[index]
-  }
-  return Array.from(map.entries()).map(([level, values]) => {
-    const avg = values.length === 0 ? 0 : values.reduce((sum, v) => sum + v, 0) / values.length
-    return {
-      level,
-      count: values.length,
-      avg,
-      median: percentile(values, 0.5),
-      p90: percentile(values, 0.9),
-      p10: percentile(values, 0.1)
+    const segments: {
+      len: number
+      count: number
+      alpha: number
+      start: number
+      end: number
+      rank?: string
+      startPercent: number
+      endPercent: number
+    }[] = []
+    const binPercent = (index: number) => {
+      if (index === maxBinIndex) {
+        return { start: 100, end: 100 }
+      }
+      const rankIndex = Math.min(normalRanksLowToHigh.length - 1, Math.floor(index / binsPerRank))
+      const bounds = normalBoundsLowToHigh[rankIndex]
+      const step = (bounds.upper - bounds.lower) / binsPerRank
+      const offset = index % binsPerRank
+      return {
+        start: bounds.lower + step * offset,
+        end: bounds.lower + step * (offset + 1)
+      }
     }
+    let i = 0
+    while (i < bins.length) {
+      if (i === maxBinIndex) {
+        const range = binPercent(i)
+        const count = bins[i]
+        segments.push({
+          len: 1,
+          count,
+          alpha: alphaForCount(count),
+          start: i,
+          end: i,
+          rank: "Max",
+          startPercent: range.start,
+          endPercent: range.end
+        })
+        i += 1
+        continue
+      }
+      const currentRank = Math.min(normalRanksLowToHigh.length - 1, Math.floor(i / binsPerRank))
+      const rankEnd = (currentRank + 1) * binsPerRank
+      if (bins[i] === 0) {
+        let j = i
+        while (j < rankEnd && bins[j] === 0) {
+          j += 1
+        }
+        const run = j - i
+        if (run >= 5) {
+          const startRange = binPercent(i)
+          const endRange = binPercent(j - 1)
+          segments.push({
+            len: run,
+            count: 0,
+            alpha: 0,
+            start: i,
+            end: j - 1,
+            rank: normalRanksLowToHigh[currentRank],
+            startPercent: startRange.start,
+            endPercent: endRange.end
+          })
+          i = j
+          continue
+        }
+      }
+      const range = binPercent(i)
+      const count = bins[i]
+      const rank = normalRanksLowToHigh[currentRank]
+      segments.push({
+        len: 1,
+        count,
+        alpha: alphaForCount(count),
+        start: i,
+        end: i,
+        rank,
+        startPercent: range.start,
+        endPercent: range.end
+      })
+      i += 1
+    }
+    return { level, segments }
   })
 })
 
@@ -355,11 +491,11 @@ watch([searchText, lampFilter, selectedTableId], () => {
     <section class="panel-grid">
       <div class="panel-box">
         <h3>ランプ分布</h3>
-        <div class="lamp-legend">
-          <span v-for="lamp in lampIndexDisplay" :key="lamp" class="legend-item">
-            <span class="legend-dot" :class="`bg-${lamp}`"></span>
-            {{ lamp }}
-          </span>
+        <div class="lamp-header">
+          <span>Level</span>
+          <span>0%</span>
+          <span>50%</span>
+          <span>100%</span>
         </div>
         <div class="lamp-level-list">
           <div v-for="row in lampCountsByLevel" :key="row.level" class="lamp-level-row">
@@ -376,26 +512,31 @@ watch([searchText, lampFilter, selectedTableId], () => {
       </div>
       <div class="panel-box">
         <h3>スコアレート分布</h3>
-        <div class="rate-legend">
-          <span class="legend-item"><span class="legend-dot avg"></span>平均</span>
-          <span class="legend-item"><span class="legend-dot median"></span>中央値</span>
-          <span class="legend-item"><span class="legend-dot p90"></span>上位10%</span>
-          <span class="legend-item"><span class="legend-dot p10"></span>上位90%</span>
-        </div>
-        <div v-if="scoreRateStatsByLevel.length" class="rate-summary">
+        <div v-if="scoreRateBinsByLevel.length" class="rate-summary">
           <div class="rate-header">
             <span>Level</span>
-            <span>平均/中央値/上位10%/上位90%</span>
+            <div class="rate-boundary-labels" :style="{ '--bins': totalBins }">
+              <span v-for="(rank, index) in rankBoundaryLabels" :key="rank.label"
+                class="rate-boundary-label"
+                :class="{ 'is-first': index === 0, 'is-last': index === rankBoundaryLabels.length - 1 }"
+                :style="{ left: rank.left }">
+                {{ rank.label }}
+              </span>
+            </div>
           </div>
-          <div v-for="row in scoreRateStatsByLevel" :key="row.level" class="rate-row">
+          <div v-for="row in scoreRateBinsByLevel" :key="row.level" class="rate-row">
             <div class="rate-name">{{ row.level }}</div>
-            <div class="rate-bar multi"
-              :style="{ '--fill': row.avg.toFixed(1) + '%' }"
-              v-tooltip="{ content: `平均 ${row.avg.toFixed(1)}% / 中央値 ${row.median.toFixed(1)}% / 上位10% ${row.p90.toFixed(1)}% / 上位90% ${row.p10.toFixed(1)}%`, delay: { show: 100, hide: 0 } }">
-              <div class="rate-fill"></div>
-              <span class="rate-marker median" :style="{ left: row.median.toFixed(1) + '%' }"></span>
-              <span class="rate-marker p90" :style="{ left: row.p90.toFixed(1) + '%' }"></span>
-              <span class="rate-marker p10" :style="{ left: row.p10.toFixed(1) + '%' }"></span>
+            <div class="rate-heat" role="img" :aria-label="`スコアレート分布 ${row.level}`"
+              :style="{ '--bins': totalBins }">
+              <span v-for="(segment, index) in row.segments" :key="index" class="rate-bin"
+                :class="[segment.rank ? `bg-${segment.rank}` : '', segment.count === 0 ? 'is-empty' : '']"
+                :style="{ '--alpha': segment.alpha.toFixed(3), '--span': segment.len }"
+                v-tooltip="{
+                  content: segment.count === 0
+                    ? `${segment.startPercent.toFixed(1)}% - ${segment.endPercent.toFixed(1)}%: 0`
+                    : `${segment.startPercent.toFixed(1)}% (${segment.rank}): ${segment.count}`,
+                  delay: { show: 0, hide: 0 }
+                }"></span>
             </div>
           </div>
         </div>
@@ -557,10 +698,6 @@ watch([searchText, lampFilter, selectedTableId], () => {
   flex-wrap: wrap;
 }
 
-.meta-label {
-  font-size: 0.85rem;
-  color: var(--muted);
-}
 
 .sub {
   margin: 0;
@@ -589,11 +726,6 @@ watch([searchText, lampFilter, selectedTableId], () => {
   animation: rise 680ms ease both;
 }
 
-.summary-label {
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-
 .summary-value {
   font-size: 1.4rem;
   font-weight: 700;
@@ -604,6 +736,7 @@ watch([searchText, lampFilter, selectedTableId], () => {
   gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   margin-bottom: 20px;
+  --dist-bar-height: 16px;
 }
 
 .panel-box {
@@ -674,23 +807,61 @@ watch([searchText, lampFilter, selectedTableId], () => {
   grid-template-columns: 80px 1fr;
   gap: 10px;
   align-items: center;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
 }
 
 .lamp-level-name {
   font-weight: 600;
   color: #3a3a44;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+}
+
+.lamp-header {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr 1fr;
+  gap: 10px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.lamp-header span:nth-child(2) {
+  justify-self: start;
+}
+
+.lamp-header span:nth-child(3) {
+  justify-self: center;
+}
+
+.lamp-header span:nth-child(4) {
+  justify-self: end;
 }
 
 .lamp-stack {
   display: flex;
-  height: 16px;
+  height: var(--dist-bar-height);
   border-radius: 0;
   overflow: hidden;
   margin-top: 0;
   background: #eee6de;
   border: 1px solid #e7dfd7;
+  position: relative;
+}
+
+.lamp-stack::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent 0,
+    transparent calc(100% / 10 - 1px),
+    rgba(0, 0, 0, 0.18) calc(100% / 10 - 1px),
+    rgba(0, 0, 0, 0.18) calc(100% / 10)
+  );
+  pointer-events: none;
 }
 
 .lamp-segment {
@@ -710,45 +881,6 @@ watch([searchText, lampFilter, selectedTableId], () => {
   color: #3a3a44;
 }
 
-.rate-bar {
-  height: 16px;
-  border-radius: 999px;
-  background: #eee6de;
-  overflow: hidden;
-  background-image: repeating-linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.08),
-    rgba(0, 0, 0, 0.08) 1px,
-    transparent 1px,
-    transparent 5%
-  );
-}
-
-
-.rate-fill {
-  position: absolute;
-  inset: 0;
-  height: 100%;
-  background: linear-gradient(90deg, #2f6bff, #6aa7ff);
-  clip-path: inset(0 calc(100% - var(--fill, 0%)) 0 0);
-}
-
-.rate-fill::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0.65),
-    rgba(255, 255, 255, 0.65) 1px,
-    transparent 1px,
-    transparent 5%
-  );
-  background-position: 5% 0;
-  pointer-events: none;
-}
-
-
 .rate-header {
   display: grid;
   grid-template-columns: 80px 1fr;
@@ -759,31 +891,24 @@ watch([searchText, lampFilter, selectedTableId], () => {
   color: var(--muted);
 }
 
-.rate-bar.multi {
+.rate-boundary-labels {
   position: relative;
-  height: 16px;
-  overflow: visible;
+  height: 1em;
 }
 
-.rate-marker {
+.rate-boundary-label {
   position: absolute;
-  top: -6px;
-  width: 2px;
-  height: 28px;
-  z-index: 2;
-  background: #2b2b36;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
 
-.rate-marker.median {
-  background: #5b2cc9;
+.rate-boundary-label.is-first {
+  transform: translateX(0);
 }
 
-.rate-marker.p90 {
-  background: #137a6f;
-}
-
-.rate-marker.p10 {
-  background: #ff7f50;
+.rate-boundary-label.is-last {
+  transform: translateX(-100%);
 }
 
 .rate-legend {
@@ -802,28 +927,56 @@ watch([searchText, lampFilter, selectedTableId], () => {
   gap: 6px;
 }
 
-.legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  display: inline-block;
-  background: #2f6bff;
+.rate-heat {
+  display: grid;
+  grid-template-columns: repeat(var(--bins, 90), minmax(0, 1fr));
+  gap: 0;
+  height: var(--dist-bar-height);
+  background: #646464;
+  border: 1px solid #555555;
+  position: relative;
 }
 
-.legend-dot.avg {
-  background: #6aa7ff;
+.rate-heat::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: calc((var(--bins, 90) - 1) / var(--bins, 90) * 100%);
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.18) 0,
+    rgba(255, 255, 255, 0.18) 1px,
+    transparent 1px
+  );
+  background-size: calc(100% * 5 / (var(--bins, 90) - 1)) 100%;
+  background-repeat: repeat;
+  pointer-events: none;
 }
 
-.legend-dot.median {
-  background: #5b2cc9;
+.rate-bin {
+  background: #9aa5b1;
+  opacity: var(--alpha);
+  grid-column: span var(--span, 1);
 }
 
-.legend-dot.p90 {
-  background: #137a6f;
+.rate-bin.is-empty {
+  background: transparent !important;
+  opacity: 0 !important;
 }
 
-.legend-dot.p10 {
-  background: #ff7f50;
+.rate-legend .legend-dot.bg-AAA,
+.rate-heat .rate-bin.bg-AAA {
+  background: #d4af37 !important;
+}
+
+.rate-legend .legend-dot.bg-AA,
+.rate-heat .rate-bin.bg-AA {
+  background: #c0c0c0 !important;
+}
+
+.rate-legend .legend-dot.bg-A,
+.rate-heat .rate-bin.bg-A {
+  background: #cd7f32 !important;
 }
 
 
