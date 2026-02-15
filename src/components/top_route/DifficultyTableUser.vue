@@ -90,6 +90,10 @@ const normalBoundsHighToLow = normalRateSteps.map((v, index) => {
 })
 const normalBoundsLowToHigh = [...normalBoundsHighToLow].reverse()
 const clampRate = (rate: number) => Math.max(0, Math.min(100, rate))
+const formatEffort = (value: number) => value.toLocaleString(undefined, {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+})
 const levelNumber = (level: string) => {
   const parsed = parseFloat(level.replace(/[^0-9.]/g, ""))
   return Number.isFinite(parsed) ? parsed : 0
@@ -163,18 +167,53 @@ const filteredSongs = computed(() => {
 
 const summaryCards = computed(() => {
   const total = tableSongs.value.length
-  const cleared = tableSongs.value.filter((s) => s.clear_type !== 0).length
-  const rate = total === 0 ? 0 : Math.round((cleared / total) * 100)
-  const scored = tableSongs.value.filter((s) => s.clear_type !== 0)
-  const scoreAvg =
-    scored.length === 0
-      ? "-"
-      : Math.round(scored.reduce((sum, s) => sum + s.score, 0) / scored.length).toLocaleString()
+  const cleared = tableSongs.value.filter((s) => s.clear_type !== 0)
+  const scoreEffortRaw = cleared.reduce((sum, s) => sum + clampRate(s.score_rate()), 0)
+  const scoreEffort = formatEffort(scoreEffortRaw)
+  const clearEffortValue = (() => {
+    if (total === 0) {
+      return 0
+    }
+    const valid = cleared.filter((s) => s.total_notes > 0 && s.min_bp >= 0)
+    if (valid.length === 0) {
+      return 0
+    }
+    const totalScore = valid.reduce((sum, s) => {
+      const base = Math.max(0, (s.total_notes - s.min_bp * 5) / s.total_notes)
+      return sum + 100 * (base ** 3)
+    }, 0)
+    return Math.max(0, totalScore)
+  })()
+  const clearEffort = formatEffort(clearEffortValue)
   return [
     { label: "総譜面数", value: total.toLocaleString() },
-    { label: "ランプ達成率", value: `${rate}%` },
-    { label: "平均スコア", value: scoreAvg }
+    { label: "スコア頑張り度", value: scoreEffort },
+    { label: "クリア頑張り度", value: clearEffort }
   ]
+})
+
+const scoreEffortByLevel = computed(() => {
+  const map: { [key: string]: number } = {}
+  tableSongs.value.forEach((s) => {
+    if (s.clear_type === 0) {
+      return
+    }
+    map[s.level] = (map[s.level] || 0) + clampRate(s.score_rate())
+  })
+  return map
+})
+
+const clearEffortByLevel = computed(() => {
+  const map: { [key: string]: number } = {}
+  tableSongs.value.forEach((s) => {
+    if (s.clear_type === 0 || s.total_notes <= 0 || s.min_bp < 0) {
+      return
+    }
+    const base = Math.max(0, (s.total_notes - s.min_bp * 5) / s.total_notes)
+    const value = 100 * (base ** 3)
+    map[s.level] = (map[s.level] || 0) + value
+  })
+  return map
 })
 
 const topUpdates = computed(() => {
@@ -606,7 +645,13 @@ watch([searchText, lampFilter, selectedTableId], () => {
         </div>
         <div class="lamp-level-list">
           <div v-for="row in lampCountsByLevel" :key="row.level" class="lamp-level-row">
-            <div class="lamp-level-name">{{ row.level }}</div>
+            <div class="lamp-level-name"
+              v-tooltip="{
+                content: `クリア頑張り度 ${formatEffort(clearEffortByLevel[row.level] || 0)}`,
+                delay: { show: 0, hide: 0 }
+              }">
+              {{ row.level }}
+            </div>
             <div class="lamp-stack" role="img" :aria-label="`ランプ分布 ${row.level}`">
               <div v-for="lamp in lampIndexDisplay" :key="lamp" class="lamp-segment"
                 :class="`bg-${lamp}`"
@@ -632,7 +677,13 @@ watch([searchText, lampFilter, selectedTableId], () => {
             </div>
           </div>
           <div v-for="row in scoreRateBinsByLevel" :key="row.level" class="rate-row">
-            <div class="rate-name">{{ row.level }}</div>
+            <div class="rate-name"
+              v-tooltip="{
+                content: `スコア頑張り度 ${formatEffort(scoreEffortByLevel[row.level] || 0)}`,
+                delay: { show: 0, hide: 0 }
+              }">
+              {{ row.level }}
+            </div>
             <div class="rate-heat" role="img" :aria-label="`スコアレート分布 ${row.level}`"
               :style="{ '--bins': totalBins }">
               <span v-for="(segment, index) in row.segments" :key="index" class="rate-bin"
