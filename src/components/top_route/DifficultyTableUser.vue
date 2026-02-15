@@ -201,7 +201,18 @@ const topUpdates = computed(() => {
     lamp: string
     lampIndex: number
     updatedAt: number
+    updatedLabel: string
   }>()
+  const candidates: {
+    title: string
+    level: string
+    rate: number
+    levelValue: number
+    lamp: string
+    lampIndex: number
+    updatedAt: number
+    updatedLabel: string
+  }[] = []
 
   tableSongs.value
     .filter((s) => s.clear_type >= easyIndex)
@@ -220,8 +231,12 @@ const topUpdates = computed(() => {
         levelValue,
         lamp: config.LAMP_INDEX[lampIndex],
         lampIndex,
-        updatedAt: s.clear_updated_at.getTime()
+        updatedAt: s.clear_updated_at.getTime(),
+        updatedLabel: isValidDate(s.clear_updated_at)
+          ? DateFormatter.format(s.clear_updated_at)
+          : "-"
       }
+      candidates.push(entry)
       const current = pickByLamp.get(lampIndex)
       if (!current) {
         pickByLamp.set(lampIndex, entry)
@@ -243,9 +258,33 @@ const topUpdates = computed(() => {
       }
     })
 
-  return Array.from(pickByLamp.values())
+  const base = Array.from(pickByLamp.values())
+  const keyOf = (row: typeof base[number]) =>
+    `${row.title}__${row.level}__${row.lampIndex}__${row.updatedAt}`
+  const used = new Set(base.map(keyOf))
+  const remaining = candidates
+    .filter((row) => !used.has(keyOf(row)))
+    .sort((a, b) => {
+      if (b.rate !== a.rate) {
+        return b.rate - a.rate
+      }
+      if (b.levelValue !== a.levelValue) {
+        return b.levelValue - a.levelValue
+      }
+      return b.updatedAt - a.updatedAt
+    })
+
+  const merged = [...base]
+  for (const row of remaining) {
+    if (merged.length >= 5) {
+      break
+    }
+    merged.push(row)
+  }
+
+  return merged
     .sort((a, b) => b.lampIndex - a.lampIndex)
-    .map(({ title, level, lamp }) => ({ title, level, lamp }))
+    .map(({ title, level, lamp, updatedLabel }) => ({ title, level, lamp, updatedLabel }))
 })
 
 const tableRows = computed(() => {
@@ -618,8 +657,12 @@ watch([searchText, lampFilter, selectedTableId], () => {
       </div>
       <div v-if="topUpdates.length" class="top-updates">
         <div v-for="row in topUpdates" :key="row.title" class="update-row">
+          <div class="update-level">{{ row.level }}</div>
           <div class="update-title">{{ row.title }}</div>
-          <div class="update-meta">{{ row.level }} / {{ row.lamp }}</div>
+          <div class="update-meta">
+            <span class="lamp-pill" :class="`lamp-${row.lamp}`">{{ row.lamp }}</span>
+            <span class="update-date">{{ row.updatedLabel }}</span>
+          </div>
         </div>
       </div>
       <div v-else class="empty-state">最近の更新はありません</div>
@@ -1050,12 +1093,17 @@ watch([searchText, lampFilter, selectedTableId], () => {
 
 .update-row {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 80px 1fr auto;
   gap: 10px;
   align-items: center;
   padding: 10px 12px;
   border-radius: 8px;
   background: #f6f2ee;
+}
+
+.update-level {
+  font-weight: 600;
+  color: #3a3a44;
 }
 
 .pickup-panel .panel-header {
@@ -1068,6 +1116,13 @@ watch([searchText, lampFilter, selectedTableId], () => {
 
 .update-meta {
   color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.update-date {
+  font-weight: 600;
 }
 
 .update-diff {
@@ -1152,23 +1207,65 @@ watch([searchText, lampFilter, selectedTableId], () => {
 }
 
 .lamp-ExHard {
-  background: #ffebad;
-  color: #9a5b00;
+  background: linear-gradient(135deg, #ffe3a1 0%, #fff3c9 45%, #ffd27a 100%);
+  color: #8a4b00;
+  box-shadow: 0 0 0 1px rgba(255, 215, 120, 0.7), 0 4px 10px rgba(255, 180, 60, 0.28);
+  position: relative;
+  overflow: hidden;
+}
+
+.lamp-ExHard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 35%,
+    transparent 65%
+  );
+  opacity: 0.7;
+  pointer-events: none;
 }
 
 .lamp-FullCombo {
-  background: #9ff0f0;
-  color: #00606a;
+  background: linear-gradient(135deg, #9ff0f0 0%, #c9fbff 45%, #78dbe6 100%);
+  color: #00545c;
+  box-shadow: 0 0 0 1px rgba(120, 219, 230, 0.6), 0 4px 10px rgba(80, 180, 190, 0.25);
+  position: relative;
+  overflow: hidden;
 }
 
 .lamp-Perfect {
-  background: #d7d7ff;
-  color: #38386f;
+  background: linear-gradient(135deg, #d0d0ff 0%, #ece9ff 45%, #b0b0ff 100%);
+  color: #2e2e6d;
+  box-shadow: 0 0 0 1px rgba(176, 176, 255, 0.6), 0 4px 10px rgba(130, 130, 220, 0.25);
+  position: relative;
+  overflow: hidden;
 }
 
 .lamp-Max {
-  background: #e3e3ff;
-  color: #3a3a7a;
+  background: linear-gradient(135deg, #f0f0ff 0%, #d8dcff 45%, #bfc6ff 100%);
+  color: #2e2e7a;
+  box-shadow: 0 0 0 1px rgba(191, 198, 255, 0.7), 0 4px 12px rgba(120, 130, 220, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.lamp-FullCombo::after,
+.lamp-Perfect::after,
+.lamp-Max::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 35%,
+    transparent 65%
+  );
+  opacity: 0.7;
+  pointer-events: none;
 }
 
 .table {
