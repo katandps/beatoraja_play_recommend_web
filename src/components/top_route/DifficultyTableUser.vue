@@ -52,6 +52,7 @@ const userName = computed(() => scores.value?.name || "")
 
 const hardIndex = config.LAMP_INDEX.indexOf("Hard")
 const failedIndex = config.LAMP_INDEX.indexOf("Failed")
+const easyIndex = config.LAMP_INDEX.indexOf("Easy")
 const lampIndexDisplay = computed(() => [...config.LAMP_INDEX].reverse())
 const lampIndexMap = computed(() => {
   const map: { [key: string]: number } = {}
@@ -89,6 +90,23 @@ const normalBoundsHighToLow = normalRateSteps.map((v, index) => {
 })
 const normalBoundsLowToHigh = [...normalBoundsHighToLow].reverse()
 const clampRate = (rate: number) => Math.max(0, Math.min(100, rate))
+const levelNumber = (level: string) => {
+  const parsed = parseFloat(level.replace(/[^0-9.]/g, ""))
+  return Number.isFinite(parsed) ? parsed : 0
+}
+const lowerBound = (values: number[], target: number) => {
+  let low = 0
+  let high = values.length
+  while (low < high) {
+    const mid = Math.floor((low + high) / 2)
+    if (values[mid] < target) {
+      low = mid + 1
+    } else {
+      high = mid
+    }
+  }
+  return low
+}
 const normalWidthPercent = ((totalBins - 1) / totalBins) * 100
 const rankBoundaryLabels = computed(() => {
   const count = normalRanksLowToHigh.length
@@ -143,14 +161,6 @@ const filteredSongs = computed(() => {
   })
 })
 
-const updateSince = computed(() => {
-  const d = new Date()
-  d.setDate(d.getDate() - 30)
-  d.setHours(0, 0, 0, 0)
-  return d
-})
-
-
 const summaryCards = computed(() => {
   const total = tableSongs.value.length
   const cleared = tableSongs.value.filter((s) => s.clear_type !== 0).length
@@ -168,16 +178,74 @@ const summaryCards = computed(() => {
 })
 
 const topUpdates = computed(() => {
-  return tableSongs.value
-    .filter((s) => s.score > s.score_before)
-    .filter((s) => s.score_updated_at >= updateSince.value)
-    .sort((a, b) => (b.score - b.score_before) - (a.score - a.score_before))
-    .slice(0, 5)
-    .map((s) => ({
-      title: s.title,
-      level: s.level,
-      diff: `+${(s.score - s.score_before).toLocaleString()}`
-    }))
+  const since = new Date()
+  since.setDate(since.getDate() - 30)
+  since.setHours(0, 0, 0, 0)
+  const byLevel = new Map<string, number[]>()
+  tableSongs.value.forEach((s) => {
+    if (!byLevel.has(s.level)) {
+      byLevel.set(s.level, [])
+    }
+    byLevel.get(s.level)?.push(s.clear_type)
+  })
+  const sortedByLevel = new Map<string, number[]>()
+  byLevel.forEach((values, level) => {
+    sortedByLevel.set(level, [...values].sort((a, b) => a - b))
+  })
+
+  const pickByLamp = new Map<number, {
+    title: string
+    level: string
+    rate: number
+    levelValue: number
+    lamp: string
+    lampIndex: number
+    updatedAt: number
+  }>()
+
+  tableSongs.value
+    .filter((s) => s.clear_type >= easyIndex)
+    .filter((s) => isValidDate(s.clear_updated_at) && s.clear_updated_at >= since)
+    .forEach((s) => {
+      const sorted = sortedByLevel.get(s.level) || [s.clear_type]
+      const total = sorted.length
+      const count = lowerBound(sorted, s.clear_type)
+      const rate = total === 0 ? 0 : count / total
+      const levelValue = levelNumber(s.level)
+      const lampIndex = s.clear_type
+      const entry = {
+        title: s.title,
+        level: s.level,
+        rate,
+        levelValue,
+        lamp: config.LAMP_INDEX[lampIndex],
+        lampIndex,
+        updatedAt: s.clear_updated_at.getTime()
+      }
+      const current = pickByLamp.get(lampIndex)
+      if (!current) {
+        pickByLamp.set(lampIndex, entry)
+        return
+      }
+      if (entry.rate > current.rate) {
+        pickByLamp.set(lampIndex, entry)
+        return
+      }
+      if (entry.rate !== current.rate) {
+        return
+      }
+      if (entry.levelValue > current.levelValue) {
+        pickByLamp.set(lampIndex, entry)
+        return
+      }
+      if (entry.levelValue === current.levelValue && entry.updatedAt > current.updatedAt) {
+        pickByLamp.set(lampIndex, entry)
+      }
+    })
+
+  return Array.from(pickByLamp.values())
+    .sort((a, b) => b.lampIndex - a.lampIndex)
+    .map(({ title, level, lamp }) => ({ title, level, lamp }))
 })
 
 const tableRows = computed(() => {
@@ -544,21 +612,14 @@ watch([searchText, lampFilter, selectedTableId], () => {
       </div>
     </section>
 
-    <section class="panel-box">
+    <section class="panel-box pickup-panel">
       <div class="panel-header">
-        <h3>最近の更新トップ</h3>
-        <div class="filters">
-          <button class="btn btn-sm btn-outline-secondary" disabled>
-            <font-awesome-icon :icon="['fas', 'circle-exclamation']" />
-            30日
-          </button>
-        </div>
+        <h3 v-tooltip="{ content: '30日以内の更新', delay: { show: 0, hide: 0 } }">ランプ更新ピックアップ</h3>
       </div>
       <div v-if="topUpdates.length" class="top-updates">
         <div v-for="row in topUpdates" :key="row.title" class="update-row">
           <div class="update-title">{{ row.title }}</div>
-          <div class="update-meta">{{ row.level }}</div>
-          <div class="update-diff">{{ row.diff }}</div>
+          <div class="update-meta">{{ row.level }} / {{ row.lamp }}</div>
         </div>
       </div>
       <div v-else class="empty-state">最近の更新はありません</div>
@@ -995,6 +1056,10 @@ watch([searchText, lampFilter, selectedTableId], () => {
   padding: 10px 12px;
   border-radius: 8px;
   background: #f6f2ee;
+}
+
+.pickup-panel .panel-header {
+  justify-content: center;
 }
 
 .update-title {
