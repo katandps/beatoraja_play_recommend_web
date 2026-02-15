@@ -375,7 +375,7 @@ watch([searchText, lampFilter, selectedTableId], () => {
         </div>
       </div>
       <div class="panel-box">
-        <h3>スコアレート達成率</h3>
+        <h3>スコアレート分布</h3>
         <div class="rate-legend">
           <span class="legend-item"><span class="legend-dot avg"></span>平均</span>
           <span class="legend-item"><span class="legend-dot median"></span>中央値</span>
