@@ -256,7 +256,7 @@ const tableRows = computed(() => {
       title: s.title,
       titleWrapped: s.title.replace(/([/\-→（）()[\]])/g, "$1\u200B"),
       lamp: config.LAMP_INDEX[s.clear_type],
-      score: s.score ? s.score.toLocaleString() : "0",
+      rate: `${clampRate(s.score_rate()).toFixed(2)}%`,
       last: isValidDate(s.updated_at) ? DateFormatter.format(s.updated_at) : "-"
     }))
 })
@@ -659,7 +659,7 @@ watch([searchText, lampFilter, selectedTableId], () => {
               <th>Level</th>
               <th>Title</th>
               <th>Lamp</th>
-              <th>Score</th>
+              <th>Rate</th>
               <th>Last</th>
             </tr>
           </thead>
@@ -672,7 +672,7 @@ watch([searchText, lampFilter, selectedTableId], () => {
               <td>
                 <span class="lamp-pill" :class="`lamp-${row.lamp}`">{{ row.lamp }}</span>
               </td>
-              <td>{{ row.score }}</td>
+              <td>{{ row.rate }}</td>
               <td>{{ row.last }}</td>
             </tr>
           </tbody>
@@ -1126,6 +1126,16 @@ watch([searchText, lampFilter, selectedTableId], () => {
   color: #5a5a5a;
 }
 
+.lamp-AssistEasy {
+  background: #c6c6ff;
+  color: #2d2d6a;
+}
+
+.lamp-LightAssistEasy {
+  background: #ffc6ff;
+  color: #6a2d6a;
+}
+
 .lamp-Easy {
   background: #d7f7d6;
   color: #1e6a2a;
@@ -1139,6 +1149,26 @@ watch([searchText, lampFilter, selectedTableId], () => {
 .lamp-Hard {
   background: #ffd6d6;
   color: #b22828;
+}
+
+.lamp-ExHard {
+  background: #ffebad;
+  color: #9a5b00;
+}
+
+.lamp-FullCombo {
+  background: #9ff0f0;
+  color: #00606a;
+}
+
+.lamp-Perfect {
+  background: #d7d7ff;
+  color: #38386f;
+}
+
+.lamp-Max {
+  background: #e3e3ff;
+  color: #3a3a7a;
 }
 
 .table {
