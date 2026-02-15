@@ -42,6 +42,10 @@ const routes = [
     component: DifficultyTableUserVue,
   },
   {
+    path: "/table-user/:user_id",
+    component: DifficultyTableUserVue,
+  },
+  {
     path: "/song",
     component: SongRankingVue,
     props: (route: any) => ({ sha256: route.query.sha256 })

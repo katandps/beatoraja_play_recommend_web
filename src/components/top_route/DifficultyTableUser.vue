@@ -35,9 +35,13 @@ const viewDate = ref((() => {
 })())
 
 const userId = computed(() => {
-  const q = parseInt(route.query.user_id as string)
-  if (q) {
-    return q
+  const paramId = parseInt(route.params.user_id as string)
+  if (Number.isFinite(paramId) && paramId > 0) {
+    return paramId
+  }
+  const queryId = parseInt(route.query.user_id as string)
+  if (Number.isFinite(queryId) && queryId > 0) {
+    return queryId
   }
   return store.userInfo?.user_id || 0
 })
