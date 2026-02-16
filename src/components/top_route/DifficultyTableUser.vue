@@ -12,7 +12,8 @@ import {
   buildTableSongs
 } from "@/models/difficultyTableUser"
 import { copyToClipboard } from "@/utils/clipboard"
-import { getTableIdFromRoute, getUserIdFromRoute } from "@/utils/route"
+import { buildTableUserShareUrl, getTableIdFromRoute, getUserIdFromRoute } from "@/utils/route"
+import { buildViewDate, calcRowsPerPage } from "@/utils/tableUser"
 import DifficultyTableUserHeader from "@/components/top_route/difficulty_table_user/DifficultyTableUserHeader.vue"
 import DifficultyTableUserDistributions from "@/components/top_route/difficulty_table_user/DifficultyTableUserDistributions.vue"
 import DifficultyTableUserPickup from "@/components/top_route/difficulty_table_user/DifficultyTableUserPickup.vue"
@@ -38,12 +39,7 @@ const showAllRows = ref(false)
 const maxAutoRows = 100
 let messageTimer: number | null = null
 
-const viewDate = ref((() => {
-  const d = new Date()
-  d.setDate(d.getDate() + 1)
-  d.setHours(0, 0, 0, 0)
-  return d
-})())
+const viewDate = ref(buildViewDate())
 
 const userId = computed(() => getUserIdFromRoute(route, store.userInfo?.user_id || 0))
 
@@ -63,11 +59,12 @@ const tableSongs = computed(() => buildTableSongs(scores.value, songs.value, sel
 const summaryCards = computed(() => buildSummaryCards(tableSongs.value))
 
 const updateRowsPerPage = () => {
-  const base = 420
-  const rowHeight = 36
-  const height = Math.max(window.innerHeight - base, 200)
-  const autoRows = Math.max(20, Math.min(maxAutoRows, Math.floor(height / rowHeight)))
-  rowsPerPage.value = autoRows
+  rowsPerPage.value = calcRowsPerPage(window.innerHeight, {
+    base: 420,
+    rowHeight: 36,
+    minRows: 20,
+    maxRows: maxAutoRows
+  })
   currentPage.value = Math.max(1, currentPage.value)
 }
 
@@ -126,21 +123,16 @@ const loadScores = async () => {
 
 const isLoading = computed(() => isLoadingTables.value || isLoadingScores.value)
 
-const buildShareUrl = () => {
-  const query: Record<string, string> = { state: "main" }
-  if (selectedTableId.value > 0) {
-    query.table_id = String(selectedTableId.value)
-  }
-  const resolved = router.resolve({ path: `/table-user/${userId.value}`, query })
-  return new URL(resolved.href, window.location.origin).toString()
-}
-
 const onShareLink = async () => {
   if (userId.value <= 0) {
     setMessage("ユーザーを指定してください")
     return
   }
-  const shareUrl = buildShareUrl()
+  const shareUrl = buildTableUserShareUrl(
+    router,
+    { userId: userId.value, tableId: selectedTableId.value },
+    window.location.origin
+  )
   const copied = await copyToClipboard(shareUrl)
   if (copied) {
     setMessage("共有リンクをコピーしました", "success", 3000)

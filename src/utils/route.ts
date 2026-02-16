@@ -26,3 +26,16 @@ export const getUserIdFromRoute = (route: { params?: Record<string, unknown>; qu
 
 export const getTableIdFromRoute = (route: { query?: Record<string, unknown> }): number =>
     parsePositiveInt(route.query?.table_id)
+
+export const buildTableUserShareUrl = (
+    router: { resolve: (value: { path: string; query?: Record<string, string> }) => { href: string } },
+    params: { userId: number; tableId?: number; state?: string },
+    origin: string
+): string => {
+    const query: Record<string, string> = { state: params.state || "main" }
+    if (params.tableId && params.tableId > 0) {
+        query.table_id = String(params.tableId)
+    }
+    const resolved = router.resolve({ path: `/table-user/${params.userId}`, query })
+    return new URL(resolved.href, origin).toString()
+}
