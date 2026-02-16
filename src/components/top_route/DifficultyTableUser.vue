@@ -28,10 +28,12 @@ const searchText = ref("")
 const lampFilter = ref("all")
 const isLoading = ref(false)
 const message = ref("")
+const messageKind = ref<"warning" | "success">("warning")
 const currentPage = ref(1)
 const rowsPerPage = ref(50)
 const showAllRows = ref(false)
 const maxAutoRows = 100
+let messageTimer: number | null = null
 
 const viewDate = ref((() => {
   const d = new Date()
@@ -78,9 +80,24 @@ const updateRowsPerPage = () => {
 
 const lastUpdated = computed(() => buildLastUpdated(tableSongs.value))
 
+const setMessage = (text: string, kind: "warning" | "success" = "warning", autoClearMs?: number) => {
+  message.value = text
+  messageKind.value = kind
+  if (messageTimer) {
+    window.clearTimeout(messageTimer)
+    messageTimer = null
+  }
+  if (autoClearMs) {
+    messageTimer = window.setTimeout(() => {
+      message.value = ""
+      messageTimer = null
+    }, autoClearMs)
+  }
+}
+
 const loadTablesAndSongs = async () => {
   if (!store.accessToken) {
-    message.value = "ログインしてください"
+    setMessage("ログインしてください")
     return
   }
   isLoading.value = true
@@ -98,14 +115,54 @@ const loadTablesAndSongs = async () => {
 
 const loadScores = async () => {
   if (!canLoad.value) {
-    message.value = "ログインしてユーザーを指定してください"
+    setMessage("ログインしてユーザーを指定してください")
     return
   }
   isLoading.value = true
-  message.value = "読込中..."
+  setMessage("読込中...")
   scores.value = await Api.fetch_score(new Date(0), viewDate.value, userId.value, store.accessToken)
-  message.value = scores.value ? "" : "読み込みに失敗しました"
+  setMessage(scores.value ? "" : "読み込みに失敗しました")
   isLoading.value = false
+}
+
+const fallbackCopy = (text: string) => {
+  const textArea = document.createElement("textarea")
+  textArea.value = text
+  textArea.setAttribute("readonly", "")
+  textArea.style.position = "fixed"
+  textArea.style.opacity = "0"
+  document.body.appendChild(textArea)
+  textArea.select()
+  document.execCommand("copy")
+  document.body.removeChild(textArea)
+}
+
+const buildShareUrl = () => {
+  const query: Record<string, string> = { state: "main" }
+  if (selectedTableId.value > 0) {
+    query.table_id = String(selectedTableId.value)
+  }
+  const resolved = router.resolve({ path: `/table-user/${userId.value}`, query })
+  return new URL(resolved.href, window.location.origin).toString()
+}
+
+const onShareLink = async () => {
+  if (userId.value <= 0) {
+    setMessage("ユーザーを指定してください")
+    return
+  }
+  const shareUrl = buildShareUrl()
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(shareUrl)
+    } else {
+      fallbackCopy(shareUrl)
+    }
+    setMessage("共有リンクをコピーしました", "success", 3000)
+  } catch (error) {
+    fallbackCopy(shareUrl)
+    setMessage("共有リンクをコピーしました", "success", 3000)
+  }
 }
 
 const onChangeTable = async () => {
@@ -141,9 +198,10 @@ watch([searchText, lampFilter, selectedTableId], () => {
   <section id="table-user-page" class="container">
     <DifficultyTableUserHeader v-model:selectedTableId="selectedTableId" :selectedTableName="selectedTableName"
       :userName="userName" :userId="userId" :lastUpdated="lastUpdated" :tableOptions="tableOptions"
-      :isLoading="isLoading" @changeTable="onChangeTable" />
+      :isLoading="isLoading" @changeTable="onChangeTable" @shareLink="onShareLink" />
 
-    <div v-if="message" class="alert alert-warning" role="alert">
+    <div v-if="message" class="alert" :class="messageKind === 'success' ? 'alert-success' : 'alert-warning'"
+      role="alert">
       {{ message }}
     </div>
 

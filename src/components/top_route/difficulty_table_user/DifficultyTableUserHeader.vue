@@ -12,6 +12,7 @@ defineProps<{
 const emit = defineEmits<{
     (e: "update:selectedTableId", value: number): void
     (e: "changeTable"): void
+    (e: "shareLink"): void
 }>()
 
 const onSelectChange = (event: Event) => {
@@ -51,9 +52,9 @@ const onSelectChange = (event: Event) => {
                 <font-awesome-icon :icon="['fas', 'circle-exclamation']" />
                 CSV
             </button>
-            <button class="btn btn-outline-dark btn-sm" :disabled="isLoading"
-                v-tooltip="{ content: '未実装', delay: { show: 0, hide: 0 } }">
-                <font-awesome-icon :icon="['fas', 'circle-exclamation']" />
+            <button class="btn btn-outline-dark btn-sm" :disabled="isLoading || userId <= 0" @click="emit('shareLink')"
+                v-tooltip="{ content: 'リンクをコピー', delay: { show: 0, hide: 0 } }">
+                <font-awesome-icon :icon="['fas', 'copy']" />
                 共有リンク
             </button>
         </div>
