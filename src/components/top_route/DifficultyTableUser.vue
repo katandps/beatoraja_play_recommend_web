@@ -26,7 +26,8 @@ const scores = ref<Scores | null>(null)
 const selectedTableId = ref<number>(0)
 const searchText = ref("")
 const lampFilter = ref("all")
-const isLoading = ref(false)
+const isLoadingTables = ref(false)
+const isLoadingScores = ref(false)
 const message = ref("")
 const messageKind = ref<"warning" | "success">("warning")
 const currentPage = ref(1)
@@ -100,17 +101,20 @@ const loadTablesAndSongs = async () => {
     setMessage("ログインしてください")
     return
   }
-  isLoading.value = true
-  tables.value = await Api.fetch_tables(store.accessToken)
-  songs.value = await Api.fetch_songs(store.accessToken)
-  const queryTableId = parseInt(route.query.table_id as string)
-  const fallbackTable = tables.value.first()
-  if (queryTableId && tables.value.tables.some((t) => t.id === queryTableId)) {
-    selectedTableId.value = queryTableId
-  } else if (fallbackTable) {
-    selectedTableId.value = fallbackTable.id
+  isLoadingTables.value = true
+  try {
+    tables.value = await Api.fetch_tables(store.accessToken)
+    songs.value = await Api.fetch_songs(store.accessToken)
+    const queryTableId = parseInt(route.query.table_id as string)
+    const fallbackTable = tables.value.first()
+    if (queryTableId && tables.value.tables.some((t) => t.id === queryTableId)) {
+      selectedTableId.value = queryTableId
+    } else if (fallbackTable) {
+      selectedTableId.value = fallbackTable.id
+    }
+  } finally {
+    isLoadingTables.value = false
   }
-  isLoading.value = false
 }
 
 const loadScores = async () => {
@@ -118,12 +122,17 @@ const loadScores = async () => {
     setMessage("ログインしてユーザーを指定してください")
     return
   }
-  isLoading.value = true
+  isLoadingScores.value = true
   setMessage("読込中...")
-  scores.value = await Api.fetch_score(new Date(0), viewDate.value, userId.value, store.accessToken)
-  setMessage(scores.value ? "" : "読み込みに失敗しました")
-  isLoading.value = false
+  try {
+    scores.value = await Api.fetch_score(new Date(0), viewDate.value, userId.value, store.accessToken)
+    setMessage(scores.value ? "" : "読み込みに失敗しました")
+  } finally {
+    isLoadingScores.value = false
+  }
 }
+
+const isLoading = computed(() => isLoadingTables.value || isLoadingScores.value)
 
 const fallbackCopy = (text: string) => {
   const textArea = document.createElement("textarea")
@@ -180,6 +189,10 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   window.removeEventListener("resize", updateRowsPerPage)
+  if (messageTimer) {
+    window.clearTimeout(messageTimer)
+    messageTimer = null
+  }
 })
 
 watch(
