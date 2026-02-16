@@ -492,50 +492,30 @@ export const buildScoreRateBinsByLevel = (
         }
         let i = 0
         while (i < bins.length) {
-            if (i === maxBinIndex) {
-                const range = binPercent(i)
-                const count = bins[i]
-                segments.push({
-                    len: 1,
-                    count,
-                    alpha: alphaForCount(count),
-                    start: i,
-                    end: i,
-                    rank: "Max",
-                    startPercent: range.start,
-                    endPercent: range.end
-                })
-                i += 1
-                continue
-            }
-            const currentRank = Math.min(normalRanksLowToHigh.length - 1, Math.floor(i / binsPerRank))
-            const rankEnd = (currentRank + 1) * binsPerRank
             if (bins[i] === 0) {
                 let j = i
-                while (j < rankEnd && bins[j] === 0) {
+                while (j < bins.length && bins[j] === 0) {
                     j += 1
                 }
-                const run = j - i
-                if (run >= 5) {
-                    const startRange = binPercent(i)
-                    const endRange = binPercent(j - 1)
-                    segments.push({
-                        len: run,
-                        count: 0,
-                        alpha: 0,
-                        start: i,
-                        end: j - 1,
-                        rank: normalRanksLowToHigh[currentRank],
-                        startPercent: startRange.start,
-                        endPercent: endRange.end
-                    })
-                    i = j
-                    continue
-                }
+                const startRange = binPercent(i)
+                const endRange = binPercent(j - 1)
+                segments.push({
+                    len: j - i,
+                    count: 0,
+                    alpha: 0,
+                    start: i,
+                    end: j - 1,
+                    startPercent: startRange.start,
+                    endPercent: endRange.end
+                })
+                i = j
+                continue
             }
             const range = binPercent(i)
             const count = bins[i]
-            const rank = normalRanksLowToHigh[currentRank]
+            const rank = i === maxBinIndex
+                ? "Max"
+                : normalRanksLowToHigh[Math.min(normalRanksLowToHigh.length - 1, Math.floor(i / binsPerRank))]
             segments.push({
                 len: 1,
                 count,

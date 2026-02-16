@@ -82,12 +82,12 @@ const clearEffortCountByLevel = computed(() => buildClearEffortCountByLevel(prop
                         :style="{ '--bins': totalBins }">
                         <span v-for="(segment, index) in row.segments" :key="index" class="rate-bin"
                             :class="[segment.rank ? `bg-${segment.rank}` : '', segment.count === 0 ? 'is-empty' : '']"
-                            :style="{ '--alpha': segment.alpha.toFixed(3), '--span': segment.len }" v-tooltip="{
-                                content: segment.count === 0
-                                    ? `${segment.startPercent.toFixed(1)}% - ${segment.endPercent.toFixed(1)}%: 0`
-                                    : `${segment.startPercent.toFixed(1)}% (${segment.rank}): ${segment.count}`,
-                                delay: { show: 0, hide: 0 }
-                            }"></span>
+                            :style="{ '--alpha': segment.alpha.toFixed(3), '--span': segment.len }" v-tooltip="segment.count === 0
+                                ? undefined
+                                : {
+                                    content: `${segment.startPercent.toFixed(1)}% (${segment.rank}): ${segment.count}`,
+                                    delay: { show: 0, hide: 0 }
+                                }"></span>
                     </div>
                 </div>
             </div>
@@ -286,17 +286,39 @@ const clearEffortCountByLevel = computed(() => buildClearEffortCountByLevel(prop
 
 .rate-legend .legend-dot.bg-AAA,
 .rate-heat .rate-bin.bg-AAA {
-    background: #d4af37 !important;
+    background: linear-gradient(135deg, #f9e08b 0%, #f6f0c4 45%, #e0b84f 100%) !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 230, 160, 0.7), 0 0 6px rgba(235, 190, 90, 0.35) !important;
 }
 
 .rate-legend .legend-dot.bg-AA,
 .rate-heat .rate-bin.bg-AA {
-    background: #c0c0c0 !important;
+    background: linear-gradient(135deg, #e5e7ea 0%, #f5f7f9 45%, #b8c0c8 100%) !important;
+    box-shadow: inset 0 0 0 1px rgba(235, 240, 245, 0.7), 0 0 6px rgba(160, 175, 190, 0.35) !important;
 }
 
 .rate-legend .legend-dot.bg-A,
 .rate-heat .rate-bin.bg-A {
-    background: #cd7f32 !important;
+    background: linear-gradient(135deg, #e5b27a 0%, #f2d1a6 45%, #b56d2b 100%) !important;
+    box-shadow: inset 0 0 0 1px rgba(240, 205, 165, 0.7), 0 0 6px rgba(190, 120, 60, 0.35) !important;
+}
+
+.rate-heat .rate-bin.bg-Max {
+    background: linear-gradient(135deg, #f7f3ff 0%, #e3e4ff 40%, #c6c9ff 70%, #9ea6ff 100%) !important;
+    box-shadow: inset 0 0 0 1px rgba(210, 214, 255, 0.9), 0 0 10px rgba(120, 140, 255, 0.55) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.rate-heat .rate-bin.bg-Max::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.75) 35%,
+            transparent 65%);
+    opacity: 0.8;
+    pointer-events: none;
 }
 
 .empty-state {
