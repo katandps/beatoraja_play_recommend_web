@@ -11,6 +11,8 @@ import {
   buildSummaryCards,
   buildTableSongs
 } from "@/models/difficultyTableUser"
+import { copyToClipboard } from "@/utils/clipboard"
+import { getTableIdFromRoute, getUserIdFromRoute } from "@/utils/route"
 import DifficultyTableUserHeader from "@/components/top_route/difficulty_table_user/DifficultyTableUserHeader.vue"
 import DifficultyTableUserDistributions from "@/components/top_route/difficulty_table_user/DifficultyTableUserDistributions.vue"
 import DifficultyTableUserPickup from "@/components/top_route/difficulty_table_user/DifficultyTableUserPickup.vue"
@@ -43,17 +45,7 @@ const viewDate = ref((() => {
   return d
 })())
 
-const userId = computed(() => {
-  const paramId = parseInt(route.params.user_id as string)
-  if (Number.isFinite(paramId) && paramId > 0) {
-    return paramId
-  }
-  const queryId = parseInt(route.query.user_id as string)
-  if (Number.isFinite(queryId) && queryId > 0) {
-    return queryId
-  }
-  return store.userInfo?.user_id || 0
-})
+const userId = computed(() => getUserIdFromRoute(route, store.userInfo?.user_id || 0))
 
 const canLoad = computed(() => !!store.accessToken && userId.value > 0)
 const tableList = computed(() => tables.value.name_list())
@@ -105,7 +97,7 @@ const loadTablesAndSongs = async () => {
   try {
     tables.value = await Api.fetch_tables(store.accessToken)
     songs.value = await Api.fetch_songs(store.accessToken)
-    const queryTableId = parseInt(route.query.table_id as string)
+    const queryTableId = getTableIdFromRoute(route)
     const fallbackTable = tables.value.first()
     if (queryTableId && tables.value.tables.some((t) => t.id === queryTableId)) {
       selectedTableId.value = queryTableId
@@ -134,18 +126,6 @@ const loadScores = async () => {
 
 const isLoading = computed(() => isLoadingTables.value || isLoadingScores.value)
 
-const fallbackCopy = (text: string) => {
-  const textArea = document.createElement("textarea")
-  textArea.value = text
-  textArea.setAttribute("readonly", "")
-  textArea.style.position = "fixed"
-  textArea.style.opacity = "0"
-  document.body.appendChild(textArea)
-  textArea.select()
-  document.execCommand("copy")
-  document.body.removeChild(textArea)
-}
-
 const buildShareUrl = () => {
   const query: Record<string, string> = { state: "main" }
   if (selectedTableId.value > 0) {
@@ -161,17 +141,12 @@ const onShareLink = async () => {
     return
   }
   const shareUrl = buildShareUrl()
-  try {
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(shareUrl)
-    } else {
-      fallbackCopy(shareUrl)
-    }
+  const copied = await copyToClipboard(shareUrl)
+  if (copied) {
     setMessage("共有リンクをコピーしました", "success", 3000)
-  } catch (error) {
-    fallbackCopy(shareUrl)
-    setMessage("共有リンクをコピーしました", "success", 3000)
+    return
   }
+  setMessage("共有リンクのコピーに失敗しました")
 }
 
 const onChangeTable = async () => {
