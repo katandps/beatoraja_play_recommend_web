@@ -51,7 +51,15 @@ export type TableRow = {
     titleWrapped: string
     lamp: string
     rate: string
+    miss: string
     last: string
+}
+
+const formatMissCount = (value: number) => {
+    if (value < 0 || value === 2147483647) {
+        return "-"
+    }
+    return value.toLocaleString()
 }
 
 export const hardIndex = config.LAMP_INDEX.indexOf("Hard")
@@ -390,6 +398,7 @@ export const buildTableRows = (songs: SongDetail[]): TableRow[] => {
             titleWrapped: s.title.replace(/([/\-→（）()[\]])/g, "$1\u200B"),
             lamp: config.LAMP_INDEX[s.clear_type],
             rate: `${clampRate(s.score_rate()).toFixed(2)}%`,
+            miss: formatMissCount(s.min_bp),
             last: isValidDate(s.updated_at) ? DateFormatter.format(s.updated_at) : "-"
         }))
 }

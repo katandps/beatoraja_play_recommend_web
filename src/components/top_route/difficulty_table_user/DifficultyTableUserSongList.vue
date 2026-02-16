@@ -102,6 +102,7 @@ const goToNext = () => {
                         <th>Title</th>
                         <th>Lamp</th>
                         <th>Rate</th>
+                        <th>Miss</th>
                         <th>Last</th>
                     </tr>
                 </thead>
@@ -116,6 +117,7 @@ const goToNext = () => {
                             <span class="lamp-pill" :class="`lamp-${row.lamp}`">{{ row.lamp }}</span>
                         </td>
                         <td>{{ row.rate }}</td>
+                        <td>{{ row.miss }}</td>
                         <td>{{ row.last }}</td>
                     </tr>
                 </tbody>
