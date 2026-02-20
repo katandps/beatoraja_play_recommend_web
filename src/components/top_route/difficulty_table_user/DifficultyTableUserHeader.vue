@@ -42,16 +42,6 @@ const onSelectChange = (event: Event) => {
             </div>
         </div>
         <div class="hero-actions">
-            <button class="btn btn-outline-dark btn-sm" :disabled="isLoading"
-                v-tooltip="{ content: '未実装', delay: { show: 0, hide: 0 } }">
-                <font-awesome-icon :icon="['fas', 'circle-exclamation']" />
-                画像エクスポート
-            </button>
-            <button class="btn btn-outline-dark btn-sm" :disabled="isLoading"
-                v-tooltip="{ content: '未実装', delay: { show: 0, hide: 0 } }">
-                <font-awesome-icon :icon="['fas', 'circle-exclamation']" />
-                CSV
-            </button>
             <button class="btn btn-outline-dark btn-sm" :disabled="isLoading || userId <= 0" @click="emit('shareLink')"
                 v-tooltip="{ content: 'リンクをコピー', delay: { show: 0, hide: 0 } }">
                 <font-awesome-icon :icon="['fas', 'copy']" />
