@@ -23,10 +23,16 @@ onBeforeMount(() =>
 <template>
   <div>
     <div v-if="ranking" style="padding-top: 20px">
-      <div>
-        <div>{{ ranking.song.title }}</div>
-        <div>{{ ranking.song.notes }} notes</div>
+      <div class="song-card">
+        <div class="song-card-header">
+          <span class="song-title">{{ ranking.song.title }}</span>
+        </div>
+        <div class="song-card-body">
+          <span class="song-notes">Notes: {{ ranking.song.notes }}</span>
+          <!-- 追加情報があればここに -->
+        </div>
       </div>
+
       <div class="table-wrapper">
         <div class="score-table">
           <div class="thead">
@@ -66,3 +72,33 @@ onBeforeMount(() =>
     </div>
   </div>
 </template>
+
+<style scoped>
+/* カード風デザイン */
+.song-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 24px 32px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.song-card-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+.song-title {
+  letter-spacing: 0.05em;
+}
+.song-card-body {
+  font-size: 1rem;
+  color: #666;
+}
+.song-notes {
+  font-weight: 500;
+}
+</style>
