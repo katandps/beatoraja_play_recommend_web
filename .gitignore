@@ -21,3 +21,6 @@ pnpm-debug.log*
 *.sw?
 
 .VSCodeCounter
+
+# generated files
+src/types/generated/*
