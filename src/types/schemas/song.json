@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SongResponse",
+  "type": "object",
+  "properties": {
+    "artist": {
+      "type": "string"
+    },
+    "include_features": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "md5": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "sha256": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "md5",
+    "sha256",
+    "title",
+    "artist",
+    "notes",
+    "include_features"
+  ]
+}

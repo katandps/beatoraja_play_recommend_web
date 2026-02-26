@@ -4,18 +4,23 @@ import Songs from "./models/songs"
 import Tables from "./models/difficultyTable"
 import PlayStats from "./models/playStats"
 import { UserInfo } from "@/store/session"
+import { AccountD } from "./types/generated/account"
 
+class Error {
+    error: string = ""
+}
 export default class Api {
     host: string = process.env.VUE_APP_HOST
+
 
     /**
      * @public
      * @param {string|null} token
-     * @returns {Promise<any>}
+     * @returns {Promise<AccountD | Error>}
      */
-    static async get_account(token: string | null) {
+    static async get_account(token: string | null): Promise<AccountD | Error> {
         if (token === null) {
-            return { 'error': 'token is not set' }
+            return { error: 'token is not set' }
         }
         const obj = new Api()
         const uri = obj.host + "/account"
