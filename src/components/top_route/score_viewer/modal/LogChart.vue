@@ -64,7 +64,7 @@ function getMarkArray(arr: Array<number | null>, nullValue: number | null = null
       continue
     }
     if (prev === null) {
-      marks.push(false)
+      marks.push(true) // 最初の値は常にマーク
       prev = val
       continue
     }
