@@ -6,6 +6,7 @@ import { useCookies } from "vue3-cookies"
 import { onMounted, ref, watch } from "vue"
 import { useRoute } from "vue-router"
 import { useLoginStore } from "@/store/session"
+import { AccountD } from "./types/generated/account"
 
 const { cookies } = useCookies()
 const loginStore = useLoginStore()
@@ -23,26 +24,33 @@ const handleSignOut = async () => {
   is_login.value = false
 }
 
+function setLoginAccount(account: AccountD | null) {
+  if (account) {
+    loginStore.userInfo = {
+      name: account.name,
+      user_id: account.user_id,
+      visibility: account.visibility,
+    }
+    is_login.value = true
+  } else {
+    is_login.value = false
+    loginStore.accessToken = null
+  }
+}
+
 onMounted(async () => {
   if (cookies.get("session-token")) {
     loginStore.accessToken = cookies.get('session-token')
   }
   if (!loginStore.accessToken) { return }
-  const account = await Api.get_account(loginStore.accessToken)
-  debug(account)
-  is_login.value = !account.error
-  if (account.error) {
-    loginStore.accessToken = null
-  } else {
-    loginStore.userInfo = account
-  }
+  await Api.get_account(loginStore.accessToken).then(setLoginAccount)
 })
 
 watch(route, async (cur, prev) => {
   if (is_login.value && cur.path !== prev.path) {
     const account = await Api.get_account(loginStore.accessToken)
     debug(account)
-    if (account.error) await handleSignOut()
+    if (!account) await handleSignOut()
   }
 })
 </script>

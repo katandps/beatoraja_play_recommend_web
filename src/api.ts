@@ -6,9 +6,6 @@ import PlayStats from "./models/playStats"
 import { UserInfo } from "@/store/session"
 import { AccountD } from "./types/generated/account"
 
-class Error {
-    error: string = ""
-}
 export default class Api {
     host: string = process.env.VUE_APP_HOST
 
@@ -16,11 +13,12 @@ export default class Api {
     /**
      * @public
      * @param {string|null} token
-     * @returns {Promise<AccountD | Error>}
+     * @returns {Promise<AccountD | null>}
      */
-    static async get_account(token: string | null): Promise<AccountD | Error> {
+    static async get_account(token: string | null): Promise<AccountD | null> {
         if (token === null) {
-            return { error: 'token is not set' }
+            log.error("Token is not set")
+            return null;
         }
         const obj = new Api()
         const uri = obj.host + "/account"
