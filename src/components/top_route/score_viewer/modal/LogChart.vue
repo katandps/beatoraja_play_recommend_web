@@ -52,45 +52,90 @@ const formatTooltipDate = (dateString: string) => {
   })
 }
 
-const scoreData = computed(() => ({
-  labels: props.logs.map(log => formatDateLabel(log.updated_at)),
-  datasets: [{
-    label: 'スコア',
-    data: props.logs.map(log => log.score),
-    borderColor: '#0066ff',
-    backgroundColor: 'rgba(0, 102, 255, 0.1)',
-    tension: 0,
-    pointRadius: 4,
-    pointHoverRadius: 6
-  }]
-}))
+// 前回値と異なる場合にマークを付けるためのユーティリティ
+function getMarkArray(arr: Array<number | null>, nullValue: number | null = null) {
+  const marks: boolean[] = []
+  let prev: number | null = null
+  for (let i = 0; i < arr.length; i++) {
+    const val = arr[i]
+    if (val === nullValue) {
+      marks.push(false)
+      prev = null
+      continue
+    }
+    if (prev === null) {
+      marks.push(false)
+      prev = val
+      continue
+    }
+    if (val !== prev) {
+      marks.push(true)
+    } else {
+      marks.push(false)
+    }
+    prev = val
+  }
+  return marks
+}
 
-const bpData = computed(() => ({
-  labels: props.logs.map(log => formatDateLabel(log.updated_at)),
-  datasets: [{
-    label: 'ミス数',
-    data: props.logs.map(log => log.min_bp === -1 ? null : log.min_bp),
-    borderColor: '#ff3333',
-    backgroundColor: 'rgba(255, 51, 51, 0.1)',
-    tension: 0,
-    pointRadius: 4,
-    pointHoverRadius: 6,
-    spanGaps: true
-  }]
-}))
+const scoreData = computed(() => {
+  const scores = props.logs.map(log => log.score)
+  const marks = getMarkArray(scores)
+  return {
+    labels: props.logs.map(log => formatDateLabel(log.updated_at)),
+    datasets: [{
+      label: 'スコア',
+      data: scores,
+      borderColor: '#0066ff',
+      backgroundColor: 'rgba(0, 102, 255, 0.1)',
+      tension: 0,
+      pointRadius: marks.map(mark => mark ? 6 : 4),
+      pointHoverRadius: 8,
+      pointStyle: marks.map(mark => mark ? 'circle' : 'circle'),
+      // mark時は色も変える例: 赤
+      pointBackgroundColor: marks.map(mark => mark ? '#0066ff' : '#ffffff ')
+    }]
+  }
+})
 
-const comboData = computed(() => ({
-  labels: props.logs.map(log => formatDateLabel(log.updated_at)),
-  datasets: [{
-    label: '最大コンボ',
-    data: props.logs.map(log => log.max_combo),
-    borderColor: '#00cc44',
-    backgroundColor: 'rgba(0, 204, 68, 0.1)',
-    tension: 0,
-    pointRadius: 4,
-    pointHoverRadius: 6
-  }]
-}))
+const bpData = computed(() => {
+  const bps = props.logs.map(log => log.min_bp === -1 ? null : log.min_bp)
+  const marks = getMarkArray(bps, null)
+  return {
+    labels: props.logs.map(log => formatDateLabel(log.updated_at)),
+    datasets: [{
+      label: 'ミス数',
+      data: bps,
+      borderColor: '#ff3333',
+      backgroundColor: 'rgba(255, 51, 51, 0.1)',
+      tension: 0,
+      pointRadius: marks.map(mark => mark ? 6 : 4),
+      pointHoverRadius: 8,
+      pointStyle: marks.map(mark => mark ? 'circle' : 'circle'),
+      pointBackgroundColor: marks.map(mark => mark ? '#ff3333' : '#ffffff'),
+      spanGaps: true
+    }]
+  }
+})
+
+const comboData = computed(() => {
+  const combos = props.logs.map(log => log.max_combo)
+  const marks = getMarkArray(combos)
+  return {
+    labels: props.logs.map(log => formatDateLabel(log.updated_at)),
+    datasets: [{
+      label: '最大コンボ',
+      data: combos,
+      borderColor: '#00cc44',
+      backgroundColor: 'rgba(0, 204, 68, 0.1)',
+      tension: 0,
+      pointRadius: marks.map(mark => mark ? 6 : 4),
+      pointHoverRadius: 8,
+      pointStyle: marks.map(mark => mark ? 'circle' : 'circle'),
+      pointBackgroundColor: marks.map(mark => mark ? '#00cc44' : '#ffffff')
+    }]
+  }
+})
 
 const createChartOptions = (yAxisTitle: string, maxValue?: number) => ({
   responsive: true,
