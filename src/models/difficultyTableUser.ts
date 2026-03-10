@@ -279,12 +279,15 @@ export const buildClearEffortCountByLevel = (songs: SongDetail[]) => {
     return map
 }
 
-export const buildTopUpdates = (songs: SongDetail[], easyLampIndex: number): TopUpdateRow[] => {
+export const buildTopUpdates = (songs: SongDetail[]): TopUpdateRow[] => {
     const since = new Date()
     since.setDate(since.getDate() - 30)
     since.setHours(0, 0, 0, 0)
     const byLevel = new Map<string, number[]>()
     songs.forEach((s) => {
+        if (s.clear_type === config.LAMP_INDEX.indexOf("NoPlay")) {
+            return
+        }
         if (!byLevel.has(s.level)) {
             byLevel.set(s.level, [])
         }
@@ -317,7 +320,7 @@ export const buildTopUpdates = (songs: SongDetail[], easyLampIndex: number): Top
     }[] = []
 
     songs
-        .filter((s) => s.clear_type >= easyLampIndex)
+        .filter((s) => s.clear_type >= easyIndex)
         .filter((s) => isValidDate(s.clear_updated_at) && s.clear_updated_at >= since)
         .forEach((s) => {
             const sorted = sortedByLevel.get(s.level) || [s.clear_type]

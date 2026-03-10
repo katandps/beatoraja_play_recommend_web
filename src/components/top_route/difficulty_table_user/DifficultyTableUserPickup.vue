@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import SongDetail from "@/models/song_detail"
-import { buildTopUpdates, easyIndex } from "@/models/difficultyTableUser"
+import { buildTopUpdates } from "@/models/difficultyTableUser"
 
 const props = defineProps<{
     tableSongs: SongDetail[]
 }>()
 
-const topUpdates = computed(() => buildTopUpdates(props.tableSongs, easyIndex))
+const topUpdates = computed(() => buildTopUpdates(props.tableSongs))
 </script>
 
 <template>
