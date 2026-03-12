@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, watch } from "vue"
 import SongDetail from "@/models/song_detail"
+import config from "@/const"
+import { DateFormatter } from "@/models/date_formatter"
 import {
     buildTableRows,
     failedIndex,
@@ -22,6 +24,7 @@ const emit = defineEmits<{
     (e: "update:lampFilter", value: string): void
     (e: "update:showAllRows", value: boolean): void
     (e: "update:currentPage", value: number): void
+    (e: "showModal", value: SongDetail): void
 }>()
 
 const toggleAllRows = () => {
@@ -61,6 +64,30 @@ const goToPrev = () => {
 const goToNext = () => {
     emit("update:currentPage", Math.min(totalPages.value, props.currentPage + 1))
 }
+
+const showModal = (song: SongDetail) => emit("showModal", song)
+
+const titleWrapped = (song: SongDetail) => song.title.replace(/([/\-→（）()[\]])/g, "$1\u200B")
+
+const lampLabel = (song: SongDetail) => config.LAMP_INDEX[song.clear_type]
+
+const rateLabel = (song: SongDetail) => `${Math.max(0, Math.min(100, song.score_rate())).toFixed(2)}%`
+
+const missLabel = (song: SongDetail) => {
+    if (song.min_bp < 0 || song.min_bp === 2147483647) {
+        return "-"
+    }
+    return song.min_bp.toLocaleString()
+}
+
+const lastLabel = (song: SongDetail) => {
+    if (!song.updated_at || song.updated_at.getFullYear() <= 2000) {
+        return "-"
+    }
+    return DateFormatter.format(song.updated_at)
+}
+
+
 </script>
 
 <template>
@@ -109,16 +136,16 @@ const goToNext = () => {
                 <tbody>
                     <tr v-for="row in pagedRows" :key="row.title">
                         <td>{{ row.level }}</td>
-                        <td
-                            v-tooltip="{ content: row.titleWrapped, delay: { show: 100, hide: 0 }, popperClass: 'song-title-tooltip' }">
+                        <td @click="showModal(row)"
+                            v-tooltip="{ content: titleWrapped(row), delay: { show: 100, hide: 0 }, popperClass: 'song-title-tooltip' }">
                             {{ row.title }}
                         </td>
                         <td>
-                            <span class="lamp-pill" :class="`lamp-${row.lamp}`">{{ row.lamp }}</span>
+                            <span class=" lamp-pill" :class="`lamp-${lampLabel(row)}`">{{ lampLabel(row) }}</span>
                         </td>
-                        <td>{{ row.rate }}</td>
-                        <td>{{ row.miss }}</td>
-                        <td>{{ row.last }}</td>
+                        <td>{{ rateLabel(row) }}</td>
+                        <td>{{ missLabel(row) }}</td>
+                        <td>{{ lastLabel(row) }}</td>
                     </tr>
                 </tbody>
             </table>

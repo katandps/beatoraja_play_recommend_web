@@ -1,13 +1,30 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import SongDetail from "@/models/song_detail"
+import config from "@/const"
+import { DateFormatter } from "@/models/date_formatter"
 import { buildTopUpdates } from "@/models/difficultyTableUser"
 
 const props = defineProps<{
     tableSongs: SongDetail[]
 }>()
 
+// --- emits ---
+const emits = defineEmits(["showModal"])
+
 const topUpdates = computed(() => buildTopUpdates(props.tableSongs))
+
+const lampLabel = (song: SongDetail) => config.LAMP_INDEX[song.clear_type] || "-"
+
+const updatedLabel = (song: SongDetail) => {
+    if (!song.clear_updated_at || song.clear_updated_at.getFullYear() <= 2000) {
+        return "-"
+    }
+    return DateFormatter.format(song.clear_updated_at)
+}
+
+const showModal = (song: SongDetail) => emits("showModal", song)
+
 </script>
 
 <template>
@@ -18,10 +35,10 @@ const topUpdates = computed(() => buildTopUpdates(props.tableSongs))
         <div v-if="topUpdates.length" class="top-updates">
             <div v-for="row in topUpdates" :key="row.title" class="update-row">
                 <div class="update-level">{{ row.level }}</div>
-                <div class="update-title">{{ row.title }}</div>
+                <div class="update-title" @click="showModal(row)">{{ row.title }}</div>
                 <div class="update-meta">
-                    <span class="lamp-pill" :class="`lamp-${row.lamp}`">{{ row.lamp }}</span>
-                    <span class="update-date">{{ row.updatedLabel }}</span>
+                    <span class="lamp-pill" :class="`lamp-${lampLabel(row)}`">{{ lampLabel(row) }}</span>
+                    <span class="update-date">{{ updatedLabel(row) }}</span>
                 </div>
             </div>
         </div>

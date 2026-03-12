@@ -38,30 +38,6 @@ export type RankBoundaryLabel = {
     left: string
 }
 
-export type TopUpdateRow = {
-    title: string
-    level: string
-    lamp: string
-    updatedLabel: string
-}
-
-export type TableRow = {
-    level: string
-    title: string
-    titleWrapped: string
-    lamp: string
-    rate: string
-    miss: string
-    last: string
-}
-
-const formatMissCount = (value: number) => {
-    if (value < 0 || value === 2147483647) {
-        return "-"
-    }
-    return value.toLocaleString()
-}
-
 export const hardIndex = config.LAMP_INDEX.indexOf("Hard")
 export const failedIndex = config.LAMP_INDEX.indexOf("Failed")
 export const easyIndex = config.LAMP_INDEX.indexOf("Easy")
@@ -279,7 +255,7 @@ export const buildClearEffortCountByLevel = (songs: SongDetail[]) => {
     return map
 }
 
-export const buildTopUpdates = (songs: SongDetail[]): TopUpdateRow[] => {
+export const buildTopUpdates = (songs: SongDetail[]): SongDetail[] => {
     const since = new Date()
     since.setDate(since.getDate() - 30)
     since.setHours(0, 0, 0, 0)
@@ -298,26 +274,16 @@ export const buildTopUpdates = (songs: SongDetail[]): TopUpdateRow[] => {
         sortedByLevel.set(level, [...values].sort((a, b) => a - b))
     })
 
-    const pickByLamp = new Map<number, {
-        title: string
-        level: string
+    type Candidate = {
+        song: SongDetail
         rate: number
         levelValue: number
-        lamp: string
         lampIndex: number
         updatedAt: number
-        updatedLabel: string
-    }>()
-    const candidates: {
-        title: string
-        level: string
-        rate: number
-        levelValue: number
-        lamp: string
-        lampIndex: number
-        updatedAt: number
-        updatedLabel: string
-    }[] = []
+    }
+
+    const pickByLamp = new Map<number, Candidate>()
+    const candidates: Candidate[] = []
 
     songs
         .filter((s) => s.clear_type >= easyIndex)
@@ -329,17 +295,12 @@ export const buildTopUpdates = (songs: SongDetail[]): TopUpdateRow[] => {
             const rate = total === 0 ? 0 : count / total
             const levelValue = levelNumber(s.level)
             const lampIndex = s.clear_type
-            const entry = {
-                title: s.title,
-                level: s.level,
+            const entry: Candidate = {
+                song: s,
                 rate,
                 levelValue,
-                lamp: config.LAMP_INDEX[lampIndex],
                 lampIndex,
-                updatedAt: s.clear_updated_at.getTime(),
-                updatedLabel: isValidDate(s.clear_updated_at)
-                    ? DateFormatter.format(s.clear_updated_at)
-                    : "-"
+                updatedAt: s.clear_updated_at.getTime()
             }
             candidates.push(entry)
             const current = pickByLamp.get(lampIndex)
@@ -365,7 +326,7 @@ export const buildTopUpdates = (songs: SongDetail[]): TopUpdateRow[] => {
 
     const base = Array.from(pickByLamp.values())
     const keyOf = (row: typeof base[number]) =>
-        `${row.title}__${row.level}__${row.lampIndex}__${row.updatedAt}`
+        `${row.song.sha256 || row.song.md5 || row.song.title}__${row.lampIndex}__${row.updatedAt}`
     const used = new Set(base.map(keyOf))
     const remaining = candidates
         .filter((row) => !used.has(keyOf(row)))
@@ -389,21 +350,12 @@ export const buildTopUpdates = (songs: SongDetail[]): TopUpdateRow[] => {
 
     return merged
         .sort((a, b) => b.lampIndex - a.lampIndex)
-        .map(({ title, level, lamp, updatedLabel }) => ({ title, level, lamp, updatedLabel }))
+        .map(({ song }) => song)
 }
 
-export const buildTableRows = (songs: SongDetail[]): TableRow[] => {
+export const buildTableRows = (songs: SongDetail[]): SongDetail[] => {
     return [...songs]
         .sort((a, b) => b.updated_at.getTime() - a.updated_at.getTime())
-        .map((s) => ({
-            level: s.level,
-            title: s.title,
-            titleWrapped: s.title.replace(/([/\-→（）()[\]])/g, "$1\u200B"),
-            lamp: config.LAMP_INDEX[s.clear_type],
-            rate: `${clampRate(s.score_rate()).toFixed(2)}%`,
-            miss: formatMissCount(s.min_bp),
-            last: isValidDate(s.updated_at) ? DateFormatter.format(s.updated_at) : "-"
-        }))
 }
 
 export const buildLampCountsByLevel = (

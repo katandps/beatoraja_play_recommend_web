@@ -18,10 +18,15 @@ import DifficultyTableUserHeader from "@/components/top_route/difficulty_table_u
 import DifficultyTableUserDistributions from "@/components/top_route/difficulty_table_user/DifficultyTableUserDistributions.vue"
 import DifficultyTableUserPickup from "@/components/top_route/difficulty_table_user/DifficultyTableUserPickup.vue"
 import DifficultyTableUserSongList from "@/components/top_route/difficulty_table_user/DifficultyTableUserSongList.vue"
+import SongModal, { ISongModal } from "@/components/top_route/score_viewer/modal/SongModal.vue"
+import SongDetail, { Log } from "@/models/song_detail"
 
 const store = useLoginStore()
 const route = useRoute()
 const router = useRouter()
+
+const song_modal = ref<ISongModal>()
+const accessToken = computed(() => store.accessToken)
 
 const tables = ref<Tables>(Tables.default())
 const songs = ref<Songs | null>(null)
@@ -172,6 +177,11 @@ watch(
 watch([searchText, lampFilter, selectedTableId], () => {
   currentPage.value = 1
 })
+const show_song_modal = async (song: SongDetail) => {
+  let score = await Api.fetch_score_log(userId.value, song.sha256, accessToken.value)
+  song_modal.value?.showModal(song, new Date().toISOString().split('T')[0], score.log as Log[])
+}
+
 </script>
 
 <template>
@@ -195,12 +205,12 @@ watch([searchText, lampFilter, selectedTableId], () => {
 
     <DifficultyTableUserDistributions :tableSongs="tableSongs" :baseLevels="selectedTable?.level_list || []" />
 
-    <DifficultyTableUserPickup :tableSongs="tableSongs" />
+    <DifficultyTableUserPickup :tableSongs="tableSongs" @showModal="show_song_modal" />
 
     <DifficultyTableUserSongList v-model:searchText="searchText" v-model:lampFilter="lampFilter"
       v-model:showAllRows="showAllRows" v-model:currentPage="currentPage" :tableSongs="tableSongs"
-      :rowsPerPage="rowsPerPage" />
-
+      :rowsPerPage="rowsPerPage" @showModal="show_song_modal" />
+    <song-modal ref="song_modal" />
   </section>
 </template>
 
