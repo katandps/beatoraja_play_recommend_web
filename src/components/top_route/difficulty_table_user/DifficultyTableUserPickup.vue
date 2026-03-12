@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import SongDetail from "@/models/song_detail"
-import config from "@/const"
-import { DateFormatter } from "@/models/date_formatter"
 import { buildTopUpdates } from "@/models/difficultyTableUser"
 
 const props = defineProps<{
@@ -13,15 +11,6 @@ const props = defineProps<{
 const emits = defineEmits(["showModal"])
 
 const topUpdates = computed(() => buildTopUpdates(props.tableSongs))
-
-const lampLabel = (song: SongDetail) => config.LAMP_INDEX[song.clear_type] || "-"
-
-const updatedLabel = (song: SongDetail) => {
-    if (!song.clear_updated_at || song.clear_updated_at.getFullYear() <= 2000) {
-        return "-"
-    }
-    return DateFormatter.format(song.clear_updated_at)
-}
 
 const showModal = (song: SongDetail) => emits("showModal", song)
 
@@ -37,8 +26,8 @@ const showModal = (song: SongDetail) => emits("showModal", song)
                 <div class="update-level">{{ row.level }}</div>
                 <div class="update-title" @click="showModal(row)">{{ row.title }}</div>
                 <div class="update-meta">
-                    <span class="lamp-pill" :class="`lamp-${lampLabel(row)}`">{{ lampLabel(row) }}</span>
-                    <span class="update-date">{{ updatedLabel(row) }}</span>
+                    <span class="lamp-pill" :class="`lamp-${row.get('clear_type')}`">{{ row.get("clear_type") }}</span>
+                    <span class="update-date">{{ row.get("clear_date") }}</span>
                 </div>
             </div>
         </div>

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed, watch } from "vue"
 import SongDetail from "@/models/song_detail"
-import config from "@/const"
-import { DateFormatter } from "@/models/date_formatter"
 import {
     buildTableRows,
     failedIndex,
@@ -69,24 +67,6 @@ const showModal = (song: SongDetail) => emit("showModal", song)
 
 const titleWrapped = (song: SongDetail) => song.title.replace(/([/\-→（）()[\]])/g, "$1\u200B")
 
-const lampLabel = (song: SongDetail) => config.LAMP_INDEX[song.clear_type]
-
-const rateLabel = (song: SongDetail) => `${Math.max(0, Math.min(100, song.score_rate())).toFixed(2)}%`
-
-const missLabel = (song: SongDetail) => {
-    if (song.min_bp < 0 || song.min_bp === 2147483647) {
-        return "-"
-    }
-    return song.min_bp.toLocaleString()
-}
-
-const lastLabel = (song: SongDetail) => {
-    if (!song.updated_at || song.updated_at.getFullYear() <= 2000) {
-        return "-"
-    }
-    return DateFormatter.format(song.updated_at)
-}
-
 
 </script>
 
@@ -141,11 +121,12 @@ const lastLabel = (song: SongDetail) => {
                             {{ row.title }}
                         </td>
                         <td>
-                            <span class=" lamp-pill" :class="`lamp-${lampLabel(row)}`">{{ lampLabel(row) }}</span>
+                            <span class=" lamp-pill" :class="`lamp-${row.get('clear_type')}`">{{ row.get("clear_type")
+                            }}</span>
                         </td>
-                        <td>{{ rateLabel(row) }}</td>
-                        <td>{{ missLabel(row) }}</td>
-                        <td>{{ lastLabel(row) }}</td>
+                        <td>{{ row.get("rate") }}%</td>
+                        <td>{{ row.get("bp") }}</td>
+                        <td>{{ row.get("date") }}</td>
                     </tr>
                 </tbody>
             </table>
