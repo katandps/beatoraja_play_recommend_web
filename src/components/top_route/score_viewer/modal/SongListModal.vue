@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import ModalBaseVue, { IModalBase } from "./ModalBase.vue"
-export interface IGraphModal {
-  showModal: (title: string, text: string[]) => void
+import SongDetail from "@/models/song_detail"
+export interface ISongListModal {
+  showModal: (title: string, text: SongDetail[]) => void
 }
 
 // --- ref ---
@@ -10,12 +11,12 @@ const modal_base = ref<IModalBase>()
 
 // --- data ---
 const title = ref("")
-const text = ref<string[]>([])
+const song_list = ref<SongDetail[]>([])
 
 // --- methods ---
-const showModal = (ti: string, tx: string[]) => {
+const showModal = (ti: string, tx: SongDetail[]) => {
   title.value = ti
-  text.value = tx
+  song_list.value = tx
   modal_base.value?.showModal()
 }
 
@@ -30,7 +31,7 @@ defineExpose({ showModal })
     </template>
     <template v-slot:body>
       <ul>
-        <li v-for="(tx, index) in text" :key="index">{{ tx }}</li>
+        <li v-for="(tx, index) in song_list" :key="index">{{ tx.title }}</li>
       </ul>
     </template>
   </ModalBaseVue>

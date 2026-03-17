@@ -3,7 +3,7 @@ import config from "../../../const"
 import SongDetail from "../../../models/song_detail"
 import { computed, ref } from "vue"
 import Tables, { ActivatedTables } from "@/models/difficultyTable"
-import GraphModalVue, { IGraphModal } from "./modal/GraphModal.vue"
+import SongListModalVue, { ISongListModal } from "./modal/SongListModal.vue"
 import { useFilterStore } from "@/store/filter"
 
 const filterStore = useFilterStore()
@@ -16,7 +16,7 @@ interface Props {
 const props = defineProps<Props>()
 
 // --- refs ---
-const modal = ref<IGraphModal>()
+const modal = ref<ISongListModal>()
 // --- computed ---
 const rank_list = computed(() =>
   active_tables.value.map((table) =>
@@ -32,13 +32,12 @@ const rank_list = computed(() =>
 
 const active_tables = computed(() => ActivatedTables.filter_active_tables(props.checks, props.tables))
 // --- methods ---
-const showModal = (title: string, text: string[]) =>
+const showModal = (title: string, text: SongDetail[]) =>
   modal.value?.showModal(title, text)
 
 const list = (table_index: number, level_index: number, rank_index: number) =>
   rank_list.value[table_index][level_index][rank_index]
     .sort(SongDetail.cmp_title)
-    .map((s) => s.title)
 </script>
 
 <template>
@@ -84,7 +83,7 @@ const list = (table_index: number, level_index: number, rank_index: number) =>
     </template>
     <template v-else> 表示する難易度が設定されていません </template>
 
-    <GraphModalVue id="song-list-modal" ref="modal" />
+    <SongListModalVue id="song-list-modal" ref="modal" />
   </div>
 </template>
 
