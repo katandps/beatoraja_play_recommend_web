@@ -12,12 +12,17 @@ import {
     lampIndexDisplay,
     lampIndexMap,
     rankBoundaryLabels,
+    ScoreRateSegment,
     totalBins
 } from "@/models/difficultyTableUser"
 
 const props = defineProps<{
     tableSongs: SongDetail[]
     baseLevels: string[]
+}>()
+
+const emit = defineEmits<{
+    (e: "showSongListModal", title: string, songs: SongDetail[]): void
 }>()
 
 const lampCountsByLevel = computed(() =>
@@ -30,6 +35,13 @@ const scoreEffortByLevel = computed(() => buildScoreEffortByLevel(props.tableSon
 const scoreEffortCountByLevel = computed(() => buildScoreEffortCountByLevel(props.tableSongs))
 const clearEffortByLevel = computed(() => buildClearEffortByLevel(props.tableSongs))
 const clearEffortCountByLevel = computed(() => buildClearEffortCountByLevel(props.tableSongs))
+
+const showModal = (title: string, songs: SongDetail[]) => emit("showSongListModal", title, songs)
+
+const showRankDistributionModal = (level: string, segment: ScoreRateSegment) => {
+    if (segment.count === 0) return
+    showModal(`${level} - ${segment.rank} ${segment.startPercent.toFixed(2)}% ~ ${segment.endPercent.toFixed(2)}%`, segment.songs)
+}
 </script>
 
 <template>
@@ -53,7 +65,9 @@ const clearEffortCountByLevel = computed(() => buildClearEffortCountByLevel(prop
                     <div class="lamp-stack" role="img" :aria-label="`ランプ分布 ${row.level}`">
                         <div v-for="lamp in lampIndexDisplay" :key="lamp" class="lamp-segment" :class="`bg-${lamp}`"
                             :style="{ width: ((row.counts[lampIndexMap[lamp]] / row.total) * 100) + '%' }"
-                            :title="`${lamp}: ${row.counts[lampIndexMap[lamp]]}`"></div>
+                            :title="`${lamp}: ${row.counts[lampIndexMap[lamp]]}`"
+                            @click="showModal(`${row.level} - ${lamp}`, row.songsByLamp[lampIndexMap[lamp]] || [])">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -87,7 +101,7 @@ const clearEffortCountByLevel = computed(() => buildClearEffortCountByLevel(prop
                                 : {
                                     content: `${segment.startPercent.toFixed(1)}% (${segment.rank}): ${segment.count}`,
                                     delay: { show: 0, hide: 0 }
-                                }"></span>
+                                }" @click="showRankDistributionModal(row.level, segment)"></span>
                     </div>
                 </div>
             </div>

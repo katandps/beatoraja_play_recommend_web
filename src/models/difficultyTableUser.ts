@@ -15,6 +15,7 @@ export type LampCountsRow = {
     level: string
     counts: number[]
     total: number
+    songsByLamp: SongDetail[][]
 }
 
 export type ScoreRateSegment = {
@@ -26,6 +27,7 @@ export type ScoreRateSegment = {
     rank?: string
     startPercent: number
     endPercent: number
+    songs: SongDetail[]
 }
 
 export type ScoreRateRow = {
@@ -212,9 +214,6 @@ export const buildSummaryCards = (songs: SongDetail[]): SummaryCard[] => {
 export const buildScoreEffortByLevel = (songs: SongDetail[]) => {
     const map: { [key: string]: number } = {}
     songs.forEach((s) => {
-        if (s.clear_type === 0) {
-            return
-        }
         map[s.level] = (map[s.level] || 0) + clampRate(s.score_rate())
     })
     return map
@@ -223,9 +222,6 @@ export const buildScoreEffortByLevel = (songs: SongDetail[]) => {
 export const buildScoreEffortCountByLevel = (songs: SongDetail[]) => {
     const map: { [key: string]: number } = {}
     songs.forEach((s) => {
-        if (s.clear_type === 0) {
-            return
-        }
         map[s.level] = (map[s.level] || 0) + 1
     })
     return map
@@ -362,22 +358,33 @@ export const buildLampCountsByLevel = (
     songs: SongDetail[],
     baseLevels: string[]
 ): LampCountsRow[] => {
-    const map = new Map<string, number[]>()
-    baseLevels.forEach((level) => map.set(level, config.LAMP_INDEX.map(() => 0)))
+    type LampLevelData = {
+        counts: number[]
+        songsByLamp: SongDetail[][]
+    }
+    const newLampLevelData = (): LampLevelData => ({
+        counts: config.LAMP_INDEX.map(() => 0),
+        songsByLamp: config.LAMP_INDEX.map(() => [])
+    })
+
+    const map = new Map<string, LampLevelData>()
+    baseLevels.forEach((level) => map.set(level, newLampLevelData()))
     songs.forEach((s) => {
         if (!map.has(s.level)) {
-            map.set(s.level, config.LAMP_INDEX.map(() => 0))
+            map.set(s.level, newLampLevelData())
         }
-        const counts = map.get(s.level)
-        if (!counts || counts[s.clear_type] === undefined) {
+        const row = map.get(s.level)
+        if (!row || row.counts[s.clear_type] === undefined || !row.songsByLamp[s.clear_type]) {
             return
         }
-        counts[s.clear_type] += 1
+        row.counts[s.clear_type] += 1
+        row.songsByLamp[s.clear_type].push(s)
     })
-    return Array.from(map.entries()).map(([level, counts]) => ({
+    return Array.from(map.entries()).map(([level, row]) => ({
         level,
-        counts,
-        total: Math.max(counts.reduce((sum, v) => sum + v, 0), 1)
+        counts: row.counts,
+        total: Math.max(row.counts.reduce((sum, v) => sum + v, 0), 1),
+        songsByLamp: row.songsByLamp
     }))
 }
 
@@ -385,22 +392,32 @@ export const buildScoreRateBinsByLevel = (
     songs: SongDetail[],
     baseLevels: string[]
 ): ScoreRateRow[] => {
-    const map = new Map<string, number[]>()
-    baseLevels.forEach((level) => map.set(level, Array.from({ length: totalBins }, () => 0)))
+    type ScoreLevelData = {
+        bins: number[]
+        songsByBin: SongDetail[][]
+    }
+    const newScoreLevelData = (): ScoreLevelData => ({
+        bins: Array.from({ length: totalBins }, () => 0),
+        songsByBin: Array.from({ length: totalBins }, () => [] as SongDetail[])
+    })
+
+    const map = new Map<string, ScoreLevelData>()
+    baseLevels.forEach((level) => map.set(level, newScoreLevelData()))
     songs.forEach((s) => {
         if (s.clear_type === 0 || s.total_notes === 0) {
             return
         }
         if (!map.has(s.level)) {
-            map.set(s.level, Array.from({ length: totalBins }, () => 0))
+            map.set(s.level, newScoreLevelData())
         }
-        const bins = map.get(s.level)
-        if (!bins) {
+        const row = map.get(s.level)
+        if (!row) {
             return
         }
         const bounded = clampRate(s.score_rate())
         if (bounded >= 100) {
-            bins[maxBinIndex] += 1
+            row.bins[maxBinIndex] += 1
+            row.songsByBin[maxBinIndex].push(s)
             return
         }
         const rankIndexHighToLow = Math.max(
@@ -415,9 +432,11 @@ export const buildScoreRateBinsByLevel = (
             : Math.min(binsPerRank - 1, Math.floor((within / span) * binsPerRank))
         const rankIndexLowToHigh = normalRanksLowToHigh.length - 1 - rankIndexHighToLow
         const index = rankIndexLowToHigh * binsPerRank + binInRank
-        bins[index] += 1
+        row.bins[index] += 1
+        row.songsByBin[index].push(s)
     })
-    return Array.from(map.entries()).map(([level, bins]) => {
+    return Array.from(map.entries()).map(([level, row]) => {
+        const bins = row.bins
         const nonZeroCounts = bins.filter((count) => count > 0)
         const sortedCounts = [...nonZeroCounts].sort((a, b) => a - b)
         const thresholds = [0.2, 0.4, 0.6, 0.8].map((q) => quantile(sortedCounts, q))
@@ -461,7 +480,8 @@ export const buildScoreRateBinsByLevel = (
                     start: i,
                     end: j - 1,
                     startPercent: startRange.start,
-                    endPercent: endRange.end
+                    endPercent: endRange.end,
+                    songs: []
                 })
                 i = j
                 continue
@@ -479,7 +499,8 @@ export const buildScoreRateBinsByLevel = (
                 end: i,
                 rank,
                 startPercent: range.start,
-                endPercent: range.end
+                endPercent: range.end,
+                songs: row.songsByBin[i] || []
             })
             i += 1
         }
