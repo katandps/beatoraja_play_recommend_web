@@ -3,15 +3,13 @@ import { computed, watch } from "vue"
 import SongDetail from "@/models/song_detail"
 import {
     buildTableRows,
-    failedIndex,
-    filterSongs,
-    hardIndex
+    filterSongs
 } from "@/models/difficultyTableUser"
 
 const props = defineProps<{
     tableSongs: SongDetail[]
     searchText: string
-    lampFilter: string
+    levelFilter: string
     showAllRows: boolean
     rowsPerPage: number
     currentPage: number
@@ -19,7 +17,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: "update:searchText", value: string): void
-    (e: "update:lampFilter", value: string): void
+    (e: "update:levelFilter", value: string): void
     (e: "update:showAllRows", value: boolean): void
     (e: "update:currentPage", value: number): void
     (e: "showModal", value: SongDetail): void
@@ -29,9 +27,18 @@ const toggleAllRows = () => {
     emit("update:showAllRows", !props.showAllRows)
 }
 
-const filteredSongs = computed(() =>
-    filterSongs(props.tableSongs, props.searchText, props.lampFilter, hardIndex, failedIndex)
-)
+const filteredSongs = computed(() => filterSongs(props.tableSongs, props.searchText, props.levelFilter))
+const levelOptions = computed(() => {
+    const levels = Array.from(new Set(props.tableSongs.map((song) => song.level)))
+    return levels.sort((a, b) => {
+        const left = parseFloat(a.replace(/[^0-9.]/g, ""))
+        const right = parseFloat(b.replace(/[^0-9.]/g, ""))
+        if (Number.isFinite(left) && Number.isFinite(right) && left !== right) {
+            return left - right
+        }
+        return a.localeCompare(b)
+    })
+})
 const tableRows = computed(() => buildTableRows(filteredSongs.value))
 const totalRows = computed(() => tableRows.value.length)
 const totalPages = computed(() => Math.max(1, Math.ceil(totalRows.value / props.rowsPerPage)))
@@ -77,11 +84,10 @@ const titleWrapped = (song: SongDetail) => song.title.replace(/([/\-→（）()[
             <div class="filters">
                 <input class="form-control form-control-sm" type="text" placeholder="曲名検索" :value="searchText"
                     @input="emit('update:searchText', ($event.target as HTMLInputElement).value)" />
-                <select class="form-control form-control-sm" :value="lampFilter"
-                    @change="emit('update:lampFilter', ($event.target as HTMLSelectElement).value)">
-                    <option value="all">ランプ全て</option>
-                    <option value="hard">Hard以上</option>
-                    <option value="uncleared">未達成</option>
+                <select class="form-control form-control-sm" :value="levelFilter"
+                    @change="emit('update:levelFilter', ($event.target as HTMLSelectElement).value)">
+                    <option value="">レベル全て</option>
+                    <option v-for="level in levelOptions" :key="level" :value="level">{{ level }}</option>
                 </select>
                 <button class="btn btn-sm btn-outline-secondary" @click="toggleAllRows">
                     {{ showAllRows ? '自動ページング' : 'すべて表示' }}
@@ -122,7 +128,7 @@ const titleWrapped = (song: SongDetail) => song.title.replace(/([/\-→（）()[
                         </td>
                         <td>
                             <span class=" lamp-pill" :class="`lamp-${row.get('clear_type')}`">{{ row.get("clear_type")
-                            }}</span>
+                                }}</span>
                         </td>
                         <td>{{ row.get("rate") }}%</td>
                         <td>{{ row.get("bp") }}</td>

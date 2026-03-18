@@ -154,20 +154,15 @@ export const buildTableSongs = (
 export const filterSongs = (
     songs: SongDetail[],
     searchText: string,
-    lampFilter: string,
-    hardLampIndex: number,
-    failedLampIndex: number
+    levelFilter: string
 ) => {
     const keyword = searchText.trim().toLowerCase()
     return songs.filter((song) => {
         if (keyword && !song.title.toLowerCase().includes(keyword)) {
             return false
         }
-        if (lampFilter === "hard") {
-            return song.clear_type >= hardLampIndex
-        }
-        if (lampFilter === "uncleared") {
-            return song.clear_type <= failedLampIndex
+        if (levelFilter && song.level !== levelFilter) {
+            return false
         }
         return true
     })

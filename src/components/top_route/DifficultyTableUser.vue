@@ -35,7 +35,7 @@ const songs = ref<Songs | null>(null)
 const scores = ref<Scores | null>(null)
 const selectedTableId = ref<number>(0)
 const searchText = ref("")
-const lampFilter = ref("all")
+const levelFilter = ref("")
 const isLoadingTables = ref(false)
 const isLoadingScores = ref(false)
 const message = ref("")
@@ -176,7 +176,14 @@ watch(
   }
 )
 
-watch([searchText, lampFilter, selectedTableId], () => {
+watch(
+  () => selectedTableId.value,
+  () => {
+    levelFilter.value = ""
+  }
+)
+
+watch([searchText, levelFilter, selectedTableId], () => {
   currentPage.value = 1
 })
 const show_song_modal = async (song: SongDetail) => {
@@ -213,7 +220,7 @@ const show_song_list_modal = async (title: string, songs: SongDetail[]) => {
 
     <DifficultyTableUserPickup :tableSongs="tableSongs" @showModal="show_song_modal" />
 
-    <DifficultyTableUserSongList v-model:searchText="searchText" v-model:lampFilter="lampFilter"
+    <DifficultyTableUserSongList v-model:searchText="searchText" v-model:levelFilter="levelFilter"
       v-model:showAllRows="showAllRows" v-model:currentPage="currentPage" :tableSongs="tableSongs"
       :rowsPerPage="rowsPerPage" @showModal="show_song_modal" />
     <SongListModal ref="song_list_modal" />
