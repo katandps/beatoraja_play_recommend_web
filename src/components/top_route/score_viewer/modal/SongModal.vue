@@ -28,7 +28,7 @@ const showModal = (s: SongDetail, d: string, l: Log[]) => {
 const viewer_url = computed(() => "https://bms-score-viewer.pages.dev/view?md5=" + song.value?.md5)
 const mocha_url = computed(() => "https://mocha-repository.info/song.php?sha256=" + song.value?.sha256)
 const minir_url = computed(() => "https://www.gaftalk.com/minir/#/viewer/song/" + song.value?.sha256 + "/" + song.value?.mode)
-const lr2ir_url = computed(() => "http://www.dream-pro.info/~lavalse/LR2IR/search.cgi?mode=ranking&bmsmd5=" + song.value?.md5)
+const bmssearch_url = computed(() => "https://bmssearch.net/patterns/" + song.value?.sha256)
 
 // --- expose ---
 defineExpose({ showModal })
@@ -85,7 +85,7 @@ defineExpose({ showModal })
             <div class="body"><span v-html="song?.get('notes')"></span></div>
           </div>
           <div class="card col-sm-4">
-            <div class="header">Ranking</div>
+            <div class="header">ほかのプレイヤーの記録</div>
             <div class="body">
               <router-link :to="{
                 path: '/song',
@@ -94,7 +94,7 @@ defineExpose({ showModal })
                   date: date
                 })
               }">
-                IRへ移動
+                リストを見る
               </router-link>
             </div>
           </div>
@@ -117,7 +117,7 @@ defineExpose({ showModal })
             <a :href="minir_url" target="_blank">MinIR for Beatoraja</a>
           </div>
           <div class="card col-6">
-            <a :href="lr2ir_url" target="_blank">Lunatic Rave 2 Internet Ranking</a>
+            <a :href="bmssearch_url" target="_blank">BMS Search</a>
           </div>
         </div>
       </div>
