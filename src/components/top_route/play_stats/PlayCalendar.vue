@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import PlayStats from '../../../models/playStats'
 import Api from '@/api';
 import { useLoginStore } from "@/store/session"
@@ -274,14 +274,28 @@ const downloadAsImage = async () => {
     const element = document.getElementById('stats-download-area')
     if (!element) return
 
+    const fixedRenderWidth = 1160
+    const originalWidth = element.style.width
+    const originalMaxWidth = element.style.maxWidth
+
     try {
+        // Capture with a stable width so narrow viewports do not clip the right side.
+        element.style.width = `${fixedRenderWidth}px`
+        element.style.maxWidth = 'none'
+        await nextTick()
+
+        const captureWidth = Math.max(fixedRenderWidth, Math.ceil(element.scrollWidth))
+        const captureHeight = Math.ceil(element.scrollHeight)
+
         const canvas = await html2canvas(element, {
             backgroundColor: '#ffffff',
             scale: 2, // 高解像度
             useCORS: true,
             logging: false,
-            width: 1000, // 固定幅を指定 (px)
-            windowWidth: 1160, // レンダリング時の仮想ウィンドウ幅
+            width: captureWidth,
+            height: captureHeight,
+            windowWidth: captureWidth,
+            windowHeight: captureHeight,
             ignoreElements: (element) => {
                 return element.classList.contains('download-ignore')
             }
@@ -294,6 +308,9 @@ const downloadAsImage = async () => {
     } catch (error) {
         console.error('画像のダウンロードに失敗しました:', error)
         alert('画像のダウンロードに失敗しました')
+    } finally {
+        element.style.width = originalWidth
+        element.style.maxWidth = originalMaxWidth
     }
 }
 
@@ -396,12 +413,12 @@ const downloadAsImage = async () => {
                             <div class="stat-item">
                                 <span class="stat-label">ノーツ数</span>
                                 <span class="stat-value">{{ selectedDay.playData.daily.notes_count.toLocaleString()
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">プレイ時間</span>
                                 <span class="stat-value">{{ formatTime(selectedDay.playData.daily.play_time)
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -412,22 +429,22 @@ const downloadAsImage = async () => {
                             <div class="stat-item">
                                 <span class="stat-label">プレイ数</span>
                                 <span class="stat-value">{{ selectedDay.playData.total.play_count.toLocaleString()
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">クリア数</span>
                                 <span class="stat-value">{{ selectedDay.playData.total.clear_count.toLocaleString()
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">ノーツ数</span>
                                 <span class="stat-value">{{ selectedDay.playData.total.notes_count.toLocaleString()
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">プレイ時間</span>
                                 <span class="stat-value">{{ formatTime(selectedDay.playData.total.play_time)
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
