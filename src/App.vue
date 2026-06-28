@@ -14,6 +14,7 @@ const route = useRoute()
 
 // --- data ---
 const is_login = ref(false)
+const is_menu_open = ref(false)
 
 
 // --- methods ---
@@ -22,6 +23,10 @@ const handleSignOut = async () => {
   loginStore.accessToken = null
   loginStore.userInfo = null
   is_login.value = false
+}
+
+const handleMenuStateChange = (open: boolean) => {
+  is_menu_open.value = open
 }
 
 function setLoginAccount(account: AccountD | null) {
@@ -56,16 +61,18 @@ watch(route, async (cur, prev) => {
 </script>
 
 <template>
-  <div id="app">
-    <hamburger-menu :is_login="is_login" @handleSignOut="handleSignOut" />
-    <router-view :is_login="is_login" @handleSignOut="handleSignOut" />
-    <footer id="footer" class="footer mt-auto py-3">
-      <div class="container">
-        © 2020 KATAND<br />
-        <a href="https://twitter.com/dnaTaK">twitter@dnaTaK</a><br />
-        <router-link to="/view/?user_id=1">Score</router-link>
-      </div>
-    </footer>
+  <div id="app" :class="{ 'menu-open': is_menu_open }">
+    <div id="content">
+      <router-view :is_login="is_login" @handleSignOut="handleSignOut" />
+      <footer id="footer" class="footer mt-auto py-3">
+        <div class="container">
+          © 2020 KATAND<br />
+          <a href="https://twitter.com/dnaTaK">twitter@dnaTaK</a><br />
+          <router-link to="/view/?user_id=1">Score</router-link>
+        </div>
+      </footer>
+    </div>
+    <hamburger-menu :is_login="is_login" @handleSignOut="handleSignOut" @menuStateChange="handleMenuStateChange" />
   </div>
 </template>
 
@@ -76,8 +83,18 @@ watch(route, async (cur, prev) => {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  width: 100%;
-  max-width: 95%;
+  width: 98%;
+
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 98%;
+
   margin-left: auto;
   margin-right: auto;
 }
@@ -86,5 +103,18 @@ watch(route, async (cur, prev) => {
   padding: 20px;
   background-color: #dddddd;
   border-radius: 0.3rem;
+  width: 100%;
+
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 1080px 以上の画面ではメニューとコンテンツを横並びに配置 */
+@media (min-width: 1080px) {
+  #app {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
 }
 </style>

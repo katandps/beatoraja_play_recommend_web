@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useLoginStore } from '@/store/session'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const store = useLoginStore()
@@ -10,9 +10,12 @@ interface Props {
   is_login: boolean
 }
 defineProps<Props>()
-const emits = defineEmits(["handleSignOut"])
+const emits = defineEmits(["handleSignOut", "menuStateChange"])
 
 const active_btn = ref(false)
+const is_wide_screen = ref(false)
+
+const BREAKPOINT = 1920
 
 const handleSignInUrl = () => {
   let client_id = process.env.VUE_APP_CLIENT_ID
@@ -34,14 +37,35 @@ const handleSignOut =
   async () => {
     emits("handleSignOut")
   }
+
+const is_menu_open = computed(() => active_btn.value || is_wide_screen.value)
+
+const updateScreenSize = () => {
+  is_wide_screen.value = window.innerWidth >= BREAKPOINT
+  emits("menuStateChange", is_menu_open.value)
+}
+
+onMounted(() => {
+  updateScreenSize()
+  window.addEventListener('resize', updateScreenSize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateScreenSize)
+})
+
 const user_id = computed(() => store.userInfo?.user_id || 1)
-router.afterEach(() => active_btn.value = false)
+router.afterEach(() => {
+  if (!is_wide_screen.value) {
+    active_btn.value = false
+  }
+})
 </script>
 
 <template>
-  <nav id="page-header">
+  <nav id="page-header" :class="{ 'menu-open': is_menu_open }">
     <!--ハンバーガーメニューのボタン-->
-    <div class="hamburger_btn" v-on:click="active_btn = !active_btn">
+    <div class="hamburger_btn" v-on:click="active_btn = !active_btn" v-show="!is_wide_screen">
       <span class="line line_01" :class="(is_login ? 'line-login ' : 'line-logout ') +
         (active_btn ? 'btn_line01' : '')
         " />
@@ -54,7 +78,7 @@ router.afterEach(() => active_btn.value = false)
     </div>
     <!--サイドバー-->
     <transition name="menu">
-      <div class="menu" v-show="active_btn">
+      <div class="menu" v-show="is_menu_open">
         <ul>
           <li>
             <router-link class="text-dark px-2" to="/">
@@ -249,5 +273,38 @@ router.afterEach(() => active_btn.value = false)
 .menu ul {
   margin: 1rem;
   padding: 0;
+}
+
+/* レスポンシブ設定 */
+@media (min-width: 1920px) {
+  .hamburger_btn {
+    display: none;
+  }
+
+  #page-header {
+    flex-shrink: 0;
+  }
+
+  .menu {
+    position: static;
+    width: 20rem;
+    height: auto;
+    margin-left: 1rem;
+    background-color: rgba(180, 210, 255, 0.95);
+    border-radius: 0.3rem;
+    z-index: auto;
+  }
+
+  .menu-enter-active,
+  .menu-leave-active {
+    transition: none;
+  }
+
+  .menu-enter,
+  .menu-leave-to,
+  .menu-leave,
+  .menu-enter-to {
+    opacity: 1;
+  }
 }
 </style>
