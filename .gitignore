@@ -24,3 +24,4 @@ pnpm-debug.log*
 
 # generated files
 src/types/generated/*
+docs/*
