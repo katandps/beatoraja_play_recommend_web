@@ -93,7 +93,7 @@ defineExpose({ showModal })
                   sha256: song?.sha256,
                   date: date
                 })
-              }">
+              }" target="_blank">
                 リストを見る
               </router-link>
             </div>
