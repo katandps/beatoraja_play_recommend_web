@@ -44,9 +44,9 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
 <template>
   <div id="lamp-graph">
     凡例
-    <table style="width: 100%">
-      <tr>
-        <td class="progress" style="width: 100%; height: 1.8em">
+    <div style="width: 100%">
+      <div>
+        <div class="progress" style="width: 100%; height: 1.8em">
           <div v-for="clear_type in config.LAMP_TYPE" :key="clear_type" :class="'progress-bar bg-' + clear_type"
             role="progressbar" style="color: #000000" :style="'width: ' + 100.0 / config.LAMP_TYPE.length + '%'">
             <span>{{ clear_type }}
@@ -55,17 +55,17 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
             </span>
 
           </div>
-        </td>
-      </tr>
-    </table>
+        </div>
+      </div>
+    </div>
     <hr />
     <template v-if="active_tables.length > 0">
       <div v-for="(table, table_index) in active_tables" :key="table_index">
         <h2>{{ table.name }}</h2>
-        <table style="width: 100%">
-          <tr v-for="(level, level_index) in table.level_list" :key="level_index" style="width: 100%">
-            <td style="width: 30px">{{ level }}</td>
-            <td class="progress" style="width: 100%; height: 1.8em">
+        <div class="lamp-table-grid">
+          <div v-for="(level, level_index) in table.level_list" :key="level_index" class="lamp-row">
+            <div class="lamp-label">{{ level }}</div>
+            <div class="progress lamp-progress">
               <div v-for="lamp_index in config.LAMP_GRAPH_LIST" :key="config.LAMP_INDEX[lamp_index]"
                 :class="'progress-bar bg-' + config.LAMP_INDEX[lamp_index]" role="progressbar" :style="'width: ' +
                   lamp_list[table_index][level_index][lamp_index].length * 100 +
@@ -78,9 +78,9 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
                     ">
                 {{ lamp_list[table_index][level_index][lamp_index].length }}
               </div>
-            </td>
-          </tr>
-        </table>
+            </div>
+          </div>
+        </div>
       </div>
     </template>
     <template v-else>表示する難易度が設定されていません</template>
@@ -89,6 +89,30 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
 </template>
 
 <style scoped>
+.lamp-table-grid {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 8px;
+  row-gap: 2px;
+  margin-bottom: 1em;
+  align-items: center;
+  width: 100%;
+}
+
+.lamp-row {
+  display: contents;
+}
+
+.lamp-label {
+  white-space: nowrap;
+}
+
+.lamp-progress {
+  width: 100%;
+  min-width: 0;
+  height: 2em;
+}
+
 .progress-bar {
   cursor: pointer;
 }
