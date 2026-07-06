@@ -5,6 +5,7 @@ import Tables from "./models/difficultyTable"
 import PlayStats from "./models/playStats"
 import { UserInfo } from "@/store/session"
 import { AccountD } from "./types/generated/account"
+import { RankingD } from "./types/generated/ranking"
 
 export default class Api {
     host: string = process.env.VUE_APP_HOST
@@ -109,7 +110,13 @@ export default class Api {
         return await fetch(url, init).then(obj.handler).catch(obj.error)
     }
 
-    static async fetch_ranking(token: string | null, sha256: string) {
+    /**
+     * @public
+     * @param {string|null} token
+     * @param {string} sha256
+     * @returns {Promise<RankingD>}>}
+     */
+    static async fetch_ranking(token: string | null, sha256: string): Promise<RankingD> {
         const obj = new Api()
         const uri = obj.host + "/ranking/?sha256=" + sha256
         const headers: any = { 'session-token': token }
