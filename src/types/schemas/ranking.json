@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RankingResponse",
+  "type": "object",
+  "properties": {
+    "score": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RankingScore"
+      }
+    },
+    "song": {
+      "$ref": "#/$defs/SongResponse"
+    }
+  },
+  "required": [
+    "song",
+    "score"
+  ],
+  "$defs": {
+    "ClearTypeSnap": {
+      "type": "object",
+      "properties": {
+        "before": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "current": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "current",
+        "updated_at",
+        "before"
+      ]
+    },
+    "MinBPSnap": {
+      "type": "object",
+      "properties": {
+        "before": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "current": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "current",
+        "updated_at",
+        "before"
+      ]
+    },
+    "RankingScore": {
+      "type": "object",
+      "properties": {
+        "score": {
+          "$ref": "#/$defs/ScoreDetail"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "user_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id",
+        "user_name",
+        "score"
+      ]
+    },
+    "ScoreDetail": {
+      "type": "object",
+      "properties": {
+        "clear_type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ClearTypeSnap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "max_combo": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "min_bp": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MinBPSnap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "play_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScoreSnap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "max_combo",
+        "updated_at",
+        "play_count"
+      ]
+    },
+    "ScoreSnap": {
+      "type": "object",
+      "properties": {
+        "before": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "current": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "current",
+        "updated_at",
+        "before"
+      ]
+    },
+    "SongResponse": {
+      "type": "object",
+      "properties": {
+        "artist": {
+          "type": "string"
+        },
+        "include_features": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "md5": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "md5",
+        "sha256",
+        "title",
+        "artist",
+        "notes",
+        "include_features"
+      ]
+    }
+  }
+}

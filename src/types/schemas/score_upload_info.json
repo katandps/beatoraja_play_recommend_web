@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ScoreUploadInfo",
+  "type": "object",
+  "properties": {
+    "score": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/ScoreDetail"
+      }
+    },
+    "stats": {
+      "$ref": "#/$defs/PlayerStatDiff"
+    },
+    "upload_at": {
+      "type": "string"
+    },
+    "upload_id": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "user_id": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "user_name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "upload_id",
+    "upload_at",
+    "user_id",
+    "user_name",
+    "stats",
+    "score"
+  ],
+  "$defs": {
+    "ClearTypeSnap": {
+      "type": "object",
+      "properties": {
+        "before": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "current": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "current",
+        "updated_at",
+        "before"
+      ]
+    },
+    "Judge": {
+      "type": "object",
+      "properties": {
+        "early_bad": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "early_good": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "early_great": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "early_miss": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "early_pgreat": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "early_poor": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "late_bad": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "late_good": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "late_great": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "late_miss": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "late_pgreat": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "late_poor": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "required": [
+        "early_pgreat",
+        "late_pgreat",
+        "early_great",
+        "late_great",
+        "early_good",
+        "late_good",
+        "early_bad",
+        "late_bad",
+        "early_poor",
+        "late_poor",
+        "early_miss",
+        "late_miss"
+      ]
+    },
+    "MinBPSnap": {
+      "type": "object",
+      "properties": {
+        "before": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "current": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "current",
+        "updated_at",
+        "before"
+      ]
+    },
+    "PlayerStatDiff": {
+      "type": "object",
+      "properties": {
+        "after_date": {
+          "type": "string"
+        },
+        "before_date": {
+          "type": "string"
+        },
+        "clear_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "play_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "play_time": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "total_judge": {
+          "$ref": "#/$defs/Judge"
+        }
+      },
+      "required": [
+        "before_date",
+        "after_date",
+        "play_count",
+        "clear_count",
+        "play_time",
+        "total_judge"
+      ]
+    },
+    "ScoreDetail": {
+      "type": "object",
+      "properties": {
+        "clear_type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ClearTypeSnap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "max_combo": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "min_bp": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MinBPSnap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "play_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScoreSnap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "max_combo",
+        "updated_at",
+        "play_count"
+      ]
+    },
+    "ScoreSnap": {
+      "type": "object",
+      "properties": {
+        "before": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "current": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "current",
+        "updated_at",
+        "before"
+      ]
+    }
+  }
+}
