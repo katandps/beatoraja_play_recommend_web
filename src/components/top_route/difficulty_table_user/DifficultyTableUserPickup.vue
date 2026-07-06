@@ -2,6 +2,7 @@
 import { computed } from "vue"
 import SongDetail from "@/models/song_detail"
 import { buildTopUpdates } from "@/models/difficultyTableUser"
+import ClearSymbol from "@/components/parts/clear_symbol.vue"
 
 const props = defineProps<{
     tableSongs: SongDetail[]
@@ -26,7 +27,7 @@ const showModal = (song: SongDetail) => emits("showModal", song)
                 <div class="update-level">{{ row.level }}</div>
                 <div class="update-title" @click="showModal(row)">{{ row.title }}</div>
                 <div class="update-meta">
-                    <span class="lamp-pill" :class="`lamp-${row.get('clear_type')}`">{{ row.get("clear_type") }}</span>
+                    <ClearSymbol :row="row" />
                     <span class="update-date">{{ row.get("clear_date") }}</span>
                 </div>
             </div>
@@ -102,16 +103,6 @@ const showModal = (song: SongDetail) => emits("showModal", song)
     font-size: 0.9rem;
 }
 
-.lamp-pill {
-    display: inline-flex;
-    align-items: center;
-    padding: 2px 10px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
 .lamp-Failed {
     background: #f4d2d2;
     color: #9c2f2f;
@@ -119,7 +110,7 @@ const showModal = (song: SongDetail) => emits("showModal", song)
 
 .lamp-NoPlay {
     background: #e5e5e5;
-    color: #5a5a5a;
+    color: #882424;
 }
 
 .lamp-AssistEasy {
