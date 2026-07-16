@@ -12,7 +12,7 @@ defineProps<Props>()
 const emits = defineEmits(["handleSignOut"])
 
 // --- computed ---
-const user_id = computed(() => store.userInfo ? store.userInfo.user_id : 1)
+const user_id = computed<number | null>(() => store.userInfo ? store.userInfo.user_id : null)
 
 // --- methods ---
 const handleSignInUrl = () => {
