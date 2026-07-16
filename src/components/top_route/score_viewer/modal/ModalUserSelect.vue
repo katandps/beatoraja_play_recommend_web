@@ -13,7 +13,6 @@ export interface IModalUserSelect {
 const store = useLoginStore()
 
 defineProps({
-  user_id: { type: Number, require: false },
   rival_mode: { type: Boolean }
 })
 
@@ -24,7 +23,7 @@ interface User {
 
 const emits = defineEmits(["setUser"])
 
-onMounted(() => {
+onMounted(async () => {
   Api.get_user_list(accessToken.value).then((u: User[]) => {
     users.value = u
     users.value.sort((a, b) => a.id - b.id)
@@ -37,9 +36,21 @@ const modal_base = ref<IModalBase>()
 // --- data ---
 const users = ref<User[]>([])
 const date = ref(new Date())
+const searchText = ref("")
 
 // --- computed ---
 const accessToken = computed(() => store.accessToken)
+const loginUserName = computed(() => store.userInfo?.name || "")
+const hasKeyword = computed(() => searchText.value.trim().length > 0)
+const filteredUsers = computed(() => {
+  const keyword = searchText.value.trim().toLowerCase()
+  if (!keyword) {
+    return []
+  }
+  return users.value
+    .filter((u) => u.name.toLowerCase().includes(keyword))
+    .slice(0, 20)
+})
 
 // --- methods ---
 const showModal = () => {
@@ -48,6 +59,14 @@ const showModal = () => {
 const closeModal = () => modal_base.value?.closeModal()
 const setUser = (user_id: number) => {
   emits("setUser", user_id, date.value)
+}
+const setLoginUser = async () => {
+  if (store.is_login() === false) {
+    return
+  }
+  console.log(store.is_login())
+  console.log(store.userInfo)
+  setUser(store.userInfo?.user_id || 0)
 }
 const resetDate = () => {
   date.value = new Date()
@@ -74,12 +93,32 @@ defineExpose({ showModal, closeModal })
       <h3>プレイヤーの選択</h3>
       プロフィールを公開しているプレイヤーのみ表示されます。<br />
       非表示の方はログインすることで自分のデータが閲覧できます。
+      <div class="mt-2 mb-3">
+        <button class="btn btn-outline-primary" :disabled="!store.is_login()" @click="setLoginUser">
+          ログイン中ユーザを選択
+          <span v-if="loginUserName">({{ loginUserName }})</span>
+        </button>
+      </div>
 
-      <div class="row">
-        <div class="btn btn-outline-secondary col-sm-4" v-for="obj in users" :key="obj.id" @click="setUser(obj.id)">
+      <div class="mb-2">
+        <input v-model="searchText" type="text" class="form-control" placeholder="ユーザ名を部分一致で検索" />
+      </div>
+
+      <div v-if="!hasKeyword" class="text-muted">
+        ユーザ名を入力すると候補を表示します。
+      </div>
+
+      <div v-else-if="filteredUsers.length === 0" class="text-muted">
+        該当するユーザが見つかりません。
+      </div>
+
+      <div v-else class="row">
+        <div class="btn btn-outline-secondary col-sm-4" v-for="obj in filteredUsers" :key="obj.id"
+          @click="setUser(obj.id)">
           {{ obj.name }}
         </div>
       </div>
+
     </template>
   </ModalBase>
 </template>
