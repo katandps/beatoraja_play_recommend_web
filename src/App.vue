@@ -4,13 +4,14 @@ import Api from "./api"
 import { debug } from "loglevel"
 import { useCookies } from "vue3-cookies"
 import { onMounted, ref, watch } from "vue"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import { useLoginStore } from "@/store/session"
 import { AccountD } from "./types/generated/account"
 
 const { cookies } = useCookies()
 const loginStore = useLoginStore()
 const route = useRoute()
+const router = useRouter()
 
 // --- data ---
 const is_login = ref(false)
@@ -23,6 +24,7 @@ const handleSignOut = async () => {
   loginStore.accessToken = null
   loginStore.userInfo = null
   is_login.value = false
+  await router.push('/')
 }
 
 const handleMenuStateChange = (open: boolean) => {
