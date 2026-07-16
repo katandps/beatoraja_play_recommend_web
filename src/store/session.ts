@@ -7,6 +7,11 @@ export type UserInfo = {
     visibility: boolean
 }
 
+export type SelectedUserHistory = {
+    id: number
+    name: string
+}
+
 export const useLoginStore = defineStore(
     {
         id: 'session',
@@ -19,10 +24,16 @@ export const useLoginStore = defineStore(
         state: () => ({
             accessToken: null as string | null,
             userInfo: null as UserInfo | null,
+            selectedUserHistory: [] as SelectedUserHistory[],
         }),
         actions: {
             is_login() {
                 return !!this.userInfo && this.userInfo.user_id > 0
+            },
+
+            addSelectedUserHistory(user: SelectedUserHistory) {
+                const deduped = this.selectedUserHistory.filter((u) => u.id !== user.id)
+                this.selectedUserHistory = [user, ...deduped].slice(0, 6)
             },
 
             reset() {

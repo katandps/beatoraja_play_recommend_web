@@ -42,6 +42,7 @@ const searchText = ref("")
 const accessToken = computed(() => store.accessToken)
 const loginUserName = computed(() => store.userInfo?.name || "")
 const hasKeyword = computed(() => searchText.value.trim().length > 0)
+const selectedUserHistory = computed(() => store.selectedUserHistory)
 const filteredUsers = computed(() => {
   const keyword = searchText.value.trim().toLowerCase()
   if (!keyword) {
@@ -57,16 +58,18 @@ const showModal = () => {
   modal_base.value?.showModal()
 }
 const closeModal = () => modal_base.value?.closeModal()
-const setUser = (user_id: number) => {
+const setUser = (user_id: number, user_name?: string) => {
+  const name = user_name || users.value.find((u) => u.id === user_id)?.name
+  if (name) {
+    store.addSelectedUserHistory({ id: user_id, name })
+  }
   emits("setUser", user_id, date.value)
 }
 const setLoginUser = async () => {
   if (store.is_login() === false) {
     return
   }
-  console.log(store.is_login())
-  console.log(store.userInfo)
-  setUser(store.userInfo?.user_id || 0)
+  setUser(store.userInfo?.user_id || 0, store.userInfo?.name || "")
 }
 const resetDate = () => {
   date.value = new Date()
@@ -100,6 +103,16 @@ defineExpose({ showModal, closeModal })
         </button>
       </div>
 
+      <div v-if="selectedUserHistory.length > 0" class="mb-3">
+        <div class="small text-muted mb-1">最近選択したユーザ</div>
+        <div class="row">
+          <div class="btn btn-outline-secondary col-sm-4" v-for="obj in selectedUserHistory" :key="`history-${obj.id}`"
+            @click="setUser(obj.id, obj.name)">
+            {{ obj.name }}
+          </div>
+        </div>
+      </div>
+
       <div class="mb-2">
         <input v-model="searchText" type="text" class="form-control" placeholder="ユーザ名を部分一致で検索" />
       </div>
@@ -114,7 +127,7 @@ defineExpose({ showModal, closeModal })
 
       <div v-else class="row">
         <div class="btn btn-outline-secondary col-sm-4" v-for="obj in filteredUsers" :key="obj.id"
-          @click="setUser(obj.id)">
+          @click="setUser(obj.id, obj.name)">
           {{ obj.name }}
         </div>
       </div>
