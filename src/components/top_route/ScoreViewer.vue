@@ -165,6 +165,8 @@ const fetchDetail = (user_id: number) => {
     loaded.value.date !== date_str.value
   ) {
     debug("fetch!")
+    scores.value = null
+    loaded.value = { user_id: 0, rival_id: 0, date: "" }
     message.value = "読込中..."
     Api.fetch_score(new Date(0), date.value, user_id, sessionStore.accessToken).then((s) => {
       scores.value = s
