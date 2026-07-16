@@ -22,7 +22,7 @@ export const useLoginStore = defineStore(
         }),
         actions: {
             is_login() {
-                return this.userInfo !== null && this.accessToken !== null
+                return !!this.userInfo && this.userInfo.user_id > 0
             },
 
             reset() {
