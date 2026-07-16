@@ -14,7 +14,6 @@ const route = useRoute()
 const router = useRouter()
 
 // --- data ---
-const is_login = ref(false)
 const is_menu_open = ref(false)
 
 
@@ -23,7 +22,6 @@ const handleSignOut = async () => {
   await Api.logout(loginStore.accessToken)
   loginStore.accessToken = null
   loginStore.userInfo = null
-  is_login.value = false
   await router.push('/')
 }
 
@@ -38,10 +36,8 @@ function setLoginAccount(account: AccountD | null) {
       user_id: account.user_id,
       visibility: account.visibility,
     }
-    is_login.value = true
   } else {
-    is_login.value = false
-    loginStore.accessToken = null
+    loginStore.reset()
   }
 }
 
@@ -49,15 +45,18 @@ onMounted(async () => {
   if (cookies.get("session-token")) {
     loginStore.accessToken = cookies.get('session-token')
   }
-  if (!loginStore.accessToken) { return }
-  await Api.get_account(loginStore.accessToken).then(setLoginAccount)
+  if (!loginStore.accessToken) { setLoginAccount(null); return }
+  await Api.get_account(loginStore.accessToken).then(setLoginAccount).catch((e) => {
+    debug(e)
+    setLoginAccount(null)
+  })
 })
 
 watch(route, async (cur, prev) => {
-  if (is_login.value && cur.path !== prev.path) {
+  if (loginStore.is_login() && cur.path !== prev.path) {
     const account = await Api.get_account(loginStore.accessToken)
     debug(account)
-    if (!account) await handleSignOut()
+    if (!account || !account.user_id) await handleSignOut()
   }
 })
 </script>
@@ -65,7 +64,7 @@ watch(route, async (cur, prev) => {
 <template>
   <div id="app" :class="{ 'menu-open': is_menu_open }">
     <div id="content">
-      <router-view :is_login="is_login" @handleSignOut="handleSignOut" />
+      <router-view :is_login="loginStore.is_login()" @handleSignOut="handleSignOut" />
       <footer id="footer" class="footer mt-auto py-3">
         <div class="container">
           © 2020 KATAND<br />
@@ -74,7 +73,8 @@ watch(route, async (cur, prev) => {
         </div>
       </footer>
     </div>
-    <hamburger-menu :is_login="is_login" @handleSignOut="handleSignOut" @menuStateChange="handleMenuStateChange" />
+    <hamburger-menu :is_login="loginStore.is_login()" @handleSignOut="handleSignOut"
+      @menuStateChange="handleMenuStateChange" />
   </div>
 </template>
 

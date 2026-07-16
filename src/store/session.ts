@@ -21,6 +21,10 @@ export const useLoginStore = defineStore(
             userInfo: null as UserInfo | null,
         }),
         actions: {
+            is_login() {
+                return this.userInfo !== null && this.accessToken !== null
+            },
+
             reset() {
                 this.accessToken = null
                 this.userInfo = null
