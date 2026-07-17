@@ -52,12 +52,17 @@ const tables = ref(new Tables([]))
 const songs = ref<Songs | undefined>()
 const scores = ref()
 const rival_score = ref()
-const date = ref((() => {
-  let d = new Date()
-  d.setDate(d.getDate() + 1)
-  d.setHours(0, 0, 0, 0)
+const date = ref(new Date())
+const fetch_date = computed(() => {
+  const d = new Date(date.value)
+  d.setHours(23, 59, 59, 999)
   return d
-})())
+})
+const fetch_rival_date = computed(() => {
+  const d = new Date(rival_date.value)
+  d.setHours(23, 59, 59, 999)
+  return d
+})
 const rival_date = ref(new Date())
 const message = ref("")
 const loaded = ref({ user_id: 0, rival_id: 0, date: "" })
@@ -111,7 +116,7 @@ const sorted_song_list = computed(() => {
 const setRival = (rival_id: number) => {
   debug(loaded.value, rival_id)
   if (rival_id > 0 && loaded.value.rival_id !== rival_id) {
-    Api.fetch_score(new Date(0), rival_date.value, rival_id, sessionStore.accessToken).then(
+    Api.fetch_score(new Date(0), fetch_rival_date.value, rival_id, sessionStore.accessToken).then(
       (s) => {
         rival_score.value = null
         rival_score.value = s
@@ -138,7 +143,8 @@ const fetchDetail = (user_id: number) => {
     scores.value = null
     loaded.value = { user_id: 0, rival_id: 0, date: "" }
     message.value = "読込中..."
-    Api.fetch_score(new Date(0), date.value, user_id, sessionStore.accessToken).then((s) => {
+    debug("fetching score for user_id:", user_id, "date:", fetch_date)
+    Api.fetch_score(new Date(0), fetch_date.value, user_id, sessionStore.accessToken).then((s) => {
       scores.value = s
       message.value = exists_scores.value ? "" : "読み込み失敗"
       loaded.value.user_id = user_id
@@ -153,9 +159,6 @@ const setUserId = async (input_user_id: number, d: Date) => {
   user_modal.value?.closeModal()
   let query = Object.assign({}, route.query)
   query.user_id = "" + input_user_id
-
-  d.setDate(d.getDate() + 1)
-  d.setHours(0, 0, 0, 0)
   date.value = d
 
   debug(query)
@@ -168,10 +171,6 @@ const setRivalId = async (input_rival_id: number, d: Date) => {
   rival_modal.value?.closeModal()
   let query = Object.assign({}, route.query)
   query.rival_id = "" + input_rival_id
-
-
-  d.setDate(d.getDate() + 1)
-  d.setHours(0, 0, 0, 0)
   rival_date.value = d
 
   debug(query)
@@ -205,14 +204,15 @@ const setRivalId = async (input_rival_id: number, d: Date) => {
     <div v-if="is_initialized">
       <div>
         <h2>
-          {{ user_name }}<span style="font-size: 0.8em;" v-if="date.getTime() < (new Date()).getTime()">( {{ date_str }}
+          {{ user_name }}<span style="font-size: 0.8em;" v-if="fetch_date.getTime() < (new Date()).getTime()">( {{
+            date_str }}
             )</span>
           <a :href="twitter_link" target="_blank">
             <font-awesome-icon :icon="['fab', 'twitter-square']" />
           </a>
         </h2>
         <h3 v-if="exists_rival_score">比較対象: {{ rival_score.name }}
-          <span style="font-size:0.8em" v-if="rival_date.getTime() < (new Date()).getTime()">{{
+          <span style="font-size:0.8em" v-if="fetch_rival_date.getTime() < (new Date()).getTime()">{{
             DateFormatter.format(rival_date) }}</span>
         </h3>
       </div>
