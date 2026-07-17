@@ -350,8 +350,8 @@ export default class SongDetail {
         return this.title
       case "level":
         return this.level
-      case "levels":
-        return this.levels.join(", ")
+      case "other_levels":
+        return this.levels.filter(level => level !== this.level).join(", ")
       case "notes":
         return this.total_notes
       case "rate":

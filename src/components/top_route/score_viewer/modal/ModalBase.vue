@@ -23,8 +23,11 @@ defineExpose({ showModal, closeModal })
         <div id="modal-bg" class="modal-bg" @click="closeModal"></div>
         <div class="modal-wrapper">
           <div class="modal-contents">
-            <div class="modal-header">
+            <h2 class="modal-header">
               <slot name="header">Modal-header</slot>
+            </h2>
+            <div class="modal-header-sub">
+              <slot name="header_sub">Modal-header-sub</slot>
             </div>
             <div class="modal-body">
               <slot name="body">Modal-body</slot>
@@ -48,6 +51,10 @@ defineExpose({ showModal, closeModal })
   width: 100vw;
   height: 100vh;
   opacity: 0.95;
+}
+
+.modal-header-sub {
+  text-align: left;
 }
 
 .modal-bg {

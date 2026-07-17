@@ -56,6 +56,27 @@ export default class Songs {
     generate_song_detail_list_with_filter(tables: Tables, scores: Scores, filter: SongFilter, checked_tables: ActivatedTables, exists_rival_score: boolean, rival_score: Scores): SongDetail[] {
         const ret = []
         const detailByHash: { [key: string]: SongDetail } = {}
+        const allLevelsByHash: { [key: string]: string[] } = {}
+
+        for (let table_index = 0; table_index < tables.tables.length; table_index += 1) {
+            const table = tables.tables[table_index]
+            for (const level in table.levels) {
+                const hashes = table.levels[level]
+                if (!hashes) {
+                    continue
+                }
+
+                for (const hash of hashes) {
+                    if (!allLevelsByHash[hash]) {
+                        allLevelsByHash[hash] = []
+                    }
+                    if (allLevelsByHash[hash].indexOf(level) === -1) {
+                        allLevelsByHash[hash].push(level)
+                    }
+                }
+            }
+        }
+
         for (let table_index = 0; table_index < tables.tables.length; table_index += 1) {
             const table = tables.tables[table_index]
             for (const level in table.levels) {
@@ -74,6 +95,9 @@ export default class Songs {
                     }
                     const score = new SongDetail()
                     score.set_level(level)
+                    for (const lv of allLevelsByHash[hash] || []) {
+                        score.set_level(lv)
+                    }
                     score.init_score(scores.get_score(hash))
                     score.init_song(this.get_song(hash), hash)
                     if (exists_rival_score) {

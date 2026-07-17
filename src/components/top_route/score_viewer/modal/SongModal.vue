@@ -39,6 +39,11 @@ defineExpose({ showModal })
     <template v-slot:header>
       {{ song?.get("level") }} {{ song?.get("title") }}
     </template>
+    <template v-slot:header_sub>
+      <span>
+        {{ song?.get('other_levels') }}
+      </span>
+    </template>
     <template v-slot:body>
       <div id="stats">
         <h3>プレイ情報</h3>
@@ -82,8 +87,9 @@ defineExpose({ showModal })
         <div class="row">
           <div class="card col-sm-4">
             <div class="header">ノーツ</div>
-            <div class="body"><span v-html="song?.get('notes')"></span></div>
+            <div class="body"><span v-html="song?.get('notes')" /></div>
           </div>
+
           <div class="card col-sm-4">
             <div class="header">ほかのプレイヤーの記録</div>
             <div class="body">
