@@ -144,7 +144,7 @@ export const buildTableSongs = (
             const detail = new SongDetail()
             detail.set_level(level)
             detail.init_score(scores.get_score(hash))
-            detail.init_song(songs.get_score(hash), hash)
+            detail.init_song(songs.get_song(hash), hash)
             list.push(detail)
         }
     }
