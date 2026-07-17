@@ -24,13 +24,13 @@ defineExpose({ showModal, closeModal })
         <div class="modal-wrapper">
           <div class="modal-contents">
             <h2 class="modal-header">
-              <slot name="header">Modal-header</slot>
+              <slot name="header"><!-- Modal-header --></slot>
             </h2>
             <div class="modal-header-sub">
-              <slot name="header_sub">Modal-header-sub</slot>
+              <slot name="header_sub"><!-- Modal-header-sub --></slot>
             </div>
             <div class="modal-body">
-              <slot name="body">Modal-body</slot>
+              <slot name="body"><!-- Modal-body --></slot>
             </div>
           </div>
           <div id="close-modal" class="close-modal" @click="closeModal">
