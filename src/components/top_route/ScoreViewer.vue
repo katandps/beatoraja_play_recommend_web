@@ -19,6 +19,7 @@ import TheDetailVue from "./score_viewer/TheDetail.vue"
 import TheStatVue from "./score_viewer/TheStat.vue"
 import { useFilterStore } from "@/store/filter"
 import { useLoginStore } from "@/store/session"
+import Songs from "@/models/songs"
 
 const sessionStore = useLoginStore()
 const filterStore = useFilterStore()
@@ -48,7 +49,7 @@ const props = defineProps<Props>()
 
 // --- data ---
 const tables = ref(new Tables([]))
-const songs = ref()
+const songs = ref<Songs | undefined>()
 const scores = ref()
 const rival_score = ref()
 const date = ref((() => {
@@ -85,41 +86,10 @@ const twitter_link = computed(() =>
 const level_is_empty = computed(() => !ActivatedTables.contains_active(filterStore.checked_tables, tables.value));
 
 const filtered_score = computed(() => {
-  if (!is_initialized.value) {
+  if (!is_initialized.value || !songs.value) {
     return []
   }
-  let ret = []
-  let used: { [key: string]: boolean } = {}
-  for (let table_index = 0; table_index < tables.value.tables.length; table_index += 1) {
-    const table = tables.value.tables[table_index]
-    for (const level in table.levels) {
-      if (!ActivatedTables.is_active(filterStore.checked_tables, table, level)) {
-        continue;
-      }
-      const hashes = table.levels[level]
-      if (!hashes) {
-        continue
-      }
-
-      for (const hash of hashes) {
-        if (used[hash]) {
-          continue
-        }
-        used[hash] = true
-        let score = new SongDetail()
-        score.set_level(level)
-        score.init_score(scores.value.get_score(hash))
-        score.init_song(songs.value.get_score(hash), hash)
-        if (exists_rival_score.value) {
-          score.init_rival_score(rival_score.value?.get_score(hash))
-        }
-        if (filterStore.filter.apply(score, exists_rival_score.value)) {
-          ret.push(score)
-        }
-      }
-    }
-  }
-  return ret
+  return songs.value.generate_song_detail_list_with_filter(tables.value, scores.value, filterStore.filter, filterStore.checked_tables, exists_rival_score.value, rival_score.value)
 })
 
 const sorted_song_list = computed(() => {

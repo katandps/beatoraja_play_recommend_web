@@ -12,6 +12,7 @@ import RowHeader from "../score_viewer/cell/RowHeader.vue"
 import RowColGroup from "../score_viewer/cell/RowColGroup.vue"
 import { useFilterStore } from '@/store/filter';
 import html2canvas from 'html2canvas'
+import Songs from '@/models/songs';
 
 const sessionStore = useLoginStore()
 const filterStore = useFilterStore()
@@ -34,35 +35,7 @@ const filtered_score = computed(() => {
     if (!is_initialized.value) {
         return []
     }
-    let ret = []
-    let used: { [key: string]: boolean } = {}
-    for (let table_index = 0; table_index < tables.value.tables.length; table_index += 1) {
-        const table = tables.value.tables[table_index]
-        for (const level in table.levels) {
-            // all difficulties are viewable 
-            const hashes = table.levels[level]
-            if (!hashes) {
-                continue
-            }
-
-            for (const hash of hashes) {
-                if (used[hash]) {
-                    continue
-                }
-                used[hash] = true
-                if (!scores.value?.score_exists(hash)) {
-                    continue
-                }
-                let score = new SongDetail()
-                score.set_level(level)
-                score.init_score(scores.value.get_score(hash))
-                score.init_song(songs.value.get_score(hash), hash)
-
-                ret.push(score)
-            }
-        }
-    }
-    return ret
+    return songs.value?.generate_song_detail_list(tables.value, scores.value) || []
 })
 
 interface Props {
@@ -78,7 +51,7 @@ onMounted(() => {
     Api.fetch_songs(sessionStore.accessToken).then((s) => (songs.value = s))
 })
 const tables = ref(new Tables([]))
-const songs = ref()
+const songs = ref<Songs | undefined>()
 
 const sorted_song_list = computed(() => {
     let songs = filtered_score.value
@@ -413,12 +386,12 @@ const downloadAsImage = async () => {
                             <div class="stat-item">
                                 <span class="stat-label">ノーツ数</span>
                                 <span class="stat-value">{{ selectedDay.playData.daily.notes_count.toLocaleString()
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">プレイ時間</span>
                                 <span class="stat-value">{{ formatTime(selectedDay.playData.daily.play_time)
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -429,22 +402,22 @@ const downloadAsImage = async () => {
                             <div class="stat-item">
                                 <span class="stat-label">プレイ数</span>
                                 <span class="stat-value">{{ selectedDay.playData.total.play_count.toLocaleString()
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">クリア数</span>
                                 <span class="stat-value">{{ selectedDay.playData.total.clear_count.toLocaleString()
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">ノーツ数</span>
                                 <span class="stat-value">{{ selectedDay.playData.total.notes_count.toLocaleString()
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">プレイ時間</span>
                                 <span class="stat-value">{{ formatTime(selectedDay.playData.total.play_time)
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </div>
