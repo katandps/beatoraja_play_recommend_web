@@ -248,7 +248,8 @@ const setRivalId = async (input_rival_id: number, d: Date) => {
             :filter="filterStore.filter" />
         </template>
         <template v-if="mode === 'lamp'">
-          <LampGraphVue :filtered_score="filtered_score" :tables="tables" :checks="filterStore.checked_tables" />
+          <LampGraphVue :filtered_score="filtered_score" :exists_rival_score="exists_rival_score" :tables="tables"
+            :checks="filterStore.checked_tables" />
         </template>
 
         <template v-if="mode === 'rank'">

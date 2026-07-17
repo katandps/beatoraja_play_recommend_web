@@ -9,6 +9,7 @@ import { useFilterStore } from "@/store/filter"
 const filterStore = useFilterStore()
 interface Props {
   filtered_score: SongDetail[]
+  exists_rival_score: boolean
   tables: Tables
   checks: ActivatedTables
 }
@@ -28,6 +29,24 @@ const lamp_list = computed(() =>
       )
     )
   )
+)
+const rival_lamp_list = computed(
+  () => {
+    if (props.exists_rival_score) {
+      return active_tables.value.map((table) =>
+        table.level_list.map((l) =>
+          config.LAMP_INDEX.map((_lamp, index) =>
+            props.filtered_score
+              .filter(
+                (s: SongDetail) => s.rival_clear_type === index && s.level === l)
+              .sort(SongDetail.cmp_title)
+          )
+        )
+      )
+    } else {
+      return []
+    }
+  }
 )
 const active_tables = computed(() => ActivatedTables.filter_active_tables(props.checks, props.tables))
 
@@ -62,10 +81,12 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
     <template v-if="active_tables.length > 0">
       <div v-for="(table, table_index) in active_tables" :key="table_index">
         <h2>{{ table.name }}</h2>
-        <div class="lamp-table-grid">
+        <div class="lamp-table-grid" :class="{ 'lamp-table-grid-with-rival': exists_rival_score }">
           <div v-for="(level, level_index) in table.level_list" :key="level_index" class="lamp-row">
             <div class="lamp-label">{{ level }}</div>
-            <div class="progress lamp-progress">
+            <!-- 自分のグラフ -->
+
+            <div class="progress" :class="exists_rival_score ? 'lamp-progress-with-rival' : 'lamp-progress'">
               <div v-for="lamp_index in config.LAMP_GRAPH_LIST" :key="config.LAMP_INDEX[lamp_index]"
                 :class="'progress-bar bg-' + config.LAMP_INDEX[lamp_index]" role="progressbar" :style="'width: ' +
                   lamp_list[table_index][level_index][lamp_index].length * 100 +
@@ -79,6 +100,24 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
                 {{ lamp_list[table_index][level_index][lamp_index].length }}
               </div>
             </div>
+            <!-- 自分のグラフここまで -->
+
+            <!-- ライバルのグラフ -->
+            <div class="progress lamp-progress-with-rival" v-if="exists_rival_score">
+              <div v-for="lamp_index in config.LAMP_GRAPH_LIST" :key="config.LAMP_INDEX[lamp_index]"
+                :class="'progress-bar bg-' + config.LAMP_INDEX[lamp_index]" role="progressbar" :style="'width: ' +
+                  rival_lamp_list[table_index][level_index][lamp_index].length * 100 +
+                  '%;color:#000'
+                  " v-on:click="
+                    showModal(
+                      level + ' ' + config.LAMP_INDEX[lamp_index],
+                      list(table_index, level_index, lamp_index)
+                    )
+                    ">
+                {{ rival_lamp_list[table_index][level_index][lamp_index].length }}
+              </div>
+            </div>
+            <!-- ライバルのグラフここまで-->
           </div>
         </div>
       </div>
@@ -96,7 +135,10 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
   row-gap: 2px;
   margin-bottom: 1em;
   align-items: center;
-  width: 100%;
+}
+
+.lamp-table-grid-with-rival {
+  grid-template-columns: max-content 1fr 1fr;
 }
 
 .lamp-row {
@@ -108,6 +150,12 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
 }
 
 .lamp-progress {
+  width: 100%;
+  min-width: 0;
+  height: 2em;
+}
+
+.lamp-progress-with-rival {
   width: 100%;
   min-width: 0;
   height: 2em;
