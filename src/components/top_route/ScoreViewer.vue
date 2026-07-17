@@ -205,12 +205,16 @@ const setRivalId = async (input_rival_id: number, d: Date) => {
     <div v-if="is_initialized">
       <div>
         <h2>
-          {{ user_name }}のデータ
+          {{ user_name }}<span style="font-size: 0.8em;" v-if="date.getTime() < (new Date()).getTime()">( {{ date_str }}
+            )</span>
           <a :href="twitter_link" target="_blank">
             <font-awesome-icon :icon="['fab', 'twitter-square']" />
           </a>
         </h2>
-        <h3 v-if="exists_rival_score">ライバル表示: {{ rival_score.name }}</h3>
+        <h3 v-if="exists_rival_score">比較対象: {{ rival_score.name }}
+          <span style="font-size:0.8em" v-if="rival_date.getTime() < (new Date()).getTime()">{{
+            DateFormatter.format(rival_date) }}</span>
+        </h3>
       </div>
       <div>
         <template v-if="mode === 'detail'">
