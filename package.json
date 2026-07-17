@@ -53,6 +53,9 @@
   },
   "eslintConfig": {
     "root": true,
+    "ignorePatterns": [
+      "src/types/generated/**/*.d.ts"
+    ],
     "env": {
       "node": true
     },
