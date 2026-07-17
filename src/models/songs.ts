@@ -22,7 +22,7 @@ export default class Songs {
 
     generate_song_detail_list(tables: Tables, scores: Scores): SongDetail[] {
         const ret = []
-        const used: { [key: string]: boolean } = {}
+        const detailByHash: { [key: string]: SongDetail } = {}
         for (let table_index = 0; table_index < tables.tables.length; table_index += 1) {
             const table = tables.tables[table_index]
             for (const level in table.levels) {
@@ -33,10 +33,10 @@ export default class Songs {
                 }
 
                 for (const hash of hashes) {
-                    if (used[hash]) {
+                    if (detailByHash[hash]) {
+                        detailByHash[hash].set_level(level)
                         continue
                     }
-                    used[hash] = true
                     if (!scores.score_exists(hash)) {
                         continue
                     }
@@ -45,6 +45,7 @@ export default class Songs {
                     score.init_score(scores.get_score(hash))
                     score.init_song(this.get_song(hash), hash)
 
+                    detailByHash[hash] = score
                     ret.push(score)
                 }
             }
@@ -54,7 +55,7 @@ export default class Songs {
 
     generate_song_detail_list_with_filter(tables: Tables, scores: Scores, filter: SongFilter, checked_tables: ActivatedTables, exists_rival_score: boolean, rival_score: Scores): SongDetail[] {
         const ret = []
-        const used: { [key: string]: boolean } = {}
+        const detailByHash: { [key: string]: SongDetail } = {}
         for (let table_index = 0; table_index < tables.tables.length; table_index += 1) {
             const table = tables.tables[table_index]
             for (const level in table.levels) {
@@ -67,10 +68,10 @@ export default class Songs {
                 }
 
                 for (const hash of hashes) {
-                    if (used[hash]) {
+                    if (detailByHash[hash]) {
+                        detailByHash[hash].set_level(level)
                         continue
                     }
-                    used[hash] = true
                     const score = new SongDetail()
                     score.set_level(level)
                     score.init_score(scores.get_score(hash))
@@ -79,6 +80,7 @@ export default class Songs {
                         score.init_rival_score(rival_score?.get_score(hash))
                     }
                     if (filter.apply(score, exists_rival_score)) {
+                        detailByHash[hash] = score
                         ret.push(score)
                     }
                 }

@@ -128,7 +128,7 @@ export const buildTableSongs = (
     if (!scores || !songs || !selectedTable) {
         return [] as SongDetail[]
     }
-    const used: { [key: string]: boolean } = {}
+    const detailByHash: { [key: string]: SongDetail } = {}
     const list: SongDetail[] = []
     const levels = selectedTable.levels
     for (const level in levels) {
@@ -137,14 +137,15 @@ export const buildTableSongs = (
             continue
         }
         for (const hash of hashes) {
-            if (used[hash]) {
+            if (detailByHash[hash]) {
+                detailByHash[hash].set_level(level)
                 continue
             }
-            used[hash] = true
             const detail = new SongDetail()
             detail.set_level(level)
             detail.init_score(scores.get_score(hash))
             detail.init_song(songs.get_song(hash), hash)
+            detailByHash[hash] = detail
             list.push(detail)
         }
     }
@@ -161,7 +162,7 @@ export const filterSongs = (
         if (keyword && !song.title.toLowerCase().includes(keyword)) {
             return false
         }
-        if (levelFilter && song.level !== levelFilter) {
+        if (levelFilter && song.get_levels().indexOf(levelFilter) === -1) {
             return false
         }
         return true

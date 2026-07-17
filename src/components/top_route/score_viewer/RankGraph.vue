@@ -24,7 +24,9 @@ const rank_list = computed(() =>
     table.level_list.map((l) =>
       config.RANK_TYPE.map((r) =>
         props.filtered_score
-          .filter((s) => s.clear_rank === r && s.level === l)
+          .filter(
+            (s) => s.clear_rank === r && s.get_levels().indexOf(l) !== -1
+          )
           .sort(SongDetail.cmp_title)
       )
     )
@@ -37,7 +39,10 @@ const rival_rank_list = computed(() => {
       table.level_list.map((l) =>
         config.RANK_TYPE.map((r) =>
           props.filtered_score
-            .filter((s) => s.rival_clear_rank === r && s.level === l)
+            .filter(
+              (s) =>
+                s.rival_clear_rank === r && s.get_levels().indexOf(l) !== -1
+            )
             .sort(SongDetail.cmp_title)
         )
       )

@@ -24,7 +24,10 @@ const lamp_list = computed(() =>
     table.level_list.map((l) =>
       config.LAMP_INDEX.map((_lamp, index) =>
         props.filtered_score
-          .filter((s: SongDetail) => s.clear_type === index && s.level === l)
+          .filter(
+            (s: SongDetail) =>
+              s.clear_type === index && s.get_levels().indexOf(l) !== -1
+          )
           .sort(SongDetail.cmp_title)
       )
     )
@@ -38,7 +41,10 @@ const rival_lamp_list = computed(
           config.LAMP_INDEX.map((_lamp, index) =>
             props.filtered_score
               .filter(
-                (s: SongDetail) => s.rival_clear_type === index && s.level === l)
+                (s: SongDetail) =>
+                  s.rival_clear_type === index &&
+                  s.get_levels().indexOf(l) !== -1
+              )
               .sort(SongDetail.cmp_title)
           )
         )

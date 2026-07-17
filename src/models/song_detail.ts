@@ -33,6 +33,7 @@ export default class SongDetail {
   clear_updated_at: Date
 
   level: string = ""
+  levels: string[] = []
 
   updated_at: Date
   rival_updated_at: Date
@@ -232,7 +233,16 @@ export default class SongDetail {
   }
 
   set_level(level: string) {
-    this.level = level
+    if (this.levels.indexOf(level) === -1) {
+      this.levels.push(level)
+    }
+    if (!this.level) {
+      this.level = level
+    }
+  }
+
+  get_levels() {
+    return this.levels.slice()
   }
 
   static cmp_title(a: SongDetail, b: SongDetail) {
@@ -340,6 +350,8 @@ export default class SongDetail {
         return this.title
       case "level":
         return this.level
+      case "levels":
+        return this.levels.join(", ")
       case "notes":
         return this.total_notes
       case "rate":
