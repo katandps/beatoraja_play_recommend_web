@@ -253,7 +253,8 @@ const setRivalId = async (input_rival_id: number, d: Date) => {
         </template>
 
         <template v-if="mode === 'rank'">
-          <RankGraphVue :filtered_score="filtered_score" :tables="tables" :checks="filterStore.checked_tables" />
+          <RankGraphVue :filtered_score="filtered_score" :exists_rival_score="exists_rival_score" :tables="tables"
+            :checks="filterStore.checked_tables" />
         </template>
 
         <template v-if="mode === 'stat'">

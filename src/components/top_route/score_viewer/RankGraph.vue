@@ -10,6 +10,7 @@ const filterStore = useFilterStore()
 
 interface Props {
   filtered_score: SongDetail[]
+  exists_rival_score: boolean
   tables: Tables
   checks: ActivatedTables
 }
@@ -30,6 +31,21 @@ const rank_list = computed(() =>
   )
 )
 
+const rival_rank_list = computed(() => {
+  if (props.exists_rival_score) {
+    return active_tables.value.map((table) =>
+      table.level_list.map((l) =>
+        config.RANK_TYPE.map((r) =>
+          props.filtered_score
+            .filter((s) => s.rival_clear_rank === r && s.level === l)
+            .sort(SongDetail.cmp_title)
+        )
+      )
+    )
+  }
+  return []
+})
+
 const active_tables = computed(() => ActivatedTables.filter_active_tables(props.checks, props.tables))
 // --- methods ---
 const showModal = (title: string, text: SongDetail[]) =>
@@ -37,6 +53,10 @@ const showModal = (title: string, text: SongDetail[]) =>
 
 const list = (table_index: number, level_index: number, rank_index: number) =>
   rank_list.value[table_index][level_index][rank_index]
+    .sort(SongDetail.cmp_title)
+
+const rivalList = (table_index: number, level_index: number, rank_index: number) =>
+  rival_rank_list.value[table_index][level_index][rank_index]
     .sort(SongDetail.cmp_title)
 </script>
 
@@ -60,10 +80,10 @@ const list = (table_index: number, level_index: number, rank_index: number) =>
     <template v-if="active_tables.length > 0">
       <div v-for="(table, table_index) in active_tables" :key="table_index">
         <h2>{{ table.name }}</h2>
-        <div class="rank-table-grid">
+        <div class="rank-table-grid" :class="{ 'rank-table-grid-with-rival': exists_rival_score }">
           <div v-for="(level, level_index) in table.level_list" :key="level_index" class="rank-row">
             <div class="rank-label">{{ level }}</div>
-            <div class="progress rank-progress">
+            <div class="progress" :class="exists_rival_score ? 'rank-progress-with-rival' : 'rank-progress'">
               <div v-for="(rank, rank_index) in config.RANK_TYPE" :key="rank" :class="'progress-bar bg-' + rank"
                 role="progressbar" :style="'width: ' +
                   rank_list[table_index][level_index][rank_index].length * 100 +
@@ -75,6 +95,21 @@ const list = (table_index: number, level_index: number, rank_index: number) =>
                     )
                     ">
                 {{ rank_list[table_index][level_index][rank_index].length }}
+              </div>
+            </div>
+
+            <div class="progress rank-progress-with-rival" v-if="exists_rival_score">
+              <div v-for="(rank, rank_index) in config.RANK_TYPE" :key="rank" :class="'progress-bar bg-' + rank"
+                role="progressbar" :style="'width: ' +
+                  rival_rank_list[table_index][level_index][rank_index].length * 100 +
+                  '%;color:#000'
+                  " v-on:click="
+                    showModal(
+                      level + ' ' + rank,
+                      rivalList(table_index, level_index, rank_index)
+                    )
+                    ">
+                {{ rival_rank_list[table_index][level_index][rank_index].length }}
               </div>
             </div>
           </div>
@@ -98,6 +133,10 @@ const list = (table_index: number, level_index: number, rank_index: number) =>
   width: 100%;
 }
 
+.rank-table-grid-with-rival {
+  grid-template-columns: max-content 1fr 1fr;
+}
+
 .rank-row {
   display: contents;
 }
@@ -107,6 +146,12 @@ const list = (table_index: number, level_index: number, rank_index: number) =>
 }
 
 .rank-progress {
+  width: 100%;
+  min-width: 0;
+  height: 2em;
+}
+
+.rank-progress-with-rival {
   width: 100%;
   min-width: 0;
   height: 2em;
