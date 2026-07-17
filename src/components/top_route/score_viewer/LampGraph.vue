@@ -64,6 +64,10 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
   return lamp_list.value[table_index][level_index][rank_index]
     .sort(SongDetail.cmp_title)
 }
+const rivalList = (table_index: number, level_index: number, rank_index: number) => {
+  return rival_lamp_list.value[table_index][level_index][rank_index]
+    .sort(SongDetail.cmp_title)
+}
 </script>
 
 <template>
@@ -117,7 +121,7 @@ const list = (table_index: number, level_index: number, rank_index: number) => {
                   " v-on:click="
                     showModal(
                       level + ' ' + config.LAMP_INDEX[lamp_index],
-                      list(table_index, level_index, lamp_index)
+                      rivalList(table_index, level_index, lamp_index)
                     )
                     ">
                 {{ rival_lamp_list[table_index][level_index][lamp_index].length }}
