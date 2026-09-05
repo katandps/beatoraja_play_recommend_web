@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import Api from '@/api'
 import { useLoginStore } from '@/store/session'
 import { useFilterStore } from '@/store/filter'
@@ -12,6 +12,7 @@ import SongModal, { ISongModal } from '@/components/top_route/score_viewer/modal
 import RowSong from '../score_viewer/cell/RowSong.vue'
 import RowHeader from '../score_viewer/cell/RowHeader.vue'
 import RowColGroup from '../score_viewer/cell/RowColGroup.vue'
+import html2canvas from 'html2canvas'
 
 interface Props {
     uploads: UploadStats
@@ -113,6 +114,45 @@ const showSongModal = async (song: SongDetail) => {
     const score = await Api.fetch_my_score(song.sha256, sessionStore.accessToken)
     songModal.value?.showModal(song, selectedDate.value || '', score.log as Log[])
 }
+const downloadAsImage = async () => {
+    const element = document.getElementById('upload-stats-download-area')
+    if (!element) return
+
+    const fixedRenderWidth = 1160
+    const originalWidth = element.style.width
+    const originalMaxWidth = element.style.maxWidth
+
+    try {
+        element.style.width = `${fixedRenderWidth}px`
+        element.style.maxWidth = 'none'
+        await nextTick()
+
+        const captureWidth = Math.max(fixedRenderWidth, Math.ceil(element.scrollWidth))
+        const captureHeight = Math.ceil(element.scrollHeight)
+        const canvas = await html2canvas(element, {
+            backgroundColor: '#ffffff',
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            width: captureWidth,
+            height: captureHeight,
+            windowWidth: captureWidth,
+            windowHeight: captureHeight,
+            ignoreElements: (target) => target.classList.contains('download-ignore')
+        })
+
+        const link = document.createElement('a')
+        link.download = `beatoraja-upload-stats-${selectedDate.value || 'unknown'}.png`
+        link.href = canvas.toDataURL('image/png')
+        link.click()
+    } catch (error) {
+        console.error('画像のダウンロードに失敗しました:', error)
+        alert('画像のダウンロードに失敗しました')
+    } finally {
+        element.style.width = originalWidth
+        element.style.maxWidth = originalMaxWidth
+    }
+}
 </script>
 
 <template>
@@ -144,10 +184,13 @@ const showSongModal = async (song: SongDetail) => {
             </div>
         </div>
 
-        <div v-if="selectedDate" class="selected-day-details">
+        <div v-if="selectedDate" id="upload-stats-download-area" class="selected-day-details download-area">
             <div class="details-header">
                 <h4>{{ selectedDate }} のアップロード</h4>
-                <button class="close-button" aria-label="詳細を閉じる" @click="selectedDate = null">×</button>
+                <div class="header-buttons download-ignore">
+                    <button class="download-button" title="画像としてダウンロード" @click="downloadAsImage">📷 ダウンロード</button>
+                    <button class="close-button" aria-label="詳細を閉じる" @click="selectedDate = null">×</button>
+                </div>
             </div>
             <p v-if="!uploadsByDate.get(selectedDate)?.length" class="empty-message">この日のアップロードはありません</p>
             <div v-else class="upload-selector">
@@ -254,5 +297,9 @@ const showSongModal = async (song: SongDetail) => {
 .stat-value { color: #495057; font-weight: bold; }
 .table-wrapper { margin-top: 30px; }
 .empty-message { text-align: center; color: #6c757d; font-style: italic; }
-@media screen and (max-width: 768px) { .day { min-height: 56px; } .details-content { grid-template-columns: 1fr; gap: 20px; } }
+.header-buttons { display: flex; align-items: center; gap: 10px; }
+.download-button { display: flex; align-items: center; gap: 5px; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; background: #28a745; color: white; font-size: 14px; }
+.download-button:hover { background: #218838; }
+.download-area { background: white; margin: 10px 0; padding: 30px; }
+@media screen and (max-width: 768px) { .day { min-height: 56px; } .details-content { grid-template-columns: 1fr; gap: 20px; } .header-buttons { flex-direction: column; gap: 5px; } }
 </style>
