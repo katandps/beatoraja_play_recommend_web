@@ -19,6 +19,7 @@ import "@fortawesome/fontawesome-svg-core/styles.css"
 config.autoAddCss = false
 import {
   faHome,
+  faCalendar,
   faCubes,
   faPencilAlt,
   faCube,
@@ -45,6 +46,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 library.add(
   faHome,
+  faCalendar,
   faCubes,
   faPencilAlt,
   faCube,

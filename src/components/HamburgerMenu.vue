@@ -134,8 +134,8 @@ router.afterEach(() => {
           </li>
           <li>
             <router-link class="text-dark px-2" to="/stats">
-              <font-awesome-icon :icon="['fas', 'wrench']" />
-              プレイ履歴
+              <font-awesome-icon :icon="['fas', 'calendar']" />
+              プレイレポート
             </router-link>
           </li>
           <li>
