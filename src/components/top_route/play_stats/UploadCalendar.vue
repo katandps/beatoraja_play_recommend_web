@@ -130,10 +130,10 @@ const showSongModal = async (song: SongDetail) => {
             </div>
             <div class="calendar-body">
                 <div v-for="(week, weekIndex) in calendarDays" :key="weekIndex" class="week">
-                    <button v-for="day in week" :key="day.dateString" class="day" :class="{ 'other-month': !day.isCurrentMonth, selected: selectedDate === day.dateString, 'has-upload': day.uploads.length, 'has-not-upload': !day.uploads.length }" @click="selectDay(day.dateString, day.uploads)">
+                    <div v-for="day in week" :key="day.dateString" class="day" :class="{ 'other-month': !day.isCurrentMonth, selected: selectedDate === day.dateString, 'has-upload': day.uploads.length, 'has-not-upload': !day.uploads.length }" @click="selectDay(day.dateString, day.uploads)">
                         <span class="day-number">{{ day.date.getDate() }}</span>
                         <strong v-if="day.uploads.length" class="play-indicator">{{ day.uploads.length }}件</strong>
-                    </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -225,7 +225,7 @@ const showSongModal = async (song: SongDetail) => {
 .weekday { padding: 10px; text-align: center; font-weight: bold; border-right: 1px solid #ddd; }
 .weekday:last-child { border-right: none; }
 .calendar-body { display: grid; grid-template-rows: repeat(6, 1fr); }
-.day { min-height: 80px; border: 1px solid #ddd; padding: 4px; position: relative; cursor: pointer; transition: all .2s; background: #fff; color: #333}
+.day { min-height: 80px; border: 1px solid #ddd; padding: 4px; position: relative; cursor: pointer; transition: all .2s; background: #fff; color: #333; }
 .day.has-upload { background: #8bcbe4; }
 .day.has-not-upload { background: #f0f0f0; }
 .day:hover { transform: scale(1.05); box-shadow: 0 2px 8px rgba(0, 0, 0, .2); z-index: 1; }
@@ -235,7 +235,7 @@ const showSongModal = async (song: SongDetail) => {
 .play-indicator { position: absolute; bottom: 2px; right: 2px; font-size: 10px; font-weight: bold; color: #333; }
 .legend { margin-top: 20px; display: flex; align-items: center; gap: 15px; font-size: 14px; }
 .legend-items, .legend-item { display: flex; align-items: center; gap: 4px; }
-.legend-color { width: 12px; height: 12px; border: 1px solid #ddd; border-radius: 2px; background: #c6e48b; }
+.legend-color { width: 12px; height: 12px; border: 1px solid #ddd; border-radius: 2px; background: #8bcbe4; }
 .legend-label { font-weight: bold; }
 .selected-day-details { margin-top: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f8f9fa; }
 .details-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
