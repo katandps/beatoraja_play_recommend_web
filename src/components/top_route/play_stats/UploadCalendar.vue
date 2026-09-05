@@ -81,6 +81,11 @@ const sortedSongList = computed(() => filteredScores.value
     .slice()
     .sort((left, right) => SongDetail.cmp(left, right, filterStore.filter.sort_key, filterStore.filter.sort_desc, levelList.value))
     .slice(0, filterStore.filter.max_length || filteredScores.value.length))
+const formatTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    return hours > 0 ? `${hours}時間${minutes}分` : `${minutes}分`
+}
 
 const selectDay = (dateString: string, uploads: UploadStat[]) => {
     selectedDate.value = dateString
@@ -148,6 +153,27 @@ const showSongModal = async (song: SongDetail) => {
             <div v-else class="upload-selector">
                 <button v-for="upload in uploadsByDate.get(selectedDate)" :key="upload.upload_id" :class="{ active: selectedUpload?.upload_id === upload.upload_id }" @click="selectUpload(upload)">ID: {{ upload.upload_id }}</button>
             </div>
+            <div v-if="selectedUpload" class="stats-section">
+                <h5>今回の実績</h5>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">プレイ数</span>
+                        <span class="stat-value">{{ selectedUpload.stats.play_count.toLocaleString() }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">クリア数</span>
+                        <span class="stat-value">{{ selectedUpload.stats.clear_count.toLocaleString() }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">ノーツ数</span>
+                        <span class="stat-value">{{ selectedUpload.stats.notes().toLocaleString() }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">プレイ時間</span>
+                        <span class="stat-value">{{ formatTime(selectedUpload.stats.play_time) }}</span>
+                    </div>
+                </div>
+            </div>
             <div v-if="selectedUpload && scores" class="table-wrapper">
                 <div class="score-table detail">
                     <RowColGroup :columns="columns" />
@@ -195,6 +221,12 @@ const showSongModal = async (song: SongDetail) => {
 .upload-selector { display: flex; flex-wrap: wrap; gap: 10px; }
 .upload-selector button { background: #6c757d; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
 .upload-selector button.active { background: #007bff; }
+.stats-section { margin-top: 30px; }
+.stats-section h5 { margin: 0 0 15px; color: #495057; border-bottom: 2px solid #007bff; padding-bottom: 5px; }
+.stats-grid { display: grid; gap: 10px; }
+.stat-item { display: flex; justify-content: space-between; padding: 8px 12px; border-left: 4px solid #007bff; border-radius: 4px; background: white; }
+.stat-label { color: #6c757d; font-weight: 500; }
+.stat-value { color: #495057; font-weight: bold; }
 .table-wrapper { margin-top: 30px; }
 .empty-message { text-align: center; color: #6c757d; font-style: italic; }
 @media screen and (max-width: 768px) { .day { min-height: 56px; } }
