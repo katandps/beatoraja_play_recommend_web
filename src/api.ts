@@ -6,6 +6,7 @@ import PlayStats from "./models/playStats"
 import { UserInfo } from "@/store/session"
 import { AccountD } from "./types/generated/account"
 import { RankingD } from "./types/generated/ranking"
+import UploadStats from "./models/uploadStats"
 
 export default class Api {
     host: string = process.env.VUE_APP_HOST
@@ -94,6 +95,27 @@ export default class Api {
         }
     }
 
+    static async fetch_upload_score(upload_id: number, token: string | null) {
+        const obj = new Api()
+        const url = obj.host + "/upload/"+ upload_id
+        const headers: any = { 'session-token': token }
+        const init = { headers }
+        try {
+            /**
+             * @type {({user_id: number, user_name: string, score: {}, error: string})}
+             */
+            const json = await fetch(url, init).then(obj.handler).catch(obj.error)
+            if (json.error) {
+                log.debug(json)
+                return null
+            }
+            return new Scores(json.score, json.user_name, json.user_id)
+        } catch (e) {
+            log.error(e)
+            return null
+        }
+    }
+
     static async fetch_score_log(user_id: number, hash: string, token: string | null) {
         const obj = new Api()
         const url = obj.host + "/score/?user_id=" + user_id + "&sha256=" + hash
@@ -159,6 +181,14 @@ export default class Api {
         const headers: any = { 'session-token': token }
         const init = { headers }
         return new PlayStats(await fetch(uri, init).then(obj.handler).catch(obj.error))
+    }
+
+    static async fetch_upload_list(token: string | null) {
+        const obj = new Api()
+        const uri = obj.host + "/uploads/my"
+        const headers: any = { 'session-token': token }
+        const init = { headers }
+        return new UploadStats(await fetch(uri, init).then(obj.handler).catch(obj.error))
     }
 
     static async logout(token: string | null) {

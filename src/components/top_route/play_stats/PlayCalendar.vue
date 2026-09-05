@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, ref } from 'vue'
 import PlayStats from '../../../models/playStats'
 import Api from '@/api';
 import { useLoginStore } from "@/store/session"
+import UploadStats from '../../../models/uploadStats'
 import SongModal, { ISongModal } from "@/components/top_route/score_viewer/modal/SongModal.vue"
 import Columns from '@/models/columns';
 import SongDetail, { Log } from '@/models/song_detail';
@@ -39,7 +40,8 @@ const filtered_score = computed(() => {
 })
 
 interface Props {
-    history: PlayStats
+    history: PlayStats,
+    uploads: UploadStats
 }
 const props = defineProps<Props>()
 const scores = ref()
