@@ -5,8 +5,9 @@ export default class UploadStats {
 
     constructor(json: any) {
         this.uploads = []
-        if (json.uploads) {
-            json.uploads.reverse().forEach((t:any) => this.uploads.push(
+        const uploads = Array.isArray(json) ? json : []
+        if (uploads) {
+            uploads.forEach((t:any) => this.uploads.push(
                 new UploadStat(
                     t.upload_id,
                     t.upload_at
