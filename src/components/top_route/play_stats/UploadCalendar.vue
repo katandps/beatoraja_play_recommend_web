@@ -130,7 +130,7 @@ const showSongModal = async (song: SongDetail) => {
             </div>
             <div class="calendar-body">
                 <div v-for="(week, weekIndex) in calendarDays" :key="weekIndex" class="week">
-                    <button v-for="day in week" :key="day.dateString" class="day" :class="{ 'other-month': !day.isCurrentMonth, selected: selectedDate === day.dateString, 'has-upload': day.uploads.length }" @click="selectDay(day.dateString, day.uploads)">
+                    <button v-for="day in week" :key="day.dateString" class="day" :class="{ 'other-month': !day.isCurrentMonth, selected: selectedDate === day.dateString, 'has-upload': day.uploads.length, 'has-not-upload': !day.uploads.length }" @click="selectDay(day.dateString, day.uploads)">
                         <span class="day-number">{{ day.date.getDate() }}</span>
                         <strong v-if="day.uploads.length" class="play-indicator">{{ day.uploads.length }}件</strong>
                     </button>
@@ -225,8 +225,9 @@ const showSongModal = async (song: SongDetail) => {
 .weekday { padding: 10px; text-align: center; font-weight: bold; border-right: 1px solid #ddd; }
 .weekday:last-child { border-right: none; }
 .calendar-body { display: grid; grid-template-rows: repeat(6, 1fr); }
-.day { min-height: 80px; border: 1px solid #ddd; padding: 4px; position: relative; cursor: pointer; transition: all .2s; background: #fff; color: #333; text-align: left; }
-.day.has-upload { background: #c6e48b; }
+.day { min-height: 80px; border: 1px solid #ddd; padding: 4px; position: relative; cursor: pointer; transition: all .2s; background: #fff; color: #333}
+.day.has-upload { background: #8bcbe4; }
+.day.has-not-upload { background: #f0f0f0; }
 .day:hover { transform: scale(1.05); box-shadow: 0 2px 8px rgba(0, 0, 0, .2); z-index: 1; }
 .day.selected { border: 3px solid #007bff; box-shadow: 0 0 10px rgba(0, 123, 255, .5); }
 .day.other-month { opacity: .3; }
