@@ -13,7 +13,8 @@ export default class UploadStats {
                     t.upload_id,
                     t.upload_at,
                     t.song_count,
-                    t.stats
+                    t.stats,
+                    t.total_stats
                 )))
         }
     }
@@ -33,12 +34,14 @@ export class UploadStat {
     upload_at: string
     song_count: number
     stats: UploadPlayStats
+    total_stats: UploadPlayStats
 
-    constructor(upload_id: number, upload_at: string, song_count: number, stats: any) {
+    constructor(upload_id: number, upload_at: string, song_count: number, stats: any, total_stats: any) {
         this.upload_id = upload_id
         this.upload_at = DateFormatter.format(new Date(upload_at))
         this.song_count = song_count
         this.stats = new UploadPlayStats(stats)
+        this.total_stats = new UploadPlayStats(total_stats)
     }
 }
 

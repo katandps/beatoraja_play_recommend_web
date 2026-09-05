@@ -153,24 +153,47 @@ const showSongModal = async (song: SongDetail) => {
             <div v-else class="upload-selector">
                 <button v-for="upload in uploadsByDate.get(selectedDate)" :key="upload.upload_id" :class="{ active: selectedUpload?.upload_id === upload.upload_id }" @click="selectUpload(upload)">ID: {{ upload.upload_id }}</button>
             </div>
-            <div v-if="selectedUpload" class="stats-section">
-                <h5>今回の実績</h5>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <span class="stat-label">プレイ数</span>
-                        <span class="stat-value">{{ selectedUpload.stats.play_count.toLocaleString() }}</span>
+            <div v-if="selectedUpload" class="details-content">
+                <div class="stats-section">
+                    <h5>今回の実績</h5>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">プレイ数</span>
+                            <span class="stat-value">{{ selectedUpload.stats.play_count.toLocaleString() }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">クリア数</span>
+                            <span class="stat-value">{{ selectedUpload.stats.clear_count.toLocaleString() }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">ノーツ数</span>
+                            <span class="stat-value">{{ selectedUpload.stats.notes().toLocaleString() }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">プレイ時間</span>
+                            <span class="stat-value">{{ formatTime(selectedUpload.stats.play_time) }}</span>
+                        </div>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-label">クリア数</span>
-                        <span class="stat-value">{{ selectedUpload.stats.clear_count.toLocaleString() }}</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">ノーツ数</span>
-                        <span class="stat-value">{{ selectedUpload.stats.notes().toLocaleString() }}</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">プレイ時間</span>
-                        <span class="stat-value">{{ formatTime(selectedUpload.stats.play_time) }}</span>
+                </div>
+                <div class="stats-section">
+                    <h5>累計実績</h5>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">プレイ数</span>
+                            <span class="stat-value">{{ selectedUpload.total_stats.play_count.toLocaleString() }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">クリア数</span>
+                            <span class="stat-value">{{ selectedUpload.total_stats.clear_count.toLocaleString() }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">ノーツ数</span>
+                            <span class="stat-value">{{ selectedUpload.total_stats.notes().toLocaleString() }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">プレイ時間</span>
+                            <span class="stat-value">{{ formatTime(selectedUpload.total_stats.play_time) }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -221,7 +244,8 @@ const showSongModal = async (song: SongDetail) => {
 .upload-selector { display: flex; flex-wrap: wrap; gap: 10px; }
 .upload-selector button { background: #6c757d; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
 .upload-selector button.active { background: #007bff; }
-.stats-section { margin-top: 30px; }
+.details-content { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
+.stats-section { min-width: 0; }
 .stats-section h5 { margin: 0 0 15px; color: #495057; border-bottom: 2px solid #007bff; padding-bottom: 5px; }
 .stats-grid { display: grid; gap: 10px; }
 .stat-item { display: flex; justify-content: space-between; padding: 8px 12px; border-left: 4px solid #007bff; border-radius: 4px; background: white; }
@@ -229,5 +253,5 @@ const showSongModal = async (song: SongDetail) => {
 .stat-value { color: #495057; font-weight: bold; }
 .table-wrapper { margin-top: 30px; }
 .empty-message { text-align: center; color: #6c757d; font-style: italic; }
-@media screen and (max-width: 768px) { .day { min-height: 56px; } }
+@media screen and (max-width: 768px) { .day { min-height: 56px; } .details-content { grid-template-columns: 1fr; gap: 20px; } }
 </style>
