@@ -26,10 +26,10 @@ Api.fetch_upload_list(store.accessToken).then((h) => (uploads.value = h))
 
 <template>
   <section id="history-page">
-    <h2>プレイ履歴</h2>
+    <h2>プレイレポート</h2>
     <div class="calendar-mode-switch" role="group" aria-label="履歴の表示単位">
-      <button :class="{ active: calendarMode === 'play-date' }" @click="calendarMode = 'play-date'">プレイ日付</button>
-      <button :class="{ active: calendarMode === 'upload' }" @click="calendarMode = 'upload'">アップロード</button>
+      <button :class="{ active: calendarMode === 'play-date' }" @click="calendarMode = 'play-date'">プレイ日別</button>
+      <button :class="{ active: calendarMode === 'upload' }" @click="calendarMode = 'upload'">アップロード日別</button>
     </div>
     <PlayCalendar v-if="calendarMode === 'play-date'" :history="history"/>
     <UploadCalendar v-else :uploads="uploads" />
