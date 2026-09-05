@@ -3,7 +3,8 @@ module.exports = {
   outputDir: "docs",
 
   devServer: {
-    allowedHosts: ["localhost.katand.net"]
+    allowedHosts: ["localhost.katand.net"],
+    server: "https"
   },
   transpileDependencies: true
 }
