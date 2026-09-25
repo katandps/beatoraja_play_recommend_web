@@ -112,7 +112,7 @@ const showModal = () => emits("showModal", props.song)
     </DataCell>
 
     <DataCell class="update" :columns="columns" name="clear_update">
-      <span v-if="song.clear_type > 0 && clear_update_day === update_day">
+      <span v-if="song.clear_type > 0 && clear_update_day === update_day && song.clear_type !== song.clear_type_before">
         <font-awesome-icon :icon="['fas', 'square']" :class="'color-' + config.LAMP_INDEX[song.clear_type_before]"
           v-tooltip="config.LAMP_INDEX[song.clear_type_before]" />
         <font-awesome-icon :icon="['fas', 'long-arrow-alt-right']" style="margin-inline: 0.2em" />
