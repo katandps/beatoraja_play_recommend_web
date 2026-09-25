@@ -16,6 +16,7 @@ interface IColumns {
   combo?: boolean,
   play?: boolean,
   date?: boolean,
+  previous_date?: boolean,
 
   clear_update?: boolean,
   rank_update?: boolean,
@@ -91,6 +92,7 @@ export default class Columns {
     this.columns.bp = false
     this.columns.bp_date = false
     this.columns.bp_update = true
+    this.columns.previous_date = true
   }
 
   for_rival() {

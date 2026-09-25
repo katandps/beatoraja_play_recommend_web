@@ -37,6 +37,7 @@ const title = computed(() => props.song.title)
 const bp = computed(() => (props.song.min_bp === -1 ? "-" : props.song.min_bp))
 
 const update_day = computed(() => props.song.get("date"))
+const previous_update_day = computed(() => props.song.get("previous_date"))
 const clear_update_day = computed(() => props.song.get("clear_date"))
 const score_update_day = computed(() => props.song.get("score_date"))
 const bp_update_day = computed(() => props.song.get("bp_date"))
@@ -192,6 +193,7 @@ const showModal = () => emits("showModal", props.song)
 
     <DataCell class="play" :columns="columns" name="play"> {{ play_count }}</DataCell>
     <DataCell class="date" :columns="columns" name="date"> {{ update_day }}</DataCell>
+    <DataCell class="date" :columns="columns" name="previous_date"> {{ previous_update_day }}</DataCell>
 
     <DataCell class="clear_vs" :columns="columns" name="clear_diff_rival" :class="clear_rival_bg_class">
       <span :class="clear_vs">{{ clear_vs }}</span>

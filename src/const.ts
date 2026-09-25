@@ -142,6 +142,7 @@ export default Object.freeze({
         { key: "combo", name: "最高コンボ", title: "Combo", class: "combo" },
         { key: "play", name: "プレイ回数", title: "Play", class: "play" },
         { key: "date", name: "更新日", title: "Date", class: "date" },
+        { key: "previous_date", name: "前回更新日", title: "PrevDate", class: "date" },
         { key: "clear_diff_rival", name: "ライバルとのクリア差", title: "ClearVS", class: "clear_vs" },
         { key: "score_diff_rival", name: "ライバルとのスコア差", title: "ScoreVS", class: "score_vs" },
         { key: "bp_diff_rival", name: "ライバルとのBP差", title: "BPVS", class: "bp_vs" },

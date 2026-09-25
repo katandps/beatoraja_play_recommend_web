@@ -36,6 +36,7 @@ export default class SongDetail {
   levels: string[] = []
 
   updated_at: Date
+  previous_updated_at: Date
   rival_updated_at: Date
 
   mode: number
@@ -58,6 +59,7 @@ export default class SongDetail {
 
     this.clear_rank = SongDetail.make_clear_rank(this.total_notes, this.score)
     this.updated_at = new Date(score.updated_at)
+    this.previous_updated_at = new Date(score.updated_at)
     this.play_count = score.play_count
     this.mode = 0
 
@@ -102,6 +104,7 @@ export default class SongDetail {
 
     this.clear_rank = SongDetail.make_clear_rank(this.total_notes, this.score)
     this.updated_at = new Date(score.updated_at)
+    this.previous_updated_at = new Date(score.previous_updated_at)
     this.play_count = score.play_count
   }
 
@@ -419,6 +422,10 @@ export default class SongDetail {
         return this.updated_at.getFullYear() < 2000
           ? "---"
           : this.updated_at.toLocaleDateString('sv-SE')
+      case "previous_date":
+        return this.previous_updated_at.getFullYear() < 2000
+          ? "---"
+          : this.previous_updated_at.toLocaleDateString('sv-SE')
 
       case "clear_diff_rival":
         return this.clear_type === this.rival_clear_type

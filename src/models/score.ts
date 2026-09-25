@@ -15,6 +15,7 @@ export default class Score {
     min_bp_updated_at : string = "1970-01-01T09:00:00+09:00"
 
     updated_at: string = "1970-01-01T09:00:00+09:00"
+    previous_updated_at: string = "1970-01-01T09:00:00+09:00"
     play_count: number = 0
 
     constructor() {}
@@ -48,6 +49,7 @@ export default class Score {
             this.min_bp_updated_at = score.min_bp.updated_at
         }
         this.updated_at = score ? score.updated_at : "1970-01-01T09:00:00+09:00"
+        this.previous_updated_at = score ? score.updated_at_before_period : "1970-01-01T09:00:00+09:00"
         this.play_count = score ? score.play_count : 0
     }
 }
