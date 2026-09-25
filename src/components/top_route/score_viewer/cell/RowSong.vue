@@ -179,7 +179,7 @@ const showModal = () => emits("showModal", props.song)
       {{ song.min_bp_before === -1 ? "---" : song.min_bp_before }}
     </DataCell>
     <DataCell class="update" :columns="columns" name="bp_update">
-      <span v-if="bp !== '-' && bp_update_day === update_day">
+      <span v-if="bp !== '-' && bp_update_day === update_day && bp !== song.min_bp_before">
         <span class="update_strong" v-if="song.min_bp_before !== -1">
           {{ song.min_bp - song.min_bp_before }}
         </span>
