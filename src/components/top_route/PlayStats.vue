@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useLoginStore } from '@/store/session'
+import { useRouter } from 'vue-router'
 import { ref } from "vue"
 import Api from "../../api"
 import PlayStats from "../../models/playStats"
@@ -7,13 +8,28 @@ import PlayCalendar from './play_stats/PlayCalendar.vue'
 import UploadCalendar from './play_stats/UploadCalendar.vue'
 import UploadStats from '../../models/uploadStats'
 
-const store = useLoginStore()
+interface Props {
+  date?: string | null | (string | null)[]
+  uploadId?: string | null | (string | null)[]
+}
 
+const props = defineProps<Props>()
+const store = useLoginStore()
+const router = useRouter()
 
 // --- data ---
 const history = ref(PlayStats.default())
 const uploads = ref(UploadStats.default())
-const calendarMode = ref<'play-date' | 'upload'>('play-date')
+const calendarMode = ref<'play-date' | 'upload'>(props.date || props.uploadId ? 'upload' : 'play-date')
+
+const updateUploadSelection = (date: Date | null, uploadId: number | null) => {
+  const query = { ...router.currentRoute.value.query }
+  if (date) query.date = date.toISOString()
+  else delete query.date
+  if (uploadId) query.upload_id = String(uploadId)
+  else delete query.upload_id
+  void router.replace({ query })
+}
 
 // --- computed ---
 Api.fetch_play_stats(store.accessToken).then(
@@ -32,7 +48,13 @@ Api.fetch_upload_list(store.accessToken).then((h) => (uploads.value = h))
       <button :class="{ active: calendarMode === 'upload' }" @click="calendarMode = 'upload'">アップロード日別</button>
     </div>
     <PlayCalendar v-if="calendarMode === 'play-date'" :history="history"/>
-    <UploadCalendar v-else :uploads="uploads" />
+    <UploadCalendar
+      v-else
+      :uploads="uploads"
+      :date="props.date"
+      :upload-id="props.uploadId"
+      @selection-change="updateUploadSelection"
+    />
   </section>
 </template>
 

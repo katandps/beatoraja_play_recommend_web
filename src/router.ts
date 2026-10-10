@@ -31,6 +31,10 @@ const routes = [
   {
     path: "/stats",
     component: PlayStatsVue,
+    props: (route: any) => ({
+      date: route.query.date,
+      uploadId: route.query.upload_id
+    }),
   },
   {
     path: "/table",

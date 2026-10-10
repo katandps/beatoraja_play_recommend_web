@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import Api from '@/api'
 import { useLoginStore } from '@/store/session'
 import { useFilterStore } from '@/store/filter'
 import UploadStats, { UploadStat } from '@/models/uploadStats'
+import { DateFormatter } from '@/models/date_formatter'
 import Columns from '@/models/columns'
 import Tables from '@/models/difficultyTable'
 import Songs from '@/models/songs'
@@ -16,9 +17,14 @@ import html2canvas from 'html2canvas'
 
 interface Props {
     uploads: UploadStats
+    date?: string | null | (string | null)[]
+    uploadId?: string | null | (string | null)[]
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits<{
+    (event: 'selection-change', date: Date | null, uploadId: number | null): void
+}>()
 const sessionStore = useLoginStore()
 const filterStore = useFilterStore()
 const currentDate = ref(new Date())
@@ -28,6 +34,44 @@ const scores = ref()
 const tables = ref(new Tables([]))
 const songs = ref<Songs>()
 const songModal = ref<ISongModal>()
+
+const queryValue = (value: unknown) => Array.isArray(value) ? value[0] : value
+const parseDate = (value: unknown) => {
+    if (typeof value !== 'string') return null
+    const date = new Date(value)
+    return Number.isNaN(date.getTime()) ? null : date
+}
+const updateQuery = (date: Date | null, uploadId: number | null) => {
+    emit('selection-change', date, uploadId)
+}
+
+const restoreSelection = () => {
+    const date = parseDate(queryValue(props.date))
+    const selectedDateFromQuery = date
+        ? DateFormatter.format(new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
+        : null
+    const requestedUploadId = Number(queryValue(props.uploadId))
+    const uploadById = Number.isInteger(requestedUploadId) && requestedUploadId > 0
+        ? props.uploads.uploads.find((item) => item.upload_id === requestedUploadId)
+        : undefined
+    const upload = uploadById || (!requestedUploadId && selectedDateFromQuery
+        ? props.uploads.uploads.find((item) => item.upload_at === selectedDateFromQuery)
+        : undefined)
+
+    if (requestedUploadId > 0 && !upload && props.uploads.uploads.length === 0) return
+
+    const selectedDateFromUpload = upload?.upload_at || null
+    const nextDate = selectedDateFromQuery || selectedDateFromUpload
+    const nextUpload = upload && (!nextDate || upload.upload_at === nextDate) ? upload : null
+    if (selectedDate.value === nextDate && selectedUpload.value?.upload_id === nextUpload?.upload_id) return
+
+    selectedDate.value = nextDate
+    selectedUpload.value = nextUpload
+    scores.value = undefined
+    const parsedSelectedDate = parseDate(queryValue(props.date)) || (nextDate ? new Date(nextDate) : null)
+    if (parsedSelectedDate) currentDate.value = new Date(parsedSelectedDate.getUTCFullYear(), parsedSelectedDate.getUTCMonth(), 1)
+    if (nextUpload) void selectUpload(nextUpload, false)
+}
 
 onMounted(() => {
     Api.fetch_tables(sessionStore.accessToken).then((result) => (tables.value = result))
@@ -92,23 +136,29 @@ const selectDay = (dateString: string, uploads: UploadStat[]) => {
     selectedDate.value = dateString
     selectedUpload.value = uploads[0] || null
     scores.value = undefined
-    if (selectedUpload.value) selectUpload(selectedUpload.value)
+    updateQuery(new Date(dateString), selectedUpload.value?.upload_id || null)
+    if (selectedUpload.value) selectUpload(selectedUpload.value, false)
 }
-const selectUpload = async (upload: UploadStat) => {
+const selectUpload = async (upload: UploadStat, updateUrl = true) => {
     selectedUpload.value = upload
+    if (updateUrl) updateQuery(new Date(selectedDate.value || upload.upload_at), upload.upload_id)
     scores.value = await Api.fetch_upload_score(upload.upload_id, sessionStore.accessToken)
+}
+watch(() => [props.date, props.uploadId, props.uploads.uploads], restoreSelection, { immediate: true })
+
+const clearSelection = () => {
+    selectedDate.value = null
+    selectedUpload.value = null
+    scores.value = undefined
+    updateQuery(null, null)
 }
 const changeMonth = (delta: number) => {
     currentDate.value = new Date(currentYear.value, currentMonth.value + delta, 1)
-    selectedDate.value = null
-    selectedUpload.value = null
-    scores.value = undefined
+    clearSelection()
 }
 const goToCurrentMonth = () => {
     currentDate.value = new Date()
-    selectedDate.value = null
-    selectedUpload.value = null
-    scores.value = undefined
+    clearSelection()
 }
 const showSongModal = async (song: SongDetail) => {
     const score = await Api.fetch_my_score(song.sha256, sessionStore.accessToken)
@@ -189,7 +239,7 @@ const downloadAsImage = async () => {
                 <h4>{{ selectedDate }} のアップロード</h4>
                 <div class="header-buttons download-ignore">
                     <button class="download-button" title="画像としてダウンロード" @click="downloadAsImage">📷 ダウンロード</button>
-                    <button class="close-button" aria-label="詳細を閉じる" @click="selectedDate = null">×</button>
+                    <button class="close-button" aria-label="詳細を閉じる" @click="clearSelection">×</button>
                 </div>
             </div>
             <p v-if="!uploadsByDate.get(selectedDate)?.length" class="empty-message">この日のアップロードはありません</p>

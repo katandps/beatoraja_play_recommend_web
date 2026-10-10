@@ -108,7 +108,7 @@ const handleSignOut = async () => {
       </div>
       <div class="col-lg-3 panel" v-if="is_login">
         <h4>
-          <router-link class="text-dark px-2" :to="'/stats?user_id=' + user_id">
+          <router-link class="text-dark px-2" to="/stats">
             <font-awesome-icon :icon="['fas', 'calendar']" />
             プレイレポート
           </router-link>
